@@ -4,18 +4,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>dev.gamekit</groupId>
-  <artifactId>gamekit</artifactId>
-  <version>0.1.0</version>
-  <packaging>pom</packaging>
-  <modules>
-    <module>engine</module>
-    <module>samples</module>
-  </modules>
+  <parent>
+    <groupId>dev.gamekit</groupId>
+    <artifactId>gamekit</artifactId>
+    <version>0.1.0</version>
+  </parent>
+
+  <artifactId>engine</artifactId>
+  <packaging>jar</packaging>
 
   <properties>
     <maven.compiler.source>18</maven.compiler.source>
     <maven.compiler.target>18</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+
 </project>
