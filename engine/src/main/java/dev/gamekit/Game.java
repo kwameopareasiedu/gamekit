@@ -1,6 +1,5 @@
 package dev.gamekit;
 
-import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -47,6 +46,7 @@ public abstract class Game {
       // noinspection BusyWait
       Thread.sleep(Math.max(frameLag, 5));
       Time.timeSinceLoad += elapsedTime;
+      Input.reset();
       frameLag = 0;
     }
 
@@ -56,6 +56,7 @@ public abstract class Game {
   protected void start() {
     window = new Window(config.title, config.screenWidth, config.screenHeight);
 
+    window.addKeyListener(Input.instance);
     window.addWindowListener(new WindowAdapter() {
       @Override
       public void windowClosing(WindowEvent e) {
@@ -71,7 +72,8 @@ public abstract class Game {
   protected void update() { }
 
   protected void render() {
-    window.clearScreen(Color.BLACK);
+    window.clearScreen();
+
     window.refresh();
   }
 

@@ -1,5 +1,6 @@
 package dev.gamekit;
 
+/** GameKit launcher configuration class. Use {@code Config.Builder} to configure options */
 public final class Config {
   final String title;
   final int screenWidth;
