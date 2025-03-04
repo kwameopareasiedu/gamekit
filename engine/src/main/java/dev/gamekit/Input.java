@@ -8,7 +8,7 @@ import java.util.stream.IntStream;
  * GameKit's static input class. Input can be used to detect press and release
  * events of keys with ASCII codes from 0 to 255.
  */
-public class Input extends KeyAdapter {
+public final class Input extends KeyAdapter {
   static final Input instance = new Input();
 
   private final boolean[] downStates = new boolean[256];

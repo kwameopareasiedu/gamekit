@@ -1,5 +1,8 @@
 package dev.gamekit;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -8,8 +11,9 @@ import java.awt.event.WindowEvent;
  * A game or application must extend this class and call the {@code run()} method.
  */
 public abstract class Application {
-  private static Application instance;
+  private static final Logger LOGGER = LogManager.getLogger();
   private static final long FRAME_TIME = 1000 / 60;
+  private static Application instance;
 
   protected boolean isRunning = true;
   protected Window window;
@@ -21,6 +25,9 @@ public abstract class Application {
   private Scene nextScene;
 
   public Application(Config config) {
+    LOGGER.debug("Created GameKit application");
+    LOGGER.debug(config);
+
     this.config = config;
     Application.instance = this;
   }
@@ -30,7 +37,12 @@ public abstract class Application {
   }
 
   public void loadScene(Scene scene) {
-    if (scene == null) return;
+    if (scene == null) {
+      LOGGER.warn("Load scene called with a null scene");
+      return;
+    }
+
+    LOGGER.debug("Queued scene load: {}", scene.name);
     this.nextScene = scene;
   }
 
@@ -49,6 +61,8 @@ public abstract class Application {
       lastFrameTime = frameTimeNow;
       frameLag += elapsedTime;
 
+      Input.reset();
+
       while (frameLag >= FRAME_TIME) {
         frameLag -= FRAME_TIME;
         update();
@@ -63,7 +77,6 @@ public abstract class Application {
       // noinspection BusyWait
       Thread.sleep(Math.max(frameLag, 5));
       Time.timeSinceLoad += elapsedTime;
-      Input.reset();
       frameLag = 0;
     }
 
@@ -71,6 +84,8 @@ public abstract class Application {
   }
 
   private void start() {
+    LOGGER.debug("Started GameKit application");
+
     window = new Window(config.title, config.screenWidth, config.screenHeight);
 
     window.addKeyListener(Input.instance);
@@ -78,6 +93,7 @@ public abstract class Application {
       @Override
       public void windowClosing(WindowEvent e) {
         super.windowClosing(e);
+        LOGGER.debug("Received window closing event");
         dispose();
       }
     });
@@ -103,10 +119,12 @@ public abstract class Application {
   }
 
   protected void dispose() {
-    System.out.println("Exiting");
+    LOGGER.debug("Disposing GameKit application");
   }
 
   private void loadNextScene() {
+    LOGGER.debug("Switching scenes");
+
     if (activeScene != null) {
       activeScene.dispose();
     }

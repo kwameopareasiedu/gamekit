@@ -1,5 +1,7 @@
 package dev.gamekit;
 
+import java.util.Locale;
+
 /** GameKit launcher configuration class. Use {@code Config.Builder} to configure options */
 public final class Config {
   final String title;
@@ -10,6 +12,17 @@ public final class Config {
     this.title = title;
     this.screenWidth = screenWidth;
     this.screenHeight = screenHeight;
+  }
+
+  @Override
+  public String toString() {
+    return String.format(Locale.getDefault(), "Config(" +
+        "title: \"%s\", " +
+        "screenWidth: %d, " +
+        "screenHeight: %d" +
+        ")",
+      title, screenWidth, screenHeight
+    );
   }
 
   public static final class Builder {

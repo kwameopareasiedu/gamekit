@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 import static dev.gamekit.Utils.toInt;
 
 /** GameKit's window class in which the game is rendered */
-public class Window extends JFrame {
+public final class Window extends JFrame {
   static Window instance;
   
   final Graphics2D windowGraphics;

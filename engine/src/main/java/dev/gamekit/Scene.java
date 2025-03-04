@@ -1,5 +1,8 @@
 package dev.gamekit;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.awt.*;
 
 /**
@@ -11,17 +14,23 @@ import java.awt.*;
  * {@code render()} to render it to the game window
  */
 public abstract class Scene {
+  private static final Logger LOGGER = LogManager.getLogger();
+
   final String name;
 
   public Scene(String name) {
     this.name = name;
   }
 
-  protected void start() { }
+  protected void start() {
+    LOGGER.debug("Started scene");
+  }
 
   protected void update() { }
 
   protected void render(Graphics2D g) { }
 
-  protected void dispose() {}
+  protected void dispose() {
+    LOGGER.debug("Disposing scene");
+  }
 }
