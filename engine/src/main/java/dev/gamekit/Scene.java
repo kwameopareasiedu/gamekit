@@ -23,7 +23,7 @@ public abstract class Scene {
   }
 
   protected void start() {
-    LOGGER.debug("Started scene");
+    LOGGER.debug("Starting scene");
   }
 
   protected void update() { }

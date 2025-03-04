@@ -88,7 +88,7 @@ public abstract class Application {
 
     window = new Window(config.title, config.screenWidth, config.screenHeight);
 
-    window.addKeyListener(Input.instance);
+    window.addKeyListener(Input.INSTANCE);
     window.addWindowListener(new WindowAdapter() {
       @Override
       public void windowClosing(WindowEvent e) {

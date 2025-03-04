@@ -9,7 +9,7 @@ import java.util.stream.IntStream;
  * events of keys with ASCII codes from 0 to 255.
  */
 public final class Input extends KeyAdapter {
-  static final Input instance = new Input();
+  static final Input INSTANCE = new Input();
 
   private final boolean[] downStates = new boolean[256];
   private final boolean[] upStates = new boolean[256];
@@ -19,23 +19,23 @@ public final class Input extends KeyAdapter {
   private Input() { }
 
   public static boolean isKeyPressed(int keyCode) {
-    return instance.downStates[keyCode];
+    return INSTANCE.downStates[keyCode];
   }
 
   public static boolean isKeyReleased(int keyCode) {
-    return instance.upStates[keyCode];
+    return INSTANCE.upStates[keyCode];
   }
 
   public static boolean isAnyKeyPressed() {
-    return instance.anyKeyPressed;
+    return INSTANCE.anyKeyPressed;
   }
 
   public static boolean isAnyKeyReleased() {
-    return instance.anyKeyReleased;
+    return INSTANCE.anyKeyReleased;
   }
 
   public static void reset() {
-    IntStream.range(0, 256).forEach(i -> instance.upStates[i] = false);
+    IntStream.range(0, 256).forEach(i -> INSTANCE.upStates[i] = false);
   }
 
   @Override
