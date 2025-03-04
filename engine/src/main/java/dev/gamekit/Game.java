@@ -1,10 +1,11 @@
 package dev.gamekit;
 
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 /**
- * GameKit abstract launcher class which runs a game at 60 frames per second.
+ * GameKit's abstract launcher class which runs a game at 60 frames per second.
  * A game or application must extend this class and call the {@code run()} method.
  */
 public abstract class Game {
@@ -12,22 +13,14 @@ public abstract class Game {
   private static final long FRAME_TIME = 1000 / 60;
 
   protected boolean isRunning = true;
-  protected final Window window;
+  protected Window window;
 
   private long lastFrameTime = System.currentTimeMillis();
   private long frameLag = 0;
+  private final Config config;
 
-  public Game(String title) {
-    window = new Window(title, 1280, 720);
-
-    window.addWindowListener(new WindowAdapter() {
-      @Override
-      public void windowClosing(WindowEvent e) {
-        super.windowClosing(e);
-        cleanup();
-      }
-    });
-
+  public Game(Config config) {
+    this.config = config;
     Game.instance = this;
   }
 
@@ -61,14 +54,28 @@ public abstract class Game {
   }
 
   protected void start() {
+    window = new Window(config.title, config.screenWidth, config.screenHeight);
+
+    window.addWindowListener(new WindowAdapter() {
+      @Override
+      public void windowClosing(WindowEvent e) {
+        super.windowClosing(e);
+        cleanup();
+      }
+    });
+
+    window.setLocationRelativeTo(null);
     window.setVisible(true);
   }
 
   protected void update() { }
 
   protected void render() {
+    window.clearScreen(Color.BLACK);
     window.refresh();
   }
 
-  protected void cleanup() { }
+  protected void cleanup() {
+    System.out.println("Exiting");
+  }
 }

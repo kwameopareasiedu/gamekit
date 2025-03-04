@@ -1,10 +1,17 @@
 package pong;
 
+import dev.gamekit.Config;
 import dev.gamekit.Game;
 
 public class Pong extends Game {
   public Pong() {
-    super("Pong");
+    super(
+      new Config.Builder()
+        .setTitle("New Age Pong")
+        .setWindowWidth(1280)
+        .setWindowHeight(720)
+        .build()
+    );
   }
 
   @Override
