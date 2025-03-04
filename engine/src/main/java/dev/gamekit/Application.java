@@ -7,8 +7,8 @@ import java.awt.event.WindowEvent;
  * GameKit's abstract launcher class which runs a game at 60 frames per second.
  * A game or application must extend this class and call the {@code run()} method.
  */
-public abstract class Game {
-  private static Game instance;
+public abstract class Application {
+  private static Application instance;
   private static final long FRAME_TIME = 1000 / 60;
 
   protected boolean isRunning = true;
@@ -17,14 +17,21 @@ public abstract class Game {
   private long lastFrameTime = System.currentTimeMillis();
   private long frameLag = 0;
   private final Config config;
+  private Scene activeScene;
+  private Scene nextScene;
 
-  public Game(Config config) {
+  public Application(Config config) {
     this.config = config;
-    Game.instance = this;
+    Application.instance = this;
   }
 
-  public static Game getInstance() {
+  public static Application getInstance() {
     return instance;
+  }
+
+  public void loadScene(Scene scene) {
+    if (scene == null) return;
+    this.nextScene = scene;
   }
 
   public void run() throws InterruptedException {
@@ -43,6 +50,10 @@ public abstract class Game {
 
       render();
 
+      if (nextScene != null) {
+        loadNextScene();
+      }
+
       // noinspection BusyWait
       Thread.sleep(Math.max(frameLag, 5));
       Time.timeSinceLoad += elapsedTime;
@@ -50,10 +61,10 @@ public abstract class Game {
       frameLag = 0;
     }
 
-    cleanup();
+    dispose();
   }
 
-  protected void start() {
+  private void start() {
     window = new Window(config.title, config.screenWidth, config.screenHeight);
 
     window.addKeyListener(Input.instance);
@@ -61,7 +72,7 @@ public abstract class Game {
       @Override
       public void windowClosing(WindowEvent e) {
         super.windowClosing(e);
-        cleanup();
+        dispose();
       }
     });
 
@@ -69,15 +80,33 @@ public abstract class Game {
     window.setVisible(true);
   }
 
-  protected void update() { }
+  private void update() {
+    if (activeScene != null) {
+      activeScene.update();
+    }
+  }
 
-  protected void render() {
+  private void render() {
     window.clearScreen();
+
+    if (activeScene != null) {
+      activeScene.render(window.screenGraphics);
+    }
 
     window.refresh();
   }
 
-  protected void cleanup() {
+  protected void dispose() {
     System.out.println("Exiting");
+  }
+
+  private void loadNextScene() {
+    if (activeScene != null) {
+      activeScene.dispose();
+    }
+
+    nextScene.start();
+    activeScene = nextScene;
+    nextScene = null;
   }
 }
