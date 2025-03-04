@@ -12,7 +12,6 @@ import java.awt.event.WindowEvent;
  */
 public abstract class Application {
   private static final Logger LOGGER = LogManager.getLogger();
-  private static final long FRAME_TIME = 1000 / 60;
   private static Application instance;
 
   protected boolean isRunning = true;
@@ -63,8 +62,8 @@ public abstract class Application {
 
       Input.reset();
 
-      while (frameLag >= FRAME_TIME) {
-        frameLag -= FRAME_TIME;
+      while (frameLag >= Time.FRAME_TIME) {
+        frameLag -= Time.FRAME_TIME;
         update();
       }
 
@@ -75,9 +74,8 @@ public abstract class Application {
       }
 
       // noinspection BusyWait
-      Thread.sleep(Math.max(frameLag, 5));
+      Thread.sleep(Math.max(frameLag, 1));
       Time.timeSinceLoad += elapsedTime;
-      frameLag = 0;
     }
 
     dispose();
@@ -109,8 +107,6 @@ public abstract class Application {
   }
 
   private void render() {
-    window.clearScreen();
-
     if (activeScene != null) {
       activeScene.render(window.screenGraphics);
     }

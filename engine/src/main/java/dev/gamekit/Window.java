@@ -9,6 +9,8 @@ import static dev.gamekit.Utils.toInt;
 
 /** GameKit's window class in which the game is rendered */
 public final class Window extends JFrame {
+  static Window INSTANCE;
+
   final Graphics2D windowGraphics;
   final Graphics2D screenGraphics;
   final AffineTransform screenTransform;
@@ -30,10 +32,19 @@ public final class Window extends JFrame {
 
     this.width = width;
     this.height = height;
+    Window.INSTANCE = this;
   }
 
-  void clearScreen() {
-    screenGraphics.setBackground(Color.BLACK);
+  public static Window getInstance() {
+    return INSTANCE;
+  }
+
+  public void clearScreen() {
+    clearScreen(Color.BLACK);
+  }
+
+  public void clearScreen(Color color) {
+    screenGraphics.setBackground(color);
     screenGraphics.setTransform(screenTransform);
     screenGraphics.clearRect(toInt(-0.5 * width), toInt(-0.5 * height), width, height);
   }
