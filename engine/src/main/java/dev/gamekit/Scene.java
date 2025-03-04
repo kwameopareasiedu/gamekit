@@ -11,6 +11,12 @@ import java.awt.*;
  * {@code render()} to render it to the game window
  */
 public abstract class Scene {
+  final String name;
+
+  public Scene(String name) {
+    this.name = name;
+  }
+
   protected void start() { }
 
   protected void update() { }

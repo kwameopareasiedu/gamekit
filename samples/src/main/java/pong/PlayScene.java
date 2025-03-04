@@ -1,5 +1,6 @@
 package pong;
 
+import dev.gamekit.Application;
 import dev.gamekit.Input;
 import dev.gamekit.Scene;
 
@@ -7,6 +8,19 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 
 public class PlayScene extends Scene {
+  public PlayScene() {
+    super("Play Scene");
+  }
+
+  @Override
+  protected void update() {
+    super.update();
+
+    if (Input.isKeyPressed(KeyEvent.VK_Q)) {
+      Application.getInstance().quit();
+    }
+  }
+
   @Override
   protected void render(Graphics2D g) {
     super.render(g);

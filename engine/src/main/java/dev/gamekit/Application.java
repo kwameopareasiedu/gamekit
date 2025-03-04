@@ -34,6 +34,12 @@ public abstract class Application {
     this.nextScene = scene;
   }
 
+  public void quit() {
+    window.dispatchEvent(
+      new WindowEvent(window, WindowEvent.WINDOW_CLOSING)
+    );
+  }
+
   public void run() throws InterruptedException {
     start();
 
