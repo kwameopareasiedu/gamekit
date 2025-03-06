@@ -5,22 +5,19 @@ import org.apache.logging.log4j.Logger;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * An arrangement of entities that represent a logical part of your game.
  * This can be a main menu, testing area or a level within your game.
- * <p>
- * When a scene is added to a game, its {@code start()} is called to initialize it.
- * Then its {@code update()} method is called in the game loop and then its
- * {@code render()} to render it to the game window
  */
 public abstract class Scene {
   private static final Logger LOGGER = LogManager.getLogger();
+  static Scene active;
 
   protected final String name;
-  protected final List<Entity> entities;
+  final Map<Integer, Entity> children;
 
   private Color graphicsBgColor;
   private AffineTransform graphicsTransform;
@@ -31,29 +28,60 @@ public abstract class Scene {
 
   public Scene(String name) {
     this.name = name;
-    entities = new ArrayList<>();
+    children = new HashMap<>();
   }
 
-  protected void start() {
+  public static Scene getActive() {
+    return active;
+  }
+
+  public void addChild(Entity entity) {
+    LOGGER.debug("Adding child: [{} - {}]", entity.internalId, entity.name);
+
+    if (!children.containsKey(entity.internalId)) {
+      Application.getInstance().runOnFrameEnd(() -> {
+        children.put(entity.internalId, entity);
+
+        if (!entity.ready) {
+          entity.onStart();
+        }
+
+        LOGGER.debug("Added child: [{} - {}]", entity.internalId, entity.name);
+      });
+    }
+  }
+
+  public void removeChild(Entity entity) {
+    LOGGER.debug("Removing child: [{} - {}]", entity.internalId, entity.name);
+
+    if (children.containsKey(entity.internalId)) {
+      Application.getInstance().runOnFrameEnd(() -> {
+        children.remove(entity.internalId, entity);
+        LOGGER.debug("Removed child: [{} - {}]", entity.internalId, entity.name);
+      });
+    }
+  }
+
+  protected void onStart() {
     LOGGER.debug("Starting scene");
-    entities.forEach(Entity::start);
+    children.forEach((k, v) -> v.onStart());
   }
 
-  protected void update() {
-    entities.forEach(Entity::update);
+  protected void onUpdate() {
+    children.forEach((k, v) -> v.onUpdate());
   }
 
-  protected void render(Graphics2D g) {
-    entities.forEach(entity -> {
+  protected void onRender(Graphics2D g) {
+    children.forEach((k, v) -> {
       saveGraphicsState(g);
-      entity.render(g);
+      v.onRender(g);
       resetGraphicsState(g);
     });
   }
 
-  protected void dispose() {
+  protected void onDispose() {
     LOGGER.debug("Disposing scene");
-    entities.forEach(Entity::dispose);
+    children.forEach((k, v) -> v.onDispose());
   }
 
   private void saveGraphicsState(Graphics2D g) {

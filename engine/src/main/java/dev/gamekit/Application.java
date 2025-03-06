@@ -1,15 +1,19 @@
 package dev.gamekit;
 
+import dev.gamekit.interfaces.FrameEndTask;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * GameKit's abstract launcher class which runs a game at 60 frames per second.
  * A game or application must extend this class and call the {@code run()} method.
  */
+@SuppressWarnings("BusyWait")
 public abstract class Application {
   private static final Logger LOGGER = LogManager.getLogger();
   private static Application instance;
@@ -23,11 +27,14 @@ public abstract class Application {
   private Scene activeScene;
   private Scene nextScene;
 
+  private final List<FrameEndTask> frameEndTasks;
+
   public Application(Config config) {
-    LOGGER.debug("Created GameKit application");
+    LOGGER.debug("Created application");
     LOGGER.debug(config);
 
     this.config = config;
+    frameEndTasks = new ArrayList<>();
     Application.instance = this;
   }
 
@@ -37,12 +44,16 @@ public abstract class Application {
 
   public void loadScene(Scene scene) {
     if (scene == null) {
-      LOGGER.warn("Load scene called with a null scene");
-      return;
+      LOGGER.fatal("Load scene called with a null scene");
+      throw new NullPointerException("Unable to load a null scene");
     }
 
-    LOGGER.debug("Queued scene load: {}", scene.name);
+    LOGGER.debug("Queued scene: {}", scene.name);
     this.nextScene = scene;
+  }
+
+  public void runOnFrameEnd(FrameEndTask task) {
+    frameEndTasks.add(task);
   }
 
   public void quit() {
@@ -52,7 +63,7 @@ public abstract class Application {
   }
 
   public void run() throws InterruptedException {
-    start();
+    onSetup();
 
     while (isRunning) {
       long frameTimeNow = System.currentTimeMillis();
@@ -64,25 +75,23 @@ public abstract class Application {
 
       while (frameLag >= Time.FRAME_TIME) {
         frameLag -= Time.FRAME_TIME;
-        update();
+        onUpdate();
       }
 
-      render();
+      onRender();
 
-      if (nextScene != null) {
-        loadNextScene();
-      }
+      onFrameEnd();
 
-      // noinspection BusyWait
-      Thread.sleep(Math.max(frameLag, 1));
       Time.timeSinceLoad += elapsedTime;
+
+      Thread.sleep(Math.max(frameLag, 1));
     }
 
-    dispose();
+    onDispose();
   }
 
-  private void start() {
-    LOGGER.debug("Started GameKit application");
+  private void onSetup() {
+    LOGGER.debug("Initializing application");
 
     window = new Window(config.title, config.screenWidth, config.screenHeight);
 
@@ -92,7 +101,7 @@ public abstract class Application {
       public void windowClosing(WindowEvent e) {
         super.windowClosing(e);
         LOGGER.debug("Received window closing event");
-        dispose();
+        onDispose();
       }
     });
 
@@ -100,33 +109,52 @@ public abstract class Application {
     window.setVisible(true);
   }
 
-  private void update() {
+  private void onUpdate() {
     if (activeScene != null) {
-      activeScene.update();
+      activeScene.onUpdate();
     }
   }
 
-  private void render() {
+  private void onRender() {
     if (activeScene != null) {
-      activeScene.render(window.screenGraphics);
+      activeScene.onRender(window.screenGraphics);
     }
 
     window.refresh();
   }
 
-  protected void dispose() {
-    LOGGER.debug("Disposing GameKit application");
-  }
+  private void onFrameEnd() {
+    if (!frameEndTasks.isEmpty()) {
+      for (var action : frameEndTasks) {
+        action.run();
+      }
 
-  private void loadNextScene() {
-    LOGGER.debug("Switching scenes");
-
-    if (activeScene != null) {
-      activeScene.dispose();
+      frameEndTasks.clear();
     }
 
-    nextScene.start();
-    activeScene = nextScene;
-    nextScene = null;
+    if (nextScene != null) {
+      if (activeScene != null) {
+        activeScene.onDispose();
+        LOGGER.debug("Switching scene: {} -> {}", activeScene.name, nextScene.name);
+      } else {
+        LOGGER.debug("Loading scene: {}", nextScene.name);
+      }
+
+      activeScene = nextScene;
+      activeScene.onStart();
+      nextScene = null;
+
+      Scene.active = activeScene;
+    }
+  }
+
+  protected void onDispose() {
+    LOGGER.debug("Disposing application");
+
+    if (activeScene != null) {
+      activeScene.onDispose();
+    }
+
+    System.exit(0);
   }
 }

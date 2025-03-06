@@ -18,7 +18,6 @@ public final class Window extends JFrame {
   private final int width, height;
 
   Window(String title, int width, int height) {
-    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setPreferredSize(new Dimension(width, height));
     setSize(width, height);
     setResizable(false);
