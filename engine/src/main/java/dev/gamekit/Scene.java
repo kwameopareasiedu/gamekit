@@ -17,6 +17,7 @@ public abstract class Scene {
   static Scene active;
 
   protected final String name;
+  protected final Camera camera;
   final Map<Integer, Entity> children;
 
   private Color graphicsBgColor;
@@ -28,11 +29,16 @@ public abstract class Scene {
 
   public Scene(String name) {
     this.name = name;
+    camera = new Camera();
     children = new HashMap<>();
   }
 
   public static Scene getActive() {
     return active;
+  }
+
+  public Camera getCamera() {
+    return camera;
   }
 
   public void addChild(Entity entity) {

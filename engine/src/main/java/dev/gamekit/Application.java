@@ -114,6 +114,7 @@ public abstract class Application {
 
   private void onRender() {
     if (activeScene != null) {
+      window.screenGraphics.setTransform(activeScene.camera.transform);
       activeScene.onRender(window.screenGraphics);
     }
 
