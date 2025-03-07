@@ -14,4 +14,10 @@ public final class Utils {
   public static double clamp(double val, double min, double max) {
     return Math.min(max, Math.max(min, val));
   }
+
+  public static int cycle(int val, int min, int max) {
+    int diff = max - min + 1;
+    while (val < min) val += diff;
+    return min + val % (max + 1);
+  }
 }
