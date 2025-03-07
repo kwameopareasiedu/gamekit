@@ -71,19 +71,16 @@ public abstract class Application {
       lastFrameTime = frameTimeNow;
       frameLag += elapsedTime;
 
-      Input.reset();
-
       while (frameLag >= Time.FRAME_TIME) {
         frameLag -= Time.FRAME_TIME;
         onUpdate();
       }
 
+      Input.reset();
       onRender();
-
       onFrameEnd();
 
       Time.timeSinceLoad += elapsedTime;
-
       Thread.sleep(Math.max(frameLag, 1));
     }
 

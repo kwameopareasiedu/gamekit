@@ -1,7 +1,11 @@
 package dev.gamekit;
 
+import dev.gamekit.interfaces.InputListener;
+
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.IntStream;
 
 /**
@@ -11,12 +15,17 @@ import java.util.stream.IntStream;
 public final class Input extends KeyAdapter {
   static final Input INSTANCE = new Input();
 
-  private final boolean[] downStates = new boolean[256];
-  private final boolean[] upStates = new boolean[256];
+  private final boolean[] downStates;
+  private final boolean[] upStates;
   private boolean anyKeyPressed = false;
   private boolean anyKeyReleased = false;
+  private final List<InputListener> listeners;
 
-  private Input() { }
+  private Input() {
+    downStates = new boolean[256];
+    upStates = new boolean[256];
+    listeners = new ArrayList<>();
+  }
 
   public static boolean isKeyPressed(int keyCode) {
     return INSTANCE.downStates[keyCode];
@@ -38,6 +47,24 @@ public final class Input extends KeyAdapter {
     IntStream.range(0, 256).forEach(i -> INSTANCE.upStates[i] = false);
   }
 
+  public static boolean registerListener(InputListener listener) {
+    if (!INSTANCE.listeners.contains(listener)) {
+      INSTANCE.listeners.add(listener);
+      return true;
+    }
+
+    return false;
+  }
+
+  public static boolean unregisterListener(InputListener listener) {
+    if (INSTANCE.listeners.contains(listener)) {
+      INSTANCE.listeners.remove(listener);
+      return true;
+    }
+
+    return false;
+  }
+
   @Override
   public void keyPressed(KeyEvent e) {
     int keyCode = e.getKeyCode();
@@ -48,6 +75,8 @@ public final class Input extends KeyAdapter {
       anyKeyPressed = true;
       anyKeyReleased = false;
     }
+
+    listeners.forEach(listener -> listener.onKeyDown(e));
   }
 
   @Override
@@ -60,5 +89,7 @@ public final class Input extends KeyAdapter {
       anyKeyPressed = false;
       anyKeyReleased = true;
     }
+
+    listeners.forEach(listener -> listener.onKeyUp(e));
   }
 }
