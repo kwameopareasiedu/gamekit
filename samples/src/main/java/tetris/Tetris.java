@@ -1,13 +1,14 @@
 package tetris;
 
-import dev.gamekit.Application;
-import dev.gamekit.Config;
-import dev.gamekit.Scene;
 import dev.gamekit.Window;
+import dev.gamekit.*;
+import dev.gamekit.interfaces.InputListener;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.util.Random;
 
-public class Tetris extends Scene {
+public class Tetris extends Scene implements InputListener {
   static final int PADDING_X = 50;
   static final int PADDING_Y = 85;
   static final int COLS = 10;
@@ -22,6 +23,9 @@ public class Tetris extends Scene {
 
   final CellState[][] cellStates = new CellState[ROWS][COLS];
   final Color[][] cellColors = new Color[ROWS][COLS];
+  final Random rand = new Random();
+  Tetromino tetromino;
+  long stepTime = 0;
 
   public Tetris() {
     super("Tetris");
@@ -47,12 +51,81 @@ public class Tetris extends Scene {
   }
 
   @Override
+  protected void onStart() {
+    super.onStart();
+    Input.registerListener(this);
+  }
+
+  @Override
+  public void onKeyDown(KeyEvent event) { }
+
+  @Override
+  public void onKeyUp(KeyEvent event) {
+    if (tetromino != null) {
+      if (event.getKeyCode() == KeyEvent.VK_LEFT) {
+        tetromino.col -= 1;
+      } else if (event.getKeyCode() == KeyEvent.VK_RIGHT) {
+        tetromino.col += 1;
+      } else if (event.getKeyCode() == KeyEvent.VK_UP) {
+        tetromino.rotateCW();
+      } else if (event.getKeyCode() == KeyEvent.VK_DOWN) {
+        tetromino.rotateCCW();
+      }
+    }
+  }
+
+  @Override
+  protected void onUpdate() {
+    super.onUpdate();
+
+    stepTime += Time.FRAME_TIME;
+
+    if (stepTime >= 500) {
+      stepTime = 0;
+
+      if (tetromino == null) {
+        tetromino = Tetromino.PIECES[rand.nextInt(0, Tetromino.PIECES.length)];
+      }
+
+      tetromino.row++;
+    }
+  }
+
+  @Override
   protected void onRender(Graphics2D g) {
     super.onRender(g);
 
     g.setColor(CLEAR_COLOR);
     g.fillRect(0, 0, Window.getInstance().getWidth(), Window.getInstance().getHeight());
     renderBoard(g);
+
+    if (tetromino != null) {
+      renderTetromino(g);
+    }
+  }
+
+  @Override
+  protected void onDispose() {
+    super.onDispose();
+    Input.unregisterListener(this);
+  }
+
+  private void renderTetromino(Graphics2D g) {
+    g.translate(PADDING_X, PADDING_Y);
+
+    for (int row = 0; row < tetromino.size; row++) {
+      for (int col = 0; col < tetromino.size; col++) {
+        int idx = row * tetromino.size + col;
+        int state = tetromino.state[idx];
+
+        if (state == 1) {
+          g.setColor(tetromino.color);
+          g.fillRect((tetromino.col + col) * Cell.SIZE, (tetromino.row + row) * Cell.SIZE, Cell.SIZE, Cell.SIZE);
+        }
+      }
+    }
+
+    g.translate(-PADDING_X, -PADDING_Y);
   }
 
   private void renderBoard(Graphics2D g) {

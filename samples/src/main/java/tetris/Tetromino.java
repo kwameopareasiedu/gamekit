@@ -138,6 +138,10 @@ public class Tetromino {
       0, 1, 0 },
   });
 
+  public static final Tetromino[] PIECES = new Tetromino[]{
+    O_PIECE, I_PIECE, L_PIECE, J_PIECE, S_PIECE, Z_PIECE, T_PIECE,
+  };
+
   public int row;
   public int col;
   public final int size;
@@ -145,7 +149,7 @@ public class Tetromino {
 
   private Orientation orientation;
   private final int[][] states;
-  private int[] state;
+  public int[] state;
 
   private Tetromino(int size, Color color, int[][] states) {
     this.size = size;
