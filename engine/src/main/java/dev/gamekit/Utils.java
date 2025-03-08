@@ -15,6 +15,10 @@ public final class Utils {
     return Math.min(max, Math.max(min, val));
   }
 
+  public static int clamp(int val, int min, int max) {
+    return Math.min(max, Math.max(min, val));
+  }
+
   public static int cycle(int val, int min, int max) {
     int diff = max - min + 1;
     while (val < min) val += diff;

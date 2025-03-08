@@ -80,14 +80,14 @@ public class Tetris extends Scene implements InputListener {
 
     stepTime += Time.FRAME_TIME;
 
-    if (stepTime >= 500) {
+    if (stepTime >= 100) {
       stepTime = 0;
 
       if (tetromino == null) {
         tetromino = Tetromino.PIECES[rand.nextInt(0, Tetromino.PIECES.length)];
       }
 
-      tetromino.row++;
+      tetromino.row = Utils.clamp(tetromino.row + 1, 0, ROWS - tetromino.size + tetromino.getRowOffset());
     }
   }
 
@@ -135,7 +135,7 @@ public class Tetris extends Scene implements InputListener {
       for (int col = 0; col < COLS; col++) {
         CellState state = cellStates[row][col];
 
-        g.setColor(state == CellState.FIXED ? cellColors[row][col] : TRANSPARENT);
+        g.setColor(state == CellState.FIXED ? cellColors[row][col] : CLEAR_COLOR);
         g.fillRect(col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE);
       }
     }
@@ -162,6 +162,6 @@ public class Tetris extends Scene implements InputListener {
 
   enum CellState {
     FREE, // Indicates an unoccupied cell
-    FIXED, // Indicates a cell occupied by a block
+    FIXED, // Indicates a cell occupied by a tetromino block
   }
 }

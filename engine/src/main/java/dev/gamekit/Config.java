@@ -16,11 +16,11 @@ public final class Config {
 
   @Override
   public String toString() {
-    return String.format(Locale.getDefault(), "Config(" +
-        "title: \"%s\", " +
-        "screenWidth: %d, " +
-        "screenHeight: %d" +
-        ")",
+    return String.format(Locale.getDefault(), "Config[" +
+        "title=%s, " +
+        "screenWidth=%d, " +
+        "screenHeight=%d" +
+        "]",
       title, screenWidth, screenHeight
     );
   }
