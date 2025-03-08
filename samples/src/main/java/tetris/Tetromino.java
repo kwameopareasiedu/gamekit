@@ -4,6 +4,8 @@ import dev.gamekit.Utils;
 
 import java.awt.*;
 
+import static tetris.Utils.getIndex;
+
 public class Tetromino {
   public static final Tetromino O_PIECE = new Tetromino(
     2, Color.YELLOW,
@@ -21,8 +23,11 @@ public class Tetromino {
         1, 1,
         1, 1 },
     },
-    new int[]{
-      0, 0, 0, 0
+    new int[][]{
+      new int[]{ 0, 0, 1, 1 },
+      new int[]{ 0, 0, 1, 1 },
+      new int[]{ 0, 0, 1, 1 },
+      new int[]{ 0, 0, 1, 1 },
     }
   );
 
@@ -50,8 +55,11 @@ public class Tetromino {
         0, 1, 0, 0,
         0, 1, 0, 0 },
     },
-    new int[]{
-      2, 0, 1, 0
+    new int[][]{
+      new int[]{ 1, 0, 1, 3 },
+      new int[]{ 0, 2, 3, 2 },
+      new int[]{ 2, 0, 2, 3 },
+      new int[]{ 0, 1, 3, 1 },
     }
   );
 
@@ -75,8 +83,11 @@ public class Tetromino {
         0, 1, 0,
         0, 1, 0 },
     },
-    new int[]{
-      1, 0, 0, 0
+    new int[][]{
+      new int[]{ 0, 0, 1, 2 },
+      new int[]{ 0, 1, 2, 2 },
+      new int[]{ 1, 0, 2, 2 },
+      new int[]{ 0, 0, 2, 1 },
     }
   );
 
@@ -100,8 +111,11 @@ public class Tetromino {
         0, 1, 0,
         1, 1, 0 },
     },
-    new int[]{
-      1, 0, 0, 0
+    new int[][]{
+      new int[]{ 0, 0, 1, 2 },
+      new int[]{ 0, 1, 2, 2 },
+      new int[]{ 1, 0, 2, 2 },
+      new int[]{ 0, 0, 2, 1 },
     }
   );
 
@@ -125,8 +139,11 @@ public class Tetromino {
         1, 1, 0,
         0, 1, 0 },
     },
-    new int[]{
-      1, 0, 0, 0
+    new int[][]{
+      new int[]{ 0, 0, 1, 2 },
+      new int[]{ 0, 1, 2, 2 },
+      new int[]{ 1, 0, 2, 2 },
+      new int[]{ 0, 0, 2, 1 },
     }
   );
 
@@ -150,8 +167,11 @@ public class Tetromino {
         1, 1, 0,
         1, 0, 0 },
     },
-    new int[]{
-      1, 0, 0, 0
+    new int[][]{
+      new int[]{ 0, 0, 1, 2 },
+      new int[]{ 0, 1, 2, 2 },
+      new int[]{ 1, 0, 2, 2 },
+      new int[]{ 0, 0, 2, 1 },
     }
   );
 
@@ -175,8 +195,11 @@ public class Tetromino {
         1, 1, 0,
         0, 1, 0 },
     },
-    new int[]{
-      1, 0, 0, 0
+    new int[][]{
+      new int[]{ 0, 0, 1, 2 },
+      new int[]{ 0, 1, 2, 2 },
+      new int[]{ 1, 0, 2, 2 },
+      new int[]{ 0, 0, 2, 1 },
     }
   );
 
@@ -184,28 +207,51 @@ public class Tetromino {
     O_PIECE, I_PIECE, L_PIECE, J_PIECE, S_PIECE, Z_PIECE, T_PIECE,
   };
 
-  public int row;
-  public int col;
   public final int size;
   public final Color color;
 
+  private int row;
+  private int col;
   private Orientation orientation;
   private final int[][] states;
+  private final int[][] offsets;
   public int[] state;
-  public int[] stateRowOffset;
 
-  private Tetromino(int size, Color color, int[][] states, int[] stateRowOffset) {
+  private Tetromino(int size, Color color, int[][] states, int[][] offsets) {
     this.size = size;
     this.color = color;
     this.states = states;
-    this.stateRowOffset = stateRowOffset;
-    state = states[0];
+    this.offsets = offsets;
     orientation = Orientation.UP;
+    state = states[0];
+    row = 0;
+    col = 4;
   }
 
-  public int getRowOffset() {
-    int ord = orientation.ordinal();
-    return stateRowOffset[ord];
+  public Tetromino(Tetromino tetromino) {
+    this.size = tetromino.size;
+    this.color = tetromino.color;
+    this.states = tetromino.states;
+    this.offsets = tetromino.offsets;
+    orientation = Orientation.UP;
+    state = states[0];
+    row = 0;
+    col = 4;
+  }
+
+  public int getRow() { return row; }
+
+  public int getCol() { return col; }
+
+  public boolean move(CellState[] grid, int gridCols, Direction dir) {
+    if (canMove(grid, gridCols, dir)) {
+      switch (dir) {
+        case RIGHT -> col += 1;
+        case DOWN -> row += 1;
+        case LEFT -> col -= 1;
+      }
+      return true;
+    } else return false;
   }
 
   public void rotateCW() { rotate(1); }
@@ -219,18 +265,25 @@ public class Tetromino {
     state = states[newOrd];
   }
 
-  enum Orientation {
-    UP, RIGHT, DOWN, LEFT;
+  private boolean canMove(CellState[] grid, int gridCols, Direction dir) {
+    int destRow = row + (dir == Direction.DOWN ? 1 : 0);
+    int destCol = col + (dir == Direction.LEFT ? -1 : dir == Direction.RIGHT ? 1 : 0);
+    int[] offset = offsets[orientation.ordinal()];
 
-    static Orientation valueOf(int val) {
-      int cycledVal = val % 4;
+    for (int row = offset[0]; row <= offset[2]; row++) {
+      for (int col = offset[1]; col <= offset[3]; col++) {
+        int gridRow = destRow + row;
+        int gridCol = destCol + col;
 
-      return switch (cycledVal) {
-        case 0 -> UP;
-        case 1 -> RIGHT;
-        case 2 -> DOWN;
-        default -> LEFT;
-      };
+        if (gridCol < 0 || gridCol >= gridCols)
+          return false;
+
+        int gridIdx = getIndex(gridRow, gridCol, gridCols);
+        if (gridIdx >= grid.length || grid[gridIdx] == CellState.FIXED)
+          return false;
+      }
     }
+
+    return true;
   }
 }

@@ -8,6 +8,9 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.Random;
 
+import static tetris.Utils.getIndex;
+
+
 public class Tetris extends Scene implements InputListener {
   static final int PADDING_X = 50;
   static final int PADDING_Y = 85;
@@ -21,8 +24,8 @@ public class Tetris extends Scene implements InputListener {
   static final Stroke STROKE_DEFAULT = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
   static final Stroke STROKE_OUTLINE = new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
-  final CellState[][] cellStates = new CellState[ROWS][COLS];
-  final Color[][] cellColors = new Color[ROWS][COLS];
+  final CellState[] grid = new CellState[ROWS * COLS];
+  final Color[] gridColors = new Color[ROWS * COLS];
   final Random rand = new Random();
   Tetromino tetromino;
   long stepTime = 0;
@@ -32,8 +35,9 @@ public class Tetris extends Scene implements InputListener {
 
     for (int row = 0; row < ROWS; row++) {
       for (int col = 0; col < COLS; col++) {
-        cellStates[row][col] = CellState.FREE;
-        cellColors[row][col] = TRANSPARENT;
+        int gridIdx = getIndex(row, col, COLS);
+        grid[gridIdx] = CellState.FREE;
+        gridColors[gridIdx] = TRANSPARENT;
       }
     }
   }
@@ -63,9 +67,9 @@ public class Tetris extends Scene implements InputListener {
   public void onKeyUp(KeyEvent event) {
     if (tetromino != null) {
       if (event.getKeyCode() == KeyEvent.VK_LEFT) {
-        tetromino.col -= 1;
+        tetromino.move(grid, COLS, Direction.LEFT);
       } else if (event.getKeyCode() == KeyEvent.VK_RIGHT) {
-        tetromino.col += 1;
+        tetromino.move(grid, COLS, Direction.RIGHT);
       } else if (event.getKeyCode() == KeyEvent.VK_UP) {
         tetromino.rotateCW();
       } else if (event.getKeyCode() == KeyEvent.VK_DOWN) {
@@ -83,11 +87,10 @@ public class Tetris extends Scene implements InputListener {
     if (stepTime >= 100) {
       stepTime = 0;
 
-      if (tetromino == null) {
-        tetromino = Tetromino.PIECES[rand.nextInt(0, Tetromino.PIECES.length)];
+      if (tetromino == null || !tetromino.move(grid, COLS, Direction.DOWN)) {
+        Tetromino template = Tetromino.PIECES[rand.nextInt(0, Tetromino.PIECES.length)];
+        tetromino = new Tetromino(template);
       }
-
-      tetromino.row = Utils.clamp(tetromino.row + 1, 0, ROWS - tetromino.size + tetromino.getRowOffset());
     }
   }
 
@@ -120,7 +123,12 @@ public class Tetris extends Scene implements InputListener {
 
         if (state == 1) {
           g.setColor(tetromino.color);
-          g.fillRect((tetromino.col + col) * CELL_SIZE, (tetromino.row + row) * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+
+          g.fillRect(
+            (tetromino.getCol() + col) * CELL_SIZE,
+            (tetromino.getRow() + row) * CELL_SIZE,
+            CELL_SIZE, CELL_SIZE
+          );
         }
       }
     }
@@ -133,9 +141,11 @@ public class Tetris extends Scene implements InputListener {
 
     for (int row = 0; row < ROWS; row++) {
       for (int col = 0; col < COLS; col++) {
-        CellState state = cellStates[row][col];
+        int gridIdx = getIndex(row, col, COLS);
+        Color cellColor = gridColors[gridIdx];
+        CellState cell = grid[gridIdx];
 
-        g.setColor(state == CellState.FIXED ? cellColors[row][col] : CLEAR_COLOR);
+        g.setColor(cell == CellState.FIXED ? cellColor : CLEAR_COLOR);
         g.fillRect(col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE);
       }
     }
@@ -158,10 +168,5 @@ public class Tetris extends Scene implements InputListener {
     g.drawRect(0, 0, BOARD_W, BOARD_H);
 
     g.translate(-PADDING_X, -PADDING_Y);
-  }
-
-  enum CellState {
-    FREE, // Indicates an unoccupied cell
-    FIXED, // Indicates a cell occupied by a tetromino block
   }
 }
