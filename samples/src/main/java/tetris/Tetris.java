@@ -20,7 +20,7 @@ public class Tetris extends Scene {
   static final Stroke STROKE_DEFAULT = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
   static final Stroke STROKE_OUTLINE = new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
-  final CellState[][] cells = new CellState[ROWS][COLS];
+  final CellState[][] cellStates = new CellState[ROWS][COLS];
   final Color[][] cellColors = new Color[ROWS][COLS];
 
   public Tetris() {
@@ -28,7 +28,7 @@ public class Tetris extends Scene {
 
     for (int row = 0; row < ROWS; row++) {
       for (int col = 0; col < COLS; col++) {
-        cells[row][col] = CellState.FREE;
+        cellStates[row][col] = CellState.FREE;
         cellColors[row][col] = TRANSPARENT;
       }
     }
@@ -60,9 +60,9 @@ public class Tetris extends Scene {
 
     for (int row = 0; row < ROWS; row++) {
       for (int col = 0; col < COLS; col++) {
-        CellState state = cells[row][col];
+        CellState state = cellStates[row][col];
 
-        g.setColor(state == CellState.FIXED || state == CellState.FLUX ? cellColors[row][col] : TRANSPARENT);
+        g.setColor(state == CellState.FIXED ? cellColors[row][col] : TRANSPARENT);
         g.fillRect(col * Cell.SIZE, row * Cell.SIZE, Cell.SIZE, Cell.SIZE);
       }
     }
@@ -89,7 +89,6 @@ public class Tetris extends Scene {
 
   enum CellState {
     FREE, // Indicates an unoccupied cell
-    FLUX, // Indicates a cell occupied by a tetromino in motion
     FIXED, // Indicates a cell occupied by a block
   }
 }

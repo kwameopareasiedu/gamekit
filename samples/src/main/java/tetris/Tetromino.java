@@ -1,0 +1,183 @@
+package tetris;
+
+import dev.gamekit.Utils;
+
+import java.awt.*;
+
+public class Tetromino {
+  public static final Tetromino O_PIECE = new Tetromino(2, Color.YELLOW, new int[][]{
+    new int[]{
+      1, 1,
+      1, 1 },
+    new int[]{
+      1, 1,
+      1, 1 },
+    new int[]{
+      1, 1,
+      1, 1 },
+    new int[]{
+      1, 1,
+      1, 1 },
+  });
+
+  public static final Tetromino I_PIECE = new Tetromino(4, Color.CYAN, new int[][]{
+    new int[]{
+      0, 0, 0, 0,
+      1, 1, 1, 1,
+      0, 0, 0, 0,
+      0, 0, 0, 0 },
+    new int[]{
+      0, 0, 1, 0,
+      0, 0, 1, 0,
+      0, 0, 1, 0,
+      0, 0, 1, 0 },
+    new int[]{
+      0, 0, 0, 0,
+      0, 0, 0, 0,
+      1, 1, 1, 1,
+      0, 0, 0, 0 },
+    new int[]{
+      0, 1, 0, 0,
+      0, 1, 0, 0,
+      0, 1, 0, 0,
+      0, 1, 0, 0 },
+  });
+
+  public static final Tetromino L_PIECE = new Tetromino(3, Color.ORANGE, new int[][]{
+    new int[]{
+      0, 0, 1,
+      1, 1, 1,
+      0, 0, 0 },
+    new int[]{
+      0, 1, 0,
+      0, 1, 0,
+      0, 1, 1 },
+    new int[]{
+      0, 0, 0,
+      1, 1, 1,
+      1, 0, 0 },
+    new int[]{
+      1, 1, 0,
+      0, 1, 0,
+      0, 1, 0 },
+  });
+
+  public static final Tetromino J_PIECE = new Tetromino(3, Color.BLUE, new int[][]{
+    new int[]{
+      1, 0, 0,
+      1, 1, 1,
+      0, 0, 0 },
+    new int[]{
+      0, 1, 1,
+      0, 1, 0,
+      0, 1, 0 },
+    new int[]{
+      0, 0, 0,
+      1, 1, 1,
+      0, 0, 1 },
+    new int[]{
+      0, 1, 0,
+      0, 1, 0,
+      1, 1, 0 },
+  });
+
+  public static final Tetromino S_PIECE = new Tetromino(3, Color.GREEN, new int[][]{
+    new int[]{
+      0, 1, 1,
+      1, 1, 0,
+      0, 0, 0 },
+    new int[]{
+      0, 1, 0,
+      0, 1, 1,
+      0, 0, 1 },
+    new int[]{
+      0, 0, 0,
+      0, 1, 1,
+      1, 1, 0 },
+    new int[]{
+      1, 0, 0,
+      1, 1, 0,
+      0, 1, 0 },
+  });
+
+  public static final Tetromino Z_PIECE = new Tetromino(3, Color.RED, new int[][]{
+    new int[]{
+      1, 1, 0,
+      0, 1, 1,
+      0, 0, 0 },
+    new int[]{
+      0, 0, 1,
+      0, 1, 1,
+      0, 1, 0 },
+    new int[]{
+      0, 0, 0,
+      1, 1, 0,
+      0, 1, 1 },
+    new int[]{
+      0, 1, 0,
+      1, 1, 0,
+      1, 0, 0 },
+  });
+
+  public static final Tetromino T_PIECE = new Tetromino(3, Color.MAGENTA, new int[][]{
+    new int[]{
+      0, 1, 0,
+      1, 1, 1,
+      0, 0, 0 },
+    new int[]{
+      0, 1, 0,
+      0, 1, 1,
+      0, 1, 0 },
+    new int[]{
+      0, 0, 0,
+      1, 1, 1,
+      0, 1, 0 },
+    new int[]{
+      0, 1, 0,
+      1, 1, 0,
+      0, 1, 0 },
+  });
+
+  public int row;
+  public int col;
+  public final int size;
+  public final Color color;
+
+  private Orientation orientation;
+  private final int[][] states;
+  private int[] state;
+
+  private Tetromino(int size, Color color, int[][] states) {
+    this.size = size;
+    this.color = color;
+    this.states = states;
+    state = states[0];
+    orientation = Orientation.UP;
+  }
+
+  public void rotateCW() { rotate(1); }
+
+  public void rotateCCW() { rotate(-1); }
+
+  private void rotate(int offset) {
+    int ord = orientation.ordinal();
+    int newOrd = Utils.cycle(ord + offset, 0, 3);
+    orientation = Orientation.valueOf(newOrd);
+    state = states[newOrd];
+  }
+
+  enum Orientation {
+    UP, RIGHT, DOWN, LEFT;
+
+    static Orientation valueOf(int val) {
+      int cycledVal = val % 4;
+
+      return switch (cycledVal) {
+        case 0 -> UP;
+        case 1 -> RIGHT;
+        case 2 -> DOWN;
+        default -> LEFT;
+      };
+    }
+  }
+}
