@@ -120,7 +120,7 @@ public class Tetris extends Scene implements InputListener {
 
         if (state == 1) {
           g.setColor(tetromino.color);
-          g.fillRect((tetromino.col + col) * Cell.SIZE, (tetromino.row + row) * Cell.SIZE, Cell.SIZE, Cell.SIZE);
+          g.fillRect((tetromino.col + col) * CELL_SIZE, (tetromino.row + row) * CELL_SIZE, CELL_SIZE, CELL_SIZE);
         }
       }
     }
@@ -136,7 +136,7 @@ public class Tetris extends Scene implements InputListener {
         CellState state = cellStates[row][col];
 
         g.setColor(state == CellState.FIXED ? cellColors[row][col] : TRANSPARENT);
-        g.fillRect(col * Cell.SIZE, row * Cell.SIZE, Cell.SIZE, Cell.SIZE);
+        g.fillRect(col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE);
       }
     }
 
@@ -144,12 +144,12 @@ public class Tetris extends Scene implements InputListener {
     g.setStroke(STROKE_DEFAULT);
 
     for (int col = 0; col <= COLS; col++) {
-      int x = col * Cell.SIZE;
+      int x = col * CELL_SIZE;
       g.drawLine(x, 0, x, BOARD_H);
     }
 
     for (int row = 0; row <= ROWS; row++) {
-      int y = row * Cell.SIZE;
+      int y = row * CELL_SIZE;
       g.drawLine(0, y, BOARD_W, y);
     }
 
