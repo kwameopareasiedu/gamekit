@@ -28,9 +28,14 @@ public class Tetris extends Scene implements InputListener {
   static final int QUEUE_H = 6 * QUEUE_CELL_SIZE;
   static final Color CLEAR_COLOR = new Color(0xff333333, true);
   static final Color TRANSPARENT = new Color(0x00000000, true);
-  static final Color GRID_COLOR = new Color(0xff3f3f3f, true);
+  static final Color GRID_COLOR = new Color(0x773f3f3f, true);
   static final Stroke STROKE_DEFAULT = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
   static final Stroke STROKE_OUTLINE = new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+  static final Font BASE_FONT = Resources.loadFont("game over.ttf");
+  static final Font NEXT_FONT = Objects.requireNonNull(BASE_FONT).deriveFont(40f);
+  static final Font SCORE_LABEL_FONT = NEXT_FONT;
+  static final Font SCORE_VALUE_FONT = Objects.requireNonNull(BASE_FONT).deriveFont(80f);
+  static final int[] SCORING = new int[] { 40, 100, 300, 1200 };
 
   final Queue<Tetromino> queue = new LinkedList<>();
   final CellState[] grid = new CellState[ROWS * COLS];
@@ -39,6 +44,7 @@ public class Tetris extends Scene implements InputListener {
   Tetromino tetromino;
   long stepTime = 0;
   boolean paused = false;
+  int score = 0;
 
   public Tetris() {
     super("Tetris");
@@ -126,6 +132,7 @@ public class Tetris extends Scene implements InputListener {
 
   private boolean eliminateFullRows() {
     boolean isDirty = false;
+    int linesRemoved = 0;
 
     for (var row = ROWS - 1; row >= 0; row--) {
       if (isRowFull(row)) {
@@ -135,8 +142,13 @@ public class Tetris extends Scene implements InputListener {
           gridColors[gridIdx] = CLEAR_COLOR;
         }
 
+        linesRemoved++;
         isDirty = true;
       }
+    }
+
+    if (linesRemoved > 0) {
+      score += SCORING[linesRemoved - 1];
     }
 
     return isDirty;
@@ -199,6 +211,7 @@ public class Tetris extends Scene implements InputListener {
     g.fillRect(0, 0, Window.getInstance().getWidth(), Window.getInstance().getHeight());
     renderQueue(g);
     renderBoard(g);
+    renderScore(g);
 
     if (tetromino != null) {
       renderTetromino(g);
@@ -269,12 +282,7 @@ public class Tetris extends Scene implements InputListener {
   }
 
   private void renderQueue(Graphics2D g) {
-    g.setColor(Color.WHITE);
-    g.setStroke(STROKE_OUTLINE);
-
     int QUEUE_X = Window.getInstance().getWidth() - QUEUE_W - PADDING_X;
-    g.drawRect(QUEUE_X, PADDING_Y, QUEUE_W, QUEUE_H);
-    g.drawString("NEXT", QUEUE_X + toInt(0.5 * QUEUE_W - 0.5 * g.getFontMetrics().stringWidth("NEXT")), PADDING_Y + 20);
 
     Tetromino tetromino = Objects.requireNonNull(queue.peek());
     int[] offset = tetromino.getOffset();
@@ -315,5 +323,30 @@ public class Tetris extends Scene implements InputListener {
     }
 
     g.translate(-QUEUE_X, -PADDING_Y);
+
+    g.setFont(NEXT_FONT);
+    g.setColor(Color.WHITE);
+    g.drawString("NEXT", QUEUE_X + toInt(0.5 * QUEUE_W - 0.5 * g.getFontMetrics().stringWidth("NEXT")), PADDING_Y + 28);
+
+    g.setColor(Color.WHITE);
+    g.setStroke(STROKE_OUTLINE);
+    g.drawRect(QUEUE_X, PADDING_Y, QUEUE_W, QUEUE_H);
+  }
+
+  private void renderScore(Graphics2D g) {
+    int SCORE_X = Window.getInstance().getWidth() - QUEUE_W - PADDING_X;
+    int SCORE_Y = PADDING_Y + 256;
+
+    g.translate(SCORE_X, SCORE_Y);
+
+    g.setFont(SCORE_LABEL_FONT);
+    g.setColor(Color.WHITE);
+    g.drawString("Score", 0, 0);
+
+    g.setFont(SCORE_VALUE_FONT);
+    g.drawString(String.valueOf(score), 0, 56);
+
+    g.translate(-SCORE_X, -SCORE_Y);
+
   }
 }

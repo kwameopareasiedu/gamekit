@@ -106,5 +106,12 @@ public abstract class Scene {
     g.setPaint(graphicsPaint);
     g.setColor(graphicsColor);
     g.setFont(graphicsFont);
+
+    graphicsBgColor = null;
+    graphicsTransform = null;
+    graphicsStroke = null;
+    graphicsPaint = null;
+    graphicsColor = null;
+    graphicsFont = null;
   }
 }

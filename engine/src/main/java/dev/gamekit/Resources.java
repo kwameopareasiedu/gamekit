@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +36,24 @@ public class Resources {
       cache.put(path, image);
       return image;
     } catch (URISyntaxException | IOException e) {
+      LOGGER.error("Unable to load image at {}", path);
+      LOGGER.catching(e);
+      return null;
+    }
+  }
+
+  public static Font loadFont(String path) {
+    if (cache.containsKey(path)) {
+      LOGGER.debug("Loaded cached font at {}", path);
+      return (Font) cache.get(path);
+    }
+
+    try{
+      URL assetUrl = Resources.class.getClassLoader().getResource(path);
+      URI assetUri = Objects.requireNonNull(assetUrl).toURI();
+      File assetFile = new File(assetUri);
+      return Font.createFont(Font.TRUETYPE_FONT, assetFile);
+    } catch (URISyntaxException | FontFormatException | IOException e) {
       LOGGER.error("Unable to load image at {}", path);
       LOGGER.catching(e);
       return null;
