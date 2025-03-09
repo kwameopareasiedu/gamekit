@@ -254,17 +254,6 @@ public class Tetromino {
     } else return false;
   }
 
-  public void rotateCW() { rotate(1); }
-
-  public void rotateCCW() { rotate(-1); }
-
-  private void rotate(int offset) {
-    int ord = orientation.ordinal();
-    int newOrd = Utils.cycle(ord + offset, 0, 3);
-    orientation = Orientation.valueOf(newOrd);
-    state = states[newOrd];
-  }
-
   private boolean canMove(CellState[] grid, int gridCols, Direction dir) {
     int destRow = row + (dir == Direction.DOWN ? 1 : 0);
     int destCol = col + (dir == Direction.LEFT ? -1 : dir == Direction.RIGHT ? 1 : 0);
@@ -274,16 +263,46 @@ public class Tetromino {
       for (int col = offset[1]; col <= offset[3]; col++) {
         int gridRow = destRow + row;
         int gridCol = destCol + col;
+        int stateIdx = getIndex(row, col, size);
 
         if (gridCol < 0 || gridCol >= gridCols)
           return false;
 
         int gridIdx = getIndex(gridRow, gridCol, gridCols);
-        if (gridIdx >= grid.length || grid[gridIdx] == CellState.FIXED)
+        if (gridIdx >= grid.length || (grid[gridIdx] == CellState.FIXED && state[stateIdx] == 1))
           return false;
       }
     }
 
     return true;
+  }
+
+  public void placeOnGrid(CellState[] grid, Color[] gridColors, int gridCols) {
+    int[] offset = offsets[orientation.ordinal()];
+
+    for (int row = offset[0]; row <= offset[2]; row++) {
+      for (int col = offset[1]; col <= offset[3]; col++) {
+        int gridRow = this.row + row;
+        int gridCol = this.col + col;
+        int gridIdx = getIndex(gridRow, gridCol, gridCols);
+        int stateIdx = getIndex(row, col, size);
+
+        if (state[stateIdx] == 1) {
+          grid[gridIdx] = CellState.FIXED;
+          gridColors[gridIdx] = color;
+        }
+      }
+    }
+  }
+
+  public void rotateCW() { rotate(1); }
+
+  public void rotateCCW() { rotate(-1); }
+
+  private void rotate(int offset) {
+    int ord = orientation.ordinal();
+    int newOrd = Utils.cycle(ord + offset, 0, 3);
+    orientation = Orientation.valueOf(newOrd);
+    state = states[newOrd];
   }
 }

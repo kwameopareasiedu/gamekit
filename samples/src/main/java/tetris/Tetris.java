@@ -61,10 +61,7 @@ public class Tetris extends Scene implements InputListener {
   }
 
   @Override
-  public void onKeyDown(KeyEvent event) { }
-
-  @Override
-  public void onKeyUp(KeyEvent event) {
+  public void onKeyDown(KeyEvent event) {
     if (tetromino != null) {
       if (event.getKeyCode() == KeyEvent.VK_LEFT) {
         tetromino.move(grid, COLS, Direction.LEFT);
@@ -79,19 +76,28 @@ public class Tetris extends Scene implements InputListener {
   }
 
   @Override
+  public void onKeyUp(KeyEvent event) {
+  }
+
+  @Override
   protected void onUpdate() {
     super.onUpdate();
 
     stepTime += Time.FRAME_TIME;
 
-    if (stepTime >= 100) {
+    if (stepTime >= 500) {
       stepTime = 0;
 
       if (tetromino == null || !tetromino.move(grid, COLS, Direction.DOWN)) {
-        Tetromino template = Tetromino.PIECES[rand.nextInt(0, Tetromino.PIECES.length)];
-        tetromino = new Tetromino(template);
+        if (tetromino != null) tetromino.placeOnGrid(grid, gridColors, COLS);
+        createTetromino();
       }
     }
+  }
+
+  private void createTetromino() {
+    Tetromino template = Tetromino.PIECES[rand.nextInt(0, Tetromino.PIECES.length)];
+    tetromino = new Tetromino(template);
   }
 
   @Override
