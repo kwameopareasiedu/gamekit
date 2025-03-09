@@ -1,9 +1,8 @@
 package tetris;
 
-import dev.gamekit.Utils;
-
 import java.awt.*;
 
+import static dev.gamekit.Utils.cycle;
 import static tetris.Utils.getIndex;
 
 public class Tetromino {
@@ -301,8 +300,23 @@ public class Tetromino {
 
   private void rotate(int offset) {
     int ord = orientation.ordinal();
-    int newOrd = Utils.cycle(ord + offset, 0, 3);
-    orientation = Orientation.valueOf(newOrd);
-    state = states[newOrd];
+    int newOrd = cycle(ord + offset, 0, 3);
+
+    int[] newState = states[newOrd];
+    int[] newOffset = offsets[newOrd];
+    Orientation newOrientation = Orientation.valueOf(newOrd);
+
+    int width = newOffset[3] - newOffset[1];
+    int leftColAfterRotation = col - newOffset[1];
+    int rightColAfterRotation = leftColAfterRotation + width;
+
+    if (leftColAfterRotation < 0) {
+      col += Math.abs(leftColAfterRotation);
+    } else if (rightColAfterRotation >= 10) {
+      col -= Math.abs(rightColAfterRotation - 10) + 1;
+    }
+
+    orientation = newOrientation;
+    state = newState;
   }
 }
