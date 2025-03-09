@@ -85,11 +85,12 @@ public class Tetris extends Scene implements InputListener {
 
     stepTime += Time.FRAME_TIME;
 
-    if (stepTime >= 500) {
+    if (stepTime >= 250) {
       stepTime = 0;
 
       if (tetromino == null || !tetromino.move(grid, COLS, Direction.DOWN)) {
         if (tetromino != null) tetromino.placeOnGrid(grid, gridColors, COLS);
+        eliminateFullRows();
         createTetromino();
       }
     }
@@ -98,6 +99,29 @@ public class Tetris extends Scene implements InputListener {
   private void createTetromino() {
     Tetromino template = Tetromino.PIECES[rand.nextInt(0, Tetromino.PIECES.length)];
     tetromino = new Tetromino(template);
+  }
+
+  private void eliminateFullRows() {
+    for (var row = ROWS - 1; row >= 0; row--) {
+      boolean isFull = true;
+
+      for (var col = COLS - 1; col >= 0; col--) {
+        int gridIdx = getIndex(row, col, COLS);
+
+        if (grid[gridIdx] == CellState.FREE) {
+          isFull = false;
+          break;
+        }
+      }
+
+      if (isFull) {
+        for (var col = COLS - 1; col >= 0; col--) {
+          int gridIdx = getIndex(row, col, COLS);
+          grid[gridIdx] = CellState.FREE;
+          gridColors[gridIdx] = CLEAR_COLOR;
+        }
+      }
+    }
   }
 
   @Override
