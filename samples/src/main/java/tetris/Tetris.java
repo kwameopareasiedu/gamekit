@@ -38,6 +38,8 @@ public class Tetris extends Scene implements InputListener {
         int gridIdx = getIndex(row, col, COLS);
         grid[gridIdx] = CellState.FREE;
         gridColors[gridIdx] = TRANSPARENT;
+//        grid[gridIdx] = INITIAL_GRID_COLORS[gridIdx] == Utils.I ? CellState.OCCUPIED : CellState.FREE;
+//        gridColors[gridIdx] = INITIAL_GRID_COLORS[gridIdx];
       }
     }
   }
@@ -89,8 +91,12 @@ public class Tetris extends Scene implements InputListener {
       stepTime = 0;
 
       if (tetromino == null || !tetromino.move(grid, COLS, Direction.DOWN)) {
-        if (tetromino != null) tetromino.placeOnGrid(grid, gridColors, COLS);
-        eliminateFullRows();
+        if (tetromino != null) {
+          tetromino.placeOnGrid(grid, gridColors, COLS);
+          tetromino = null;
+        }
+
+        if (eliminateFullRows()) compactGrid();
         createTetromino();
       }
     }
@@ -101,27 +107,71 @@ public class Tetris extends Scene implements InputListener {
     tetromino = new Tetromino(template);
   }
 
-  private void eliminateFullRows() {
+  private boolean eliminateFullRows() {
+    boolean isDirty = false;
+
     for (var row = ROWS - 1; row >= 0; row--) {
-      boolean isFull = true;
-
-      for (var col = COLS - 1; col >= 0; col--) {
-        int gridIdx = getIndex(row, col, COLS);
-
-        if (grid[gridIdx] == CellState.FREE) {
-          isFull = false;
-          break;
-        }
-      }
-
-      if (isFull) {
-        for (var col = COLS - 1; col >= 0; col--) {
+      if (isRowFull(row)) {
+        for (var col = 0; col < COLS; col++) {
           int gridIdx = getIndex(row, col, COLS);
           grid[gridIdx] = CellState.FREE;
           gridColors[gridIdx] = CLEAR_COLOR;
         }
+
+        isDirty = true;
       }
     }
+
+    return isDirty;
+  }
+
+  private void compactGrid() {
+    int emptyRowTop;
+
+    for (var row = ROWS - 1; row > 0; row--) {
+      emptyRowTop = row - 1;
+
+      if (isRowEmpty(row)) {
+        while (isRowEmpty(emptyRowTop) && emptyRowTop - 1 >= 0) {
+          emptyRowTop--;
+        }
+
+        for (var col = 0; col < COLS; col++) {
+          int sourceGridIdx = getIndex(emptyRowTop, col, COLS);
+          int targetGridIdx = getIndex(row, col, COLS);
+
+          grid[targetGridIdx] = grid[sourceGridIdx];
+          gridColors[targetGridIdx] = gridColors[sourceGridIdx];
+
+          grid[sourceGridIdx] = CellState.FREE;
+          gridColors[sourceGridIdx] = CLEAR_COLOR;
+        }
+      }
+    }
+  }
+
+  private boolean isRowEmpty(int row) {
+    for (var col = 0; col < COLS; col++) {
+      int gridIdx = getIndex(row, col, COLS);
+
+      if (grid[gridIdx] == CellState.OCCUPIED) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  private boolean isRowFull(int row) {
+    for (var col = 0; col < COLS; col++) {
+      int gridIdx = getIndex(row, col, COLS);
+
+      if (grid[gridIdx] == CellState.FREE) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   @Override
@@ -175,7 +225,7 @@ public class Tetris extends Scene implements InputListener {
         Color cellColor = gridColors[gridIdx];
         CellState cell = grid[gridIdx];
 
-        g.setColor(cell == CellState.FIXED ? cellColor : CLEAR_COLOR);
+        g.setColor(cell == CellState.OCCUPIED ? cellColor : CLEAR_COLOR);
         g.fillRect(col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE);
       }
     }

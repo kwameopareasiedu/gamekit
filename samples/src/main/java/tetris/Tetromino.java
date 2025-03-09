@@ -269,7 +269,7 @@ public class Tetromino {
           return false;
 
         int gridIdx = getIndex(gridRow, gridCol, gridCols);
-        if (gridIdx >= grid.length || (grid[gridIdx] == CellState.FIXED && state[stateIdx] == 1))
+        if (gridIdx >= grid.length || (grid[gridIdx] == CellState.OCCUPIED && state[stateIdx] == 1))
           return false;
       }
     }
@@ -288,7 +288,7 @@ public class Tetromino {
         int stateIdx = getIndex(row, col, size);
 
         if (state[stateIdx] == 1) {
-          grid[gridIdx] = CellState.FIXED;
+          grid[gridIdx] = CellState.OCCUPIED;
           gridColors[gridIdx] = color;
         }
       }
