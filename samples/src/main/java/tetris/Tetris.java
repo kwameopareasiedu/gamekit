@@ -6,8 +6,12 @@ import dev.gamekit.interfaces.InputListener;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.LinkedList;
+import java.util.Objects;
+import java.util.Queue;
 import java.util.Random;
 
+import static dev.gamekit.Utils.toInt;
 import static tetris.Utils.getIndex;
 
 
@@ -19,16 +23,22 @@ public class Tetris extends Scene implements InputListener {
   static final int CELL_SIZE = 40;
   static final int BOARD_W = CELL_SIZE * COLS;
   static final int BOARD_H = CELL_SIZE * ROWS;
-  static final Color CLEAR_COLOR = new Color(0xff333333);
-  static final Color TRANSPARENT = new Color(0x00000000);
+  static final int QUEUE_CELL_SIZE = 30;
+  static final int QUEUE_W = 6 * QUEUE_CELL_SIZE;
+  static final int QUEUE_H = 6 * QUEUE_CELL_SIZE;
+  static final Color CLEAR_COLOR = new Color(0xff333333, true);
+  static final Color TRANSPARENT = new Color(0x00000000, true);
+  static final Color GRID_COLOR = new Color(0xff3f3f3f, true);
   static final Stroke STROKE_DEFAULT = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
   static final Stroke STROKE_OUTLINE = new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
+  final Queue<Tetromino> queue = new LinkedList<>();
   final CellState[] grid = new CellState[ROWS * COLS];
   final Color[] gridColors = new Color[ROWS * COLS];
   final Random rand = new Random();
   Tetromino tetromino;
   long stepTime = 0;
+  boolean paused = false;
 
   public Tetris() {
     super("Tetris");
@@ -38,10 +48,12 @@ public class Tetris extends Scene implements InputListener {
         int gridIdx = getIndex(row, col, COLS);
         grid[gridIdx] = CellState.FREE;
         gridColors[gridIdx] = TRANSPARENT;
-//        grid[gridIdx] = INITIAL_GRID_COLORS[gridIdx] == Utils.I ? CellState.OCCUPIED : CellState.FREE;
-//        gridColors[gridIdx] = INITIAL_GRID_COLORS[gridIdx];
       }
     }
+
+    queue.add(Tetromino.PIECES[rand.nextInt(0, Tetromino.PIECES.length)]);
+    queue.add(Tetromino.PIECES[rand.nextInt(0, Tetromino.PIECES.length)]);
+    queue.add(Tetromino.PIECES[rand.nextInt(0, Tetromino.PIECES.length)]);
   }
 
   public static void main(String[] args) throws InterruptedException {
@@ -64,7 +76,7 @@ public class Tetris extends Scene implements InputListener {
 
   @Override
   public void onKeyDown(KeyEvent event) {
-    if (tetromino != null) {
+    if (!paused && tetromino != null) {
       if (event.getKeyCode() == KeyEvent.VK_LEFT) {
         tetromino.move(grid, COLS, Direction.LEFT);
       } else if (event.getKeyCode() == KeyEvent.VK_RIGHT) {
@@ -79,13 +91,18 @@ public class Tetris extends Scene implements InputListener {
 
   @Override
   public void onKeyUp(KeyEvent event) {
+    if (event.getKeyCode() == KeyEvent.VK_ESCAPE) {
+      paused = !paused;
+    }
   }
 
   @Override
   protected void onUpdate() {
     super.onUpdate();
 
-    stepTime += Time.FRAME_TIME;
+    if (!paused) {
+      stepTime += Time.FRAME_TIME;
+    }
 
     if (stepTime >= 250) {
       stepTime = 0;
@@ -97,14 +114,14 @@ public class Tetris extends Scene implements InputListener {
         }
 
         if (eliminateFullRows()) compactGrid();
-        createTetromino();
+        spawnTetromino();
       }
     }
   }
 
-  private void createTetromino() {
-    Tetromino template = Tetromino.PIECES[rand.nextInt(0, Tetromino.PIECES.length)];
-    tetromino = new Tetromino(template);
+  private void spawnTetromino() {
+    tetromino = new Tetromino(queue.remove());
+    queue.add(Tetromino.PIECES[rand.nextInt(0, Tetromino.PIECES.length)]);
   }
 
   private boolean eliminateFullRows() {
@@ -180,6 +197,7 @@ public class Tetris extends Scene implements InputListener {
 
     g.setColor(CLEAR_COLOR);
     g.fillRect(0, 0, Window.getInstance().getWidth(), Window.getInstance().getHeight());
+    renderQueue(g);
     renderBoard(g);
 
     if (tetromino != null) {
@@ -230,7 +248,7 @@ public class Tetris extends Scene implements InputListener {
       }
     }
 
-    g.setColor(Color.GRAY);
+    g.setColor(GRID_COLOR);
     g.setStroke(STROKE_DEFAULT);
 
     for (int col = 0; col <= COLS; col++) {
@@ -248,5 +266,54 @@ public class Tetris extends Scene implements InputListener {
     g.drawRect(0, 0, BOARD_W, BOARD_H);
 
     g.translate(-PADDING_X, -PADDING_Y);
+  }
+
+  private void renderQueue(Graphics2D g) {
+    g.setColor(Color.WHITE);
+    g.setStroke(STROKE_OUTLINE);
+
+    int QUEUE_X = Window.getInstance().getWidth() - QUEUE_W - PADDING_X;
+    g.drawRect(QUEUE_X, PADDING_Y, QUEUE_W, QUEUE_H);
+    g.drawString("NEXT", QUEUE_X + toInt(0.5 * QUEUE_W - 0.5 * g.getFontMetrics().stringWidth("NEXT")), PADDING_Y + 20);
+
+    Tetromino tetromino = Objects.requireNonNull(queue.peek());
+    int[] offset = tetromino.getOffset();
+    int tetrominoWidthCount = offset[3] - offset[1] + 1;
+    int tetrominoHeightCount = offset[2] - offset[0] + 1;
+    int queueCellCount = tetrominoWidthCount + 2;
+    int queueCellSize = toInt((double) QUEUE_W / queueCellCount);
+
+    g.translate(QUEUE_X, PADDING_Y);
+    g.setStroke(STROKE_DEFAULT);
+    g.setColor(GRID_COLOR);
+
+    for (int col = 0; col <= queueCellCount; col++) {
+      int x = col * queueCellSize;
+      g.drawLine(x, 0, x, QUEUE_H);
+    }
+
+    for (int row = 0; row <= queueCellCount + 1; row++) {
+      int y = row * queueCellSize;
+      g.drawLine(0, y, QUEUE_W, y);
+    }
+
+    for (int row = 0; row < tetromino.size; row++) {
+      for (int col = 0; col < tetromino.size; col++) {
+        int idx = row * tetromino.size + col;
+        int state = tetromino.state[idx];
+
+        if (state == 1) {
+          g.setColor(tetromino.color);
+
+          g.fillRect(
+            (col + 1) * queueCellSize,
+            (row + 2) * queueCellSize,
+            queueCellSize, queueCellSize
+          );
+        }
+      }
+    }
+
+    g.translate(-QUEUE_X, -PADDING_Y);
   }
 }

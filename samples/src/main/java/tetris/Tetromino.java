@@ -242,6 +242,8 @@ public class Tetromino {
 
   public int getCol() { return col; }
 
+  public int[] getOffset() { return offsets[orientation.ordinal()]; }
+
   public boolean move(CellState[] grid, int gridCols, Direction dir) {
     if (canMove(grid, gridCols, dir)) {
       switch (dir) {
