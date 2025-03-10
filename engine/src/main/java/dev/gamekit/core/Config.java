@@ -1,4 +1,4 @@
-package dev.gamekit;
+package dev.gamekit.core;
 
 import java.util.Locale;
 

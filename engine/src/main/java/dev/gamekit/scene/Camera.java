@@ -1,4 +1,4 @@
-package dev.gamekit;
+package dev.gamekit.scene;
 
 import java.awt.geom.AffineTransform;
 
@@ -12,4 +12,6 @@ public final class Camera {
   public void setTransform(double m00, double m10, double m01, double m11, double m02, double m12) {
     transform.setTransform(m00, m10, m01, m11, m02, m12);
   }
+
+  public AffineTransform getTransform() { return transform; }
 }

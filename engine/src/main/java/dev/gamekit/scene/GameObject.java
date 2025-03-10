@@ -1,20 +1,19 @@
-package dev.gamekit;
+package dev.gamekit.scene;
 
 import dev.gamekit.interfaces.InputListener;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
-/** Entities are used to represent objects in the game world */
-public abstract class Entity implements InputListener {
+public abstract class GameObject implements InputListener {
   private static int idCounter = 0;
 
   final int internalId;
   final String name;
   boolean ready;
 
-  public Entity(String name) {
-    internalId = Entity.idCounter++;
+  public GameObject(String name) {
+    internalId = GameObject.idCounter++;
     this.name = name;
     this.ready = false;
   }

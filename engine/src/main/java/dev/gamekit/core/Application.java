@@ -1,6 +1,7 @@
-package dev.gamekit;
+package dev.gamekit.core;
 
 import dev.gamekit.interfaces.FrameEndTask;
+import dev.gamekit.scene.Scene;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -48,7 +49,7 @@ public abstract class Application {
       throw new NullPointerException("Unable to load a null scene");
     }
 
-    LOGGER.debug("Queued scene: {}", scene.name);
+    LOGGER.debug("Queued scene: {}", scene.getName());
     this.nextScene = scene;
   }
 
@@ -114,7 +115,7 @@ public abstract class Application {
 
   private void onRender() {
     if (activeScene != null) {
-      window.screenGraphics.setTransform(activeScene.camera.transform);
+      window.screenGraphics.setTransform(activeScene.getCamera().getTransform());
       activeScene.onRender(window.screenGraphics);
     }
 
@@ -133,16 +134,16 @@ public abstract class Application {
     if (nextScene != null) {
       if (activeScene != null) {
         activeScene.onDispose();
-        LOGGER.debug("Switching scene: {} -> {}", activeScene.name, nextScene.name);
+        LOGGER.debug("Switching scene: {} -> {}", activeScene.getName(), nextScene.getName());
       } else {
-        LOGGER.debug("Loading scene: {}", nextScene.name);
+        LOGGER.debug("Loading scene: {}", nextScene.getName());
       }
 
       activeScene = nextScene;
       activeScene.onStart();
       nextScene = null;
 
-      Scene.active = activeScene;
+      Scene.setActive(activeScene);
     }
   }
 

@@ -1,7 +1,7 @@
-package dev.gamekit;
+package dev.gamekit.utils;
 
-public final class Utils {
-  private Utils() { }
+public final class MathUtils {
+  private MathUtils() { }
 
   public static int toInt(float number) {
     return (int) number;

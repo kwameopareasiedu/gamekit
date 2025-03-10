@@ -1,4 +1,4 @@
-package dev.gamekit;
+package dev.gamekit.core;
 
 /** Stores global time related information at runtime. */
 public final class Time {

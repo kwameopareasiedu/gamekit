@@ -1,5 +1,6 @@
-package dev.gamekit;
+package dev.gamekit.scene;
 
+import dev.gamekit.core.Application;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,11 +15,11 @@ import java.util.Map;
  */
 public abstract class Scene {
   private static final Logger LOGGER = LogManager.getLogger();
-  static Scene active;
+  private static Scene active;
 
   protected final String name;
   protected final Camera camera;
-  final Map<Integer, Entity> children;
+  final Map<Integer, GameObject> children;
 
   private Color graphicsBgColor;
   private AffineTransform graphicsTransform;
@@ -33,51 +34,53 @@ public abstract class Scene {
     children = new HashMap<>();
   }
 
-  public static Scene getActive() {
-    return active;
-  }
+  public static Scene getActive() { return active; }
 
-  public Camera getCamera() {
-    return camera;
-  }
+  public static void setActive(Scene scene) { active = scene; }
 
-  public void addChild(Entity entity) {
-    LOGGER.debug("Adding child: [{} - {}]", entity.internalId, entity.name);
+  public String getName() { return name; }
 
-    if (!children.containsKey(entity.internalId)) {
+  public Camera getCamera() { return camera; }
+
+  public void addChild(GameObject gameObject) {
+    LOGGER.debug("Adding child: [{} - {}]", gameObject.internalId, gameObject.name);
+
+    if (!children.containsKey(gameObject.internalId)) {
       Application.getInstance().runOnFrameEnd(() -> {
-        children.put(entity.internalId, entity);
+        children.put(gameObject.internalId, gameObject);
 
-        if (!entity.ready) {
-          entity.onStart();
+        if (!gameObject.ready) {
+          gameObject.onStart();
         }
 
-        LOGGER.debug("Added child: [{} - {}]", entity.internalId, entity.name);
+        LOGGER.debug("Added child: [{} - {}]", gameObject.internalId, gameObject.name);
       });
     }
   }
 
-  public void removeChild(Entity entity) {
-    LOGGER.debug("Removing child: [{} - {}]", entity.internalId, entity.name);
+  public void removeChild(GameObject gameObject) {
+    LOGGER.debug("Removing child: [{} - {}]", gameObject.internalId, gameObject.name);
 
-    if (children.containsKey(entity.internalId)) {
+    if (children.containsKey(gameObject.internalId)) {
       Application.getInstance().runOnFrameEnd(() -> {
-        children.remove(entity.internalId, entity);
-        LOGGER.debug("Removed child: [{} - {}]", entity.internalId, entity.name);
+        children.remove(gameObject.internalId, gameObject);
+        LOGGER.debug("Removed child: [{} - {}]", gameObject.internalId, gameObject.name);
       });
     }
   }
 
-  protected void onStart() {
+  public void onStart() {
     LOGGER.debug("Starting scene");
     children.forEach((k, v) -> v.onStart());
   }
 
-  protected void onUpdate() {
+  public void onUpdate() {
     children.forEach((k, v) -> v.onUpdate());
   }
 
-  protected void onRender(Graphics2D g) {
+  public void onRender(Graphics2D g) {
+    g.setTransform(camera.transform);
+
     children.forEach((k, v) -> {
       saveGraphicsState(g);
       v.onRender(g);
@@ -85,7 +88,7 @@ public abstract class Scene {
     });
   }
 
-  protected void onDispose() {
+  public void onDispose() {
     LOGGER.debug("Disposing scene");
     children.forEach((k, v) -> v.onDispose());
   }
