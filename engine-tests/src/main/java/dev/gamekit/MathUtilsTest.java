@@ -1,10 +1,11 @@
 package dev.gamekit;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
-import static dev.gamekit.Utils.*;
 
-public class UtilsTest {
+import static dev.gamekit.utils.MathUtils.cycle;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class MathUtilsTest {
   @Test
   public void cycleTest() {
     assertEquals(0, cycle(4, 0, 3));

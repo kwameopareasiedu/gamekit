@@ -5,15 +5,23 @@ import dev.gamekit.interfaces.InputListener;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
-public abstract class GameObject implements InputListener {
+/**
+ * Represents game objects within Scenes. Because these are part of the "game world",
+ * they have lifecycle methods which are called by the engine to set up, update, render
+ * and dispose.
+ * <p>
+ * <p>
+ * Props im
+ */
+public abstract class Prop implements InputListener {
   private static int idCounter = 0;
 
   final int internalId;
   final String name;
   boolean ready;
 
-  public GameObject(String name) {
-    internalId = GameObject.idCounter++;
+  public Prop(String name) {
+    internalId = Prop.idCounter++;
     this.name = name;
     this.ready = false;
   }

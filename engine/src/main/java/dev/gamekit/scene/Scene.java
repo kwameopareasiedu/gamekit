@@ -19,8 +19,8 @@ public abstract class Scene {
 
   protected final String name;
   protected final Camera camera;
-  final Map<Integer, GameObject> children;
 
+  private final Map<Integer, Prop> props;
   private Color graphicsBgColor;
   private AffineTransform graphicsTransform;
   private Stroke graphicsStroke;
@@ -31,7 +31,7 @@ public abstract class Scene {
   public Scene(String name) {
     this.name = name;
     camera = new Camera();
-    children = new HashMap<>();
+    props = new HashMap<>();
   }
 
   public static Scene getActive() { return active; }
@@ -42,46 +42,46 @@ public abstract class Scene {
 
   public Camera getCamera() { return camera; }
 
-  public void addChild(GameObject gameObject) {
-    LOGGER.debug("Adding child: [{} - {}]", gameObject.internalId, gameObject.name);
+  public void addChild(Prop prop) {
+    LOGGER.debug("Adding child: [{} - {}]", prop.internalId, prop.name);
 
-    if (!children.containsKey(gameObject.internalId)) {
+    if (!props.containsKey(prop.internalId)) {
       Application.getInstance().runOnFrameEnd(() -> {
-        children.put(gameObject.internalId, gameObject);
+        props.put(prop.internalId, prop);
 
-        if (!gameObject.ready) {
-          gameObject.onStart();
+        if (!prop.ready) {
+          prop.onStart();
         }
 
-        LOGGER.debug("Added child: [{} - {}]", gameObject.internalId, gameObject.name);
+        LOGGER.debug("Added child: [{} - {}]", prop.internalId, prop.name);
       });
     }
   }
 
-  public void removeChild(GameObject gameObject) {
-    LOGGER.debug("Removing child: [{} - {}]", gameObject.internalId, gameObject.name);
+  public void removeChild(Prop prop) {
+    LOGGER.debug("Removing child: [{} - {}]", prop.internalId, prop.name);
 
-    if (children.containsKey(gameObject.internalId)) {
+    if (props.containsKey(prop.internalId)) {
       Application.getInstance().runOnFrameEnd(() -> {
-        children.remove(gameObject.internalId, gameObject);
-        LOGGER.debug("Removed child: [{} - {}]", gameObject.internalId, gameObject.name);
+        props.remove(prop.internalId, prop);
+        LOGGER.debug("Removed child: [{} - {}]", prop.internalId, prop.name);
       });
     }
   }
 
   public void onStart() {
     LOGGER.debug("Starting scene");
-    children.forEach((k, v) -> v.onStart());
+    props.forEach((k, v) -> v.onStart());
   }
 
   public void onUpdate() {
-    children.forEach((k, v) -> v.onUpdate());
+    props.forEach((k, v) -> v.onUpdate());
   }
 
   public void onRender(Graphics2D g) {
     g.setTransform(camera.transform);
 
-    children.forEach((k, v) -> {
+    props.forEach((k, v) -> {
       saveGraphicsState(g);
       v.onRender(g);
       resetGraphicsState(g);
@@ -90,7 +90,7 @@ public abstract class Scene {
 
   public void onDispose() {
     LOGGER.debug("Disposing scene");
-    children.forEach((k, v) -> v.onDispose());
+    props.forEach((k, v) -> v.onDispose());
   }
 
   private void saveGraphicsState(Graphics2D g) {

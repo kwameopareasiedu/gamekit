@@ -47,22 +47,15 @@ public final class Input extends KeyAdapter {
     IntStream.range(0, 256).forEach(i -> INSTANCE.upStates[i] = false);
   }
 
-  public static boolean registerListener(InputListener listener) {
+  public static void registerListener(InputListener listener) {
     if (!INSTANCE.listeners.contains(listener)) {
       INSTANCE.listeners.add(listener);
-      return true;
     }
 
-    return false;
   }
 
-  public static boolean unregisterListener(InputListener listener) {
-    if (INSTANCE.listeners.contains(listener)) {
-      INSTANCE.listeners.remove(listener);
-      return true;
-    }
-
-    return false;
+  public static void unregisterListener(InputListener listener) {
+    INSTANCE.listeners.remove(listener);
   }
 
   @Override
