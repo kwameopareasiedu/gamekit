@@ -1,8 +1,9 @@
 package tetris;
 
-import dev.gamekit.Window;
-import dev.gamekit.*;
+import dev.gamekit.core.Window;
+import dev.gamekit.core.*;
 import dev.gamekit.interfaces.InputListener;
+import dev.gamekit.scene.Scene;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -11,11 +12,12 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.Random;
 
-import static dev.gamekit.Utils.toInt;
+import static dev.gamekit.utils.MathUtils.toInt;
+import static tetris.GameState.*;
 import static tetris.Utils.getIndex;
 
-
 public class Tetris extends Scene implements InputListener {
+  static final int STEP_INTERVAL = 250;
   static final int PADDING_X = 50;
   static final int PADDING_Y = 85;
   static final int COLS = 10;
@@ -35,15 +37,21 @@ public class Tetris extends Scene implements InputListener {
   static final Font NEXT_FONT = Objects.requireNonNull(BASE_FONT).deriveFont(40f);
   static final Font SCORE_LABEL_FONT = NEXT_FONT;
   static final Font SCORE_VALUE_FONT = Objects.requireNonNull(BASE_FONT).deriveFont(80f);
-  static final int[] SCORING = new int[] { 40, 100, 300, 1200 };
+  static final Font PAUSED_FONT = Objects.requireNonNull(BASE_FONT).deriveFont(128f);
+  static final Font CONTINUE_FONT = NEXT_FONT.deriveFont(28f);
+  static final int[] SCORING = new int[]{ 40, 100, 300, 1200 };
+  static final int PAUSE_PANEL_W = 480;
+  static final int PAUSE_PANEL_H = 128;
+  static final int GAME_OVER_PANEL_W = 640;
+  static final int GAME_OVER_PANEL_H = 128;
 
   final Queue<Tetromino> queue = new LinkedList<>();
   final CellState[] grid = new CellState[ROWS * COLS];
   final Color[] gridColors = new Color[ROWS * COLS];
   final Random rand = new Random();
+  GameState gameState = PLAYING;
   Tetromino tetromino;
   long stepTime = 0;
-  boolean paused = false;
   int score = 0;
 
   public Tetris() {
@@ -75,14 +83,14 @@ public class Tetris extends Scene implements InputListener {
   }
 
   @Override
-  protected void onStart() {
+  public void onStart() {
     super.onStart();
     Input.registerListener(this);
   }
 
   @Override
   public void onKeyDown(KeyEvent event) {
-    if (!paused && tetromino != null) {
+    if (gameState == PLAYING && tetromino != null) {
       if (event.getKeyCode() == KeyEvent.VK_LEFT) {
         tetromino.move(grid, COLS, Direction.LEFT);
       } else if (event.getKeyCode() == KeyEvent.VK_RIGHT) {
@@ -98,19 +106,24 @@ public class Tetris extends Scene implements InputListener {
   @Override
   public void onKeyUp(KeyEvent event) {
     if (event.getKeyCode() == KeyEvent.VK_ESCAPE) {
-      paused = !paused;
+      if (gameState == PLAYING) gameState = PAUSED;
+      else if (gameState == PAUSED) gameState = PLAYING;
+    } else if (event.getKeyCode() == KeyEvent.VK_R) {
+      if (gameState == GAME_OVER) {
+        Application.getInstance().loadScene(new Tetris());
+      }
     }
   }
 
   @Override
-  protected void onUpdate() {
+  public void onUpdate() {
     super.onUpdate();
 
-    if (!paused) {
+    if (gameState == PLAYING) {
       stepTime += Time.FRAME_TIME;
     }
 
-    if (stepTime >= 250) {
+    if (gameState == PLAYING && stepTime >= STEP_INTERVAL) {
       stepTime = 0;
 
       if (tetromino == null || !tetromino.move(grid, COLS, Direction.DOWN)) {
@@ -120,7 +133,12 @@ public class Tetris extends Scene implements InputListener {
         }
 
         if (eliminateFullRows()) compactGrid();
+
         spawnTetromino();
+
+        if (!tetromino.move(grid, COLS, Direction.DOWN)) {
+          gameState = GAME_OVER;
+        }
       }
     }
   }
@@ -204,7 +222,7 @@ public class Tetris extends Scene implements InputListener {
   }
 
   @Override
-  protected void onRender(Graphics2D g) {
+  public void onRender(Graphics2D g) {
     super.onRender(g);
 
     g.setColor(CLEAR_COLOR);
@@ -216,10 +234,16 @@ public class Tetris extends Scene implements InputListener {
     if (tetromino != null) {
       renderTetromino(g);
     }
+
+    if (gameState == PAUSED) {
+      renderPausePanel(g);
+    } else if (gameState == GAME_OVER) {
+      renderGameOverPanel(g);
+    }
   }
 
   @Override
-  protected void onDispose() {
+  public void onDispose() {
     super.onDispose();
     Input.unregisterListener(this);
   }
@@ -287,7 +311,6 @@ public class Tetris extends Scene implements InputListener {
     Tetromino tetromino = Objects.requireNonNull(queue.peek());
     int[] offset = tetromino.getOffset();
     int tetrominoWidthCount = offset[3] - offset[1] + 1;
-    int tetrominoHeightCount = offset[2] - offset[0] + 1;
     int queueCellCount = tetrominoWidthCount + 2;
     int queueCellSize = toInt((double) QUEUE_W / queueCellCount);
 
@@ -347,6 +370,66 @@ public class Tetris extends Scene implements InputListener {
     g.drawString(String.valueOf(score), 0, 56);
 
     g.translate(-SCORE_X, -SCORE_Y);
+  }
 
+  private void renderPausePanel(Graphics2D g) {
+    int screenW = Window.getInstance().getWidth();
+    int screenH = Window.getInstance().getHeight();
+    int panelX = (screenW - PAUSE_PANEL_W) / 2;
+    int panelY = (screenH - PAUSE_PANEL_H) / 2;
+
+    g.setColor(Color.BLACK);
+    g.setStroke(STROKE_OUTLINE);
+    g.drawRoundRect(panelX, panelY, PAUSE_PANEL_W, PAUSE_PANEL_H, 4, 4);
+
+    g.setColor(CLEAR_COLOR);
+    g.setStroke(STROKE_DEFAULT);
+    g.fillRoundRect(panelX, panelY, PAUSE_PANEL_W, PAUSE_PANEL_H, 4, 4);
+
+    g.setFont(PAUSED_FONT);
+    g.setColor(Color.WHITE);
+    g.drawString(
+      "PAUSED",
+      toInt(panelX + 0.5 * PAUSE_PANEL_W - 0.5 * g.getFontMetrics().stringWidth("PAUSED")),
+      toInt(panelY + 0.5 * PAUSE_PANEL_H + 6)
+    );
+
+    g.setFont(CONTINUE_FONT);
+    g.drawString(
+      "Press Escape to continue",
+      toInt(panelX + 0.5 * PAUSE_PANEL_W - 0.5 * g.getFontMetrics().stringWidth("Press Escape to continue")),
+      toInt(panelY + 0.5 * PAUSE_PANEL_H + 38)
+    );
+  }
+
+  private void renderGameOverPanel(Graphics2D g) {
+    int screenW = Window.getInstance().getWidth();
+    int screenH = Window.getInstance().getHeight();
+    int panelX = (screenW - GAME_OVER_PANEL_W) / 2;
+    int panelY = (screenH - GAME_OVER_PANEL_H) / 2;
+
+    g.setColor(Color.BLACK);
+    g.setStroke(STROKE_OUTLINE);
+    g.drawRoundRect(panelX, panelY, GAME_OVER_PANEL_W, GAME_OVER_PANEL_H, 4, 4);
+
+    g.setColor(CLEAR_COLOR);
+    g.setStroke(STROKE_DEFAULT);
+    g.fillRoundRect(panelX, panelY, GAME_OVER_PANEL_W, GAME_OVER_PANEL_H, 4, 4);
+
+    g.setFont(PAUSED_FONT);
+    g.setColor(Color.RED);
+    g.drawString(
+      "Game Over",
+      toInt(panelX + 0.5 * GAME_OVER_PANEL_W - 0.5 * g.getFontMetrics().stringWidth("Game Over")),
+      toInt(panelY + 0.5 * GAME_OVER_PANEL_H + 6)
+    );
+
+    g.setFont(CONTINUE_FONT);
+    g.setColor(Color.WHITE);
+    g.drawString(
+      "Score: " + score,
+      toInt(panelX + 0.5 * GAME_OVER_PANEL_W - 0.5 * g.getFontMetrics().stringWidth("Score: " + score)),
+      toInt(panelY + 0.5 * GAME_OVER_PANEL_H + 38)
+    );
   }
 }
