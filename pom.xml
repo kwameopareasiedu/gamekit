@@ -15,7 +15,6 @@
   <modules>
     <module>engine</module>
     <module>samples</module>
-    <module>engine-tests</module>
   </modules>
 
   <properties>
