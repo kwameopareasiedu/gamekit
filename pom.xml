@@ -8,6 +8,10 @@
   <artifactId>gamekit</artifactId>
   <version>0.1.0</version>
   <packaging>pom</packaging>
+
+  <name>GameKit</name>
+  <description>A 2D Java game engine for creating simple games fast</description>
+
   <modules>
     <module>engine</module>
     <module>samples</module>
