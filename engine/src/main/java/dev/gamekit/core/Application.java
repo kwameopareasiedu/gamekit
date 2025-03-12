@@ -26,6 +26,7 @@ public abstract class Application {
   private final List<FrameEndTask> frameEndTasks;
 
   private Window window;
+  private Renderer renderer;
   private boolean isRunning;
   private Scene activeScene;
   private Scene nextScene;
@@ -68,43 +69,44 @@ public abstract class Application {
     );
   }
 
-  public void run() throws InterruptedException {
-    onSetup();
+  public void run() {
+    try {
+      onSetup();
 
-    long lastFrameTime = System.currentTimeMillis();
-    long frameTimeAccumulator = 0;
+      long lastFrameTime = System.currentTimeMillis();
+      long frameTimeAccumulator = 0;
 
-    while (isRunning) {
-      long frameTimeNow = System.currentTimeMillis();
-      long elapsedTime = frameTimeNow - lastFrameTime;
-      lastFrameTime = frameTimeNow;
-      frameTimeAccumulator += elapsedTime;
+      while (isRunning) {
+        long frameTimeNow = System.currentTimeMillis();
+        long elapsedTime = frameTimeNow - lastFrameTime;
+        lastFrameTime = frameTimeNow;
+        frameTimeAccumulator += elapsedTime;
 
-      while (frameTimeAccumulator >= FRAME_TIME) {
-        Input.freeze();
-        frameTimeAccumulator -= FRAME_TIME;
-        onUpdate();
-        Input.reset();
+        while (frameTimeAccumulator >= FRAME_TIME) {
+          Input.freeze();
+          frameTimeAccumulator -= FRAME_TIME;
+          onUpdate();
+          Input.reset();
+        }
+
+        onRender();
+        onFrameEnd();
+        Thread.sleep(Math.max(frameTimeAccumulator, 1));
       }
 
-      onRender();
-      onFrameEnd();
-      Thread.sleep(Math.max(frameTimeAccumulator, 1));
-    }
-
-    try {
       onDispose();
+      System.exit(0);
     } catch (Exception e) {
-      LOGGER.error("onDispose() raised an exception", e);
+      LOGGER.error("Application loop raised an exception", e);
+      System.exit(-1);
     }
-
-    System.exit(0);
   }
 
   private void onSetup() {
     LOGGER.debug("Initializing application");
 
     window = new Window(title, screenWidth, screenHeight);
+    renderer = new Renderer(window.screenGraphics);
 
     window.addKeyListener(Input.INSTANCE);
     window.addWindowListener(new WindowAdapter() {
@@ -129,7 +131,7 @@ public abstract class Application {
   private void onRender() {
     if (activeScene != null) {
       window.screenGraphics.setTransform(activeScene.getCamera().getTransform());
-      activeScene.onRender(window.screenGraphics);
+      activeScene.onRender();
     }
 
     window.refresh();
@@ -156,6 +158,7 @@ public abstract class Application {
       activeScene.onStart();
       nextScene = null;
 
+      renderer.restoreInitialState();
       Scene.setActive(activeScene);
     }
   }

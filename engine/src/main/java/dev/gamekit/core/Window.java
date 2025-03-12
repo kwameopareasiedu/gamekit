@@ -6,9 +6,9 @@ import java.awt.image.BufferedImage;
 
 /** GameKit's window class in which the game is rendered */
 final class Window extends JFrame {
-  final Graphics2D windowGraphics;
   final Graphics2D screenGraphics;
-  final BufferedImage screenImage;
+  private final Graphics2D windowGraphics;
+  private final BufferedImage screenImage;
 
   Window(String title, int width, int height) {
     setPreferredSize(new Dimension(width, height));

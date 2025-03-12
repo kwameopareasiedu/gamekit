@@ -4,7 +4,6 @@ import dev.gamekit.core.Application;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,12 +20,7 @@ public abstract class Scene {
   protected final Camera camera;
 
   private final Map<Integer, Prop> props;
-  private Color graphicsBgColor;
   private AffineTransform graphicsTransform;
-  private Stroke graphicsStroke;
-  private Paint graphicsPaint;
-  private Color graphicsColor;
-  private Font graphicsFont;
 
   public Scene(String name) {
     this.name = name;
@@ -78,43 +72,12 @@ public abstract class Scene {
     props.forEach((k, v) -> v.onUpdate());
   }
 
-  public void onRender(Graphics2D g) {
-    g.setTransform(camera.transform);
-
-    props.forEach((k, v) -> {
-      saveGraphicsState(g);
-      v.onRender(g);
-      resetGraphicsState(g);
-    });
+  public void onRender() {
+    props.forEach((k, v) -> v.onRender());
   }
 
   public void onDispose() {
     LOGGER.debug("Disposing scene");
     props.forEach((k, v) -> v.onDispose());
-  }
-
-  private void saveGraphicsState(Graphics2D g) {
-    graphicsBgColor = g.getBackground();
-    graphicsTransform = g.getTransform();
-    graphicsStroke = g.getStroke();
-    graphicsPaint = g.getPaint();
-    graphicsColor = g.getColor();
-    graphicsFont = g.getFont();
-  }
-
-  private void resetGraphicsState(Graphics2D g) {
-    g.setBackground(graphicsBgColor);
-    g.setTransform(graphicsTransform);
-    g.setStroke(graphicsStroke);
-    g.setPaint(graphicsPaint);
-    g.setColor(graphicsColor);
-    g.setFont(graphicsFont);
-
-    graphicsBgColor = null;
-    graphicsTransform = null;
-    graphicsStroke = null;
-    graphicsPaint = null;
-    graphicsColor = null;
-    graphicsFont = null;
   }
 }
