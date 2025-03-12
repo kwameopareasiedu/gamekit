@@ -38,9 +38,9 @@ public class Tetris extends Scene implements InputListener {
   static final Font BASE_FONT = Resources.loadFont("game over.ttf");
   static final Font NEXT_FONT = Objects.requireNonNull(BASE_FONT).deriveFont(40f);
   static final Font SCORE_LABEL_FONT = NEXT_FONT;
+  static final Font CONTINUE_FONT = NEXT_FONT.deriveFont(28f);
   static final Font SCORE_VALUE_FONT = Objects.requireNonNull(BASE_FONT).deriveFont(80f);
   static final Font PAUSED_FONT = Objects.requireNonNull(BASE_FONT).deriveFont(128f);
-  static final Font CONTINUE_FONT = NEXT_FONT.deriveFont(28f);
   static final int[] SCORING = new int[]{ 40, 100, 300, 1200 };
   static final int PAUSE_PANEL_W = 480;
   static final int PAUSE_PANEL_H = 128;

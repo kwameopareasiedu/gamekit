@@ -17,20 +17,17 @@ import java.util.List;
 @SuppressWarnings("BusyWait")
 public abstract class Application {
   public static final long FRAME_TIME = 1000 / 60;
-
   private static final Logger LOGGER = LogManager.getLogger();
   private static Application instance;
 
-  protected boolean isRunning = true;
   protected Window window;
-
   private final String title;
   private final int screenWidth;
   private final int screenHeight;
+  private final List<FrameEndTask> frameEndTasks;
+  private boolean isRunning;
   private Scene activeScene;
   private Scene nextScene;
-
-  private final List<FrameEndTask> frameEndTasks;
 
   public Application(String title, int screenWidth, int screenHeight) {
     LOGGER.debug("Created application [{} @ {}x{}]", title, screenWidth, screenHeight);
@@ -90,7 +87,13 @@ public abstract class Application {
       Thread.sleep(Math.max(frameTimeAccumulator, 1));
     }
 
-    onDispose();
+    try {
+      onDispose();
+    } catch (Exception e) {
+      LOGGER.error("onDispose() raised an exception", e);
+    }
+
+    System.exit(0);
   }
 
   private void onSetup() {
@@ -104,7 +107,7 @@ public abstract class Application {
       public void windowClosing(WindowEvent e) {
         super.windowClosing(e);
         LOGGER.debug("Received window closing event");
-        onDispose();
+        isRunning = false;
       }
     });
 
@@ -158,7 +161,5 @@ public abstract class Application {
     if (activeScene != null) {
       activeScene.onDispose();
     }
-
-    System.exit(0);
   }
 }

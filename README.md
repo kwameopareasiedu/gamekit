@@ -5,11 +5,17 @@ Java [Swing](https://docs.oracle.com/javase/tutorial/uiswing/index.html) and doe
 based and not GPU based.
 
 GameKit is in no way a AAA engine and has limitations due to it not using OpenGL, but performance is decent enough for
-small indie games.
+small games.
 
-## Installation
+## Full Documentation
 
-To use GameKit, include it as a dependency:
+Read the full engine documentation [here](./ENGINE.md).
+
+[//]: # (## Installation)
+
+[//]: # ()
+
+[//]: # (To use GameKit, include it as a dependency:)
 
 [//]: # (Include dependency syntax after publishing)
 
@@ -34,13 +40,7 @@ public class GameScene extends Scene {
 
   public static void main(String[] args) throws InterruptedException {
     // Create a new game application
-    Application game = new Application(
-      new Config.Builder()
-        .setTitle("Simple Game")
-        .setWindowWidth(800)
-        .setWindowHeight(600)
-        .build()
-    ) { };
+    Application game = new Application("Simple Game", 800, 600) { };
 
     // Load an instance of our Scene class
     game.loadScene(new GameScene());
@@ -66,14 +66,24 @@ After running the main method, you should see your window similar to this:
 
 <img src="docs/assets/simple-game.png" width="404">
 
-## Samples
+[//]: # (## Samples)
 
-The project uses a multi-module maven architecture. There's an included `samples` module containing small games built with the engine. 
+[//]: # ()
 
-These include:
+[//]: # (The project uses a multi-module maven architecture. There's an included `samples` module containing small games built)
 
-1. Basic game
-2. Tetris (No audio)
+[//]: # (with the engine.)
+
+[//]: # ()
+
+[//]: # (These include:)
+
+[//]: # ()
+
+[//]: # (1. Basic game)
+
+[//]: # (2. Tetris &#40;No audio&#41;)
 
 ## Contributors
+
 1. [Kwame Opare Asiedu](https://github.com/kwameopareasiedu)
