@@ -1,7 +1,9 @@
 package tetris;
 
+import dev.gamekit.core.Application;
+import dev.gamekit.core.Input;
+import dev.gamekit.core.Resources;
 import dev.gamekit.core.Window;
-import dev.gamekit.core.*;
 import dev.gamekit.interfaces.InputListener;
 import dev.gamekit.scene.Scene;
 
@@ -71,13 +73,7 @@ public class Tetris extends Scene implements InputListener {
   }
 
   public static void main(String[] args) throws InterruptedException {
-    Application game = new Application(
-      new Config.Builder()
-        .setTitle("GameKit Tetris")
-        .setWindowWidth(720)
-        .setWindowHeight(960)
-        .build()
-    ) { };
+    Application game = new Application("GameKit Tetris", 720, 960) { };
     game.loadScene(new Tetris());
     game.run();
   }
@@ -120,7 +116,7 @@ public class Tetris extends Scene implements InputListener {
     super.onUpdate();
 
     if (gameState == PLAYING) {
-      stepTime += Time.FRAME_TIME;
+      stepTime += Application.FRAME_TIME;
     }
 
     if (gameState == PLAYING && stepTime >= STEP_INTERVAL) {

@@ -16,25 +16,28 @@ import java.util.List;
  */
 @SuppressWarnings("BusyWait")
 public abstract class Application {
+  public static final long FRAME_TIME = 1000 / 60;
+
   private static final Logger LOGGER = LogManager.getLogger();
   private static Application instance;
 
   protected boolean isRunning = true;
   protected Window window;
 
-  private long lastFrameTime = System.currentTimeMillis();
-  private long frameLag = 0;
-  private final Config config;
+  private final String title;
+  private final int screenWidth;
+  private final int screenHeight;
   private Scene activeScene;
   private Scene nextScene;
 
   private final List<FrameEndTask> frameEndTasks;
 
-  public Application(Config config) {
-    LOGGER.debug("Created application");
-    LOGGER.debug(config);
+  public Application(String title, int screenWidth, int screenHeight) {
+    LOGGER.debug("Created application [{} @ {}x{}]", title, screenWidth, screenHeight);
 
-    this.config = config;
+    this.title = title;
+    this.screenWidth = screenWidth;
+    this.screenHeight = screenHeight;
     frameEndTasks = new ArrayList<>();
     Application.instance = this;
   }
@@ -66,14 +69,17 @@ public abstract class Application {
   public void run() throws InterruptedException {
     onSetup();
 
+    long lastFrameTime = System.currentTimeMillis();
+    long frameTimeAccumulator = 0;
+
     while (isRunning) {
       long frameTimeNow = System.currentTimeMillis();
       long elapsedTime = frameTimeNow - lastFrameTime;
       lastFrameTime = frameTimeNow;
-      frameLag += elapsedTime;
+      frameTimeAccumulator += elapsedTime;
 
-      while (frameLag >= Time.FRAME_TIME) {
-        frameLag -= Time.FRAME_TIME;
+      while (frameTimeAccumulator >= FRAME_TIME) {
+        frameTimeAccumulator -= FRAME_TIME;
         onUpdate();
       }
 
@@ -81,8 +87,7 @@ public abstract class Application {
       onRender();
       onFrameEnd();
 
-      Time.timeSinceLoad += elapsedTime;
-      Thread.sleep(Math.max(frameLag, 1));
+      Thread.sleep(Math.max(frameTimeAccumulator, 1));
     }
 
     onDispose();
@@ -91,7 +96,7 @@ public abstract class Application {
   private void onSetup() {
     LOGGER.debug("Initializing application");
 
-    window = new Window(config.title, config.screenWidth, config.screenHeight);
+    window = new Window(title, screenWidth, screenHeight);
 
     window.addKeyListener(Input.INSTANCE);
     window.addWindowListener(new WindowAdapter() {
