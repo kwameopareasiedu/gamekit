@@ -15,11 +15,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class Resources {
+public class IO {
   private static final Logger LOGGER = LogManager.getLogger();
   private static final Map<String, Object> cache = new HashMap<>();
 
-  private Resources() { }
+  private IO() { }
 
   public static BufferedImage loadImage(String path) {
     if (cache.containsKey(path)) {
@@ -29,7 +29,7 @@ public class Resources {
 
     try {
       LOGGER.debug("Loading image at {}", path);
-      URL assetUrl = Resources.class.getClassLoader().getResource(path);
+      URL assetUrl = IO.class.getClassLoader().getResource(path);
       URI assetUri = Objects.requireNonNull(assetUrl).toURI();
       File assetFile = new File(assetUri);
       BufferedImage image = ImageIO.read(assetFile);
@@ -49,7 +49,7 @@ public class Resources {
     }
 
     try{
-      URL assetUrl = Resources.class.getClassLoader().getResource(path);
+      URL assetUrl = IO.class.getClassLoader().getResource(path);
       URI assetUri = Objects.requireNonNull(assetUrl).toURI();
       File assetFile = new File(assetUri);
       return Font.createFont(Font.TRUETYPE_FONT, assetFile);

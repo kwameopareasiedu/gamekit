@@ -2,7 +2,7 @@ package tetris;
 
 import dev.gamekit.core.Application;
 import dev.gamekit.core.Input;
-import dev.gamekit.core.Resources;
+import dev.gamekit.core.IO;
 import dev.gamekit.scene.Scene;
 
 import java.awt.*;
@@ -32,7 +32,7 @@ public class Tetris extends Scene {
   static final Color GRID_COLOR = new Color(0x773f3f3f, true);
   static final Stroke STROKE_DEFAULT = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
   static final Stroke STROKE_OUTLINE = new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-  static final Font BASE_FONT = Resources.loadFont("game over.ttf");
+  static final Font BASE_FONT = IO.loadFont("game over.ttf");
   static final Font NEXT_FONT = Objects.requireNonNull(BASE_FONT).deriveFont(40f);
   static final Font SCORE_LABEL_FONT = NEXT_FONT;
   static final Font CONTINUE_FONT = NEXT_FONT.deriveFont(28f);

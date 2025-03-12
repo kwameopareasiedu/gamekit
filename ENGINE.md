@@ -55,7 +55,7 @@ public class MyAwesomeGame extends Scene {
   public void onUpdate() {
     // Instead of using KeyEvent.VK_SPACE
     Input.isKeyJustPressed(KeyEvent.VK_SPACE);
-    
+
     // You can use Input.KEY_SPACE
     Input.isKeyJustPressed(Input.KEY_SPACE);
   }
@@ -67,3 +67,13 @@ public class MyAwesomeGame extends Scene {
 | `public static boolean isKeyPressed(int keyCode)`      | Check if a key is being held down in the current frame |
 | `public static boolean isKeyJustPressed(int keyCode)`  | Check if a key just pressed in the current frame       |
 | `public static boolean isKeyJustReleased(int keyCode)` | Check if a key just released in the current frame      |
+
+## IO
+
+Static class responsible for resource loading and file output. `IO` caches resources loaded, prevent multiple disk reads
+for the same and improving performance.
+
+| Method                                               | Description                                        |
+|------------------------------------------------------|----------------------------------------------------|
+| `public static BufferedImage loadImage(String path)` | Loads and caches an image at the specified path    |
+| `public static Font loadFont(String path)`           | Loads and caches a font file at the specified path |
