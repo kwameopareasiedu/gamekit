@@ -6,7 +6,6 @@ import dev.gamekit.core.Resources;
 import dev.gamekit.scene.Scene;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Queue;
@@ -82,21 +81,21 @@ public class Tetris extends Scene {
 
     if (gameState == PLAYING) {
       stepTime += Application.FRAME_TIME;
-      if (Input.isKeyJustPressed(KeyEvent.VK_ESCAPE)) gameState = PAUSED;
-    } else if (gameState == PAUSED && Input.isKeyJustPressed(KeyEvent.VK_ESCAPE)) {
+      if (Input.isKeyJustPressed(Input.KEY_ESCAPE)) gameState = PAUSED;
+    } else if (gameState == PAUSED && Input.isKeyJustPressed(Input.KEY_ESCAPE)) {
       gameState = PLAYING;
-    } else if (gameState == GAME_OVER && Input.isKeyJustPressed(KeyEvent.VK_R)) {
+    } else if (gameState == GAME_OVER && Input.isKeyJustPressed(Input.KEY_R)) {
       Application.getInstance().loadScene(new Tetris());
     }
 
     if (tetromino != null) {
-      if (Input.isKeyJustPressed(KeyEvent.VK_LEFT)) {
+      if (Input.isKeyJustPressed(Input.KEY_LEFT)) {
         tetromino.move(grid, COLS, Direction.LEFT);
-      } else if (Input.isKeyJustPressed(KeyEvent.VK_RIGHT)) {
+      } else if (Input.isKeyJustPressed(Input.KEY_RIGHT)) {
         tetromino.move(grid, COLS, Direction.RIGHT);
-      } else if (Input.isKeyJustPressed(KeyEvent.VK_UP)) {
+      } else if (Input.isKeyJustPressed(Input.KEY_UP)) {
         tetromino.rotateCW();
-      } else if (Input.isKeyJustPressed(KeyEvent.VK_DOWN)) {
+      } else if (Input.isKeyJustPressed(Input.KEY_DOWN)) {
         tetromino.rotateCCW();
       }
     }

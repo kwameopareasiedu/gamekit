@@ -5,7 +5,6 @@ import dev.gamekit.core.Input;
 import dev.gamekit.scene.Scene;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 
 public class BasicGame extends Scene {
   public BasicGame() {
@@ -28,7 +27,7 @@ public class BasicGame extends Scene {
     g.fillRect(0, 0, 800, 600);
 
     // Draw a red or blue square based on if the space bar is pressed
-    g.setColor(Input.isKeyPressed(KeyEvent.VK_SPACE) ? Color.RED : Color.BLUE);
+    g.setColor(Input.isKeyPressed(Input.KEY_SPACE) ? Color.RED : Color.BLUE);
     g.fillRect(300, 200, 200, 200);
   }
 }
