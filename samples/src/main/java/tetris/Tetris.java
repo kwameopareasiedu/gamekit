@@ -3,8 +3,6 @@ package tetris;
 import dev.gamekit.core.Application;
 import dev.gamekit.core.Input;
 import dev.gamekit.core.Resources;
-import dev.gamekit.core.Window;
-import dev.gamekit.interfaces.InputListener;
 import dev.gamekit.scene.Scene;
 
 import java.awt.*;
@@ -18,7 +16,7 @@ import static dev.gamekit.utils.MathUtils.toInt;
 import static tetris.GameState.*;
 import static tetris.Utils.getIndex;
 
-public class Tetris extends Scene implements InputListener {
+public class Tetris extends Scene {
   static final int STEP_INTERVAL = 250;
   static final int PADDING_X = 50;
   static final int PADDING_Y = 85;
@@ -79,44 +77,28 @@ public class Tetris extends Scene implements InputListener {
   }
 
   @Override
-  public void onStart() {
-    super.onStart();
-    Input.registerListener(this);
-  }
-
-  @Override
-  public void onKeyDown(KeyEvent event) {
-    if (gameState == PLAYING && tetromino != null) {
-      if (event.getKeyCode() == KeyEvent.VK_LEFT) {
-        tetromino.move(grid, COLS, Direction.LEFT);
-      } else if (event.getKeyCode() == KeyEvent.VK_RIGHT) {
-        tetromino.move(grid, COLS, Direction.RIGHT);
-      } else if (event.getKeyCode() == KeyEvent.VK_UP) {
-        tetromino.rotateCW();
-      } else if (event.getKeyCode() == KeyEvent.VK_DOWN) {
-        tetromino.rotateCCW();
-      }
-    }
-  }
-
-  @Override
-  public void onKeyUp(KeyEvent event) {
-    if (event.getKeyCode() == KeyEvent.VK_ESCAPE) {
-      if (gameState == PLAYING) gameState = PAUSED;
-      else if (gameState == PAUSED) gameState = PLAYING;
-    } else if (event.getKeyCode() == KeyEvent.VK_R) {
-      if (gameState == GAME_OVER) {
-        Application.getInstance().loadScene(new Tetris());
-      }
-    }
-  }
-
-  @Override
   public void onUpdate() {
     super.onUpdate();
 
     if (gameState == PLAYING) {
       stepTime += Application.FRAME_TIME;
+      if (Input.isKeyJustPressed(KeyEvent.VK_ESCAPE)) gameState = PAUSED;
+    } else if (gameState == PAUSED && Input.isKeyJustPressed(KeyEvent.VK_ESCAPE)) {
+      gameState = PLAYING;
+    } else if (gameState == GAME_OVER && Input.isKeyJustPressed(KeyEvent.VK_R)) {
+      Application.getInstance().loadScene(new Tetris());
+    }
+
+    if (tetromino != null) {
+      if (Input.isKeyJustPressed(KeyEvent.VK_LEFT)) {
+        tetromino.move(grid, COLS, Direction.LEFT);
+      } else if (Input.isKeyJustPressed(KeyEvent.VK_RIGHT)) {
+        tetromino.move(grid, COLS, Direction.RIGHT);
+      } else if (Input.isKeyJustPressed(KeyEvent.VK_UP)) {
+        tetromino.rotateCW();
+      } else if (Input.isKeyJustPressed(KeyEvent.VK_DOWN)) {
+        tetromino.rotateCCW();
+      }
     }
 
     if (gameState == PLAYING && stepTime >= STEP_INTERVAL) {
@@ -222,7 +204,7 @@ public class Tetris extends Scene implements InputListener {
     super.onRender(g);
 
     g.setColor(CLEAR_COLOR);
-    g.fillRect(0, 0, Window.getInstance().getWidth(), Window.getInstance().getHeight());
+    g.fillRect(0, 0, Application.getInstance().getScreenWidth(), Application.getInstance().getScreenHeight());
     renderQueue(g);
     renderBoard(g);
     renderScore(g);
@@ -236,12 +218,6 @@ public class Tetris extends Scene implements InputListener {
     } else if (gameState == GAME_OVER) {
       renderGameOverPanel(g);
     }
-  }
-
-  @Override
-  public void onDispose() {
-    super.onDispose();
-    Input.unregisterListener(this);
   }
 
   private void renderTetromino(Graphics2D g) {
@@ -302,7 +278,7 @@ public class Tetris extends Scene implements InputListener {
   }
 
   private void renderQueue(Graphics2D g) {
-    int QUEUE_X = Window.getInstance().getWidth() - QUEUE_W - PADDING_X;
+    int QUEUE_X = Application.getInstance().getScreenWidth() - QUEUE_W - PADDING_X;
 
     Tetromino tetromino = Objects.requireNonNull(queue.peek());
     int[] offset = tetromino.getOffset();
@@ -353,7 +329,7 @@ public class Tetris extends Scene implements InputListener {
   }
 
   private void renderScore(Graphics2D g) {
-    int SCORE_X = Window.getInstance().getWidth() - QUEUE_W - PADDING_X;
+    int SCORE_X = Application.getInstance().getScreenWidth() - QUEUE_W - PADDING_X;
     int SCORE_Y = PADDING_Y + 256;
 
     g.translate(SCORE_X, SCORE_Y);
@@ -369,8 +345,8 @@ public class Tetris extends Scene implements InputListener {
   }
 
   private void renderPausePanel(Graphics2D g) {
-    int screenW = Window.getInstance().getWidth();
-    int screenH = Window.getInstance().getHeight();
+    int screenW = Application.getInstance().getScreenWidth();
+    int screenH = Application.getInstance().getScreenHeight();
     int panelX = (screenW - PAUSE_PANEL_W) / 2;
     int panelY = (screenH - PAUSE_PANEL_H) / 2;
 
@@ -399,8 +375,8 @@ public class Tetris extends Scene implements InputListener {
   }
 
   private void renderGameOverPanel(Graphics2D g) {
-    int screenW = Window.getInstance().getWidth();
-    int screenH = Window.getInstance().getHeight();
+    int screenW = Application.getInstance().getScreenWidth();
+    int screenH = Application.getInstance().getScreenHeight();
     int panelX = (screenW - GAME_OVER_PANEL_W) / 2;
     int panelY = (screenH - GAME_OVER_PANEL_H) / 2;
 

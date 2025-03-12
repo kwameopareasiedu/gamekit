@@ -1,11 +1,7 @@
 package dev.gamekit.core;
 
-import dev.gamekit.interfaces.InputListener;
-
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.IntStream;
 
 /**
@@ -14,75 +10,73 @@ import java.util.stream.IntStream;
  */
 public final class Input extends KeyAdapter {
   static final Input INSTANCE = new Input();
+  private static final int COUNT = 256;
 
-  private final boolean[] downStates;
-  private final boolean[] upStates;
-  private boolean anyKeyPressed = false;
-  private boolean anyKeyReleased = false;
-  private final List<InputListener> listeners;
+  private final KeyState[] states;
+  private boolean isFrozen = false;
 
   private Input() {
-    downStates = new boolean[256];
-    upStates = new boolean[256];
-    listeners = new ArrayList<>();
+    states = new KeyState[COUNT];
+
+    IntStream.range(0, 256).forEach(
+      i -> states[i] = new KeyState()
+    );
   }
 
-  public static boolean isKeyPressed(int keyCode) {
-    return INSTANCE.downStates[keyCode];
+  public synchronized static boolean isKeyPressed(int keyCode) {
+    return INSTANCE.states[keyCode].isPressed;
   }
 
-  public static boolean isKeyReleased(int keyCode) {
-    return INSTANCE.upStates[keyCode];
+  public synchronized static boolean isKeyJustPressed(int keyCode) {
+    return INSTANCE.states[keyCode].isJustPressed;
   }
 
-  public static boolean isAnyKeyPressed() {
-    return INSTANCE.anyKeyPressed;
+  public synchronized static boolean isKeyJustReleased(int keyCode) {
+    return INSTANCE.states[keyCode].isJustReleased;
   }
 
-  public static boolean isAnyKeyReleased() {
-    return INSTANCE.anyKeyReleased;
+  static void freeze() {
+    INSTANCE.isFrozen = true;
   }
 
-  public static void reset() {
-    IntStream.range(0, 256).forEach(i -> INSTANCE.upStates[i] = false);
-  }
+  static void reset() {
+    IntStream.range(0, COUNT).forEach(
+      i -> INSTANCE.states[i].reset()
+    );
 
-  public static void registerListener(InputListener listener) {
-    if (!INSTANCE.listeners.contains(listener)) {
-      INSTANCE.listeners.add(listener);
-    }
-
-  }
-
-  public static void unregisterListener(InputListener listener) {
-    INSTANCE.listeners.remove(listener);
+    INSTANCE.isFrozen = false;
   }
 
   @Override
-  public void keyPressed(KeyEvent e) {
+  public synchronized void keyPressed(KeyEvent e) {
     int keyCode = e.getKeyCode();
-
-    if (keyCode >= 0 && keyCode < 256) {
-      downStates[keyCode] = true;
-      upStates[keyCode] = false;
-      anyKeyPressed = true;
-      anyKeyReleased = false;
+    if (!isFrozen && keyCode >= 0 && keyCode < 256) {
+      states[keyCode].update(true);
     }
-
-    listeners.forEach(listener -> listener.onKeyDown(e));
   }
 
   @Override
-  public void keyReleased(KeyEvent e) {
+  public synchronized void keyReleased(KeyEvent e) {
     int keyCode = e.getKeyCode();
+    if (!isFrozen && keyCode >= 0 && keyCode < 256) {
+      states[keyCode].update(false);
+    }
+  }
 
-    if (keyCode >= 0 && keyCode < 256) {
-      downStates[keyCode] = false;
-      upStates[keyCode] = true;
-      anyKeyPressed = false;
-      anyKeyReleased = true;
+  private static class KeyState {
+    boolean isPressed = false;
+    boolean isJustPressed = false;
+    boolean isJustReleased = false;
+
+    private void update(boolean isPressed) {
+      isJustPressed = !this.isPressed && isPressed;
+      isJustReleased = this.isPressed && !isPressed;
+      this.isPressed = isPressed;
     }
 
-    listeners.forEach(listener -> listener.onKeyUp(e));
+    private void reset() {
+      isJustPressed = false;
+      isJustReleased = false;
+    }
   }
 }

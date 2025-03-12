@@ -5,9 +5,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /** GameKit's window class in which the game is rendered */
-public final class Window extends JFrame {
-  static Window INSTANCE;
-
+final class Window extends JFrame {
   final Graphics2D windowGraphics;
   final Graphics2D screenGraphics;
   final BufferedImage screenImage;
@@ -22,12 +20,6 @@ public final class Window extends JFrame {
     windowGraphics = (Graphics2D) super.getGraphics();
     screenImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     screenGraphics = screenImage.createGraphics();
-
-    Window.INSTANCE = this;
-  }
-
-  public static Window getInstance() {
-    return INSTANCE;
   }
 
   void refresh() {

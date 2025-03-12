@@ -20,11 +20,12 @@ public abstract class Application {
   private static final Logger LOGGER = LogManager.getLogger();
   private static Application instance;
 
-  protected Window window;
   private final String title;
   private final int screenWidth;
   private final int screenHeight;
   private final List<FrameEndTask> frameEndTasks;
+
+  private Window window;
   private boolean isRunning;
   private Scene activeScene;
   private Scene nextScene;
@@ -36,12 +37,16 @@ public abstract class Application {
     this.screenWidth = screenWidth;
     this.screenHeight = screenHeight;
     frameEndTasks = new ArrayList<>();
+    isRunning = true;
+
     Application.instance = this;
   }
 
-  public static Application getInstance() {
-    return instance;
-  }
+  public static Application getInstance() { return instance; }
+
+  public int getScreenWidth() { return screenWidth; }
+
+  public int getScreenHeight() { return screenHeight; }
 
   public void loadScene(Scene scene) {
     if (scene == null) {
@@ -76,14 +81,14 @@ public abstract class Application {
       frameTimeAccumulator += elapsedTime;
 
       while (frameTimeAccumulator >= FRAME_TIME) {
+        Input.freeze();
         frameTimeAccumulator -= FRAME_TIME;
         onUpdate();
+        Input.reset();
       }
 
-      Input.reset();
       onRender();
       onFrameEnd();
-
       Thread.sleep(Math.max(frameTimeAccumulator, 1));
     }
 
