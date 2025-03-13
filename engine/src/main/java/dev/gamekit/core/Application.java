@@ -21,8 +21,6 @@ public abstract class Application {
   private static Application instance;
 
   private final String title;
-  private final int screenWidth;
-  private final int screenHeight;
   private final List<FrameEndTask> frameEndTasks;
 
   private Window window;
@@ -30,12 +28,10 @@ public abstract class Application {
   private Scene activeScene;
   private Scene nextScene;
 
-  public Application(String title, int screenWidth, int screenHeight) {
-    LOGGER.debug("Created application [{} @ {}x{}]", title, screenWidth, screenHeight);
+  public Application(String title) {
+    LOGGER.debug("Created application \"{}\"", title);
 
     this.title = title;
-    this.screenWidth = screenWidth;
-    this.screenHeight = screenHeight;
     frameEndTasks = new ArrayList<>();
     isRunning = true;
 
@@ -43,10 +39,6 @@ public abstract class Application {
   }
 
   public static Application getInstance() { return instance; }
-
-  public int getScreenWidth() { return screenWidth; }
-
-  public int getScreenHeight() { return screenHeight; }
 
   public void loadScene(Scene scene) {
     if (scene == null) {

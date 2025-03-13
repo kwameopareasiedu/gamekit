@@ -22,7 +22,7 @@ public class CalibrationTest extends Scene {
   }
 
   public static void main(String[] args) {
-    Application game = new Application("Calibration Test", 800, 600) { };
+    Application game = new Application("Calibration Test") { };
     game.loadScene(new CalibrationTest());
     game.run();
   }

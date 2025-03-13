@@ -27,37 +27,48 @@ This is a simple GameKit scene which renders a red or blue box based on whether 
 application is created in the `main()` method and loads an instance of our scene.
 
 ```java
-import dev.gamekit.core.*;
+import dev.gamekit.core.Application;
+import dev.gamekit.core.Input;
+import dev.gamekit.core.Renderer;
 import dev.gamekit.scene.Scene;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 
-public class GameScene extends Scene {
-  public GameScene() {
-    super("Game Scene");
+public class BasicGame extends Scene {
+  private boolean isPressed = false;
+
+  public BasicGame() {
+    super("Basic Game");
   }
 
-  public static void main(String[] args) throws InterruptedException {
+  public static void main(String[] args) {
     // Create a new game application
-    Application game = new Application("Simple Game", 800, 600) { };
+    Application game = new Application("Simple Game") { };
 
     // Load an instance of our Scene class
-    game.loadScene(new GameScene());
+    game.loadScene(new BasicGame());
 
     // Run the game application
     game.run();
   }
 
   @Override
-  public void onRender(Graphics2D g) {
+  public void onUpdate() {
+    super.onUpdate();
+
+    isPressed = Input.isKeyPressed(Input.KEY_SPACE);
+  }
+
+  @Override
+  public void onRender() {
+    super.onRender();
     // Clear the screen with black
-    g.setColor(Color.BLACK);
-    g.fillRect(0, 0, 800, 600);
+    Renderer.setColor(Color.BLACK);
+    Renderer.clear();
 
     // Draw a red or blue square based on if the space bar is pressed
-    g.setColor(Input.isKeyPressed(KeyEvent.VK_SPACE) ? Color.RED : Color.BLUE);
-    g.fillRect(300, 200, 200, 200);
+    Renderer.setColor(isPressed ? Color.RED : Color.BLUE);
+    Renderer.fillRect(0, 0, 200, 200);
   }
 }
 ```

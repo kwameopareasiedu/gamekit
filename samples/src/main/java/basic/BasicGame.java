@@ -14,9 +14,9 @@ public class BasicGame extends Scene {
     super("Basic Game");
   }
 
-  public static void main(String[] args) throws InterruptedException {
+  public static void main(String[] args) {
     // Create a new game application
-    Application game = new Application("Simple Game", 800, 600) { };
+    Application game = new Application("Simple Game") { };
     // Load an instance of our Scene class
     game.loadScene(new BasicGame());
     // Run the game application
@@ -35,10 +35,10 @@ public class BasicGame extends Scene {
     super.onRender();
     // Clear the screen with black
     Renderer.setColor(Color.BLACK);
-//    Renderer.clear(0, 0, 800, 600);
+    Renderer.clear();
 
     // Draw a red or blue square based on if the space bar is pressed
     Renderer.setColor(isPressed ? Color.RED : Color.BLUE);
-    Renderer.fillRect(400, 300, 200, 200);
+    Renderer.fillRect(0, 0, 200, 200);
   }
 }
