@@ -35,7 +35,7 @@ public class BasicGame extends Scene {
     super.onRender();
     // Clear the screen with black
     Renderer.setColor(Color.BLACK);
-    Renderer.clear(0, 0, 800, 600);
+//    Renderer.clear(0, 0, 800, 600);
 
     // Draw a red or blue square based on if the space bar is pressed
     Renderer.setColor(isPressed ? Color.RED : Color.BLUE);

@@ -199,9 +199,10 @@ public class Tetris extends Scene {
   }
 
   @Override
-  public void onRender(Graphics2D g) {
-    super.onRender(g);
+  public void onRender() {
+    super.onRender();
 
+    Graphics2D g = null;
     g.setColor(CLEAR_COLOR);
     g.fillRect(0, 0, Application.getInstance().getScreenWidth(), Application.getInstance().getScreenHeight());
     renderQueue(g);
