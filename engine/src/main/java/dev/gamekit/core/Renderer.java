@@ -49,31 +49,41 @@ public final class Renderer {
     line(x1, y, x2, y);
   }
 
-  public static void rect(int x, int y, int width, int height, boolean fill) {
-    updateGraphicsObject();
-    int x0 = x - width / 2, y0 = y + height / 2;
-    if (fill) g.fillRect(x0, -y0, width, height);
-    else g.drawRect(x0, -y0, width, height);
-    resetGraphicsObject();
+  public static void fillRect(int x, int y, int width, int height) {
+    rect(x, y, width, height, true);
   }
 
-  public static void rect(int x1, int y1, int width, int height) {
-    rect(x1, y1, width, height, false);
+  public static void drawRect(int x, int y, int width, int height) {
+    rect(x, y, width, height, false);
   }
 
-  public static void roundRect(int x, int y, int width, int height, int arcWidth, int arcHeight, boolean fill) {
-    updateGraphicsObject();
-    int x0 = x - width / 2, y0 = y + height / 2;
-    if (fill) g.fillRoundRect(x0, -y0, width, height, arcWidth, arcHeight);
-    else g.drawRoundRect(x0, -y0, width, height, arcWidth, arcHeight);
-    resetGraphicsObject();
+  public static void fillRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) {
+    roundRect(x, y, width, height, arcWidth, arcHeight, true);
   }
 
-  public static void roundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) {
+  public static void drawRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) {
     roundRect(x, y, width, height, arcWidth, arcHeight, false);
   }
 
-  public static void oval(int x, int y, int width, int height, boolean fill) {
+  public static void fillOval(int x, int y, int width, int height) {
+    oval(x, y, width, height, true);
+  }
+
+  public static void drawOval(int x, int y, int width, int height) {
+    oval(x, y, width, height, false);
+  }
+
+  public static void fillCircle(int x, int y, int radius) {
+    int diameter = 2 * radius;
+    oval(x, y, diameter, diameter, true);
+  }
+
+  public static void drawCircle(int x, int y, int radius) {
+    int diameter = 2 * radius;
+    oval(x, y, diameter, diameter, false);
+  }
+
+  private static void oval(int x, int y, int width, int height, boolean fill) {
     updateGraphicsObject();
     int x0 = x - width / 2, y0 = y + height / 2;
     if (fill) g.fillOval(x0, -y0, width, height);
@@ -81,17 +91,20 @@ public final class Renderer {
     resetGraphicsObject();
   }
 
-  public static void oval(int x, int y, int width, int height) {
-    oval(x, y, width, height, false);
+  private static void rect(int x, int y, int width, int height, boolean fill) {
+    updateGraphicsObject();
+    int x0 = x - width / 2, y0 = y + height / 2;
+    if (fill) g.fillRect(x0, -y0, width, height);
+    else g.drawRect(x0, -y0, width, height);
+    resetGraphicsObject();
   }
 
-  public static void circle(int x, int y, int radius, boolean fill) {
-    int diameter = 2 * radius;
-    oval(x, y, diameter, diameter, fill);
-  }
-
-  public static void circle(int x, int y, int radius) {
-    circle(x, y, radius, false);
+  private static void roundRect(int x, int y, int width, int height, int arcWidth, int arcHeight, boolean fill) {
+    updateGraphicsObject();
+    int x0 = x - width / 2, y0 = y + height / 2;
+    if (fill) g.fillRoundRect(x0, -y0, width, height, arcWidth, arcHeight);
+    else g.drawRoundRect(x0, -y0, width, height, arcWidth, arcHeight);
+    resetGraphicsObject();
   }
 
   //  public static void text(Object text, int x, int y) {

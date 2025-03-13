@@ -54,29 +54,29 @@ public class CalibrationTest extends Scene {
     // Top right quadrant
     Renderer.beginGroup();
     Renderer.setColor(Color.RED);
-    Renderer.rect(100, 100, 20, 20, true);
-    Renderer.rect(100, 100, 30, 30);
+    Renderer.fillRect(100, 100, 20, 20);
+    Renderer.drawRect(100, 100, 30, 30);
     Renderer.endGroup();
 
     // Top left quadrant
     Renderer.beginGroup();
     Renderer.setColor(Color.YELLOW);
-    Renderer.oval(-100, 100, 20, 30, true);
-    Renderer.oval(-100, 100, 30, 40);
+    Renderer.fillOval(-100, 100, 20, 30);
+    Renderer.drawOval(-100, 100, 30, 40);
     Renderer.endGroup();
 
     // Bottom left quadrant
     Renderer.beginGroup();
     Renderer.setColor(Color.GREEN);
-    Renderer.roundRect(-100, -100, 50, 50, 10, 10, true);
-    Renderer.roundRect(-100, -100, 60, 60, 10, 10);
+    Renderer.fillRoundRect(-100, -100, 50, 50, 10, 10);
+    Renderer.drawRoundRect(-100, -100, 60, 60, 10, 10);
     Renderer.endGroup();
 
     // Bottom right quadrant
     Renderer.beginGroup();
     Renderer.setColor(Color.BLUE);
-    Renderer.circle(100, -100, 20, true);
-    Renderer.circle(100, -100, 25);
+    Renderer.fillCircle(100, -100, 20);
+    Renderer.drawCircle(100, -100, 25);
     Renderer.endGroup();
 
     for (int i = 0; i <= WORLD_WIDTH / 2; i += 50) {

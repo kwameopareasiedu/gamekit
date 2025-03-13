@@ -48,11 +48,53 @@ At the end of `Application.onRender()`, the window is redrawn with the content o
 
 ## Renderer
 
+Static class containing all supported draw calls of the engine.
+
+`Renderer` can be setup with options before a drawing function is called to apply values to it (E.g. setting the color,
+stroke, font, etc)
+
+> NB: By default, options are reset after each draw call. To preserve options for another draw call, use the
+`beginGroup()` and `endGroup()` methods.
+
+| Method                                                                                                | Description                                                                                                                   |
+|-------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
+| `public static void setBackground(Color color)`                                                       | Sets the background color for the next draw call                                                                              |
+| `public static void setStroke(Stroke stroke)`                                                         | Sets the stroke for the next draw call                                                                                        |
+| `public static void setPaint(Paint paint)`                                                            | Sets the paint for the next draw call                                                                                         |
+| `public static void setColor(Color color)`                                                            | Sets the color for the next draw call                                                                                         |
+| `public static void setFont(Font font)`                                                               | Sets the font for the next draw call                                                                                          |
+| `public static void beginGroup()`                                                                     | Configures the renderer to not reset options after next draw call. Useful for multiple draw calls which share similar options |
+| `public static void endGroup()`                                                                       | Ends a previously called `beginGroup()`                                                                                       |
+| `public static void clear()`                                                                          | Fills the viewport with a specified color                                                                                     |
+| `public static void line(int x1, int y1, int x2, int y2)`                                             | Draws a line from (x1, y1) to (x2, y2)                                                                                        |
+| `public static void lineV(int x, int y1, int y2)`                                                     | Draws a vertical line from (x, y1), to (x, y2)                                                                                |
+| `public static void lineH(int x1, int y, int x2)`                                                     | Draws a horizontal line from (x1, y), to (x2, y)                                                                              |
+| `public static void fillRect(int x, int y, int width, int height)`                                    | Fills a center-origin rect at (x, y) with width and height                                                                    |
+| `public static void drawRect(int x, int y, int width, int height)`                                    | Draws a center-origin rect at (x, y) with width and height                                                                    |
+| `public static void fillRoundRect(int x, int y, int width, int height, int arcWidth, int archHeight)` | Fills a center-origin rounded rect at (x, y) with width, height and arc radii                                                 |
+| `public static void drawRoundRect(int x, int y, int width, int height, int arcWidth, int archHeight)` | Draws a center-origin rounded rect at (x, y) with width, height and arc radii                                                 |
+| `public static void fillOval(int x, int y, int width, int height)`                                    | Fills a center-origin oval at (x, y) with width and height                                                                    |
+| `public static void drawOval(int x, int y, int width, int height)`                                    | Draws a center-origin oval at (x, y) with width and height                                                                    |
+| `public static void fillCircle(int x, int y, int radius)`                                             | Fills a center-origin circle at (x, y) with radius                                                                            |
+| `public static void drawCircle(int x, int y, int radius)`                                             | Draws a center-origin circle at (x, y) with radius                                                                            |
+
 ## Camera
+
+Singleton class which controls which part of the game world is rendered in the `Window`.
+
+`Camera` allows you to pan around the game world as well as zooming. Internally, `Camera` controls the 3x3
+transformation matrix of the Window graphics object.
+
+| Method                                      | Description                                                          |
+|---------------------------------------------|----------------------------------------------------------------------|
+| `public static Camera getInstance()`        | Get the current instance of the camera                               |
+| `public void lookAt(double x, double y)`    | Pan the camera such that point (x, y) is at the center of the screen |
+| `public void setZoom(double zoom)`          | Sets the zoom of the camera                                          |
+| `public Point transformPoint(int x, int y)` | Projects the point (x, y) into the camera's local space              |
 
 ## Input
 
-Static class responsible for capturing keyboard and mouse inputs for use in the game.
+Singleton class responsible for capturing keyboard and mouse inputs for use in the game.
 
 Input exports static constants which map to
 Java's [KeyEvent](https://docs.oracle.com/javase/8/docs/api/java/awt/event/KeyEvent.html) constants so they can be used
