@@ -16,7 +16,7 @@ import java.util.List;
  */
 @SuppressWarnings("BusyWait")
 public abstract class Application {
-  public static final long FRAME_TIME = 1000 / 60;
+  public static final long FRAME_TIME = 1000 / 90;
   private static final Logger LOGGER = LogManager.getLogger();
   private static Application instance;
 
@@ -26,7 +26,6 @@ public abstract class Application {
   private final List<FrameEndTask> frameEndTasks;
 
   private Window window;
-  private Renderer renderer;
   private boolean isRunning;
   private Scene activeScene;
   private Scene nextScene;
@@ -64,8 +63,8 @@ public abstract class Application {
   }
 
   public void quit() {
-    window.dispatchEvent(
-      new WindowEvent(window, WindowEvent.WINDOW_CLOSING)
+    window.frame.dispatchEvent(
+      new WindowEvent(window.frame, WindowEvent.WINDOW_CLOSING)
     );
   }
 
@@ -91,7 +90,7 @@ public abstract class Application {
 
         onRender();
         onFrameEnd();
-        Thread.sleep(Math.max(frameTimeAccumulator, 1));
+        Thread.sleep(Math.max(frameTimeAccumulator, 5));
       }
 
       onDispose();
@@ -105,11 +104,10 @@ public abstract class Application {
   private void onSetup() {
     LOGGER.debug("Initializing application");
 
-    window = new Window(title, screenWidth, screenHeight);
-    renderer = new Renderer(window.screenGraphics);
+    window = new Window(title);
 
-    window.addKeyListener(Input.INSTANCE);
-    window.addWindowListener(new WindowAdapter() {
+    window.frame.addKeyListener(Input.INSTANCE);
+    window.frame.addWindowListener(new WindowAdapter() {
       @Override
       public void windowClosing(WindowEvent e) {
         super.windowClosing(e);
@@ -118,8 +116,7 @@ public abstract class Application {
       }
     });
 
-    window.setLocationRelativeTo(null);
-    window.setVisible(true);
+    window.frame.setVisible(true);
   }
 
   private void onUpdate() {
@@ -130,11 +127,11 @@ public abstract class Application {
 
   private void onRender() {
     if (activeScene != null) {
-      window.screenGraphics.setTransform(activeScene.getCamera().getTransform());
+      Camera.getInstance().update();
       activeScene.onRender();
     }
 
-    window.refresh();
+    window.redraw();
   }
 
   private void onFrameEnd() {
@@ -158,7 +155,7 @@ public abstract class Application {
       activeScene.onStart();
       nextScene = null;
 
-      renderer.restoreInitialState();
+      window.createRenderLayers();
       Scene.setActive(activeScene);
     }
   }

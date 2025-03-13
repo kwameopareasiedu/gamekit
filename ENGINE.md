@@ -24,15 +24,31 @@ You can override `Application.onDispose()` to perform any cleanup before the app
 ## Window
 
 This is the [JFrame](https://docs.oracle.com/javase/8/docs/api/javax/swing/JFrame.html) window which displays the
-application. It's width and height are initialized to the `screenWidth` and `screenHeight` passed to the `Application`
-instance.
+application.
 
-The `Window` uses a double buffering approach for rendering. Scene draw calls affect the draw buffer after which the
-draw buffer is copied to the window's render buffer. This double buffer approach eliminates screen tearing issues.
+In screen space, the origin (I.e. (0,0)) is at the top-left of the screen, +x is to the right of the screen and +y is to
+the bottom of the screen. This doesn't translate to world/scene space which uses a cartesian coordinate system where the
+origin is at the center of the screen, +x is to the right and +y is upwards.
 
-Application handles the `Window` object internally and exposes
-its [Graphics2D](https://docs.oracle.com/javase/8/docs/api/java/awt/Graphics2D.html) object to the current scene to draw
-onto.
+![](./docs/assets/screen-space-vs-world-space.png)
+
+To allow for both world/scene space and screen space rendering, `Window` provides
+two [BufferedImage](https://docs.oracle.com/javase/8/docs/api/java/awt/image/BufferedImage.html)
+objects; one for rendering scene elements the other for rendering screen elements.
+
+At the end of `Application.onRender()`, the window is redrawn with the content of the scene layer and text layer.
+
+| Method                               | Description                               |
+|--------------------------------------|-------------------------------------------|
+| `public static Window getInstance()` | Get the current instance of the window    |
+| `public int getWidth()`              | Get the width of the window               |
+| `public int getHeight()`             | Get the height of the window              |
+| `public int getCenterX()`            | Get the x-coordinate of the window center |
+| `public int getCenterY()`            | Get the y-coordinate of the window center |
+
+## Renderer
+
+## Camera
 
 ## Input
 

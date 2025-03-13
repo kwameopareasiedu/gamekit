@@ -2,55 +2,59 @@ package dev.gamekit.core;
 
 import java.awt.*;
 
-import static dev.gamekit.utils.MathUtils.toInt;
-
 /** Renderer exposes methods which the draw anything on the game window */
-public class Renderer {
-  private static Renderer instance;
+public final class Renderer {
+  private static final Color TRANSPARENT = new Color(0x00000000, true);
+  private static final GraphicsState SAVED_STATE = new GraphicsState();
+  private static final GraphicsState CURRENT_STATE = new GraphicsState();
 
-  private final Graphics2D g;
-  private final GraphicsState initialState;
-  private final GraphicsState currentState;
+  private static Graphics2D g;
 
-  Renderer(Graphics2D g) {
-    this.g = g;
-    initialState = new GraphicsState();
-    currentState = new GraphicsState();
+  private Renderer() { }
 
-    initialState.save(g);
-    Renderer.instance = this;
-  }
+  public static void setBackground(Color color) { CURRENT_STATE.bgColor = color; }
 
-  public static void clearState() { instance.currentState.reset(); }
+  public static void setStroke(Stroke stroke) { CURRENT_STATE.stroke = stroke; }
 
-  public static void setBackground(Color color) { instance.currentState.bgColor = color; }
+  public static void setPaint(Paint paint) { CURRENT_STATE.paint = paint; }
 
-  public static void setStroke(Stroke stroke) { instance.currentState.stroke = stroke; }
+  public static void setColor(Color color) { CURRENT_STATE.color = color; }
 
-  public static void setPaint(Paint paint) { instance.currentState.paint = paint; }
+  public static void setFont(Font font) { CURRENT_STATE.font = font; }
 
-  public static void setColor(Color color) { instance.currentState.color = color; }
+  public static void beginGroup() { CURRENT_STATE.beginGroup(); }
 
-  public static void setFont(Font font) { instance.currentState.font = font; }
+  public static void endGroup() { CURRENT_STATE.endGroup(); }
 
-  public static void clear(int x, int y, int width, int height) {
-    instance.applyCurrentState();
-    instance.g.fillRect(x, y, width, height);
-    instance.restoreInitialState();
+  public static void clear() {
+    updateGraphicsObject();
+    int x = 0, y = 0, w = Window.getInstance().getWidth(), h = Window.getInstance().getHeight();
+    var pt = Camera.getInstance().transformPoint(x, y);
+    g.fillRect(-pt.x, -pt.y, w, h);
+    //    g.fillRect(x, y, w, h);
+    resetGraphicsObject();
   }
 
   public static void line(int x1, int y1, int x2, int y2) {
-    instance.applyCurrentState();
-    instance.g.drawLine(x1, y1, x2, y2);
-    instance.restoreInitialState();
+    updateGraphicsObject();
+    g.drawLine(x1, -y1, x2, -y2);
+    resetGraphicsObject();
+  }
+
+  public static void lineV(int x, int y1, int y2) {
+    line(x, y1, x, y2);
+  }
+
+  public static void lineH(int x1, int y, int x2) {
+    line(x1, y, x2, y);
   }
 
   public static void rect(int x, int y, int width, int height, boolean fill) {
-    instance.applyCurrentState();
-    int x0 = x - toInt(0.5 * width), y0 = y - toInt(0.5 * height);
-    if (fill) instance.g.fillRect(x0, y0, width, height);
-    instance.g.drawRect(x0, y0, width, height);
-    instance.restoreInitialState();
+    updateGraphicsObject();
+    int x0 = x - width / 2, y0 = y + height / 2;
+    if (fill) g.fillRect(x0, -y0, width, height);
+    else g.drawRect(x0, -y0, width, height);
+    resetGraphicsObject();
   }
 
   public static void rect(int x1, int y1, int width, int height) {
@@ -58,49 +62,97 @@ public class Renderer {
   }
 
   public static void roundRect(int x, int y, int width, int height, int arcWidth, int arcHeight, boolean fill) {
-    instance.applyCurrentState();
-    int x0 = x - toInt(0.5 * width), y0 = y - toInt(0.5 * height);
-    if (fill) instance.g.fillRoundRect(x0, y0, width, height, arcWidth, arcHeight);
-    instance.g.drawRoundRect(x0, y0, width, height, arcWidth, arcHeight);
-    instance.restoreInitialState();
+    updateGraphicsObject();
+    int x0 = x - width / 2, y0 = y + height / 2;
+    if (fill) g.fillRoundRect(x0, -y0, width, height, arcWidth, arcHeight);
+    else g.drawRoundRect(x0, -y0, width, height, arcWidth, arcHeight);
+    resetGraphicsObject();
   }
 
   public static void roundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) {
     roundRect(x, y, width, height, arcWidth, arcHeight, false);
   }
 
-  void applyCurrentState() {
-    if (currentState.stroke == null)
-      currentState.stroke = initialState.stroke;
-    currentState.apply(g);
+  public static void oval(int x, int y, int width, int height, boolean fill) {
+    updateGraphicsObject();
+    int x0 = x - width / 2, y0 = y + height / 2;
+    if (fill) g.fillOval(x0, -y0, width, height);
+    else g.drawOval(x0, -y0, width, height);
+    resetGraphicsObject();
   }
 
-  void restoreInitialState() { initialState.apply(g); }
+  public static void oval(int x, int y, int width, int height) {
+    oval(x, y, width, height, false);
+  }
+
+  public static void circle(int x, int y, int radius, boolean fill) {
+    int diameter = 2 * radius;
+    oval(x, y, diameter, diameter, fill);
+  }
+
+  public static void circle(int x, int y, int radius) {
+    circle(x, y, radius, false);
+  }
+
+  //  public static void text(Object text, int x, int y) {
+  //    if (text == null) return;
+  //
+  //    //    INSTANCE.updateGraphicsObject();
+  //    //    INSTANCE.g.drawString(text.toString(), x, -y);
+  //    //    INSTANCE.resetGraphicsObject();
+  //  }
+
+  private static void updateGraphicsObject() {
+    g = Window.getInstance().getSceneGraphics();
+    SAVED_STATE.copyFrom(g);
+    CURRENT_STATE.applyTo(g);
+  }
+
+  private static void resetGraphicsObject() {
+    SAVED_STATE.applyTo(g);
+    CURRENT_STATE.reset();
+    SAVED_STATE.reset();
+  }
 
   private static class GraphicsState {
+    private static final Stroke DEFAULT_STROKE = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+
+    boolean preserve;
     Color bgColor;
     Stroke stroke;
     Paint paint;
     Color color;
     Font font;
 
-    private void save(Graphics2D g) {
-      this.bgColor = g.getBackground();
-      this.stroke = g.getStroke();
-      this.paint = g.getPaint();
-      this.color = g.getColor();
-      this.font = g.getFont();
+    private void beginGroup() {
+      reset();
+      preserve = true;
     }
 
-    private void apply(Graphics2D g) {
-      g.setBackground(this.bgColor);
-      g.setStroke(this.stroke);
-      g.setPaint(this.paint);
-      g.setColor(this.color);
-      g.setFont(this.font);
+    private void endGroup() {
+      reset();
+      preserve = false;
+    }
+
+    private void copyFrom(Graphics2D g) {
+      bgColor = g.getBackground();
+      stroke = g.getStroke();
+      paint = g.getPaint();
+      color = g.getColor();
+      font = g.getFont();
+    }
+
+    private void applyTo(Graphics2D g) {
+      g.setBackground(bgColor);
+      g.setStroke(stroke != null ? stroke : DEFAULT_STROKE);
+      g.setPaint(paint);
+      g.setColor(color);
+      g.setFont(font);
     }
 
     private void reset() {
+      if (preserve) return;
+
       bgColor = null;
       stroke = null;
       paint = null;

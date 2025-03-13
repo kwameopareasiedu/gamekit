@@ -4,7 +4,6 @@ import dev.gamekit.core.Application;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.awt.geom.AffineTransform;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,14 +16,11 @@ public abstract class Scene {
   private static Scene active;
 
   protected final String name;
-  protected final Camera camera;
 
   private final Map<Integer, Prop> props;
-  private AffineTransform graphicsTransform;
 
   public Scene(String name) {
     this.name = name;
-    camera = new Camera();
     props = new HashMap<>();
   }
 
@@ -33,8 +29,6 @@ public abstract class Scene {
   public static void setActive(Scene scene) { active = scene; }
 
   public String getName() { return name; }
-
-  public Camera getCamera() { return camera; }
 
   public void addChild(Prop prop) {
     LOGGER.debug("Adding child: [{} - {}]", prop.internalId, prop.name);
