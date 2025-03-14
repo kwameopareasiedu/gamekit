@@ -6,7 +6,7 @@
   <parent>
     <groupId>dev.gamekit</groupId>
     <artifactId>gamekit</artifactId>
-    <version>0.1.0-TEST-1</version>
+    <version>${revision}</version>
   </parent>
 
   <artifactId>samples</artifactId>

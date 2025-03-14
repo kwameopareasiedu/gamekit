@@ -6,7 +6,7 @@
 
   <groupId>dev.gamekit</groupId>
   <artifactId>gamekit</artifactId>
-  <version>0.1.0-TEST-1</version>
+  <version>${revision}</version>
   <packaging>pom</packaging>
 
   <name>GameKit</name>
@@ -21,6 +21,7 @@
     <maven.compiler.source>18</maven.compiler.source>
     <maven.compiler.target>18</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <revision>0.1.0-TEST-2</revision>
   </properties>
 
   <distributionManagement>
