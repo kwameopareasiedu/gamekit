@@ -6,7 +6,7 @@
 
   <groupId>dev.gamekit</groupId>
   <artifactId>gamekit</artifactId>
-  <version>0.1.0</version>
+  <version>0.1.0-TEST-1</version>
   <packaging>pom</packaging>
 
   <name>GameKit</name>
@@ -41,5 +41,15 @@
         </plugin>
       </plugins>
     </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 </project>
