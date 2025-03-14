@@ -4,7 +4,6 @@ on:
   release:
     types:
       - created
-      - edited
 
 jobs:
   publish:
@@ -19,6 +18,6 @@ jobs:
           java-version: 18
           distribution: temurin
       - name: Publish package
-        run: mvn deploy --batch-mode -pl engine
+        run: mvn --batch-mode deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
