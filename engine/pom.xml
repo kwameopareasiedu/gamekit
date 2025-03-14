@@ -39,12 +39,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <distributionManagement>
-    <repository>
-      <id>github</id>
-      <name>Github Packages</name>
-      <url>https://maven.pkg.github.com/kwameopareasiedu/gamekit-engine</url>
-    </repository>
-  </distributionManagement>
 </project>

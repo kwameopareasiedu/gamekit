@@ -22,4 +22,24 @@
     <maven.compiler.target>18</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>Github Packages</name>
+      <url>https://maven.pkg.github.com/kwameopareasiedu/gamekit-engine</url>
+    </repository>
+  </distributionManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>3.1.4</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 </project>
