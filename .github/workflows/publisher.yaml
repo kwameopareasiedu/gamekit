@@ -18,6 +18,6 @@ jobs:
           java-version: 18
           distribution: temurin
       - name: Publish package
-        run: mvn --batch-mode deploy
+        run: mvn deploy --batch-mode -pl engine
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
