@@ -5,8 +5,10 @@ import java.awt.event.KeyEvent;
 import java.util.stream.IntStream;
 
 /**
- * GameKit's static input class. Input can be used to detect press and release
- * events of keys with ASCII codes from 0 to 255.
+ * Singleton class responsible for capturing keyboard and mouse inputs for use in the application.
+ * <p>
+ * Input includes static constants which map to Java's {@link KeyEvent} constants
+ * so they can be used interchangeably.
  */
 public final class Input extends KeyAdapter {
   public static final int KEY_ENTER = KeyEvent.VK_ENTER;
@@ -213,14 +215,26 @@ public final class Input extends KeyAdapter {
     );
   }
 
+  /**
+   * Check if a key is being held down in the current frame
+   * @param keyCode The ASCII key code of the key to check
+   */
   public synchronized static boolean isKeyPressed(int keyCode) {
     return INSTANCE.states[keyCode].isPressed;
   }
 
+  /**
+   * Check if a key just pressed in the current frame
+   * @param keyCode The ASCII key code of the key to check
+   */
   public synchronized static boolean isKeyJustPressed(int keyCode) {
     return INSTANCE.states[keyCode].isJustPressed;
   }
 
+  /**
+   * Check if a key just released in the current frame
+   * @param keyCode The ASCII key code of the key to check
+   */
   public synchronized static boolean isKeyJustReleased(int keyCode) {
     return INSTANCE.states[keyCode].isJustReleased;
   }

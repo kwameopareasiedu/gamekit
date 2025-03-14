@@ -11,8 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * GameKit's abstract launcher class which runs a game at 60 frames per second.
- * A game or application must extend this class and call the {@code run()} method.
+ * Application is the heart of a GameKit program.
+ * <p>
+ * A game or application must extend this class to do anything with the engine.
  */
 @SuppressWarnings("BusyWait")
 public abstract class Application {
@@ -28,6 +29,7 @@ public abstract class Application {
   private Scene activeScene;
   private Scene nextScene;
 
+  /** Creates an application with a title */
   public Application(String title) {
     LOGGER.debug("Created application \"{}\"", title);
 
@@ -38,8 +40,16 @@ public abstract class Application {
     Application.instance = this;
   }
 
+  /**
+   * Returns the current instance of the application
+   * @return The current application instance
+   */
   public static Application getInstance() { return instance; }
 
+  /**
+   * Queues a scene to be loaded after the end of the current frame
+   * @param scene {@link Scene} Scene to load
+   */
   public void loadScene(Scene scene) {
     if (scene == null) {
       LOGGER.fatal("Load scene called with a null scene");
@@ -50,16 +60,22 @@ public abstract class Application {
     this.nextScene = scene;
   }
 
+  /**
+   * Schedule a one-off task to be executed at the end of the current frame
+   * @param task {@link FrameEndTask} Task to execute
+   */
   public void runOnFrameEnd(FrameEndTask task) {
     frameEndTasks.add(task);
   }
 
+  /** Quit the current {@link Application} by dispatching a {@code WINDOW_CLOSING} event to its window */
   public void quit() {
     window.frame.dispatchEvent(
       new WindowEvent(window.frame, WindowEvent.WINDOW_CLOSING)
     );
   }
 
+  /** Begin the game loop of this application */
   public void run() {
     try {
       onSetup();
@@ -152,6 +168,7 @@ public abstract class Application {
     }
   }
 
+  /** Runs cleanup code before exiting the application */
   protected void onDispose() {
     LOGGER.debug("Disposing application");
 

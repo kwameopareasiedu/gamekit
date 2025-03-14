@@ -7,10 +7,9 @@ import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 
 /**
- * GameKit's window class in which the game is rendered.
+ * Singleton class which manages the {@link JFrame} the application is rendered in.
  * <p>
- * Window uses double buffering with two {@link BufferedImage} objects.
- * One to draw the world state and another for world text rendering.
+ * Window uses a double buffering rendering approach to avoid screen tearing.
  */
 public final class Window {
   private static final int MIN_WIDTH = 640;
@@ -59,14 +58,34 @@ public final class Window {
     Window.instance = this;
   }
 
+  /**
+   * Returns the current instance of the window
+   * @return The current window instance
+   */
   public static Window getInstance() { return instance; }
 
+  /**
+   * Returns the width of the window
+   * @return The width of the window
+   */
   public int getWidth() { return width; }
 
+  /**
+   * Returns the height of the window
+   * @return The height of the window
+   */
   public int getHeight() { return height; }
 
+  /**
+   * Returns the x component of the center point of the window
+   * @return The x component of the center point of the window
+   */
   public int getCenterX() { return centerX; }
 
+  /**
+   * Returns the y component of the center point of the window
+   * @return The y component of the center point of the window
+   */
   public int getCenterY() { return centerY; }
 
   Graphics2D getSceneGraphics() { return sceneGraphics; }
