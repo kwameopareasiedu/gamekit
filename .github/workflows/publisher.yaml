@@ -21,7 +21,6 @@ jobs:
         with:
           java-version: 18
           distribution: temurin
-      - run: cd engine
       - name: Publish package
         run: mvn --batch-mode deploy
         env:
