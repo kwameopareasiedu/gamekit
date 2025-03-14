@@ -1,9 +1,13 @@
 name: Github Action Publisher
 
+#on:
+#  release:
+#    types:
+#      - created
 on:
-  release:
-    types:
-      - created
+  push:
+    branches:
+      - master
 
 jobs:
   publish:
