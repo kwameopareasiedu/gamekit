@@ -11,13 +11,40 @@ small games.
 
 Read the full engine documentation [here](./ENGINE.md).
 
-[//]: # (## Installation)
+## Installation
 
-[//]: # ()
+Gamekit is distributed as a Maven dependency on Github packages. To include in your project add its dependency to your `pom.xml`
 
-[//]: # (To use GameKit, include it as a dependency:)
+```xml
 
-[//]: # (Include dependency syntax after publishing)
+<project>
+  <!-- Project config -->
+
+  <repositories>
+    <!-- Other repositories -->
+    <repository>
+      <id>github</id>
+      <name>Github Packages</name>
+      <url>
+        https://kwameopareasiedu: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@maven.pkg.github.com/kwameopareasiedu/gamekit
+      </url>
+    </repository>
+  </repositories>
+
+  <dependencies>
+    <!-- Other dependencies -->
+    <dependency>
+      <groupId>dev.gamekit</groupId>
+      <artifactId>engine</artifactId>
+
+      <!--Replace VERSION with the desired version number -->
+      <version>VERSION</version>
+    </dependency>
+  </dependencies>
+</project>
+```
+
+Then sync your project in your IDE or run `mvn install` in the terminal.
 
 ## Getting Started
 
