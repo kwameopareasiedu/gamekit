@@ -1,4 +1,4 @@
-name: Github Action Publisher
+name: Github Maven Publisher
 
 on:
   release:
@@ -10,14 +10,23 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: kwameopareasiedu/gamekit-maven
+          ref: master
+          path: ./engine/target/mvn
+          token: ${{ secrets.GAMEKIT_MAVEN_PAT }}
       - uses: actions/setup-java@v4
         with:
           java-version: 18
           distribution: temurin
-      - name: Publish package
-        run: mvn --batch-mode deploy
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: mvn --batch-mode deploy
+      - run: |
+          git config user.name publisher
+          git config user.email publisher@gamekit.dev
+          git add -A
+          git commit -m "Published new version"
+          git push origin master
+        working-directory: ./engine/target/mvn
