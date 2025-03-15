@@ -14,7 +14,7 @@
 
   <modules>
     <module>engine</module>
-    <module>samples</module>
+    <module>testing</module>
   </modules>
 
   <properties>

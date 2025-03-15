@@ -1,5 +1,6 @@
 package dev.gamekit.core;
 
+import dev.gamekit.animation.Animation;
 import dev.gamekit.interfaces.FrameEndTask;
 import dev.gamekit.scene.Scene;
 import org.apache.logging.log4j.LogManager;
@@ -23,6 +24,7 @@ public abstract class Application {
 
   private final String title;
   private final List<FrameEndTask> frameEndTasks;
+  private final List<Animation> animations;
 
   private Window window;
   private boolean isRunning;
@@ -35,6 +37,7 @@ public abstract class Application {
 
     this.title = title;
     frameEndTasks = new ArrayList<>();
+    animations = new ArrayList<>();
     isRunning = true;
 
     Application.instance = this;
@@ -64,8 +67,21 @@ public abstract class Application {
    * Schedule a one-off task to be executed at the end of the current frame
    * @param task {@link FrameEndTask} Task to execute
    */
-  public void runOnFrameEnd(FrameEndTask task) {
-    frameEndTasks.add(task);
+  public void scheduleFrameEndTask(FrameEndTask task) {
+    if (!frameEndTasks.contains(task)) {
+      frameEndTasks.add(task);
+    }
+  }
+
+  /**
+   * Adds an animation to the application. Animation are updated before the scene's
+   * {@code onUpdate()} to ensure current values are used by the scene.
+   * @param animation {@link Animation} The animation to add
+   */
+  public void addAnimation(Animation animation) {
+    if (!animations.contains(animation)) {
+      animations.add(animation);
+    }
   }
 
   /** Quit the current {@link Application} by dispatching a {@code WINDOW_CLOSING} event to its window */
@@ -128,6 +144,11 @@ public abstract class Application {
   }
 
   private void onUpdate() {
+    if (!animations.isEmpty()) {
+      for (var action : animations)
+        action.update();
+    }
+
     if (activeScene != null) {
       activeScene.onUpdate();
     }
@@ -144,14 +165,21 @@ public abstract class Application {
 
   private void onFrameEnd() {
     if (!frameEndTasks.isEmpty()) {
-      for (var action : frameEndTasks) {
+      for (var action : frameEndTasks)
         action.run();
-      }
 
       frameEndTasks.clear();
     }
 
+    if (!animations.isEmpty()) {
+      animations.removeIf(animation ->
+        animation.getState() == Animation.State.ENDED
+      );
+    }
+
     if (nextScene != null) {
+      animations.clear();
+
       if (activeScene != null) {
         activeScene.onDispose();
         LOGGER.debug("Switching scene: {} -> {}", activeScene.getName(), nextScene.getName());
