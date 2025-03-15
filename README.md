@@ -13,7 +13,8 @@ Read the full engine documentation [here](./ENGINE.md).
 
 ## Installation
 
-Gamekit is distributed as a Maven dependency on Github packages. To include in your project add its dependency to your `pom.xml`
+Gamekit is distributed as a Maven dependency on Github packages. To include in your project add its dependency to your
+`pom.xml`
 
 ```xml
 
@@ -22,21 +23,20 @@ Gamekit is distributed as a Maven dependency on Github packages. To include in y
 
   <repositories>
     <!-- Other repositories -->
+
     <repository>
-      <id>github</id>
-      <name>Github Packages</name>
-      <url>
-        https://kwameopareasiedu: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@maven.pkg.github.com/kwameopareasiedu/gamekit
-      </url>
+      <id>github-maven</id>
+      <name>Gamekit Github Maven</name>
+      <url>https://raw.github.com/kwameopareasiedu/gamekit-maven/master</url>
     </repository>
   </repositories>
 
   <dependencies>
     <!-- Other dependencies -->
+
     <dependency>
       <groupId>dev.gamekit</groupId>
       <artifactId>engine</artifactId>
-
       <!--Replace VERSION with the desired version number -->
       <version>VERSION</version>
     </dependency>
@@ -83,7 +83,7 @@ public class BasicGame extends Scene {
   public void onUpdate() {
     super.onUpdate();
 
-    isPressed = Input.isKeyPressed(Input.KEY_SPACE);
+    isPressed = Input.isKeyJustPressed(Input.KEY_SPACE);
   }
 
   @Override
@@ -104,24 +104,6 @@ After running the main method, you should see your window similar to this:
 
 <img src="docs/assets/simple-game.png" width="404">
 
-[//]: # (## Samples)
-
-[//]: # ()
-
-[//]: # (The project uses a multi-module maven architecture. There's an included `samples` module containing small games built)
-
-[//]: # (with the engine.)
-
-[//]: # ()
-
-[//]: # (These include:)
-
-[//]: # ()
-
-[//]: # (1. Basic game)
-
-[//]: # (2. Tetris &#40;No audio&#41;)
-
 ## Contributors
 
-1. [Kwame Opare Asiedu](https://github.com/kwameopareasiedu)
+- [Kwame Opare Asiedu](https://github.com/kwameopareasiedu)
