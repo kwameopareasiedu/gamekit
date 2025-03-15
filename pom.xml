@@ -25,9 +25,9 @@
 
   <distributionManagement>
     <repository>
-      <id>github</id>
-      <name>Github Packages</name>
-      <url>https://maven.pkg.github.com/kwameopareasiedu/gamekit</url>
+      <id>github-maven</id>
+      <name>Github Maven</name>
+      <url>file://${project.build.directory}/mvn</url>
     </repository>
   </distributionManagement>
 
