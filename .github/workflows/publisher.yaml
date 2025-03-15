@@ -1,13 +1,9 @@
 name: Github Maven Publisher
 
-#on:
-#  release:
-#    types:
-#      - created
 on:
-  push:
-    branches:
-      - deploy-setup
+  release:
+    types:
+      - created
 
 jobs:
   publish:
