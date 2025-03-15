@@ -7,6 +7,7 @@ import dev.gamekit.core.Renderer;
 import dev.gamekit.scene.Scene;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 import static dev.gamekit.utils.MathUtils.clamp;
 
@@ -14,6 +15,7 @@ public class CalibrationTest extends Scene {
   private static final int WORLD_WIDTH = 2400;
   private static final int WORLD_HEIGHT = 1400;
   private static final Font LEXEND_FONT = IO.loadFont("lexend-regular.ttf").deriveFont(12f);
+  private static final BufferedImage SPRITE = IO.loadImage("zainar.png");
 
   private double time;
 
@@ -31,12 +33,13 @@ public class CalibrationTest extends Scene {
   public void onUpdate() {
     super.onUpdate();
 
-    time += 0.025;
-    double x = 50 * Math.sin(time);
-    double y = 50 * Math.cos(time);
-    Camera.getInstance().lookAt(x, y);
-    Camera.getInstance().setZoom(clamp(1 + Math.sin(time), 1, 2));
+//    time += 0.025;
+//    double x = 50 * Math.sin(time);
+//    double y = 50 * Math.cos(time);
+//    Camera.getInstance().lookAt(x, y);
+//    Camera.getInstance().setZoom(clamp(1 + Math.sin(time), 1, 2));
     //    Camera.getInstance().lookAt(-200, -100);
+        Camera.getInstance().setZoom(2.5);
   }
 
   @Override
@@ -93,5 +96,9 @@ public class CalibrationTest extends Scene {
       //      Renderer.text(i, 0, i);
       //      Renderer.endGroup();
     }
+
+    Renderer.setColor(Color.MAGENTA);
+    Renderer.drawRect(0, 0, 10, 10);
+    Renderer.drawImage(SPRITE, -100, -100, 10, 10);
   }
 }

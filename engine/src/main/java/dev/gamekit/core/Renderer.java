@@ -1,6 +1,7 @@
 package dev.gamekit.core;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /** Static class containing all supported draw calls of the engine. */
 public final class Renderer {
@@ -184,6 +185,23 @@ public final class Renderer {
   public static void drawCircle(int x, int y, int radius) {
     int diameter = 2 * radius;
     oval(x, y, diameter, diameter, false);
+  }
+
+  /**
+   * Draws a center-origin {@link BufferedImage} at (x, y).
+   * The image is scaled down to fit within the bounds of the origin and dimensions
+   * @param img    The image to draw
+   * @param x      The x-coordinate of the circle
+   * @param y      The y-coordinate of the circle
+   * @param width  The screen width of the image
+   * @param height The screen height of the image
+   */
+  public static void drawImage(BufferedImage img, int x, int y, int width, int height) {
+    updateGraphicsObject();
+    int x0 = x - width / 2, y0 = y + height / 2;
+    int x1 = x0 + width, y1 = y0 - height;
+    g.drawImage(img, x0, -y0, x1, -y1, 0, 0, img.getWidth(), img.getHeight(), null);
+    resetGraphicsObject();
   }
 
   private static void oval(int x, int y, int width, int height, boolean fill) {
