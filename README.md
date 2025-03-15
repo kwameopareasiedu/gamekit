@@ -26,7 +26,7 @@ Gamekit is distributed as a Maven dependency on Github packages. To include in y
       <id>github</id>
       <name>Github Packages</name>
       <url>
-        https://kwameopareasiedu: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@maven.pkg.github.com/kwameopareasiedu/gamekit
+        https://kwameopareasiedu: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@maven.pkg.github.com/kwameopareasiedu/gamekit
       </url>
     </repository>
   </repositories>
