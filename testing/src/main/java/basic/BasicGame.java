@@ -20,6 +20,7 @@ public class BasicGame extends Scene {
     Window.getInstance().setSize(1280, 720);
     Window.getInstance().maximize();
 
+    game.scheduleTimerTask(5000, () -> Application.getInstance().quit());
     game.loadScene(new BasicGame());
     game.run();
   }

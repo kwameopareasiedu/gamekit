@@ -1,8 +1,9 @@
 package dev.gamekit.core;
 
 import dev.gamekit.animation.Animation;
-import dev.gamekit.interfaces.FrameEndTask;
+import dev.gamekit.interfaces.Task;
 import dev.gamekit.scene.Scene;
+import dev.gamekit.utils.Timeout;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,7 +23,8 @@ public abstract class Application {
   private static final Logger LOGGER = LogManager.getLogger();
   private static Application instance;
 
-  private final List<FrameEndTask> frameEndTasks;
+  private final List<Task> frameEndTasks;
+  private final List<Timeout> timeouts;
   private final List<Animation> animations;
   private final Window window;
   private boolean isRunning;
@@ -35,6 +37,7 @@ public abstract class Application {
 
     window = new Window(title);
     frameEndTasks = new ArrayList<>();
+    timeouts = new ArrayList<>();
     animations = new ArrayList<>();
     isRunning = true;
 
@@ -63,16 +66,25 @@ public abstract class Application {
 
   /**
    * Schedule a one-off task to be executed at the end of the current frame
-   * @param task {@link FrameEndTask} Task to execute
+   * @param task {@link Task} Task to execute
    */
-  public void scheduleFrameEndTask(FrameEndTask task) {
+  public void scheduleFrameEndTask(Task task) {
     if (!frameEndTasks.contains(task)) {
       frameEndTasks.add(task);
     }
   }
 
   /**
-   * Adds an animation to the application. Animation are updated before the scene's
+   * Schedule a task to be executed after some time
+   * @param timeout Timeout of this task in milliseconds
+   * @param task    Task to execute
+   */
+  public void scheduleTimerTask(long timeout, Task task) {
+    timeouts.add(new Timeout(timeout, task));
+  }
+
+  /**
+   * Schedule an animation to the application. Animation are updated before the scene's
    * {@code onUpdate()} to ensure current values are used by the scene.
    * @param animation {@link Animation} The animation to add
    */
@@ -141,8 +153,13 @@ public abstract class Application {
 
   private void onUpdate() {
     if (!animations.isEmpty()) {
-      for (var action : animations)
-        action.update();
+      for (var anim : animations)
+        anim.update();
+    }
+
+    if (!timeouts.isEmpty()) {
+      for (var timeout : timeouts)
+        timeout.update();
     }
 
     if (activeScene != null) {
@@ -171,6 +188,10 @@ public abstract class Application {
       animations.removeIf(animation ->
         animation.getState() == Animation.State.ENDED
       );
+    }
+
+    if (!timeouts.isEmpty()) {
+      timeouts.removeIf(Timeout::isCompleted);
     }
 
     if (nextScene != null) {

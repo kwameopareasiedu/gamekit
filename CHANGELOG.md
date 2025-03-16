@@ -11,6 +11,8 @@
 - Added `void setSize(int width, int height)` to `Window` class which resizes the current instance frame to the new
   width and height.
 - Added `void maximize()` to `Window` class which maximizes the current instance frame.
+- Added `void scheduleTimerTask(long timeout, Task task)` to `Application` which schedules a task to be run after the
+  timeout has elapsed
 
 ### Changed
 
