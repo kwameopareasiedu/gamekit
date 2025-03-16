@@ -22,11 +22,9 @@ public abstract class Application {
   private static final Logger LOGGER = LogManager.getLogger();
   private static Application instance;
 
-  private final String title;
   private final List<FrameEndTask> frameEndTasks;
   private final List<Animation> animations;
-
-  private Window window;
+  private final Window window;
   private boolean isRunning;
   private Scene activeScene;
   private Scene nextScene;
@@ -35,7 +33,7 @@ public abstract class Application {
   public Application(String title) {
     LOGGER.debug("Created application \"{}\"", title);
 
-    this.title = title;
+    window = new Window(title);
     frameEndTasks = new ArrayList<>();
     animations = new ArrayList<>();
     isRunning = true;
@@ -78,7 +76,7 @@ public abstract class Application {
    * {@code onUpdate()} to ensure current values are used by the scene.
    * @param animation {@link Animation} The animation to add
    */
-  public void addAnimation(Animation animation) {
+  public void scheduleAnimation(Animation animation) {
     if (!animations.contains(animation)) {
       animations.add(animation);
     }
@@ -127,8 +125,6 @@ public abstract class Application {
 
   private void onSetup() {
     LOGGER.debug("Initializing application");
-
-    window = new Window(title);
 
     window.frame.addKeyListener(Input.INSTANCE);
     window.frame.addWindowListener(new WindowAdapter() {

@@ -35,7 +35,6 @@ public final class Window {
     frame = new JFrame(title);
     frame.setMinimumSize(new Dimension(MIN_WIDTH, MIN_HEIGHT));
     frame.setPreferredSize(new Dimension(width, height));
-    // frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
     frame.setLocationRelativeTo(null);
     frame.setTitle(title);
     frame.pack();
@@ -87,6 +86,26 @@ public final class Window {
    * @return The y component of the center point of the window
    */
   public int getCenterY() { return centerY; }
+
+  /**
+   * Sets the size of the window. If the width or height is less than the minimum size,
+   * the minimum width and/or height is used.
+   * @param width  The new width of the window
+   * @param height The new height of the window
+   */
+  public void setSize(int width, int height) {
+    this.width = Math.max(width, MIN_WIDTH);
+    this.height = Math.max(height, MIN_HEIGHT);
+    Dimension d = new Dimension(this.width, this.height);
+    frame.setPreferredSize(d);
+    frame.setSize(d);
+    frame.setLocationRelativeTo(null);
+  }
+
+  /** Maximizes the window */
+  public void maximize() {
+    frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+  }
 
   Graphics2D getSceneGraphics() { return sceneGraphics; }
 

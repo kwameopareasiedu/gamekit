@@ -107,3 +107,7 @@ After running the main method, you should see your window similar to this:
 ## Contributors
 
 - [Kwame Opare Asiedu](https://github.com/kwameopareasiedu)
+
+## Changelog
+
+View the full changelog [here](./CHANGELOG.md).

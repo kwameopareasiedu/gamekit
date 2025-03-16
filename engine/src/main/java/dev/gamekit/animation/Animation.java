@@ -66,7 +66,7 @@ public class Animation {
   public void start() {
     if (state == State.IDLE) {
       state = State.RUNNING;
-      Application.getInstance().addAnimation(this);
+      Application.getInstance().scheduleAnimation(this);
     }
   }
 

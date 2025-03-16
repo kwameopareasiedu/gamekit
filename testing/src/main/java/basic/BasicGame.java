@@ -3,6 +3,7 @@ package basic;
 import dev.gamekit.core.Application;
 import dev.gamekit.core.Input;
 import dev.gamekit.core.Renderer;
+import dev.gamekit.core.Window;
 import dev.gamekit.scene.Scene;
 
 import java.awt.*;
@@ -15,11 +16,11 @@ public class BasicGame extends Scene {
   }
 
   public static void main(String[] args) {
-    // Create a new game application
     Application game = new Application("Simple Game") { };
-    // Load an instance of our Scene class
+    Window.getInstance().setSize(1280, 720);
+    Window.getInstance().maximize();
+
     game.loadScene(new BasicGame());
-    // Run the game application
     game.run();
   }
 
