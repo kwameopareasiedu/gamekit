@@ -2,9 +2,20 @@
 
 ## UNRELEASED
 
-- Add JavaDoc comments to all methods
+## v0.2.1-SNAPSHOT
+
+### Added
+
+- Added Javadoc comments to engine classes and methods
 - Add `void stop()` method to `Animation` class
-- Deprecated `AnimationCurves`. Moved all static constants to `AnimationCurve`
+
+### Changed
+
+- Copied all static constants of `AnimationCurves` to `AnimationCurve`
+
+### Deprecated
+
+- Deprecated `AnimationCurves` and its static constants for removal in next minor update
 
 ## v0.2.0-SNAPSHOT
 
