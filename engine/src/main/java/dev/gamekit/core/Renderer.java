@@ -204,6 +204,13 @@ public final class Renderer {
     resetGraphicsObject();
   }
 
+  /**
+   * Internal method for drawing or filling ovals
+   * @see #drawOval(int, int, int, int)
+   * @see #fillOval(int, int, int, int)
+   * @see #drawCircle(int, int, int)
+   * @see #fillCircle(int, int, int)
+   */
   private static void oval(int x, int y, int width, int height, boolean fill) {
     updateGraphicsObject();
     int x0 = x - width / 2, y0 = y + height / 2;
@@ -212,6 +219,11 @@ public final class Renderer {
     resetGraphicsObject();
   }
 
+  /**
+   * Internal method for drawing or filling rects
+   * @see #drawRect(int, int, int, int)
+   * @see #fillRect(int, int, int, int)
+   */
   private static void rect(int x, int y, int width, int height, boolean fill) {
     updateGraphicsObject();
     int x0 = x - width / 2, y0 = y + height / 2;
@@ -220,6 +232,11 @@ public final class Renderer {
     resetGraphicsObject();
   }
 
+  /**
+   * Internal method for drawing or filling rounded rects
+   * @see #drawRoundRect(int, int, int, int, int, int)
+   * @see #fillRoundRect(int, int, int, int, int, int)
+   */
   private static void roundRect(int x, int y, int width, int height, int arcWidth, int arcHeight, boolean fill) {
     updateGraphicsObject();
     int x0 = x - width / 2, y0 = y + height / 2;
@@ -228,12 +245,14 @@ public final class Renderer {
     resetGraphicsObject();
   }
 
+  /** Applies the current render properties to the current window's graphics object */
   private static void updateGraphicsObject() {
     g = Window.getInstance().getSceneGraphics();
     SAVED_STATE.copyFrom(g);
     CURRENT_STATE.applyTo(g);
   }
 
+  /** Restores the initial render properties to the current window's graphics object */
   private static void resetGraphicsObject() {
     SAVED_STATE.applyTo(g);
     CURRENT_STATE.reset();

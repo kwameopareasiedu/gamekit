@@ -135,6 +135,7 @@ public abstract class Application {
     }
   }
 
+  /** Sets up Gamekit's internals before starting the game loop */
   private void onSetup() {
     LOGGER.debug("Initializing application");
 
@@ -151,6 +152,10 @@ public abstract class Application {
     window.frame.setVisible(true);
   }
 
+  /**
+   * Called in each frame to update the active scene all
+   * running animations and timeouts have been updated
+   */
   private void onUpdate() {
     if (!animations.isEmpty()) {
       for (var anim : animations)
@@ -167,6 +172,7 @@ public abstract class Application {
     }
   }
 
+  /** Applies the camera's transformation on the window screen and renders the active scene */
   private void onRender() {
     if (activeScene != null) {
       Camera.getInstance().update();
@@ -176,6 +182,11 @@ public abstract class Application {
     window.redraw();
   }
 
+  /**
+   * Runs end-of-frame tasks, removes ended animations and timeouts from the queue.
+   * <p>
+   * If a new scene has been queued, the scene switch occurs here.
+   */
   private void onFrameEnd() {
     if (!frameEndTasks.isEmpty()) {
       for (var action : frameEndTasks)

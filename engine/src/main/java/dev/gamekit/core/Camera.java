@@ -13,6 +13,7 @@ public final class Camera {
   private double y = 0;
   private double zoom = 1;
 
+  /** Creates a new Camera instance */
   private Camera() {
     transform = new AffineTransform(1, 0, 0, -1, 0, 0);
   }
@@ -47,6 +48,7 @@ public final class Camera {
     this.zoom = Math.max(zoom, 1);
   }
 
+  /** Applies the camera's position and zoom to the current window's transform matrix */
   void update() {
     Window window = Window.getInstance();
     int centerX = window.getCenterX(), centerY = window.getCenterY();

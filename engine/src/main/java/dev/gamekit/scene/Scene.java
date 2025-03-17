@@ -11,7 +11,7 @@ import java.util.Map;
  * A representation of a logical part of your application.
  * This can be a main menu, testing area or a level within your game.
  * <p>
- * A scene can contain {@link Prop Props} which interact with each other
+ * A scene can contain {@link Prop props} which interact with each other
  * to implement the goal of the scene.
  */
 public abstract class Scene {

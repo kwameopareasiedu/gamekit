@@ -2,7 +2,9 @@ package dev.gamekit.animation;
 
 import static dev.gamekit.animation.Constants.*;
 
+/** @deprecated Use static constants from {@link AnimationCurve} instead */
 public final class AnimationCurves {
+  /** @deprecated Use {@link AnimationCurve#LINEAR} instead */
   public static final AnimationCurve LINEAR = new AnimationCurve() {
     @Override
     public double transform(double value) {
@@ -10,6 +12,7 @@ public final class AnimationCurves {
     }
   };
 
+  /** @deprecated Use {@link AnimationCurve#EASE_IN_SINE} instead */
   public static final AnimationCurve EASE_IN_SINE = new AnimationCurve() {
     @Override
     public double transform(double value) {
@@ -17,6 +20,7 @@ public final class AnimationCurves {
     }
   };
 
+  /** @deprecated Use {@link AnimationCurve#EASE_OUT_SINE} instead */
   public static final AnimationCurve EASE_OUT_SINE = new AnimationCurve() {
     @Override
     public double transform(double value) {
@@ -24,6 +28,7 @@ public final class AnimationCurves {
     }
   };
 
+  /** @deprecated Use {@link AnimationCurve#EASE_IN_OUT_SINE} instead */
   public static final AnimationCurve EASE_IN_OUT_SINE = new AnimationCurve() {
     @Override
     public double transform(double value) {
@@ -31,6 +36,7 @@ public final class AnimationCurves {
     }
   };
 
+  /** @deprecated Use {@link AnimationCurve#EASE_IN_QUAD} instead */
   public static final AnimationCurve EASE_IN_QUAD = new AnimationCurve() {
     @Override
     public double transform(double value) {
@@ -38,6 +44,7 @@ public final class AnimationCurves {
     }
   };
 
+  /** @deprecated Use {@link AnimationCurve#EASE_OUT_QUAD} instead */
   public static final AnimationCurve EASE_OUT_QUAD = new AnimationCurve() {
     @Override
     public double transform(double value) {
@@ -45,6 +52,7 @@ public final class AnimationCurves {
     }
   };
 
+  /** @deprecated Use {@link AnimationCurve#EASE_IN_OUT_QUAD} instead */
   public static final AnimationCurve EASE_IN_OUT_QUAD = new AnimationCurve() {
     @Override
     public double transform(double value) {
@@ -52,6 +60,7 @@ public final class AnimationCurves {
     }
   };
 
+  /** @deprecated Use {@link AnimationCurve#EASE_IN_CUBIC} instead */
   public static final AnimationCurve EASE_IN_CUBIC = new AnimationCurve() {
     @Override
     public double transform(double value) {
@@ -59,6 +68,7 @@ public final class AnimationCurves {
     }
   };
 
+  /** @deprecated Use {@link AnimationCurve#EASE_OUT_CUBIC} instead */
   public static final AnimationCurve EASE_OUT_CUBIC = new AnimationCurve() {
     @Override
     public double transform(double value) {
@@ -66,6 +76,7 @@ public final class AnimationCurves {
     }
   };
 
+  /** @deprecated Use {@link AnimationCurve#EASE_IN_OUT_CUBIC} instead */
   public static final AnimationCurve EASE_IN_OUT_CUBIC = new AnimationCurve() {
     @Override
     public double transform(double value) {
@@ -73,6 +84,7 @@ public final class AnimationCurves {
     }
   };
 
+  /** @deprecated Use {@link AnimationCurve#EASE_IN_EXPO} instead */
   public static final AnimationCurve EASE_IN_EXPO = new AnimationCurve() {
     @Override
     public double transform(double value) {
@@ -80,6 +92,7 @@ public final class AnimationCurves {
     }
   };
 
+  /** @deprecated Use {@link AnimationCurve#EASE_OUT_EXPO} instead */
   public static final AnimationCurve EASE_OUT_EXPO = new AnimationCurve() {
     @Override
     public double transform(double value) {
@@ -87,6 +100,7 @@ public final class AnimationCurves {
     }
   };
 
+  /** @deprecated Use {@link AnimationCurve#EASE_IN_OUT_EXPO} instead */
   public static final AnimationCurve EASE_IN_OUT_EXPO = new AnimationCurve() {
     @Override
     public double transform(double value) {
@@ -96,6 +110,7 @@ public final class AnimationCurves {
     }
   };
 
+  /** @deprecated Use {@link AnimationCurve#EASE_IN_BACK} instead */
   public static final AnimationCurve EASE_IN_BACK = new AnimationCurve() {
     @Override
     public double transform(double value) {
@@ -103,6 +118,7 @@ public final class AnimationCurves {
     }
   };
 
+  /** @deprecated Use {@link AnimationCurve#EASE_OUT_BACK} instead */
   public static final AnimationCurve EASE_OUT_BACK = new AnimationCurve() {
     @Override
     public double transform(double value) {
@@ -110,6 +126,7 @@ public final class AnimationCurves {
     }
   };
 
+  /** @deprecated Use {@link AnimationCurve#EASE_IN_OUT_BACK} instead */
   public static final AnimationCurve EASE_IN_OUT_BACK = new AnimationCurve() {
     @Override
     public double transform(double value) {
@@ -119,6 +136,7 @@ public final class AnimationCurves {
     }
   };
 
+  /** @deprecated Use {@link AnimationCurve#EASE_IN_ELASTIC} instead */
   public static final AnimationCurve EASE_IN_ELASTIC = new AnimationCurve() {
     @Override
     public double transform(double value) {
@@ -128,6 +146,7 @@ public final class AnimationCurves {
     }
   };
 
+  /** @deprecated Use {@link AnimationCurve#EASE_OUT_ELASTIC} instead */
   public static final AnimationCurve EASE_OUT_ELASTIC = new AnimationCurve() {
     @Override
     public double transform(double value) {
@@ -137,6 +156,7 @@ public final class AnimationCurves {
     }
   };
 
+  /** @deprecated Use {@link AnimationCurve#EASE_IN_OUT_ELASTIC} instead */
   public static final AnimationCurve EASE_IN_OUT_ELASTIC = new AnimationCurve() {
     @Override
     public double transform(double value) {
@@ -147,6 +167,8 @@ public final class AnimationCurves {
         : (Math.pow(2, -20 * value + 10) * Math.sin((20 * value - 11.125) * C5)) / 2 + 1;
     }
   };
+
+  /** @deprecated Use {@link AnimationCurve#EASE_OUT_BOUNCE} instead */
   public static final AnimationCurve EASE_OUT_BOUNCE = new AnimationCurve() {
     @Override
     public double transform(double value) {
@@ -161,12 +183,16 @@ public final class AnimationCurves {
       }
     }
   };
+
+  /** @deprecated Use {@link AnimationCurve#EASE_IN_BOUNCE} instead */
   public static final AnimationCurve EASE_IN_BOUNCE = new AnimationCurve() {
     @Override
     public double transform(double value) {
       return 1 - EASE_OUT_BOUNCE.transform(1 - value);
     }
   };
+
+  /** @deprecated Use {@link AnimationCurve#EASE_IN_OUT_BOUNCE} instead */
   public static final AnimationCurve EASE_IN_OUT_BOUNCE = new AnimationCurve() {
     @Override
     public double transform(double value) {

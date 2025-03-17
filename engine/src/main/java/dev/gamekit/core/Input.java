@@ -207,6 +207,7 @@ public final class Input extends KeyAdapter {
   private final KeyState[] states;
   private boolean isFrozen = false;
 
+  /** Creates a new Input instance */
   private Input() {
     states = new KeyState[COUNT];
 
@@ -239,10 +240,18 @@ public final class Input extends KeyAdapter {
     return INSTANCE.states[keyCode].isJustReleased;
   }
 
+  /**
+   * Prevents Window input events from affecting the current input state.
+   * This makes for predictable reads in the scene's update function
+   */
   static void freeze() {
     INSTANCE.isFrozen = true;
   }
 
+  /**
+   * Resets the current state and allows Window
+   * input events to affect the current input state
+   */
   static void reset() {
     IntStream.range(0, COUNT).forEach(
       i -> INSTANCE.states[i].reset()
@@ -267,17 +276,23 @@ public final class Input extends KeyAdapter {
     }
   }
 
+  /** Represents a keyboard key state */
   private static class KeyState {
     boolean isPressed = false;
     boolean isJustPressed = false;
     boolean isJustReleased = false;
 
+    /**
+     * Updates the key state
+     * @param isPressed Whether the key for this state has been pressed
+     */
     private void update(boolean isPressed) {
       isJustPressed = !this.isPressed && isPressed;
       isJustReleased = this.isPressed && !isPressed;
       this.isPressed = isPressed;
     }
 
+    /** Resets this key state */
     private void reset() {
       isJustPressed = false;
       isJustReleased = false;

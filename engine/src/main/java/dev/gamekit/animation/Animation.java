@@ -4,6 +4,14 @@ import dev.gamekit.core.Application;
 
 import static dev.gamekit.utils.MathUtils.clamp;
 
+/**
+ * Animation holds a value which increments from 0 to 1 over some duration.
+ * The value can then be connected to any property for smooth transitions.
+ * <p>
+ * Animation can be set to run once or repeat (either restart or revers).
+ * Additionally, an {@link AnimationCurve} can be attached to change how
+ * the animation's value is interpolated.
+ */
 public class Animation {
   private final RepeatMode repeatMode;
   private final AnimationCurve curve;
@@ -59,15 +67,21 @@ public class Animation {
     else return curve.transform(value);
   }
 
-  /**
-   * Starts this animation.
-   * After this the state is changed to {@link State#RUNNING}
-   */
+  /** Starts this animation and changes its state to {@link State#RUNNING} */
   public void start() {
     if (state == State.IDLE) {
       state = State.RUNNING;
       Application.getInstance().scheduleAnimation(this);
     }
+  }
+
+  /**
+   * Stops this animation and changes its state to {@link State#ENDED}
+   * <p>
+   * An ended animation cannot be restarted.
+   */
+  public void stop() {
+    state = State.ENDED;
   }
 
   /** Called internally by the application game loop to update this animation */

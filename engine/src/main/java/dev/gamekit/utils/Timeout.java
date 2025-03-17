@@ -3,7 +3,7 @@ package dev.gamekit.utils;
 import dev.gamekit.core.Application;
 import dev.gamekit.interfaces.Task;
 
-/** Interface for a task which is scheduled to run after some time has passed. */
+/** Timeout executes a specified {@link Task} after its duration has elapsed. */
 public class Timeout {
   boolean completed;
   long duration;
@@ -26,7 +26,10 @@ public class Timeout {
     return completed;
   }
 
-  /** Updates the timeout by decrementing its duration till it reaches 0, then the task is run */
+  /**
+   * Called internally by the application to update the timeout by decrementing its duration till it reaches 0.
+   * When the duration reaches zero, then the task's {@link Task#run() run()} method is executed.
+   */
   public void update() {
     if (!completed) {
       duration = Math.max(0, duration - Application.FRAME_TIME);

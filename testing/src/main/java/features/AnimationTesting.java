@@ -1,7 +1,7 @@
 package features;
 
 import dev.gamekit.animation.Animation;
-import dev.gamekit.animation.AnimationCurves;
+import dev.gamekit.animation.AnimationCurve;
 import dev.gamekit.core.Application;
 import dev.gamekit.core.Renderer;
 import dev.gamekit.scene.Scene;
@@ -12,7 +12,7 @@ import static dev.gamekit.utils.MathUtils.toInt;
 
 public class AnimationTesting extends Scene {
   private final Animation bounceAnimation = new Animation(
-    4, Animation.RepeatMode.REVERSE, AnimationCurves.EASE_IN_OUT_BOUNCE
+    4, Animation.RepeatMode.REVERSE, AnimationCurve.EASE_IN_OUT_BOUNCE
   );
 
   public AnimationTesting() {

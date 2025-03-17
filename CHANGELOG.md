@@ -2,6 +2,10 @@
 
 ## UNRELEASED
 
+- Add JavaDoc comments to all methods
+- Add `void stop()` method to `Animation` class
+- Deprecated `AnimationCurves`. Moved all static constants to `AnimationCurve`
+
 ## v0.2.0-SNAPSHOT
 
 ### Added
