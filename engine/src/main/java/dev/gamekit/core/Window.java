@@ -120,9 +120,11 @@ public final class Window {
     sceneLayer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     sceneGraphics = sceneLayer.createGraphics();
     sceneGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    sceneGraphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
     screenLayer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     screenGraphics = screenLayer.createGraphics();
     screenGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    screenGraphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
   }
 }
