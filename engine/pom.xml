@@ -45,12 +45,20 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>3.1.4</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.11.2</version>
         <executions>
           <execution>
             <id>attach-javadoc</id>
             <phase>package</phase>
             <goals>
+              <goal>javadoc</goal>
               <goal>jar</goal>
             </goals>
           </execution>
