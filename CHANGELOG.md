@@ -2,6 +2,18 @@
 
 ## UNRELEASED
 
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+- Removed ~~`void scheduleFrameEndTask(Task task)`~~ from `Application` class. To schedule end of frame task, use
+  `void scheduleTask(Task task)` instead
+- Removed `AnimationCurves` class.
+
 ## v0.2.1-SNAPSHOT
 
 ### Added

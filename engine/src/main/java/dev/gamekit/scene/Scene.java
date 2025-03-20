@@ -57,7 +57,7 @@ public abstract class Scene {
     LOGGER.debug("Adding child: [{} - {}]", prop.internalId, prop.name);
 
     if (!props.containsKey(prop.internalId)) {
-      Application.getInstance().scheduleFrameEndTask(() -> {
+      Application.getInstance().scheduleTask(() -> {
         props.put(prop.internalId, prop);
 
         if (!prop.ready) prop.onStart();
@@ -75,7 +75,7 @@ public abstract class Scene {
     LOGGER.debug("Removing child: [{} - {}]", prop.internalId, prop.name);
 
     if (props.containsKey(prop.internalId)) {
-      Application.getInstance().scheduleFrameEndTask(() -> {
+      Application.getInstance().scheduleTask(() -> {
         props.remove(prop.internalId, prop);
 
         if (prop.ready) prop.onDispose();

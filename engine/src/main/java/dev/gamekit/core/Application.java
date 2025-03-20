@@ -23,7 +23,6 @@ public abstract class Application {
   private static final Logger LOGGER = LogManager.getLogger();
   private static Application instance;
 
-  private final List<Task> frameEndTasks;
   private final List<Timeout> timeouts;
   private final List<Animation> animations;
   private final Window window;
@@ -36,7 +35,6 @@ public abstract class Application {
     LOGGER.debug("Created application \"{}\"", title);
 
     window = new Window(title);
-    frameEndTasks = new ArrayList<>();
     timeouts = new ArrayList<>();
     animations = new ArrayList<>();
     isRunning = true;
@@ -65,21 +63,26 @@ public abstract class Application {
   }
 
   /**
-   * Schedule a one-off task to be executed at the end of the current frame
-   * @param task {@link Task} Task to execute
+   * Schedule a task to be executed immediately 
+   * after the end of the current frame.
+   * @param task Task to execute
+   * @see #scheduleTask(Task, long) 
    */
-  public void scheduleFrameEndTask(Task task) {
-    if (!frameEndTasks.contains(task)) {
-      frameEndTasks.add(task);
-    }
+  public void scheduleTask(Task task) {
+    scheduleTask(task, 0);
   }
 
   /**
-   * Schedule a task to be executed after some time
-   * @param timeout Timeout of this task in milliseconds
+   * Schedule a task to be executed after some time.
+   * <p>
+   * If {@code timeout} is zero, {@code task} is
+   * executed immediately after the current frame
    * @param task    Task to execute
+   * @param timeout Timeout of this task in milliseconds
    */
-  public void scheduleTimerTask(long timeout, Task task) {
+  public void scheduleTask(Task task, long timeout) {
+    if (timeout < 0)
+      throw new RuntimeException("timeout cannot be negative");
     timeouts.add(new Timeout(timeout, task));
   }
 
@@ -188,13 +191,6 @@ public abstract class Application {
    * If a new scene has been queued, the scene switch occurs here.
    */
   private void onFrameEnd() {
-    if (!frameEndTasks.isEmpty()) {
-      for (var action : frameEndTasks)
-        action.run();
-
-      frameEndTasks.clear();
-    }
-
     if (!animations.isEmpty()) {
       animations.removeIf(animation ->
         animation.getState() == Animation.State.ENDED
