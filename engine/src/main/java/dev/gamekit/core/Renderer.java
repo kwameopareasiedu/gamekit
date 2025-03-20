@@ -1,13 +1,15 @@
 package dev.gamekit.core;
 
+import dev.gamekit.utils.G2DState;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-/** Static class containing all supported draw calls of the engine. */
+/** Static class which provides draw methods to draw on the window scene. */
 public final class Renderer {
   private static final Color TRANSPARENT = new Color(0x00000000, true);
-  private static final GraphicsState SAVED_STATE = new GraphicsState();
-  private static final GraphicsState CURRENT_STATE = new GraphicsState();
+  private static final G2DState INITIAL_STATE = new G2DState();
+  private static final G2DState CURRENT_STATE = new G2DState();
 
   private static Graphics2D g;
 
@@ -48,18 +50,18 @@ public final class Renderer {
    * <p>
    * Useful for multiple draw calls which share similar options
    */
-  public static void beginGroup() { CURRENT_STATE.beginGroup(); }
+  public static void beginGroup() { CURRENT_STATE.preserve(); }
 
   /** Ends a previously called {@code beginGroup()} */
-  public static void endGroup() { CURRENT_STATE.endGroup(); }
+  public static void endGroup() { CURRENT_STATE.discard(); }
 
   /** Fills the viewport with a specified color */
   public static void clear() {
-    updateGraphicsObject();
+    applyGraphicsState();
     int x = 0, y = 0, w = Window.getInstance().getWidth(), h = Window.getInstance().getHeight();
     var pt = Camera.getInstance().transformPoint(x, y);
     g.fillRect(-pt.x, -pt.y, w, h);
-    resetGraphicsObject();
+    resetGraphicsState();
   }
 
   /**
@@ -70,9 +72,9 @@ public final class Renderer {
    * @param y2 The y-coordinate of P2
    */
   public static void drawLine(int x1, int y1, int x2, int y2) {
-    updateGraphicsObject();
+    applyGraphicsState();
     g.drawLine(x1, -y1, x2, -y2);
-    resetGraphicsObject();
+    resetGraphicsState();
   }
 
   /**
@@ -197,11 +199,11 @@ public final class Renderer {
    * @param height The screen height of the image
    */
   public static void drawImage(BufferedImage img, int x, int y, int width, int height) {
-    updateGraphicsObject();
+    applyGraphicsState();
     int x0 = x - width / 2, y0 = y + height / 2;
     int x1 = x0 + width, y1 = y0 - height;
     g.drawImage(img, x0, -y0, x1, -y1, 0, 0, img.getWidth(), img.getHeight(), null);
-    resetGraphicsObject();
+    resetGraphicsState();
   }
 
   /**
@@ -212,11 +214,11 @@ public final class Renderer {
    * @see #fillCircle(int, int, int)
    */
   private static void oval(int x, int y, int width, int height, boolean fill) {
-    updateGraphicsObject();
+    applyGraphicsState();
     int x0 = x - width / 2, y0 = y + height / 2;
     if (fill) g.fillOval(x0, -y0, width, height);
     else g.drawOval(x0, -y0, width, height);
-    resetGraphicsObject();
+    resetGraphicsState();
   }
 
   /**
@@ -225,11 +227,11 @@ public final class Renderer {
    * @see #fillRect(int, int, int, int)
    */
   private static void rect(int x, int y, int width, int height, boolean fill) {
-    updateGraphicsObject();
+    applyGraphicsState();
     int x0 = x - width / 2, y0 = y + height / 2;
     if (fill) g.fillRect(x0, -y0, width, height);
     else g.drawRect(x0, -y0, width, height);
-    resetGraphicsObject();
+    resetGraphicsState();
   }
 
   /**
@@ -238,71 +240,24 @@ public final class Renderer {
    * @see #fillRoundRect(int, int, int, int, int, int)
    */
   private static void roundRect(int x, int y, int width, int height, int arcWidth, int arcHeight, boolean fill) {
-    updateGraphicsObject();
+    applyGraphicsState();
     int x0 = x - width / 2, y0 = y + height / 2;
     if (fill) g.fillRoundRect(x0, -y0, width, height, arcWidth, arcHeight);
     else g.drawRoundRect(x0, -y0, width, height, arcWidth, arcHeight);
-    resetGraphicsObject();
+    resetGraphicsState();
   }
 
-  /** Applies the current render properties to the current window's graphics object */
-  private static void updateGraphicsObject() {
-    g = Window.getInstance().getSceneGraphics();
-    SAVED_STATE.copyFrom(g);
-    CURRENT_STATE.applyTo(g);
+  /** Applies the current graphics state to the current graphics object */
+  private static void applyGraphicsState() {
+    g = Window.getInstance().getGraphics();
+    INITIAL_STATE.save(g);
+    CURRENT_STATE.apply(g);
   }
 
-  /** Restores the initial render properties to the current window's graphics object */
-  private static void resetGraphicsObject() {
-    SAVED_STATE.applyTo(g);
+  /** Restores the initial graphics state to the current graphics object */
+  private static void resetGraphicsState() {
+    INITIAL_STATE.apply(g);
     CURRENT_STATE.reset();
-    SAVED_STATE.reset();
-  }
-
-  private static class GraphicsState {
-    private static final Stroke DEFAULT_STROKE = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-
-    boolean preserve;
-    Color bgColor;
-    Stroke stroke;
-    Paint paint;
-    Color color;
-    Font font;
-
-    private void beginGroup() {
-      reset();
-      preserve = true;
-    }
-
-    private void endGroup() {
-      reset();
-      preserve = false;
-    }
-
-    private void copyFrom(Graphics2D g) {
-      bgColor = g.getBackground();
-      stroke = g.getStroke();
-      paint = g.getPaint();
-      color = g.getColor();
-      font = g.getFont();
-    }
-
-    private void applyTo(Graphics2D g) {
-      g.setBackground(bgColor);
-      g.setStroke(stroke != null ? stroke : DEFAULT_STROKE);
-      g.setPaint(paint);
-      g.setColor(color);
-      g.setFont(font);
-    }
-
-    private void reset() {
-      if (preserve) return;
-
-      bgColor = null;
-      stroke = null;
-      paint = null;
-      color = null;
-      font = null;
-    }
+    INITIAL_STATE.reset();
   }
 }

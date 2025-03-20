@@ -6,22 +6,16 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 
-/**
- * Singleton class which manages the {@link JFrame} the application is rendered in.
- * <p>
- * Window uses a double buffering rendering approach to avoid screen tearing.
- */
+/** Singleton class which manages the {@link JFrame} the application is rendered in */
 public final class Window {
   private static final int MIN_WIDTH = 640;
   private static final int MIN_HEIGHT = 480;
   private static Window instance;
 
-  final JFrame frame;
-  private final Graphics2D windowGraphics;
-  private BufferedImage sceneLayer;
-  private BufferedImage screenLayer;
-  private Graphics2D sceneGraphics;
-  private Graphics2D screenGraphics;
+  private final JFrame frame;
+  private final JPanel panel;
+  private BufferedImage image;
+  private Graphics2D graphics;
   private int width, height;
   private int centerX, centerY;
 
@@ -30,13 +24,18 @@ public final class Window {
     height = MIN_HEIGHT;
     centerX = width / 2;
     centerY = height / 2;
-    createRenderLayers();
+    createRenderImage();
+
+    panel = new JPanel();
 
     frame = new JFrame(title);
     frame.setMinimumSize(new Dimension(MIN_WIDTH, MIN_HEIGHT));
     frame.setPreferredSize(new Dimension(width, height));
     frame.setLocationRelativeTo(null);
     frame.setTitle(title);
+    frame.pack();
+
+    frame.add(panel);
     frame.pack();
 
     frame.addComponentListener(new ComponentAdapter() {
@@ -48,11 +47,9 @@ public final class Window {
         height = frame.getHeight();
         centerX = width / 2;
         centerY = height / 2;
-        createRenderLayers();
+        createRenderImage();
       }
     });
-
-    windowGraphics = (Graphics2D) frame.getGraphics();
 
     Window.instance = this;
   }
@@ -107,24 +104,19 @@ public final class Window {
     frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
   }
 
-  Graphics2D getSceneGraphics() { return sceneGraphics; }
+  JFrame getFrame() { return frame; }
 
-  Graphics2D getScreenGraphics() { return screenGraphics; }
+  Graphics2D getGraphics() { return graphics; }
 
   void redraw() {
-    windowGraphics.drawImage(sceneLayer, null, 0, 0);
-    windowGraphics.drawImage(screenLayer, null, 0, 0);
+    var scenePanelGraphics = (Graphics2D) panel.getGraphics();
+    scenePanelGraphics.drawImage(image, null, 0, 0);
   }
 
-  void createRenderLayers() {
-    sceneLayer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-    sceneGraphics = sceneLayer.createGraphics();
-    sceneGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-    sceneGraphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-
-    screenLayer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-    screenGraphics = screenLayer.createGraphics();
-    screenGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-    screenGraphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+  void createRenderImage() {
+    image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+    graphics = image.createGraphics();
+    graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
   }
 }

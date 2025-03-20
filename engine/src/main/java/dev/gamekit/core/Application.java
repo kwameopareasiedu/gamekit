@@ -96,8 +96,8 @@ public abstract class Application {
 
   /** Quit the current {@link Application} by dispatching a {@code WINDOW_CLOSING} event to its window */
   public void quit() {
-    window.frame.dispatchEvent(
-      new WindowEvent(window.frame, WindowEvent.WINDOW_CLOSING)
+    window.getFrame().dispatchEvent(
+      new WindowEvent(window.getFrame(), WindowEvent.WINDOW_CLOSING)
     );
   }
 
@@ -139,8 +139,8 @@ public abstract class Application {
   private void onSetup() {
     LOGGER.debug("Initializing application");
 
-    window.frame.addKeyListener(Input.INSTANCE);
-    window.frame.addWindowListener(new WindowAdapter() {
+    window.getFrame().addKeyListener(Input.INSTANCE);
+    window.getFrame().addWindowListener(new WindowAdapter() {
       @Override
       public void windowClosing(WindowEvent e) {
         super.windowClosing(e);
@@ -149,7 +149,7 @@ public abstract class Application {
       }
     });
 
-    window.frame.setVisible(true);
+    window.getFrame().setVisible(true);
   }
 
   /**
@@ -219,7 +219,7 @@ public abstract class Application {
       activeScene.onStart();
       nextScene = null;
 
-      window.createRenderLayers();
+      window.createRenderImage();
       Scene.setActive(activeScene);
     }
   }
