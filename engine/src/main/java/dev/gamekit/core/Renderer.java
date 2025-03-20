@@ -1,15 +1,12 @@
 package dev.gamekit.core;
 
-import dev.gamekit.utils.G2DState;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /** Static class which provides draw methods to draw on the window scene. */
 public final class Renderer {
-  private static final Color TRANSPARENT = new Color(0x00000000, true);
-  private static final G2DState INITIAL_STATE = new G2DState();
-  private static final G2DState CURRENT_STATE = new G2DState();
+  private static final GraphicsState INITIAL_STATE = new GraphicsState();
+  private static final GraphicsState CURRENT_STATE = new GraphicsState();
 
   private static Graphics2D g;
 
@@ -259,5 +256,88 @@ public final class Renderer {
     INITIAL_STATE.apply(g);
     CURRENT_STATE.reset();
     INITIAL_STATE.reset();
+  }
+
+  /**
+   * G2DState maintains the state of a {@link Graphics2D} object.
+   * <p>
+   * This state includes the following:
+   * <ul>
+   *   <li>Foreground {@link Color color}</li>
+   *   <li>Background {@link Color color}</li>
+   *   <li>{@link Stroke Stroke}</li>
+   *   <li>{@link Paint Paint}</li>
+   * </ul>
+   */
+  private static class GraphicsState {
+    public static final Stroke DEFAULT_STROKE = new BasicStroke(
+      1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND
+    );
+
+    Color bgColor;
+    Stroke stroke;
+    Paint paint;
+    Color color;
+    Font font;
+    private boolean preserve;
+
+    /**
+     * Copies the state of a {@link Graphics2D} object
+     * @param g The Graphics2D object
+     */
+    void save(Graphics2D g) {
+      bgColor = g.getBackground();
+      stroke = g.getStroke();
+      paint = g.getPaint();
+      color = g.getColor();
+      font = g.getFont();
+    }
+
+    /**
+     * Applies the internal state to a {@link Graphics2D} object
+     * @param g The Graphics2D object
+     */
+    void apply(Graphics2D g) {
+      g.setBackground(bgColor);
+      g.setStroke(stroke != null ? stroke : DEFAULT_STROKE);
+      g.setPaint(paint);
+      g.setColor(color);
+      g.setFont(font);
+    }
+
+    /**
+     * Activates the preserve mode of this state.
+     * <p>
+     * In preserve mode, calls to {@link #reset()} are ignored
+     * @see #discard()
+     */
+    void preserve() {
+      reset();
+      preserve = true;
+    }
+
+    /**
+     * Deactivates the preserve mode of this state.
+     * @see #preserve()
+     */
+    void discard() {
+      preserve = false;
+      reset();
+    }
+
+    /**
+     * Resets the internal state to null.
+     * <p>
+     * If preserve mode is activated, this does nothing
+     */
+    void reset() {
+      if (preserve) return;
+
+      bgColor = null;
+      stroke = null;
+      paint = null;
+      color = null;
+      font = null;
+    }
   }
 }
