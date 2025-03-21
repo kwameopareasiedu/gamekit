@@ -24,9 +24,9 @@ public class Demo2Renderer extends Scene {
   }
 
   public static void main(String[] args) {
-    Window.setWindowedMode(true);
+    Window.setFullscreen(false);
     Window.setResolution(Window.Resolution._800_600);
-    Application game = new Application("Renderer") { };
+    Application game = new Application("Demo 2 - Renderer") { };
 
     game.loadScene(new Demo2Renderer());
     game.run();

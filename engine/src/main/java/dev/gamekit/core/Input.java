@@ -212,14 +212,16 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
   private final ActionState[] keyStates;
   private final ActionState[] buttonStates;
-  private final Point mousePosition;
+  private final Point absoluteMousePosition;
+  //  private final Point mousePosition;
   private boolean isFrozen = false;
 
   /** Creates a new Input instance */
   private Input() {
     keyStates = new ActionState[KEY_COUNT];
     buttonStates = new ActionState[BUTTON_COUNT];
-    mousePosition = new Point(0, 0);
+    absoluteMousePosition = new Point(MouseInfo.getPointerInfo().getLocation());
+    //    mousePosition = new Point(0, 0);
 
     IntStream.range(0, KEY_COUNT).forEach(
       i -> keyStates[i] = new ActionState()
@@ -281,9 +283,18 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
     return INSTANCE.buttonStates[buttonIndex].isJustReleased;
   }
 
-  public synchronized static Point getMousePosition() {
-    return INSTANCE.mousePosition;
-  }
+  //  public synchronized static Point getMousePosition() {
+  //    Window win = Window.getInstance();
+  //    double scaleRatio = win.getScaleRatio();
+  //    double offsetX = 0.5 * (win.getFrameWidth() - win.getRenderWidth() * scaleRatio);
+  //
+  //    INSTANCE.mousePosition.setLocation(
+  //      (int) clamp((INSTANCE.absoluteMousePosition.x / scaleRatio - offsetX), 0, win.getRenderWidth()),
+  //      (int) clamp((INSTANCE.absoluteMousePosition.y / scaleRatio), 0, win.getRenderHeight())
+  //    );
+  //
+  //    return INSTANCE.mousePosition;
+  //  }
 
   /**
    * Prevents Window input events from affecting the current input state.
@@ -347,14 +358,14 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   @Override
   public synchronized void mouseDragged(MouseEvent e) {
     if (!isFrozen) {
-      mousePosition.move(e.getX(), e.getY());
+      absoluteMousePosition.move(e.getX(), e.getY());
     }
   }
 
   @Override
   public synchronized void mouseMoved(MouseEvent e) {
     if (!isFrozen) {
-      mousePosition.move(e.getX(), e.getY());
+      absoluteMousePosition.move(e.getX(), e.getY());
     }
   }
 

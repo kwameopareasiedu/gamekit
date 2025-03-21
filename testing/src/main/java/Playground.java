@@ -7,16 +7,16 @@ import dev.gamekit.scene.Scene;
 import java.awt.*;
 
 public class Playground extends Scene {
-  private boolean isPressed = false;
   private int x = 0, y = 0;
 
   public Playground() {
-    super("Basic Game");
+    super("Main Scene");
   }
 
   public static void main(String[] args) {
-    dev.gamekit.core.Window.setResolution(Window.Resolution._1024_768);
-    Application game = new Application("Simple Game") { };
+    Window.setFullscreen(true);
+    Window.setResolution(Window.Resolution._800_600);
+    Application game = new Application("PlayGround") { };
 
     game.loadScene(new Playground());
     game.run();
@@ -26,12 +26,6 @@ public class Playground extends Scene {
   public void onUpdate() {
     super.onUpdate();
 
-    var pos = Input.getMousePosition();
-    int centerX = dev.gamekit.core.Window.getInstance().getCenterX();
-    int centerY = dev.gamekit.core.Window.getInstance().getCenterY();
-    x = pos.x - centerX;
-    y = centerY - pos.y;
-    isPressed = Input.isKeyPressed(Input.KEY_SPACE);
   }
 
   @Override
@@ -40,9 +34,15 @@ public class Playground extends Scene {
     Renderer.setColor(Color.DARK_GRAY);
     Renderer.clear();
 
-    // Draw a red or blue square based on if the space bar is pressed
-    Renderer.setColor(isPressed ? Color.RED : Color.BLUE);
-    Renderer.fillRect(x, y, 200, 200);
+    Renderer.setColor(Color.RED);
+    Renderer.fillRect(x - 50, y - 50, 100, 100);
+    Renderer.setColor(Color.YELLOW);
+    Renderer.fillRect(x + 50, y - 50, 100, 100);
+    Renderer.setColor(Color.GREEN);
+    Renderer.fillRect(x + 50, y + 50, 100, 100);
+    Renderer.setColor(Color.CYAN);
+    Renderer.fillRect(x - 50, y + 50, 100, 100);
+
     super.onRender();
   }
 }

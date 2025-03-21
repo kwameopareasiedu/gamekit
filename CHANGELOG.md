@@ -10,7 +10,6 @@
 - Added `static boolean isButtonPressed(int buttonCode)` to `Input` class
 - Added `static boolean isButtonJustPressed(int buttonCode)` to `Input` class
 - Added `static boolean isButtonJustReleased(int buttonCode)` to `Input` class
-- Added `static Point getMousePosition()` to `Input` class
 
 ### Changed
 

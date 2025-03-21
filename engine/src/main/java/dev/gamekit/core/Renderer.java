@@ -55,7 +55,7 @@ public final class Renderer {
   /** Fills the viewport with a specified color */
   public static void clear() {
     applyGraphicsState();
-    int x = 0, y = 0, w = Window.getInstance().getWidth(), h = Window.getInstance().getHeight();
+    int x = 0, y = 0, w = Window.getInstance().getRenderWidth(), h = Window.getInstance().getRenderHeight();
     var pt = Camera.getInstance().transformPoint(x, y);
     g.fillRect(-pt.x, -pt.y, w, h);
     resetGraphicsState();

@@ -7,19 +7,29 @@ function.
 
 This is the heart of a GameKit program. A game or application must extend this class to do anything with the engine.
 
-`Application` runs a **60fps** fixed-step game loop which processes input, updates and renders the current scene and
-runs end-of-frame tasks.
+`Application` runs a fixed-step game loop which processes input, updates and renders the current scene and runs
+end-of-frame tasks. This fixed time step approach makes sure during lag spikes don't overshoot logic and physics
+updates.
 
-You can override `Application.onDispose()` to perform any cleanup before the application exits.
+When the application is run, it sets up the engine internals which include:
 
-| Method                                                               | Description                                                                |
-|----------------------------------------------------------------------|----------------------------------------------------------------------------|
-| `public Application(String name, int screenWidth, int screenHeight)` | Get the current instance of the application                                |
-| `public static Application getInstance()`                            | Get the current instance of the application                                |
-| `public void run()`                                                  | Starts up the application's  game loop                                     |
-| `public void loadScene(Scene scene)`                                 | Queues a scene object which is loaded at the end of the current frame      |
-| `public void runOnFrameEnd(FrameEndTask task)`                       | Schedule a task to be executed at the end of the current frame             |
-| `public void quit()`                                                 | Signal to the application to end the game loop, run `onDispose()` and exit |
+- Creating the window object
+- Attaching keyboard and mouse listeners to the window
+- Making the window visible
+
+After setup, the game loop starts which runs the following until the application exits:
+
+- Captures keyboard and mouse input
+- Updates running animations
+- Updates active timeout tasks
+- Update the active scene
+- Renders the current scene to the window
+
+The game loops continues running until the close event is received on the window. When this happens, the loop is halted
+and the application runs its dispose logic before exiting. You can override the `onDispose()` to custom cleanup before
+the application exits.
+
+To access the application from anywhere in the application, use `Application.getInstance()`.
 
 ## Window
 

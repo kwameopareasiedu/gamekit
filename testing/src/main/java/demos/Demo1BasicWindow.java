@@ -20,9 +20,9 @@ public class Demo1BasicWindow extends Scene {
   }
 
   public static void main(String[] args) {
-    Window.setWindowedMode(true);
+    Window.setFullscreen(false);
     Window.setResolution(Window.Resolution._800_600);
-    Application game = new Application("Basic Window") { };
+    Application game = new Application("Demo 1 - Basic Window") { };
 
     game.loadScene(new Demo1BasicWindow());
     game.run();
