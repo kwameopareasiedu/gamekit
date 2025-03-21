@@ -113,7 +113,7 @@ interchangeably. An example is shown below
 ```java
 import java.awt.event.KeyEvent;
 
-import dev.gamekit.scene.Scene;
+import dev.gamekit.core.Scene;
 import dev.gamekit.core.Input;
 
 /* Omitted code */

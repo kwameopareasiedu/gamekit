@@ -57,7 +57,7 @@ application is created in the `main()` method and loads an instance of our scene
 import dev.gamekit.core.Application;
 import dev.gamekit.core.Input;
 import dev.gamekit.core.Renderer;
-import dev.gamekit.scene.Scene;
+import dev.gamekit.core.Scene;
 
 import java.awt.*;
 

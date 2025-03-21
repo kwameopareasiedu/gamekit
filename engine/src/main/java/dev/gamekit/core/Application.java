@@ -2,7 +2,6 @@ package dev.gamekit.core;
 
 import dev.gamekit.animation.Animation;
 import dev.gamekit.utils.Task;
-import dev.gamekit.scene.Scene;
 import dev.gamekit.utils.Timeout;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,7 +26,7 @@ public abstract class Application {
   private final List<Animation> animations;
   private final Window window;
   private boolean isRunning;
-  private Scene activeScene;
+  private Scene currentScene;
   private Scene nextScene;
 
   /** Creates an application with a title */
@@ -173,16 +172,16 @@ public abstract class Application {
         timeout.update();
     }
 
-    if (activeScene != null) {
-      activeScene.onUpdate();
+    if (currentScene != null) {
+      currentScene.onApplicationUpdate();
     }
   }
 
   /** Applies the camera's transformation on the window screen and renders the active scene */
   private void onRender() {
-    if (activeScene != null) {
+    if (currentScene != null) {
       Camera.getInstance().update();
-      activeScene.onRender();
+      currentScene.onApplicationRender();
     }
 
     window.redraw();
@@ -207,19 +206,19 @@ public abstract class Application {
     if (nextScene != null) {
       animations.clear();
 
-      if (activeScene != null) {
-        activeScene.onDispose();
-        LOGGER.debug("Switching scene: {} -> {}", activeScene.getName(), nextScene.getName());
+      if (currentScene != null) {
+        currentScene.onApplicationDispose();
+        LOGGER.debug("Switching scene: {} -> {}", currentScene.getName(), nextScene.getName());
       } else {
         LOGGER.debug("Loading scene: {}", nextScene.getName());
       }
 
-      activeScene = nextScene;
-      activeScene.onStart();
+      currentScene = nextScene;
+      currentScene.onApplicationStart();
       nextScene = null;
 
       window.createRenderTargets();
-      Scene.setActive(activeScene);
+      Scene.current = currentScene;
     }
   }
 
@@ -227,8 +226,8 @@ public abstract class Application {
   protected void onDispose() {
     LOGGER.debug("Disposing application");
 
-    if (activeScene != null) {
-      activeScene.onDispose();
+    if (currentScene != null) {
+      currentScene.onApplicationDispose();
     }
   }
 }

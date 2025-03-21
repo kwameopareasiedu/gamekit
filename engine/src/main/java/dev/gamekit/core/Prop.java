@@ -1,4 +1,4 @@
-package dev.gamekit.scene;
+package dev.gamekit.core;
 
 /**
  * Represents game objects within Scenes. Because these are part of the "game world",

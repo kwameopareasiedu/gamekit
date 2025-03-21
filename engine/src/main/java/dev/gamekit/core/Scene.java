@@ -1,6 +1,6 @@
-package dev.gamekit.scene;
+package dev.gamekit.core;
 
-import dev.gamekit.core.Application;
+import dev.gamekit.ui.UINode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,11 +16,11 @@ import java.util.Map;
  */
 public abstract class Scene {
   private static final Logger LOGGER = LogManager.getLogger();
-  private static Scene active;
+  static Scene current;
 
   protected final String name;
-
-  private final Map<Integer, Prop> props;
+  protected final Map<Integer, Prop> props;
+  protected UINode rootUiNode;
 
   /**
    * Create a scene with the given name
@@ -35,13 +35,7 @@ public abstract class Scene {
    * Returns the currently loaded scene instance
    * @return {@link Scene} The active scene of the application
    */
-  public static Scene getActive() { return active; }
-
-  /**
-   * Sets the currently active scene instance. This is called internally by the application
-   * @param scene The active scene
-   */
-  public static void setActive(Scene scene) { active = scene; }
+  public static Scene getCurrent() { return current; }
 
   /**
    * Returns the name of the scene
@@ -85,47 +79,59 @@ public abstract class Scene {
     }
   }
 
+  /** Overridable method to add scene setup logic. This is called once. */
+  public void onStart() { }
+
+  /** Overridable method to add scene update logic */
+  public void onUpdate() { }
+
+  /** Overridable method to add scene render logic */
+  public void onRender() { }
+
+  /** Overridable method to add scene update logic This is called once. */
+  public void onDispose() { }
+
   /**
-   * Called by the application to initialize the scene.
-   * It can be overridden to implement custom setup.
+   * Called by {@link Application} to initialize the scene.
    * <p>
-   * <b>Remember to call {@code super.onStart()}</b>
+   * This calls {@link #onStart()} before calling {@link Prop#onStart() onStart()} on each child prop
    */
-  public void onStart() {
+  void onApplicationStart() {
     LOGGER.debug("Starting scene");
+    onStart();
     props.forEach((k, v) -> v.onStart());
   }
 
   /**
-   * Called by the application's game loop to update the scene.
-   * It can be overridden to implement custom update logic.
+   * Called by {@link Application} to update the scene.
    * <p>
-   * <b>Remember to call {@code super.onUpdate()}</b>
+   * This calls {@link #onUpdate()} before calling {@link Prop#onUpdate() onUpdate()} on each child prop
    */
-  public void onUpdate() {
+  void onApplicationUpdate() {
+    onUpdate();
     props.forEach((k, v) -> v.onUpdate());
+    if (rootUiNode != null) rootUiNode.onUpdate();
   }
 
   /**
-   * Called by the application game loop to render the scene.
-   * It can be overridden to implement custom render logic.
+   * Called by {@link Application} to render the scene.
    * <p>
-   * <blockquote>Use {@link dev.gamekit.core.Renderer Renderer} methods to draw to the window</blockquote>
-   * <p>
-   * <b>Remember to call {@code super.onRender()}</b>
+   * This calls {@link #onRender()} before calling {@link Prop#onRender() onRender()} on each child prop
    */
-  public void onRender() {
+  void onApplicationRender() {
+    onRender();
     props.forEach((k, v) -> v.onRender());
+    if (rootUiNode != null) rootUiNode.onRender();
   }
 
   /**
-   * Called by the application to dispose the scene
-   * It can be overridden to implement custom dispose logic.
+   * Called by {@link Application} to render the scene.
    * <p>
-   * <b>Remember to call {@code super.onDispose()}</b>
+   * This calls {@link Prop#onDispose() onDispose()} on each child prop before calling {@link #onDispose()}
    */
-  public void onDispose() {
+  void onApplicationDispose() {
     LOGGER.debug("Disposing scene");
     props.forEach((k, v) -> v.onDispose());
+    onDispose();
   }
 }

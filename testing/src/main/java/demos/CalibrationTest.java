@@ -4,7 +4,7 @@ import dev.gamekit.core.Application;
 import dev.gamekit.core.Camera;
 import dev.gamekit.core.IO;
 import dev.gamekit.core.Renderer;
-import dev.gamekit.scene.Scene;
+import dev.gamekit.core.Scene;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

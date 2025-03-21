@@ -69,7 +69,6 @@ public final class Window {
     LOGGER.debug("Resolution: {}x{}", resolution.width, resolution.height);
     LOGGER.debug("Fullscreen: {}", isFullScreen);
     LOGGER.debug("Scale Ratio: {}", scaleRatio);
-    LOGGER.debug("Center: {},{}", center.x, center.y);
   }
 
   /**
