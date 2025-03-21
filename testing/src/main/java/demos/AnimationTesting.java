@@ -1,4 +1,4 @@
-package features;
+package demos;
 
 import dev.gamekit.animation.Animation;
 import dev.gamekit.animation.AnimationCurve;
