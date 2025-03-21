@@ -20,7 +20,6 @@ public class BasicGame extends Scene {
     Window.getInstance().setSize(1280, 720);
     Window.getInstance().maximize();
 
-    game.scheduleTimerTask(5000, () -> Application.getInstance().quit());
     game.loadScene(new BasicGame());
     game.run();
   }
@@ -34,7 +33,6 @@ public class BasicGame extends Scene {
 
   @Override
   public void onRender() {
-    super.onRender();
     // Clear the screen with black
     Renderer.setColor(Color.BLACK);
     Renderer.clear();
@@ -42,5 +40,6 @@ public class BasicGame extends Scene {
     // Draw a red or blue square based on if the space bar is pressed
     Renderer.setColor(isPressed ? Color.RED : Color.BLUE);
     Renderer.fillRect(0, 0, 200, 200);
+    super.onRender();
   }
 }
