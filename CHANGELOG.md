@@ -4,6 +4,10 @@
 
 ### Added
 
+- Added `static void setResolution(Resolution resolution)` to `Window` class
+- Removed `void setSize(int width, int height)` from `Window` class
+- Removed `void maximize()` from `Window` class
+
 ### Changed
 
 ### Deprecated
@@ -19,7 +23,7 @@
 ### Added
 
 - Added Javadoc comments to engine classes and methods
-- Add `void stop()` method to `Animation` class
+- Added `void stop()` to `Animation` class
 
 ### Changed
 

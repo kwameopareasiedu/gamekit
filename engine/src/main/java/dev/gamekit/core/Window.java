@@ -2,54 +2,50 @@ package dev.gamekit.core;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 
 /** Singleton class which manages the {@link JFrame} the application is rendered in */
 public final class Window {
-  private static final int MIN_WIDTH = 640;
-  private static final int MIN_HEIGHT = 480;
+  private static Resolution resolution = Resolution._800_600;
   private static Window instance;
 
+  private final int width;
+  private final int height;
+  private final int centerX;
+  private final int centerY;
+  private final double scaleRatio;
   private final JFrame frame;
-  private final JPanel panel;
-  private BufferedImage image;
-  private Graphics2D graphics;
-  private int width, height;
-  private int centerX, centerY;
+  private final JPanel renderPanel;
+  private BufferedImage sceneTarget;
+  private BufferedImage nodeTarget;
+  private Graphics2D sceneGraphics;
+  private Graphics2D nodeGraphics;
 
   Window(String title) {
-    width = MIN_WIDTH;
-    height = MIN_HEIGHT;
+    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    width = resolution == Resolution.NATIVE ? screenSize.width : resolution.minWidth;
+    height = resolution == Resolution.NATIVE ? screenSize.height : resolution.minHeight;
+    scaleRatio = Math.min(screenSize.getWidth() / width, screenSize.getHeight() / height);
     centerX = width / 2;
     centerY = height / 2;
-    createRenderImage();
 
-    panel = new JPanel();
+    createRenderTargets();
+
+    renderPanel = new JPanel();
+    renderPanel.setBackground(Color.BLACK);
 
     frame = new JFrame(title);
-    frame.setMinimumSize(new Dimension(MIN_WIDTH, MIN_HEIGHT));
-    frame.setPreferredSize(new Dimension(width, height));
     frame.setLocationRelativeTo(null);
+    frame.setUndecorated(true);
     frame.setTitle(title);
+    frame.add(renderPanel);
     frame.pack();
 
-    frame.add(panel);
-    frame.pack();
-
-    frame.addComponentListener(new ComponentAdapter() {
-      @Override
-      public void componentResized(ComponentEvent e) {
-        super.componentResized(e);
-
-        width = frame.getWidth();
-        height = frame.getHeight();
-        centerX = width / 2;
-        centerY = height / 2;
-        createRenderImage();
-      }
-    });
+    // Enter true full screen mode
+    GraphicsEnvironment
+      .getLocalGraphicsEnvironment()
+      .getDefaultScreenDevice()
+      .setFullScreenWindow(frame);
 
     Window.instance = this;
   }
@@ -59,6 +55,18 @@ public final class Window {
    * @return The current window instance
    */
   public static Window getInstance() { return instance; }
+
+  /**
+   * Sets the resolution of the {@link Window} before starting the application
+   * <p>
+   * After the {@code Window} instance is created, this method does nothing
+   * @param resolution The resolution of the window
+   */
+  public static void setResolution(Resolution resolution) {
+    if (Window.instance == null) {
+      Window.resolution = resolution;
+    }
+  }
 
   /**
    * Returns the width of the window
@@ -84,39 +92,54 @@ public final class Window {
    */
   public int getCenterY() { return centerY; }
 
-  /**
-   * Sets the size of the window. If the width or height is less than the minimum size,
-   * the minimum width and/or height is used.
-   * @param width  The new width of the window
-   * @param height The new height of the window
-   */
-  public void setSize(int width, int height) {
-    this.width = Math.max(width, MIN_WIDTH);
-    this.height = Math.max(height, MIN_HEIGHT);
-    Dimension d = new Dimension(this.width, this.height);
-    frame.setPreferredSize(d);
-    frame.setSize(d);
-    frame.setLocationRelativeTo(null);
-  }
-
-  /** Maximizes the window */
-  public void maximize() {
-    frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-  }
-
   JFrame getFrame() { return frame; }
 
-  Graphics2D getGraphics() { return graphics; }
+  Graphics2D getSceneGraphics() { return sceneGraphics; }
+
+  Graphics2D getNodeGraphics() { return nodeGraphics; }
 
   void redraw() {
-    var scenePanelGraphics = (Graphics2D) panel.getGraphics();
-    scenePanelGraphics.drawImage(image, null, 0, 0);
+    int scaledWidth = (int) (width * scaleRatio);
+    int scaledHeight = (int) (height * scaleRatio);
+    int dx1 = (int) (0.5 * (frame.getWidth() - scaledWidth));
+    int dy1 = (int) (0.5 * (frame.getHeight() - scaledHeight));
+    int dx2 = dx1 + scaledWidth;
+    int dy2 = dy1 + scaledHeight;
+    Graphics2D renderGraphics = (Graphics2D) renderPanel.getGraphics();
+
+    renderGraphics.drawImage(sceneTarget, dx1, dy1, dx2, dy2, 0, 0, width, height, null);
+    renderGraphics.drawImage(nodeTarget, dx1, dy1, dx2, dx2, 0, 0, width, height, null);
   }
 
-  void createRenderImage() {
-    image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-    graphics = image.createGraphics();
-    graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-    graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+  void createRenderTargets() {
+    sceneTarget = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+    sceneGraphics = sceneTarget.createGraphics();
+    sceneGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    sceneGraphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+
+    nodeTarget = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+    nodeGraphics = nodeTarget.createGraphics();
+    nodeGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    nodeGraphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+  }
+
+  public static final class Resolution {
+    public static final Resolution _640_480 = new Resolution(640, 480);
+    public static final Resolution _800_600 = new Resolution(800, 600);
+    public static final Resolution _1024_768 = new Resolution(1024, 768);
+    public static final Resolution _1280_720 = new Resolution(1280, 720);
+    public static final Resolution _1366_768 = new Resolution(1366, 768);
+    public static final Resolution _1920_1080 = new Resolution(1920, 1080);
+    public static final Resolution NATIVE = new Resolution(-1, -1);
+
+    public final int minWidth;
+    public final int minHeight;
+    public final double ratio;
+
+    public Resolution(int minWidth, int minHeight) {
+      this.minWidth = minWidth;
+      this.minHeight = minHeight;
+      ratio = (double) minWidth / minHeight;
+    }
   }
 }

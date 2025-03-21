@@ -53,6 +53,6 @@ public final class Camera {
     Window window = Window.getInstance();
     int centerX = window.getCenterX(), centerY = window.getCenterY();
     transform.setTransform(zoom, 0, 0, zoom, centerX - x, centerY - y);
-    window.getGraphics().setTransform(transform);
+    window.getSceneGraphics().setTransform(transform);
   }
 }

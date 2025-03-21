@@ -246,7 +246,7 @@ public final class Renderer {
 
   /** Applies the current graphics state to the current graphics object */
   private static void applyGraphicsState() {
-    g = Window.getInstance().getGraphics();
+    g = Window.getInstance().getSceneGraphics();
     INITIAL_STATE.save(g);
     CURRENT_STATE.apply(g);
   }

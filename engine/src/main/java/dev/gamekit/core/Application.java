@@ -215,7 +215,7 @@ public abstract class Application {
       activeScene.onStart();
       nextScene = null;
 
-      window.createRenderImage();
+      window.createRenderTargets();
       Scene.setActive(activeScene);
     }
   }
