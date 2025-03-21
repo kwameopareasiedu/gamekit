@@ -1,7 +1,6 @@
 package dev.gamekit.utils;
 
 import dev.gamekit.core.Application;
-import dev.gamekit.interfaces.Task;
 
 /** Timeout executes a specified {@link Task} after its duration has elapsed. */
 public class Timeout {

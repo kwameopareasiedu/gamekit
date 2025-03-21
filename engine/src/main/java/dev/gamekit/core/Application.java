@@ -1,7 +1,7 @@
 package dev.gamekit.core;
 
 import dev.gamekit.animation.Animation;
-import dev.gamekit.interfaces.Task;
+import dev.gamekit.utils.Task;
 import dev.gamekit.scene.Scene;
 import dev.gamekit.utils.Timeout;
 import org.apache.logging.log4j.LogManager;
@@ -19,7 +19,7 @@ import java.util.List;
  */
 @SuppressWarnings("BusyWait")
 public abstract class Application {
-  public static final long FRAME_TIME = 1000 / 90;
+  public static final long FRAME_TIME = 1000 / 60;
   private static final Logger LOGGER = LogManager.getLogger();
   private static Application instance;
 
@@ -143,6 +143,9 @@ public abstract class Application {
     LOGGER.debug("Initializing application");
 
     window.getFrame().addKeyListener(Input.INSTANCE);
+    window.getFrame().addMouseListener(Input.INSTANCE);
+    window.getFrame().addMouseMotionListener(Input.INSTANCE);
+
     window.getFrame().addWindowListener(new WindowAdapter() {
       @Override
       public void windowClosing(WindowEvent e) {

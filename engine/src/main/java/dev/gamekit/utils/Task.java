@@ -1,4 +1,4 @@
-package dev.gamekit.interfaces;
+package dev.gamekit.utils;
 
 /** Interface for an arbitrary task */
 public interface Task {

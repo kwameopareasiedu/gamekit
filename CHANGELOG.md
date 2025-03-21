@@ -5,8 +5,12 @@
 ### Added
 
 - Added `static void setResolution(Resolution resolution)` to `Window` class
-- Removed `void setSize(int width, int height)` from `Window` class
-- Removed `void maximize()` from `Window` class
+- Added `static void setFullscreen(boolean fullScreen)` to `Window` class
+- Implemented mouse button detection in `Input` class
+- Added `static boolean isButtonPressed(int buttonCode)` to `Input` class
+- Added `static boolean isButtonJustPressed(int buttonCode)` to `Input` class
+- Added `static boolean isButtonJustReleased(int buttonCode)` to `Input` class
+- Added `static Point getMousePosition()` to `Input` class
 
 ### Changed
 
@@ -16,7 +20,9 @@
 
 - Removed ~~`void scheduleFrameEndTask(Task task)`~~ from `Application` class. To schedule end of frame task, use
   `void scheduleTask(Task task)` instead
-- Removed `AnimationCurves` class.
+- Removed deprecated ~~`AnimationCurves`~~ class.
+- Removed ~~`void setSize(int width, int height)`~~ from `Window` class
+- Removed ~~`void maximize()`~~ from `Window` class
 
 ## v0.2.1-SNAPSHOT
 

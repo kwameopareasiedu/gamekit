@@ -1,7 +1,7 @@
 package dev.gamekit.core;
 
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.stream.IntStream;
 
 /**
@@ -10,7 +10,7 @@ import java.util.stream.IntStream;
  * Input includes static constants which map to Java's {@link KeyEvent} constants
  * so they can be used interchangeably.
  */
-public final class Input extends KeyAdapter {
+public final class Input implements KeyListener, MouseListener, MouseMotionListener {
   public static final int KEY_ENTER = KeyEvent.VK_ENTER;
   public static final int KEY_BACK_SPACE = KeyEvent.VK_BACK_SPACE;
   public static final int KEY_TAB = KeyEvent.VK_TAB;
@@ -201,18 +201,32 @@ public final class Input extends KeyAdapter {
   public static final int KEY_BEGIN = KeyEvent.VK_BEGIN;
   public static final int KEY_UNDEFINED = KeyEvent.VK_UNDEFINED;
 
-  static final Input INSTANCE = new Input();
-  private static final int COUNT = 256;
+  public static final int BUTTON_LMB = MouseEvent.BUTTON1;
+  public static final int BUTTON_RMB = MouseEvent.BUTTON2;
+  public static final int BUTTON_MMB = MouseEvent.BUTTON3;
 
-  private final KeyState[] states;
+  private static final int KEY_COUNT = 256;
+  private static final int BUTTON_COUNT = 3;
+
+  static final Input INSTANCE = new Input();
+
+  private final ActionState[] keyStates;
+  private final ActionState[] buttonStates;
+  private final Point mousePosition;
   private boolean isFrozen = false;
 
   /** Creates a new Input instance */
   private Input() {
-    states = new KeyState[COUNT];
+    keyStates = new ActionState[KEY_COUNT];
+    buttonStates = new ActionState[BUTTON_COUNT];
+    mousePosition = new Point(0, 0);
 
-    IntStream.range(0, 256).forEach(
-      i -> states[i] = new KeyState()
+    IntStream.range(0, KEY_COUNT).forEach(
+      i -> keyStates[i] = new ActionState()
+    );
+
+    IntStream.range(0, BUTTON_COUNT).forEach(
+      i -> buttonStates[i] = new ActionState()
     );
   }
 
@@ -221,7 +235,7 @@ public final class Input extends KeyAdapter {
    * @param keyCode The ASCII key code of the key to check
    */
   public synchronized static boolean isKeyPressed(int keyCode) {
-    return INSTANCE.states[keyCode].isPressed;
+    return INSTANCE.keyStates[keyCode].isPressed;
   }
 
   /**
@@ -229,7 +243,7 @@ public final class Input extends KeyAdapter {
    * @param keyCode The ASCII key code of the key to check
    */
   public synchronized static boolean isKeyJustPressed(int keyCode) {
-    return INSTANCE.states[keyCode].isJustPressed;
+    return INSTANCE.keyStates[keyCode].isJustPressed;
   }
 
   /**
@@ -237,7 +251,38 @@ public final class Input extends KeyAdapter {
    * @param keyCode The ASCII key code of the key to check
    */
   public synchronized static boolean isKeyJustReleased(int keyCode) {
-    return INSTANCE.states[keyCode].isJustReleased;
+    return INSTANCE.keyStates[keyCode].isJustReleased;
+  }
+
+  /**
+   * Check if a button is being held down in the current frame
+   * @param buttonCode The code of the button to check
+   */
+  public synchronized static boolean isButtonPressed(int buttonCode) {
+    int buttonIndex = buttonCode - 1;
+    return INSTANCE.buttonStates[buttonIndex].isPressed;
+  }
+
+  /**
+   * Check if a button just pressed in the current frame
+   * @param buttonCode The code of the button to check
+   */
+  public synchronized static boolean isButtonJustPressed(int buttonCode) {
+    int buttonIndex = buttonCode - 1;
+    return INSTANCE.buttonStates[buttonIndex].isJustPressed;
+  }
+
+  /**
+   * Check if a button just released in the current frame
+   * @param buttonCode The code of the button to check
+   */
+  public synchronized static boolean isButtonJustReleased(int buttonCode) {
+    int buttonIndex = buttonCode - 1;
+    return INSTANCE.buttonStates[buttonIndex].isJustReleased;
+  }
+
+  public synchronized static Point getMousePosition() {
+    return INSTANCE.mousePosition;
   }
 
   /**
@@ -253,8 +298,12 @@ public final class Input extends KeyAdapter {
    * input events to affect the current input state
    */
   static void reset() {
-    IntStream.range(0, COUNT).forEach(
-      i -> INSTANCE.states[i].reset()
+    IntStream.range(0, KEY_COUNT).forEach(
+      i -> INSTANCE.keyStates[i].reset()
+    );
+
+    IntStream.range(0, BUTTON_COUNT).forEach(
+      i -> INSTANCE.buttonStates[i].reset()
     );
 
     INSTANCE.isFrozen = false;
@@ -263,28 +312,70 @@ public final class Input extends KeyAdapter {
   @Override
   public synchronized void keyPressed(KeyEvent e) {
     int keyCode = e.getKeyCode();
-    if (!isFrozen && keyCode >= 0 && keyCode < 256) {
-      states[keyCode].update(true);
+    if (!isFrozen && keyCode >= 0 && keyCode < KEY_COUNT) {
+      keyStates[keyCode].update(true);
     }
   }
 
   @Override
   public synchronized void keyReleased(KeyEvent e) {
     int keyCode = e.getKeyCode();
-    if (!isFrozen && keyCode >= 0 && keyCode < 256) {
-      states[keyCode].update(false);
+    if (!isFrozen && keyCode >= 0 && keyCode < KEY_COUNT) {
+      keyStates[keyCode].update(false);
     }
   }
 
-  /** Represents a keyboard key state */
-  private static class KeyState {
+  @Override
+  public void keyTyped(KeyEvent e) { /* No-op */ }
+
+  @Override
+  public synchronized void mousePressed(MouseEvent e) {
+    int buttonCode = e.getButton();
+    if (!isFrozen && buttonCode >= 1 && buttonCode < BUTTON_COUNT) {
+      buttonStates[buttonCode - 1].update(true);
+    }
+  }
+
+  @Override
+  public synchronized void mouseReleased(MouseEvent e) {
+    int buttonCode = e.getButton();
+    if (!isFrozen && buttonCode >= 1 && buttonCode < BUTTON_COUNT) {
+      buttonStates[buttonCode - 1].update(false);
+    }
+  }
+
+  @Override
+  public synchronized void mouseDragged(MouseEvent e) {
+    if (!isFrozen) {
+      mousePosition.move(e.getX(), e.getY());
+    }
+  }
+
+  @Override
+  public synchronized void mouseMoved(MouseEvent e) {
+    if (!isFrozen) {
+      mousePosition.move(e.getX(), e.getY());
+    }
+  }
+
+  @Override
+  public synchronized void mouseClicked(MouseEvent e) { /* No-op */ }
+
+  @Override
+  public synchronized void mouseEntered(MouseEvent e) { /* No-op */ }
+
+  @Override
+  public synchronized void mouseExited(MouseEvent e) { /* No-op */ }
+
+  /** Represents a keyboard key or mouse button state */
+  private static class ActionState {
     boolean isPressed = false;
     boolean isJustPressed = false;
     boolean isJustReleased = false;
 
     /**
-     * Updates the key state
-     * @param isPressed Whether the key for this state has been pressed
+     * Updates the action state
+     * @param isPressed Whether the action has been pressed
      */
     private void update(boolean isPressed) {
       isJustPressed = !this.isPressed && isPressed;
@@ -292,7 +383,7 @@ public final class Input extends KeyAdapter {
       this.isPressed = isPressed;
     }
 
-    /** Resets this key state */
+    /** Resets this action state */
     private void reset() {
       isJustPressed = false;
       isJustReleased = false;
