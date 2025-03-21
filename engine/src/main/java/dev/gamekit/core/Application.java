@@ -66,7 +66,7 @@ public abstract class Application {
    * Schedule a task to be executed immediately 
    * after the end of the current frame.
    * @param task Task to execute
-   * @see #scheduleTask(Task, long) 
+   * @see #scheduleTask(Task, long)
    */
   public void scheduleTask(Task task) {
     scheduleTask(task, 0);
