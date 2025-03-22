@@ -2,7 +2,7 @@ package dev.gamekit.animation;
 
 import dev.gamekit.core.Application;
 
-import static dev.gamekit.utils.MathUtils.clamp;
+import static dev.gamekit.utils.Math.clamp;
 
 /**
  * Animation holds a value which increments from 0 to 1 over some duration.

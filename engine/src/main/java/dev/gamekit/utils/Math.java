@@ -1,8 +1,8 @@
 package dev.gamekit.utils;
 
 /** Utility class providing commonly used math utility methods */
-public final class MathUtils {
-  private MathUtils() { }
+public final class Math {
+  private Math() { }
 
   /**
    * Casts a floating to an integer
@@ -30,7 +30,7 @@ public final class MathUtils {
    * @return The clamped value
    */
   public static double clamp(double val, double min, double max) {
-    return Math.min(max, Math.max(min, val));
+    return java.lang.Math.min(max, java.lang.Math.max(min, val));
   }
 
   /**
@@ -41,7 +41,7 @@ public final class MathUtils {
    * @return The clamped value
    */
   public static int clamp(int val, int min, int max) {
-    return Math.min(max, Math.max(min, val));
+    return java.lang.Math.min(max, java.lang.Math.max(min, val));
   }
 
   /**
