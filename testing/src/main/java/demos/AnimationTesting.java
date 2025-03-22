@@ -8,7 +8,7 @@ import dev.gamekit.core.Scene;
 
 import java.awt.*;
 
-import static dev.gamekit.utils.MathUtils.toInt;
+import static dev.gamekit.utils.Math.toInt;
 
 public class AnimationTesting extends Scene {
   private final Animation bounceAnimation = new Animation(

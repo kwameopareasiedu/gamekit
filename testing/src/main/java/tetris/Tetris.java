@@ -12,7 +12,7 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.Random;
 
-import static dev.gamekit.utils.MathUtils.toInt;
+import static dev.gamekit.utils.Math.toInt;
 import static tetris.GameState.*;
 import static tetris.Utils.getIndex;
 

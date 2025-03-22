@@ -1,15 +1,12 @@
 package demos;
 
-import dev.gamekit.core.Application;
-import dev.gamekit.core.Camera;
-import dev.gamekit.core.IO;
-import dev.gamekit.core.Renderer;
-import dev.gamekit.core.Scene;
+import dev.gamekit.core.*;
+import dev.gamekit.core.Window;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-import static dev.gamekit.utils.MathUtils.clamp;
+import static dev.gamekit.utils.Math.clamp;
 
 public class CalibrationTest extends Scene {
   private static final int WORLD_WIDTH = 2400;
@@ -24,6 +21,7 @@ public class CalibrationTest extends Scene {
   }
 
   public static void main(String[] args) {
+    Window.setResolution(Window.Resolution._800_600);
     Application game = new Application("Calibration Test") { };
     game.loadScene(new CalibrationTest());
     game.run();
@@ -33,13 +31,13 @@ public class CalibrationTest extends Scene {
   public void onUpdate() {
     super.onUpdate();
 
-//    time += 0.025;
-//    double x = 50 * Math.sin(time);
-//    double y = 50 * Math.cos(time);
-//    Camera.getInstance().lookAt(x, y);
-//    Camera.getInstance().setZoom(clamp(1 + Math.sin(time), 1, 2));
+    time += 0.025;
+    double x = 50 * Math.sin(time);
+    double y = 50 * Math.cos(time);
+    Camera.getInstance().lookAt(x, y);
+    Camera.getInstance().setZoom(clamp(1 + Math.sin(time), 1, 2));
     //    Camera.getInstance().lookAt(-200, -100);
-        Camera.getInstance().setZoom(2.5);
+    Camera.getInstance().setZoom(1);
   }
 
   @Override
