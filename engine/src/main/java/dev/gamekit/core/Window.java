@@ -20,16 +20,18 @@ public final class Window {
   private final double scaleRatio;
   private final JFrame frame;
   private final JPanel renderPanel;
+  private BufferedImage renderTarget;
   private BufferedImage sceneTarget;
-  private BufferedImage nodeTarget;
+  private BufferedImage uiTarget;
+  private Graphics2D renderGraphics;
   private Graphics2D sceneGraphics;
-  private Graphics2D nodeGraphics;
+  private Graphics2D uiGraphics;
 
   Window(String title) {
     renderSize = new Dimension(resolution.width, resolution.height);
     center = new Point(resolution.width / 2, resolution.height / 2);
 
-    renderPanel = new JPanel();
+    renderPanel = new JPanel(true);
     renderPanel.setBackground(Color.BLACK);
 
     frame = new JFrame(title);
@@ -147,11 +149,9 @@ public final class Window {
 
   Graphics2D getSceneGraphics() { return sceneGraphics; }
 
-  Graphics2D getNodeGraphics() { return nodeGraphics; }
+  Graphics2D getUiGraphics() { return uiGraphics; }
 
   void redraw() {
-    Graphics2D renderGraphics = (Graphics2D) renderPanel.getGraphics();
-
     if (Window.isFullScreen) {
       int scaledWidth = (int) (renderSize.width * scaleRatio);
       int scaledHeight = (int) (renderSize.height * scaleRatio);
@@ -161,11 +161,14 @@ public final class Window {
       int dy2 = dy1 + scaledHeight;
 
       renderGraphics.drawImage(sceneTarget, dx1, dy1, dx2, dy2, 0, 0, renderSize.width, renderSize.height, null);
-      renderGraphics.drawImage(nodeTarget, dx1, dy1, dx2, dx2, 0, 0, renderSize.width, renderSize.height, null);
+      renderGraphics.drawImage(uiTarget, dx1, dy1, dx2, dx2, 0, 0, renderSize.width, renderSize.height, null);
     } else {
       renderGraphics.drawImage(sceneTarget, null, 0, 0);
-      renderGraphics.drawImage(nodeTarget, null, 0, 0);
+      renderGraphics.drawImage(uiTarget, null, 0, 0);
     }
+
+    Graphics2D renderPanelGraphics = (Graphics2D) renderPanel.getGraphics();
+    renderPanelGraphics.drawImage(renderTarget, null, 0, 0);
   }
 
   void createRenderTargets() {
@@ -174,10 +177,13 @@ public final class Window {
     sceneGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     sceneGraphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
-    nodeTarget = new BufferedImage(renderSize.width, renderSize.height, BufferedImage.TYPE_INT_ARGB);
-    nodeGraphics = nodeTarget.createGraphics();
-    nodeGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-    nodeGraphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+    uiTarget = new BufferedImage(renderSize.width, renderSize.height, BufferedImage.TYPE_INT_ARGB);
+    uiGraphics = uiTarget.createGraphics();
+    uiGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    uiGraphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+
+    renderTarget = new BufferedImage(Resolution.FULL.width, Resolution.FULL.height, BufferedImage.TYPE_INT_ARGB);
+    renderGraphics = renderTarget.createGraphics();
   }
 
   public record Resolution(int width, int height) {

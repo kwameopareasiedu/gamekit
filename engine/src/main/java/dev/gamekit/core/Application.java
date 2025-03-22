@@ -18,7 +18,7 @@ import java.util.List;
  */
 @SuppressWarnings("BusyWait")
 public abstract class Application {
-  public static final long FRAME_TIME = 1000 / 60;
+  public static final long FRAME_TIME = 1000 / 90;
   private static final Logger LOGGER = LogManager.getLogger();
   private static Application instance;
 

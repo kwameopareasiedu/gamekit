@@ -1,5 +1,7 @@
 package dev.gamekit.core;
 
+import dev.gamekit.ui.UINode;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -7,6 +9,7 @@ import java.awt.image.BufferedImage;
 public final class Renderer {
   private static final GraphicsState INITIAL_STATE = new GraphicsState();
   private static final GraphicsState CURRENT_STATE = new GraphicsState();
+  private static final Color TRANSPARENT = new Color(0x00000000, true);
 
   private static Graphics2D g;
 
@@ -54,11 +57,17 @@ public final class Renderer {
 
   /** Fills the viewport with a specified color */
   public static void clear() {
+    // Clear scene target
     applyGraphicsState();
     int x = 0, y = 0, w = Window.getInstance().getRenderWidth(), h = Window.getInstance().getRenderHeight();
     var pt = Camera.getInstance().transformPoint(x, y);
     g.fillRect(-pt.x, -pt.y, w, h);
     resetGraphicsState();
+
+    // Clear ui target
+    Graphics2D gui = Window.getInstance().getUiGraphics();
+    gui.setBackground(TRANSPARENT);
+    gui.clearRect(0, 0, w, h);
   }
 
   /**
@@ -201,6 +210,11 @@ public final class Renderer {
     int x1 = x0 + width, y1 = y0 - height;
     g.drawImage(img, x0, -y0, x1, -y1, 0, 0, img.getWidth(), img.getHeight(), null);
     resetGraphicsState();
+  }
+
+  public static void drawUiNode(UINode node) {
+    Graphics2D g = Window.getInstance().getUiGraphics();
+    g.drawImage(node.getAppearance(), node.getX(), node.getY(), node.getWidth(), node.getHeight(), null);
   }
 
   /**
