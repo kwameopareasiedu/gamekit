@@ -38,31 +38,32 @@ public abstract class UIContainer extends UINode {
 
   @Override
   public BufferedImage getAppearance() {
-    if (img == null || img.getWidth() != width || img.getHeight() != height) {
-      img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+    if (img == null || img.getWidth() != size.width || img.getHeight() != size.height) {
+      img = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
       g = img.createGraphics();
     }
 
     g.setColor(bgColor);
-    g.fillRect(0, 0, width, height);
+    g.fillRect(0, 0, size.width, size.height);
 
     // The children are drawn in the container's image instead of calling their onRender.
     // This allows for clipping if the child's bounds fall outside that of the container.
-    children.forEach(child -> g.drawImage(child.getAppearance(), child.x, child.y, null));
+    children.forEach(child -> g.drawImage(child.getAppearance(), child.getPosition().x, child.getPosition().y, null));
 
     return img;
   }
 
   protected void computePosition() {
-    x = margin.left;
-    y = margin.top;
+    position.set(margin.left, margin.top);
     updateChildrenPositions();
   }
 
   protected void computeSize() {
     Dimension contentSize = computeChildrenSize();
-    width = padding.getHorizontal() + contentSize.width;
-    height = padding.getVertical() + contentSize.height;
+    size.set(
+      padding.getHorizontal() + contentSize.width,
+      padding.getVertical() + contentSize.height
+    );
   }
 
   protected abstract void updateChildrenPositions();

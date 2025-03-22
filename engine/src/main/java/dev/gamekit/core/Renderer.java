@@ -214,7 +214,12 @@ public final class Renderer {
 
   public static void drawUiNode(UINode node) {
     Graphics2D g = Window.getInstance().getUiGraphics();
-    g.drawImage(node.getAppearance(), node.getX(), node.getY(), node.getWidth(), node.getHeight(), null);
+    g.drawImage(
+      node.getAppearance(),
+      node.getPosition().x, node.getPosition().y,
+      node.getSize().width, node.getSize().height,
+      null
+    );
   }
 
   /**

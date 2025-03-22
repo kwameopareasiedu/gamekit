@@ -23,7 +23,7 @@ public abstract class Scene {
   protected UINode rootUiNode;
 
   /**
-   * Create a scene with the given name
+   * Creates a scene with the given name
    * @param name The name of the scene for logging purposes
    */
   public Scene(String name) {

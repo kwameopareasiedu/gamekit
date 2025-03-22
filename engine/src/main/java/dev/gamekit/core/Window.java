@@ -197,7 +197,7 @@ public final class Window {
 
     @Override
     public String toString() {
-      return String.format("Resolution[width=%d,height=%d]", width, height);
+      return String.format(getClass().getName() + "[width=%d,height=%d]", width, height);
     }
   }
 }
