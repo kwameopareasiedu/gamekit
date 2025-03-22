@@ -10,27 +10,30 @@ public abstract class UIContainer extends UINode {
   protected final List<UINode> children;
   private BufferedImage img;
   private Graphics2D g;
+  private Color bgColor;
 
   public UIContainer() {
     children = new ArrayList<>();
+    bgColor = Color.GRAY;
     computeSize();
     computePosition();
   }
 
-  public void add(UINode child) {
+  public void addChild(UINode child) {
     if (!children.contains(child)) {
       children.add(child);
     }
   }
 
-  protected void computePosition() {
-    x = margin.left;
-    y = margin.top;
+  public void setBgColor(Color bgColor) {
+    this.bgColor = bgColor;
   }
 
-  protected void computeSize() {
-    width = padding.getHorizontal();
-    height = padding.getVertical();
+  @Override
+  public void onUpdate() {
+    children.forEach(UINode::onUpdate);
+    computeSize();
+    computePosition();
   }
 
   @Override
@@ -40,14 +43,29 @@ public abstract class UIContainer extends UINode {
       g = img.createGraphics();
     }
 
-    g.setBackground(Color.RED);
+    g.setColor(bgColor);
     g.fillRect(0, 0, width, height);
+
+    // The children are drawn in the container's image instead of calling their onRender.
+    // This allows for clipping if the child's bounds fall outside that of the container.
+    children.forEach(child -> g.drawImage(child.getAppearance(), child.x, child.y, null));
+
     return img;
   }
 
-  @Override
-  public void onUpdate() {
-    computeSize();
-    computePosition();
+  protected void computePosition() {
+    x = margin.left;
+    y = margin.top;
+    updateChildrenPositions();
   }
+
+  protected void computeSize() {
+    Dimension contentSize = computeChildrenSize();
+    width = padding.getHorizontal() + contentSize.width;
+    height = padding.getVertical() + contentSize.height;
+  }
+
+  protected abstract void updateChildrenPositions();
+
+  protected abstract Dimension computeChildrenSize();
 }

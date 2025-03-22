@@ -22,9 +22,7 @@ public abstract class UINode {
 
   public abstract void onUpdate();
 
-  public void onRender() {
-    Renderer.drawUiNode(this);
-  }
+  public void onRender() { Renderer.drawUiNode(this); }
 
   public int getX() { return x; }
 
