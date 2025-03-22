@@ -2,7 +2,6 @@ package dev.gamekit.ui;
 
 import dev.gamekit.utils.Constants;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +23,15 @@ public abstract class Container extends Node {
   @Override
   public void onUpdate() {
     children.forEach(Node::onUpdate);
-    computeSize();
-    computePosition();
+
+    Size contentSize = getContentSize();
+    size.set(
+      contentSize.width + padding.getHorizontal(),
+      contentSize.height + padding.getVertical()
+    );
+
+    position.set(margin.left, margin.top);
+    updateContentPositions();
   }
 
   @Override
@@ -54,20 +60,13 @@ public abstract class Container extends Node {
     return image;
   }
 
-  protected void computePosition() {
-    position.set(margin.left, margin.top);
-    updateChildrenPositions();
-  }
+  /**
+   * Abstract method which measures the size of the
+   * smallest bounding box which contains all children
+   * @return The size of the content
+   */
+  protected abstract Size getContentSize();
 
-  protected void computeSize() {
-    Dimension contentSize = computeChildrenSize();
-    size.set(
-      padding.getHorizontal() + contentSize.width,
-      padding.getVertical() + contentSize.height
-    );
-  }
-
-  protected abstract void updateChildrenPositions();
-
-  protected abstract Dimension computeChildrenSize();
+  /** Abstract method which updates the positions of children within this container */
+  protected abstract void updateContentPositions();
 }

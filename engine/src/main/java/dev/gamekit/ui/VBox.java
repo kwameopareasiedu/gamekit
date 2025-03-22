@@ -2,22 +2,9 @@ package dev.gamekit.ui;
 
 import dev.gamekit.utils.Reusable;
 
-import java.awt.*;
-
 public class VBox extends Container {
   @Override
-  protected void updateChildrenPositions() {
-    int ypos = padding.top;
-
-    for (var child : children) {
-      ypos += child.margin.top;
-      child.position.set(padding.left + child.margin.left, ypos);
-      ypos += child.size.height + child.margin.bottom;
-    }
-  }
-
-  @Override
-  protected Dimension computeChildrenSize() {
+  protected Size getContentSize() {
     int widestWidth = 0;
     int combinedHeight = 0;
 
@@ -26,7 +13,18 @@ public class VBox extends Container {
       combinedHeight += child.size.height + child.margin.getVertical();
     }
 
-    Reusable.SIZE.setSize(widestWidth, combinedHeight);
+    Reusable.SIZE.set(widestWidth, combinedHeight);
     return Reusable.SIZE;
+  }
+
+  @Override
+  protected void updateContentPositions() {
+    int ypos = padding.top;
+
+    for (var child : children) {
+      ypos += child.margin.top;
+      child.position.set(padding.left + child.margin.left, ypos);
+      ypos += child.size.height + child.margin.bottom;
+    }
   }
 }

@@ -75,7 +75,8 @@ public class Text extends Node {
     if (shadowEnabled) {
       graphics.setColor(shadowColor);
       graphics.drawString(
-        text, padding.left + shadowOffset.x,
+        text,
+        padding.left + shadowOffset.x,
         fontSize + padding.top + shadowOffset.y
       );
     }
@@ -85,23 +86,66 @@ public class Text extends Node {
     return image;
   }
 
+  /**
+   * Sets the text of this text
+   * @param text The text of this text
+   */
   public void setText(String text) { this.text = text; }
 
+  /**
+   * Sets the font family of this text.
+   * <p>
+   * The name of the font should match an installed font on the system
+   * @param fontFamily The font family of this text
+   */
   public void setFontFamily(String fontFamily) { this.fontFamily = fontFamily; }
 
+  /**
+   * Sets the font style of this text
+   * @param fontStyle The font style of this text
+   */
   public void setFontStyle(int fontStyle) { this.fontStyle = fontStyle; }
 
+  /**
+   * Sets the font size of this text
+   * @param fontSize The font size of this text
+   */
   public void setFontSize(int fontSize) { this.fontSize = fontSize; }
 
+  /**
+   * Sets the background color of this text
+   * @param bgColor The background color of this text
+   */
   public void setBgColor(Color bgColor) { this.bgColor = bgColor; }
 
+  /**
+   * Sets the color of this text
+   * @param color The color of this text
+   */
   public void setColor(Color color) { this.color = color; }
 
+  /**
+   * Sets the font of this text. If set, this overrides {@link #fontFamily} value
+   * @param font The font of this text
+   */
   public void setFont(Font font) { this.font = font; }
 
+  /**
+   * Enables or disabled the drop shadow of this text
+   * @param enabled The drop shadow state
+   */
   public void toggleShadow(boolean enabled) { shadowEnabled = enabled; }
 
+  /**
+   * Sets the shadow offset of this text
+   * @param x The horizontal offset. This can be negative
+   * @param y The vertical offset. This can be negative
+   */
   public void setShadowOffset(int x, int y) { shadowOffset.set(x, y); }
 
+  /**
+   * Sets the shadow color of this text
+   * @param color The shadow color of this text
+   */
   public void setShadowColor(Color color) { shadowColor = color; }
 }

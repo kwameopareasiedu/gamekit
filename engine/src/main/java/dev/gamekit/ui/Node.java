@@ -24,8 +24,8 @@ public abstract class Node {
 
   /**
    * Abstract method which the node uses to update itself on each frame.
-   * The goal of this method is to compute the final size before the node
-   * is rendered, either to the window or the parent node.
+   * The goal of this method is to compute the position, size and other
+   * attributes needed for rendering.
    */
   public abstract void onUpdate();
 

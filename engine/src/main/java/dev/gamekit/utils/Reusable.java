@@ -1,9 +1,9 @@
 package dev.gamekit.utils;
 
-import java.awt.*;
+import dev.gamekit.ui.Size;
 
 public final class Reusable {
-  public static final Dimension SIZE = new Dimension();
+  public static final Size SIZE = new Size(0);
 
-  private Reusable() {}
+  private Reusable() { }
 }
