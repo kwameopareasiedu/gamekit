@@ -5,13 +5,13 @@ import dev.gamekit.core.Renderer;
 import java.awt.image.BufferedImage;
 
 /** Base class for all UI elements in the engine */
-public abstract class UINode {
+public abstract class Node {
   protected final Position position;
   protected final Size size;
   protected final Spacing padding;
   protected final Spacing margin;
 
-  public UINode() {
+  public Node() {
     position = new Position(0, 0);
     size = new Size(0, 0);
     padding = new Spacing(5);
@@ -22,7 +22,7 @@ public abstract class UINode {
 
   public abstract void onUpdate();
 
-  public void onRender() { Renderer.drawUiNode(this); }
+  public void onRender() { Renderer.drawNode(this); }
 
   public Position getPosition() { return position; }
 

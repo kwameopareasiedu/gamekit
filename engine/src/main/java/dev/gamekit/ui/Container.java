@@ -6,20 +6,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** Base class for all UI containers in the engine */
-public abstract class UIContainer extends UINode {
-  protected final List<UINode> children;
+public abstract class Container extends Node {
+  protected final List<Node> children;
   private BufferedImage img;
   private Graphics2D g;
   private Color bgColor;
 
-  public UIContainer() {
+  public Container() {
     children = new ArrayList<>();
     bgColor = Color.GRAY;
     computeSize();
     computePosition();
   }
 
-  public void addChild(UINode child) {
+  public void addChild(Node child) {
     if (!children.contains(child)) {
       children.add(child);
     }
@@ -31,7 +31,7 @@ public abstract class UIContainer extends UINode {
 
   @Override
   public void onUpdate() {
-    children.forEach(UINode::onUpdate);
+    children.forEach(Node::onUpdate);
     computeSize();
     computePosition();
   }

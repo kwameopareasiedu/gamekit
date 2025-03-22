@@ -1,6 +1,6 @@
 package dev.gamekit.core;
 
-import dev.gamekit.ui.UINode;
+import dev.gamekit.ui.Node;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,7 +20,7 @@ public abstract class Scene {
 
   protected final String name;
   protected final Map<Integer, Prop> props;
-  protected UINode rootUiNode;
+  protected Node rootNode;
 
   /**
    * Creates a scene with the given name
@@ -110,7 +110,7 @@ public abstract class Scene {
   void onApplicationUpdate() {
     onUpdate();
     props.forEach((k, v) -> v.onUpdate());
-    if (rootUiNode != null) rootUiNode.onUpdate();
+    if (rootNode != null) rootNode.onUpdate();
   }
 
   /**
@@ -121,7 +121,7 @@ public abstract class Scene {
   void onApplicationRender() {
     onRender();
     props.forEach((k, v) -> v.onRender());
-    if (rootUiNode != null) rootUiNode.onRender();
+    if (rootNode != null) rootNode.onRender();
   }
 
   /**

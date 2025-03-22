@@ -4,7 +4,7 @@ import dev.gamekit.utils.Reusable;
 
 import java.awt.*;
 
-public class HBox extends UIContainer {
+public class HBox extends Container {
   @Override
   protected void updateChildrenPositions() {
     int xpos = padding.left;

@@ -4,7 +4,7 @@ import dev.gamekit.utils.Reusable;
 
 import java.awt.*;
 
-public class VBox extends UIContainer {
+public class VBox extends Container {
   @Override
   protected void updateChildrenPositions() {
     int ypos = padding.top;

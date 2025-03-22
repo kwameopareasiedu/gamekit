@@ -1,6 +1,6 @@
 package dev.gamekit.core;
 
-import dev.gamekit.ui.UINode;
+import dev.gamekit.ui.Node;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -212,7 +212,7 @@ public final class Renderer {
     resetGraphicsState();
   }
 
-  public static void drawUiNode(UINode node) {
+  public static void drawNode(Node node) {
     Graphics2D g = Window.getInstance().getUiGraphics();
     g.drawImage(
       node.getAppearance(),

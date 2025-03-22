@@ -1,6 +1,6 @@
 package dev.gamekit.ui;
 
-/** Represents a padding or margin of a {@link UINode} */
+/** Represents a padding or margin of a {@link Node} */
 public class Spacing {
   public int top;
   public int right;

@@ -1,6 +1,6 @@
 package dev.gamekit.ui;
 
-/** Represents the width and height dimension of a {@link UINode} */
+/** Represents the width and height dimension of a {@link Node} */
 public class Size {
   public int width;
   public int height;
