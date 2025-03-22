@@ -1,6 +1,7 @@
 package dev.gamekit.core;
 
 import dev.gamekit.ui.Node;
+import dev.gamekit.utils.Constants;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -9,7 +10,6 @@ import java.awt.image.BufferedImage;
 public final class Renderer {
   private static final GraphicsState INITIAL_STATE = new GraphicsState();
   private static final GraphicsState CURRENT_STATE = new GraphicsState();
-  private static final Color TRANSPARENT = new Color(0x00000000, true);
 
   private static Graphics2D g;
 
@@ -66,7 +66,7 @@ public final class Renderer {
 
     // Clear ui target
     Graphics2D gui = Window.getInstance().getUiGraphics();
-    gui.setBackground(TRANSPARENT);
+    gui.setBackground(Constants.TRANSPARENT);
     gui.clearRect(0, 0, w, h);
   }
 
@@ -212,6 +212,10 @@ public final class Renderer {
     resetGraphicsState();
   }
 
+  /**
+   * Draws a UI {@link Node} to the window's UI target
+   * @param node The node to draw
+   */
   public static void drawNode(Node node) {
     Graphics2D g = Window.getInstance().getUiGraphics();
     g.drawImage(
@@ -220,6 +224,16 @@ public final class Renderer {
       node.getSize().width, node.getSize().height,
       null
     );
+  }
+
+  /**
+   * Uses the {@link Window} UI graphics object to
+   * retrieve the {@link FontMetrics} for a given font
+   * @param font The font whose metrics to return
+   * @return The font metrics of the font
+   */
+  public static FontMetrics getFontMetrics(Font font) {
+    return Window.getInstance().getUiGraphics().getFontMetrics(font);
   }
 
   /**

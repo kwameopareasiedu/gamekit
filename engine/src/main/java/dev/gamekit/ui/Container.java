@@ -1,5 +1,7 @@
 package dev.gamekit.ui;
 
+import dev.gamekit.utils.Constants;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -8,25 +10,15 @@ import java.util.List;
 /** Base class for all UI containers in the engine */
 public abstract class Container extends Node {
   protected final List<Node> children;
-  private BufferedImage img;
-  private Graphics2D g;
-  private Color bgColor;
 
   public Container() {
     children = new ArrayList<>();
-    bgColor = Color.GRAY;
-    computeSize();
-    computePosition();
   }
 
   public void addChild(Node child) {
     if (!children.contains(child)) {
       children.add(child);
     }
-  }
-
-  public void setBgColor(Color bgColor) {
-    this.bgColor = bgColor;
   }
 
   @Override
@@ -38,19 +30,28 @@ public abstract class Container extends Node {
 
   @Override
   public BufferedImage getAppearance() {
-    if (img == null || img.getWidth() != size.width || img.getHeight() != size.height) {
-      img = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
-      g = img.createGraphics();
+    if (image == null || image.getWidth() != size.width || image.getHeight() != size.height) {
+      image = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
+      graphics = image.createGraphics();
     }
 
-    g.setColor(bgColor);
-    g.fillRect(0, 0, size.width, size.height);
+    graphics.setColor(Constants.TRANSPARENT);
+    graphics.fillRect(0, 0, size.width, size.height);
 
-    // The children are drawn in the container's image instead of calling their onRender.
-    // This allows for clipping if the child's bounds fall outside that of the container.
-    children.forEach(child -> g.drawImage(child.getAppearance(), child.getPosition().x, child.getPosition().y, null));
+    // The children are drawn in the container's image
+    // instead of calling their onRender. This allows
+    // for clipping if the child's bounds fall outside
+    // that of the container.
+    children.forEach(child ->
+      graphics.drawImage(
+        child.getAppearance(),
+        child.getPosition().x,
+        child.getPosition().y,
+        null
+      )
+    );
 
-    return img;
+    return image;
   }
 
   protected void computePosition() {
