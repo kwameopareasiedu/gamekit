@@ -19,7 +19,6 @@ public final class Window {
   private final Point center;
   private final double scaleRatio;
   private final JFrame frame;
-  private final JPanel renderPanel;
   private BufferedImage renderTarget;
   private BufferedImage sceneTarget;
   private BufferedImage uiTarget;
@@ -31,10 +30,8 @@ public final class Window {
     renderSize = new Dimension(resolution.width, resolution.height);
     center = new Point(resolution.width / 2, resolution.height / 2);
 
-    renderPanel = new JPanel(true);
-    renderPanel.setBackground(Color.BLACK);
-
     frame = new JFrame(title);
+    frame.getContentPane().setBackground(Color.BLACK);
 
     if (Window.isFullScreen) {
       frame.setUndecorated(true);
@@ -61,7 +58,7 @@ public final class Window {
     }
 
     frame.setLocationRelativeTo(null);
-    frame.add(renderPanel);
+    frame.setBackground(Color.BLACK);
     frame.pack();
 
     createRenderTargets();
@@ -161,14 +158,14 @@ public final class Window {
       int dy2 = dy1 + scaledHeight;
 
       renderGraphics.drawImage(sceneTarget, dx1, dy1, dx2, dy2, 0, 0, renderSize.width, renderSize.height, null);
-      renderGraphics.drawImage(uiTarget, dx1, dy1, dx2, dx2, 0, 0, renderSize.width, renderSize.height, null);
+      renderGraphics.drawImage(uiTarget, dx1, dy1, dx2, dy2, 0, 0, renderSize.width, renderSize.height, null);
     } else {
       renderGraphics.drawImage(sceneTarget, null, 0, 0);
       renderGraphics.drawImage(uiTarget, null, 0, 0);
     }
 
-    Graphics2D renderPanelGraphics = (Graphics2D) renderPanel.getGraphics();
-    renderPanelGraphics.drawImage(renderTarget, null, 0, 0);
+    Graphics2D frameGraphics = (Graphics2D) frame.getGraphics();
+    frameGraphics.drawImage(renderTarget, null, 0, 0);
   }
 
   void createRenderTargets() {
@@ -197,5 +194,10 @@ public final class Window {
       Toolkit.getDefaultToolkit().getScreenSize().width,
       Toolkit.getDefaultToolkit().getScreenSize().height
     );
+
+    @Override
+    public String toString() {
+      return String.format("Resolution[width=%d,height=%d]", width, height);
+    }
   }
 }
