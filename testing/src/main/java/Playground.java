@@ -1,12 +1,11 @@
 import dev.gamekit.core.Window;
 import dev.gamekit.core.*;
-import dev.gamekit.ui.widgets.Align;
-import dev.gamekit.ui.widgets.Center;
 import dev.gamekit.ui.widgets.Image;
+import dev.gamekit.ui.widgets.*;
 import dev.gamekit.utils.Alignment;
-import dev.gamekit.ui.widgets.Text;
 
 import java.awt.*;
+import java.util.List;
 
 public class Playground extends Scene {
   private int x = 0, y = 0;
@@ -30,13 +29,28 @@ public class Playground extends Scene {
     Text text = new Text("The quick brown fox jumps over the lazy dog");
     text.setBackgroundColor(Color.BLACK);
 
+    Text text2 = new Text("I've got a shadow");
+    text2.toggleShadow(true);
+    text2.setShadowColor(Color.LIGHT_GRAY);
+    text2.setShadowOffset(2, 3);
+
+    Text text3 = new Text("Text 3");
+
     Image img = new Image("wide-img.jpg");
     img.getSize().set(300, 150);
 
     uiManager.setRoot(
       new Align(
-        new Center(text),
-        Alignment.TOP_LEFT
+        new Column(
+          List.of(
+            img,
+            text,
+            new Row(
+              List.of(text2, text3)
+            )
+          )
+        ),
+        Alignment.CENTER
       )
     );
   }

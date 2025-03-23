@@ -3,42 +3,43 @@ package dev.gamekit.ui.widgets;
 import dev.gamekit.ui.Container;
 import dev.gamekit.ui.Node;
 import dev.gamekit.utils.Constraints;
+import dev.gamekit.utils.Size;
 
 import java.util.List;
 
 /** Column container arranges its children vertically */
 public class Row extends Container {
+  protected final List<Node> children;
+
+  public Row(List<Node> children) {
+    if (children == null)
+      throw new NullPointerException("Row children cannot be null");
+    this.children = children;
+  }
+
   @Override
   protected List<Node> getChildren() {
-    return List.of();
+    return children;
   }
 
   @Override
   public void onLayout(Constraints constraints) {
+    Constraints cc = new Constraints(0, constraints.maxWidth, 0, constraints.maxHeight);
+    List<Node> children = getChildren();
+    int currentX = 0;
+    int maxHeight = 0;
 
+    for (var child : children) {
+      child.onLayout(cc);
+      child.getComputedPosition().set(currentX, 0);
+
+      Size childSize = child.getComputedSize();
+
+      currentX += childSize.width;
+      maxHeight = Math.max(maxHeight, childSize.height);
+      cc = cc.update(0, cc.maxWidth - childSize.width, 0, cc.maxHeight);
+    }
+
+    computedSize.set(currentX, maxHeight);
   }
-
-  //  @Override
-  //  protected Size getContentSize() {
-  //    int combinedWidth = 0;
-  //    int tallestHeight = 0;
-  //
-  //    for (var child : children) {
-  //      combinedWidth += child.getComputedSize().width;
-  //      tallestHeight = Math.max(tallestHeight, child.getComputedSize().height);
-  //    }
-  //
-  //    Reusable.SIZE.set(combinedWidth, tallestHeight);
-  //    return Reusable.SIZE;
-  //  }
-  //
-  //  @Override
-  //  protected void updateContentPositions() {
-  //    int xpos = 0;
-  //
-  //    for (var child : children) {
-  //      child.getComputedPosition().set(xpos, 0);
-  //      xpos += child.getComputedSize().width;
-  //    }
-  //  }
 }

@@ -29,10 +29,11 @@ public abstract class Node {
 
   /**
    * Abstract method which the node uses to lay itself out.
-   * It receives a {@link Constraints} object which it must respect
-   * when determining its size.
+   * It receives a {@link Constraints} object which it
+   * <b>must respect</b> when determining its size.
    * <p>
-   * The goal of this method is to compute attributes needed for rendering.
+   * The goal of this method is to set the {@link #computedSize}
+   * which is required for rendering the node.
    * @param constraints Constraints from the parent or window
    */
   public abstract void onLayout(Constraints constraints);

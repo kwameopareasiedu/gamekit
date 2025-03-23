@@ -8,11 +8,19 @@ public class Constraints {
 
   /** Creates a new constraints object with the given values */
   public Constraints(int minWidth, int maxWidth, int minHeight, int maxHeight) {
-    this.minWidth = minWidth;
-    this.maxWidth = maxWidth;
-    this.minHeight = minHeight;
-    this.maxHeight = maxHeight;
+    this.minWidth = java.lang.Math.max(0, minWidth);
+    this.maxWidth = java.lang.Math.max(0, maxWidth);
+    this.minHeight = java.lang.Math.max(0, minHeight);
+    this.maxHeight = java.lang.Math.max(0, maxHeight);
     this.isTight = minWidth == maxWidth && minHeight == maxHeight;
+  }
+
+  /**
+   * Creates a new constraints object, copying values from another constraints object
+   * @param constraints The constraints object to copy from
+   */
+  public Constraints(Constraints constraints) {
+    this(constraints.minWidth, constraints.maxWidth, constraints.minHeight, constraints.maxHeight);
   }
 
   /**
