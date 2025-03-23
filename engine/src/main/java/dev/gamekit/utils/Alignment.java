@@ -1,5 +1,6 @@
-package dev.gamekit.ui;
+package dev.gamekit.utils;
 
+/** Represents the alignment of an object relative to another */
 public enum Alignment {
   TOP_LEFT,
   TOP_CENTER,

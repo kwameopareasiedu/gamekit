@@ -66,7 +66,7 @@ public final class Renderer {
 
     // Clear ui target
     Graphics2D gui = Window.getInstance().getUiGraphics();
-    gui.setBackground(Constants.TRANSPARENT);
+    gui.setBackground(Constants.TRANSPARENT_COLOR);
     gui.clearRect(0, 0, w, h);
   }
 

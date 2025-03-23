@@ -1,6 +1,9 @@
 package dev.gamekit.ui;
 
 import dev.gamekit.core.Renderer;
+import dev.gamekit.utils.Constraints;
+import dev.gamekit.utils.Position;
+import dev.gamekit.utils.Size;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -60,16 +63,22 @@ public abstract class Node {
   public final void onRender() { Renderer.drawNode(this); }
 
   /**
-   * Returns the position of the node
-   * @return The node position
+   * Returns the computed position of the node
+   * @return The computed position
    */
   public Position getComputedPosition() { return computedPosition; }
 
   /**
-   * Returns the size of the node
-   * @return The node size
+   * Returns the computed size of the node
+   * @return The computed size
    */
   public Size getComputedSize() { return computedSize; }
+
+  /**
+   * Returns the intrinsic size of the node
+   * @return The intrinsic size
+   */
+  public Size getIntrinsicSize() { return intrinsicSize; }
 
   /**
    * Appearance contains a {@link BufferedImage} and a
@@ -77,7 +86,7 @@ public abstract class Node {
    */
   public static class Appearance {
     public final BufferedImage image;
-    final Graphics2D graphics;
+    public final Graphics2D graphics;
 
     /** Creates a new appearance from the given image */
     private Appearance(BufferedImage image) {

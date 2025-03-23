@@ -1,4 +1,6 @@
-package dev.gamekit.ui;
+package dev.gamekit.utils;
+
+import dev.gamekit.ui.Node;
 
 /** Represents a padding or margin of a {@link Node} */
 public class Spacing {

@@ -1,10 +1,12 @@
-package dev.gamekit.ui;
+package dev.gamekit.utils;
 
+/** An immutable container for range values for width and height */
 public class Constraints {
   public final int minWidth, maxWidth;
   public final int minHeight, maxHeight;
   public final boolean isTight;
 
+  /** Creates a new constraints object with the given values */
   public Constraints(int minWidth, int maxWidth, int minHeight, int maxHeight) {
     this.minWidth = minWidth;
     this.maxWidth = maxWidth;
@@ -13,7 +15,17 @@ public class Constraints {
     this.isTight = minWidth == maxWidth && minHeight == maxHeight;
   }
 
-  public Constraints copyWith(int minWidth, int maxWidth, int minHeight, int maxHeight) {
+  /**
+   * Returns this {@link Constraints} if all incoming values are the same as instance values
+   * else it creates a new {@link Constraints} object with the new values
+   * @param minWidth  The new minimum width
+   * @param maxWidth  The new maximum width
+   * @param minHeight The new minimum height
+   * @param maxHeight The new maximum height
+   * @return This object if all incoming values are the same as instance
+   * values else a new {@link Constraints} object with the new values
+   */
+  public Constraints update(int minWidth, int maxWidth, int minHeight, int maxHeight) {
     if (this.minWidth != minWidth ||
       this.maxWidth != maxWidth ||
       this.minHeight != minHeight ||

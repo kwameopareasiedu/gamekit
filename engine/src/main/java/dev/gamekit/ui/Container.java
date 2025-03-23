@@ -1,8 +1,10 @@
 package dev.gamekit.ui;
 
 import dev.gamekit.utils.Constants;
+import dev.gamekit.utils.Constraints;
+import dev.gamekit.utils.Size;
 
-import java.awt.image.BufferedImage;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,48 +23,43 @@ public abstract class Container extends Node {
   }
 
   @Override
-  public void onUpdate() {
-    children.forEach(Node::onUpdate);
-
-    Size contentSize = getContentSize();
-    size.set(
-      contentSize.width + padding.getHorizontal(),
-      contentSize.height + padding.getVertical()
-    );
-
-    position.set(margin.left, margin.top);
-    updateContentPositions();
+  public void onLayout(Constraints constraints) {
+//    children.forEach(Node::onLayout);
+//
+//    Size contentSize = getContentSize();
+//    computedSize.set(
+//      contentSize.width + padding.getHorizontal(),
+//      contentSize.height + padding.getVertical()
+//    );
+//
+//    computedPosition.set(margin.left, margin.top);
+//    updateContentPositions();
   }
 
   @Override
-  public BufferedImage getAppearance() {
-    if (image == null || image.getWidth() != size.width || image.getHeight() != size.height) {
-      image = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
-      graphics = image.createGraphics();
-    }
+  public Appearance getAppearance() {
+    Appearance appearance = super.getAppearance();
+    Graphics2D g = appearance.graphics;
 
-    graphics.setColor(Constants.TRANSPARENT);
-    graphics.fillRect(0, 0, size.width, size.height);
+    g.setColor(Constants.TRANSPARENT_COLOR);
+    g.fillRect(0, 0, computedSize.width, computedSize.height);
 
-    // The children are drawn in the container's image
-    // instead of calling their onRender. This allows
-    // for clipping if the child's bounds fall outside
-    // that of the container.
+    // The children are drawn in the container's image instead of calling their onRender.
+    // This allows for clipping if the child's bounds fall outside that of the container.
     children.forEach(child ->
-      graphics.drawImage(
-        child.getAppearance(),
-        child.getPosition().x,
-        child.getPosition().y,
+      g.drawImage(
+        child.getAppearance().image,
+        child.getComputedPosition().x,
+        child.getComputedPosition().y,
         null
       )
     );
 
-    return image;
+    return appearance;
   }
 
   /**
-   * Abstract method which measures the size of the
-   * smallest bounding box which contains all children
+   * Abstract method which measures the size of the smallest bounding box which contains all children
    * @return The size of the content
    */
   protected abstract Size getContentSize();

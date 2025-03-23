@@ -2,16 +2,17 @@ package dev.gamekit.ui;
 
 import dev.gamekit.core.Renderer;
 import dev.gamekit.core.Window;
+import dev.gamekit.utils.Constraints;
 
 /**
  * Manages UI handling within a {@link dev.gamekit.core.Scene Scene}.
  * A {@link dev.gamekit.core.Scene Scene} must only contain 1 instance of this
  */
-public class UiManager {
+public class UIManager {
   private Constraints windowConstraints;
   private Node root;
 
-  public UiManager() {
+  public UIManager() {
     Window win = Window.getInstance();
 
     windowConstraints = new Constraints(
@@ -27,7 +28,7 @@ public class UiManager {
   public void onUpdate() {
     if (root != null) {
       Window win = Window.getInstance();
-      windowConstraints = windowConstraints.copyWith(
+      windowConstraints = windowConstraints.update(
         win.getRenderWidth(),
         win.getRenderWidth(),
         win.getRenderHeight(),

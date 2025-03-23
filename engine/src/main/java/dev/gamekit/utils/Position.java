@@ -1,4 +1,6 @@
-package dev.gamekit.ui;
+package dev.gamekit.utils;
+
+import dev.gamekit.ui.Node;
 
 /** Represents the position of a {@link Node} in screen space */
 public class Position {

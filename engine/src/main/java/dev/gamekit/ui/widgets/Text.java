@@ -1,6 +1,10 @@
-package dev.gamekit.ui;
+package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.Renderer;
+import dev.gamekit.utils.Alignment;
+import dev.gamekit.utils.Constraints;
+import dev.gamekit.ui.Node;
+import dev.gamekit.utils.Position;
 import dev.gamekit.utils.Constants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,7 +40,7 @@ public class Text extends Node {
     fontSize = 16;
     color = Color.WHITE;
     alignment = Alignment.TOP_LEFT;
-    backgroundColor = Constants.TRANSPARENT;
+    backgroundColor = Constants.TRANSPARENT_COLOR;
     font = Constants.DEFAULT_FONT;
     shadowOffset = new Position(0, 0);
   }

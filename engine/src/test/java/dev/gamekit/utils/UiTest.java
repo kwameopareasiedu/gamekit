@@ -1,8 +1,5 @@
 package dev.gamekit.utils;
 
-import dev.gamekit.ui.Position;
-import dev.gamekit.ui.Size;
-import dev.gamekit.ui.Spacing;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

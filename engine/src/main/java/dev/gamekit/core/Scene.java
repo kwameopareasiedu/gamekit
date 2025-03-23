@@ -1,6 +1,6 @@
 package dev.gamekit.core;
 
-import dev.gamekit.ui.UiManager;
+import dev.gamekit.ui.UIManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,7 +20,7 @@ public abstract class Scene {
 
   protected final String name;
   protected final Map<Integer, Prop> props;
-  protected final UiManager uiManager;
+  protected final UIManager uiManager;
 
   /**
    * Creates a scene with the given name
@@ -29,7 +29,7 @@ public abstract class Scene {
   public Scene(String name) {
     this.name = name;
     props = new HashMap<>();
-    uiManager = new UiManager();
+    uiManager = new UIManager();
   }
 
   /**
