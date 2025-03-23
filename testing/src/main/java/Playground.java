@@ -29,7 +29,7 @@ public class Playground extends Scene {
     text.setAlignment(Alignment.CENTER);
     text.setBackgroundColor(Color.CYAN);
 
-    Image img = new Image("wide-img.jpg", Image.Fit.STRETCH);
+    Image img = new Image("wide-img.jpg");
     img.getSize().set(150, 150);
 
     uiManager.setRoot(img);

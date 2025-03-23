@@ -76,8 +76,8 @@ public class Image extends Node {
         double heightRatio = (double) computedSize.height / intrinsicSize.height;
 
         double scaleRatio = fit == Fit.FIT ?
-          intrinsicSize.width >= intrinsicSize.height ? widthRatio : heightRatio :
-          intrinsicSize.width < intrinsicSize.height ? widthRatio : heightRatio;
+          intrinsicSize.width > intrinsicSize.height ? widthRatio : heightRatio :
+          intrinsicSize.width <= intrinsicSize.height ? widthRatio : heightRatio;
 
         int scaledWidth = (int) (intrinsicSize.width * scaleRatio);
         int scaledHeight = (int) (intrinsicSize.height * scaleRatio);
