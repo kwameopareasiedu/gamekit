@@ -12,9 +12,10 @@
 - Added `static boolean isButtonJustReleased(int buttonCode)` to `Input` class
 - Added abstract `Node` class which is the base class of all UI elements 
 - Added abstract `Container` class which is the base class of all container UI elements
-- Added `HBox` container class which lays its children horizontally
-- Added `VBox` container class which lays its children vertically
+- Added `Row` container class which lays its children horizontally
+- Added `Column` container class which lays its children vertically
 - Added `Text` UI class which renders text on the `Window` UI target
+- Added `Image` UI class which renders an image on the `Window` UI target
 
 ### Changed
 

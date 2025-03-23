@@ -35,6 +35,7 @@ public class UIManager {
         win.getRenderHeight()
       );
       root.onLayout(windowConstraints);
+      root.computedPosition.set(0, 0);
     }
   }
 

@@ -1,8 +1,8 @@
 import dev.gamekit.core.Window;
 import dev.gamekit.core.*;
-import dev.gamekit.ui.Container;
-import dev.gamekit.ui.Text;
-import dev.gamekit.ui.VBox;
+import dev.gamekit.ui.widgets.Image;
+import dev.gamekit.utils.Alignment;
+import dev.gamekit.ui.widgets.Text;
 
 import java.awt.*;
 
@@ -25,22 +25,14 @@ public class Playground extends Scene {
   @Override
   public void onStart() {
     super.onStart();
-    Container vbox = new VBox();
-    vbox.getPadding().set(0);
-
     Text text = new Text("The quick brown fox jumps over the lazy dog");
-    text.getPadding().set(25);
+    text.setAlignment(Alignment.CENTER);
+    text.setBackgroundColor(Color.CYAN);
 
-    Text text2 = new Text("I've got a shadow");
-    text2.toggleShadow(true);
-    text2.setShadowColor(Color.GRAY);
-//    text2.setBgColor(Color.BLACK);
-    text2.setShadowOffset(2, 2);
-    text2.getPadding().set(4, 25);
+    Image img = new Image("wide-img.jpg", Image.Fit.STRETCH);
+    img.getSize().set(150, 150);
 
-    vbox.addChild(text);
-    vbox.addChild(text2);
-    rootNode = vbox;
+    uiManager.setRoot(img);
   }
 
   @Override
