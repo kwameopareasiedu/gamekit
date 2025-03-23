@@ -1,5 +1,6 @@
 import dev.gamekit.core.Window;
 import dev.gamekit.core.*;
+import dev.gamekit.ui.widgets.Center;
 import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.utils.Alignment;
 import dev.gamekit.ui.widgets.Text;
@@ -30,9 +31,11 @@ public class Playground extends Scene {
     text.setBackgroundColor(Color.CYAN);
 
     Image img = new Image("wide-img.jpg");
-    img.getSize().set(150, 150);
+    img.getSize().set(300, 150);
 
-    uiManager.setRoot(img);
+    uiManager.setRoot(
+      new Center(text)
+    );
   }
 
   @Override
