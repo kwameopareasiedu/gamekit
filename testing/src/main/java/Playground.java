@@ -28,16 +28,15 @@ public class Playground extends Scene {
   public void onStart() {
     super.onStart();
     Text text = new Text("The quick brown fox jumps over the lazy dog");
-    text.setAlignment(Alignment.CENTER);
-    text.setBackgroundColor(Color.CYAN);
+    text.setBackgroundColor(Color.BLACK);
 
     Image img = new Image("wide-img.jpg");
     img.getSize().set(300, 150);
 
     uiManager.setRoot(
       new Align(
-        new Center(img),
-        Alignment.BOTTOM_RIGHT
+        new Center(text),
+        Alignment.TOP_LEFT
       )
     );
   }

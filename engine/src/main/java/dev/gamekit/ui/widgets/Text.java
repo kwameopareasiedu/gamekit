@@ -1,11 +1,10 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.Renderer;
-import dev.gamekit.utils.Alignment;
-import dev.gamekit.utils.Constraints;
 import dev.gamekit.ui.Node;
-import dev.gamekit.utils.Position;
 import dev.gamekit.utils.Constants;
+import dev.gamekit.utils.Constraints;
+import dev.gamekit.utils.Position;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,7 +24,6 @@ public class Text extends Node {
   protected Color color;
   protected Color backgroundColor;
   protected Font font;
-  protected Alignment alignment;
   protected boolean shadowEnabled;
   protected Position shadowOffset;
   protected Color shadowColor;
@@ -39,7 +37,6 @@ public class Text extends Node {
     fontStyle = Font.PLAIN;
     fontSize = 16;
     color = Color.WHITE;
-    alignment = Alignment.TOP_LEFT;
     backgroundColor = Constants.TRANSPARENT_COLOR;
     font = Constants.DEFAULT_FONT;
     shadowOffset = new Position(0, 0);
@@ -80,54 +77,13 @@ public class Text extends Node {
     g.clearRect(0, 0, computedSize.width, computedSize.height);
     g.setFont(renderFont);
 
-    int drawX = 0, drawY = 0;
-
-    switch (alignment) {
-      case TOP_LEFT -> {
-        drawX = 0;
-        drawY = 0;
-      }
-      case TOP_CENTER -> {
-        drawX = computedSize.width / 2 - intrinsicSize.width / 2;
-        drawY = 0;
-      }
-      case TOP_RIGHT -> {
-        drawX = computedSize.width - intrinsicSize.width;
-        drawY = 0;
-      }
-      case LEFT -> {
-        drawX = 0;
-        drawY = computedSize.height / 2 - intrinsicSize.height / 2;
-      }
-      case CENTER -> {
-        drawX = computedSize.width / 2 - intrinsicSize.width / 2;
-        drawY = computedSize.height / 2 - intrinsicSize.height / 2;
-      }
-      case RIGHT -> {
-        drawX = computedSize.width - intrinsicSize.width;
-        drawY = computedSize.height / 2 - intrinsicSize.height / 2;
-      }
-      case BOTTOM_LEFT -> {
-        drawX = 0;
-        drawY = computedSize.height - intrinsicSize.height;
-      }
-      case BOTTOM_CENTER -> {
-        drawX = computedSize.width / 2 - intrinsicSize.width / 2;
-        drawY = computedSize.height - intrinsicSize.height;
-      }
-      case BOTTOM_RIGHT -> {
-        drawX = computedSize.width - intrinsicSize.width;
-        drawY = computedSize.height - intrinsicSize.height;
-      }
-    }
-
     if (shadowEnabled) {
       g.setColor(shadowColor);
-      g.drawString(text, drawX + shadowOffset.x, drawY + fontSize + shadowOffset.y);
+      g.drawString(text, shadowOffset.x, fontSize + shadowOffset.y);
     }
 
     g.setColor(color);
-    g.drawString(text, drawX, drawY + fontSize);
+    g.drawString(text, 0, fontSize);
     return appearance;
   }
 
@@ -174,12 +130,6 @@ public class Text extends Node {
    * @param font The text font
    */
   public void setFont(Font font) { this.font = font; }
-
-  /**
-   * Sets the alignment of this text
-   * @param alignment The text alignment
-   */
-  public void setAlignment(Alignment alignment) { this.alignment = alignment; }
 
   /**
    * Enables or disabled the drop shadow of this text
