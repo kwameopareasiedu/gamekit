@@ -219,9 +219,9 @@ public final class Renderer {
   public static void drawNode(Node node) {
     Graphics2D g = Window.getInstance().getUiGraphics();
     g.drawImage(
-      node.getAppearance(),
-      node.getPosition().x, node.getPosition().y,
-      node.getSize().width, node.getSize().height,
+      node.getAppearance().image,
+      node.getComputedPosition().x, node.getComputedPosition().y,
+      node.getComputedSize().width, node.getComputedSize().height,
       null
     );
   }

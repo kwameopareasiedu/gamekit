@@ -28,7 +28,7 @@ public class Spacing {
    * @param vertical   Vertical spacing (Top and bottom)
    * @param horizontal Horizontal spacing (Left and right)
    */
-  public Spacing(int vertical, int horizontal) {
+  public Spacing(int horizontal, int vertical) {
     this(vertical, horizontal, vertical, horizontal);
   }
 
@@ -69,7 +69,7 @@ public class Spacing {
    * @param vertical   Vertical spacing (Top and bottom)
    * @param horizontal Horizontal spacing (Left and right)
    */
-  public void set(int vertical, int horizontal) {
+  public void set(int horizontal, int vertical) {
     set(vertical, horizontal, vertical, horizontal);
   }
 
@@ -97,6 +97,9 @@ public class Spacing {
 
   @Override
   public String toString() {
-    return String.format(getClass().getName() + "[top=%d,right=%d,bottom=%d,left=%d]", top, right, bottom, left);
+    return String.format(
+      getClass().getName() + "[top=%d,right=%d,bottom=%d,left=%d]",
+      top, right, bottom, left
+    );
   }
 }

@@ -1,45 +1,61 @@
 package dev.gamekit.ui;
 
 import dev.gamekit.core.Renderer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /** Base class for all UI elements in the engine */
 public abstract class Node {
-  protected final Position position;
-  protected final Size size;
-  protected final Spacing padding;
-  protected final Spacing margin;
-  protected BufferedImage image;
-  protected Graphics2D graphics;
+  private static final Logger LOGGER = LogManager.getLogger();
+
+  protected final Position computedPosition;
+  protected final Size intrinsicSize;
+  protected final Size computedSize;
+
+  private Appearance appearance;
 
   /** Creates a new node with default parameters */
   public Node() {
-    position = new Position(0, 0);
-    size = new Size(0, 0);
-    padding = new Spacing(5);
-    margin = new Spacing(0);
+    computedPosition = new Position(0, 0);
+    intrinsicSize = new Size(0, 0);
+    computedSize = new Size(0, 0);
   }
 
   /**
-   * Abstract method which the node uses to update itself on each frame.
-   * The goal of this method is to compute the position, size and other
-   * attributes needed for rendering.
+   * Abstract method which the node uses to lay itself out.
+   * It receives a {@link Constraints} object which it must respect
+   * when determining its size.
+   * <p>
+   * The goal of this method is to compute attributes needed for rendering.
+   * @param constraints Constraints from the parent or window
    */
-  public abstract void onUpdate();
+  public abstract void onLayout(Constraints constraints);
 
   /**
-   * Abstract method which returns the {@link BufferedImage} representing what this node looks like.
-   * <p>
-   * For container nodes, the children should be drawn on this image as well.
+   * Creates and returns the {@link Appearance} object of the node.
+   * The node renders its content onto the {@link Appearance#image}
    * @return The {@link BufferedImage} representation of this node
    */
-  public abstract BufferedImage getAppearance();
+  public Appearance getAppearance() {
+    if (appearance == null ||
+      appearance.image.getWidth() != computedSize.width ||
+      appearance.image.getHeight() != computedSize.height) {
+      LOGGER.debug("Creating appearance");
+      BufferedImage image = new BufferedImage(computedSize.width, computedSize.height, BufferedImage.TYPE_INT_ARGB);
+      appearance = new Appearance(image);
+    }
+
+    return appearance;
+  }
 
   /**
    * Renders the node's {@link #getAppearance() appearance}
    * on the current {@link dev.gamekit.core.Window Window}
+   * <p>
+   * <i>This is only called if the node is at the root level of the scene's UI hierarchy</i>
    */
   public final void onRender() { Renderer.drawNode(this); }
 
@@ -47,23 +63,26 @@ public abstract class Node {
    * Returns the position of the node
    * @return The node position
    */
-  public Position getPosition() { return position; }
+  public Position getComputedPosition() { return computedPosition; }
 
   /**
    * Returns the size of the node
    * @return The node size
    */
-  public Size getSize() { return size; }
+  public Size getComputedSize() { return computedSize; }
 
   /**
-   * Returns the padding of the node
-   * @return The node padding
+   * Appearance contains a {@link BufferedImage} and a
+   * {@link Graphics2D} object which draws to the image
    */
-  public Spacing getPadding() { return padding; }
+  public static class Appearance {
+    public final BufferedImage image;
+    final Graphics2D graphics;
 
-  /**
-   * Returns the margin of the node
-   * @return The node margin
-   */
-  public Spacing getMargin() { return margin; }
+    /** Creates a new appearance from the given image */
+    private Appearance(BufferedImage image) {
+      this.image = image;
+      this.graphics = image.createGraphics();
+    }
+  }
 }
