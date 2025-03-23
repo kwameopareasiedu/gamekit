@@ -40,6 +40,7 @@ public class Row extends Container {
       cc = cc.update(0, cc.maxWidth - childSize.width, 0, cc.maxHeight);
     }
 
+    intrinsicSize.set(currentX, maxHeight);
     computedSize.set(currentX, maxHeight);
   }
 }

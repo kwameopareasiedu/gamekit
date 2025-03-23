@@ -97,7 +97,7 @@ public abstract class Scene {
    * <p>
    * This calls {@link #onStart()} before calling {@link Prop#onStart() onStart()} on each child prop
    */
-  void onApplicationStart() {
+  void onSceneStart() {
     LOGGER.debug("Starting scene");
     onStart();
     props.forEach((k, v) -> v.onStart());
@@ -108,7 +108,7 @@ public abstract class Scene {
    * <p>
    * This calls {@link #onUpdate()} before calling {@link Prop#onUpdate() onUpdate()} on each child prop
    */
-  void onApplicationUpdate() {
+  void onSceneUpdate() {
     onUpdate();
     props.forEach((k, v) -> v.onUpdate());
     uiManager.onUpdate();
@@ -119,7 +119,7 @@ public abstract class Scene {
    * <p>
    * This calls {@link #onRender()} before calling {@link Prop#onRender() onRender()} on each child prop
    */
-  void onApplicationRender() {
+  void onSceneRender() {
     onRender();
     props.forEach((k, v) -> v.onRender());
     uiManager.onRender();
@@ -130,7 +130,7 @@ public abstract class Scene {
    * <p>
    * This calls {@link Prop#onDispose() onDispose()} on each child prop before calling {@link #onDispose()}
    */
-  void onApplicationDispose() {
+  void onSceneDispose() {
     LOGGER.debug("Disposing scene");
     props.forEach((k, v) -> v.onDispose());
     onDispose();

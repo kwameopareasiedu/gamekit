@@ -40,6 +40,7 @@ public class Column extends Container {
       cc = cc.update(0, cc.maxWidth, 0, cc.maxHeight - childSize.height);
     }
 
+    intrinsicSize.set(maxWidth, currentY);
     computedSize.set(maxWidth, currentY);
   }
 }

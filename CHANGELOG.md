@@ -18,6 +18,7 @@
 - Added `Image` UI class which renders an image on the `Window` UI target
 - Added `Align` UI container which align its only child based on `Alignment` enum
 - Added `Center` UI container which centers its only child
+- Added `Padding` UI container which pads its only child with some spacing
 
 ### Changed
 

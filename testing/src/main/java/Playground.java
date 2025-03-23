@@ -3,6 +3,7 @@ import dev.gamekit.core.*;
 import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.ui.widgets.*;
 import dev.gamekit.utils.Alignment;
+import dev.gamekit.utils.Spacing;
 
 import java.awt.*;
 import java.util.List;
@@ -46,7 +47,7 @@ public class Playground extends Scene {
             img,
             text,
             new Row(
-              List.of(text2, text3)
+              List.of(text2, new Padding(text3, new Spacing(15)))
             )
           )
         ),
@@ -68,6 +69,7 @@ public class Playground extends Scene {
 
   @Override
   public void onRender() {
+    super.onRender();
     // Clear the screen with black
     Renderer.setColor(Color.DARK_GRAY);
     Renderer.clear();
@@ -80,7 +82,5 @@ public class Playground extends Scene {
     Renderer.fillRoundRect(x + 50, y + 50, 100, 100, 10, 10);
     Renderer.setColor(Color.CYAN);
     Renderer.fillRoundRect(x - 50, y + 50, 100, 100, 10, 10);
-
-    super.onRender();
   }
 }

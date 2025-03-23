@@ -173,7 +173,7 @@ public abstract class Application {
     }
 
     if (currentScene != null) {
-      currentScene.onApplicationUpdate();
+      currentScene.onSceneUpdate();
     }
   }
 
@@ -181,7 +181,7 @@ public abstract class Application {
   private void onRender() {
     if (currentScene != null) {
       Camera.getInstance().update();
-      currentScene.onApplicationRender();
+      currentScene.onSceneRender();
     }
 
     window.redraw();
@@ -207,14 +207,14 @@ public abstract class Application {
       animations.clear();
 
       if (currentScene != null) {
-        currentScene.onApplicationDispose();
+        currentScene.onSceneDispose();
         LOGGER.debug("Switching scene: {} -> {}", currentScene.getName(), nextScene.getName());
       } else {
         LOGGER.debug("Loading scene: {}", nextScene.getName());
       }
 
       currentScene = nextScene;
-      currentScene.onApplicationStart();
+      currentScene.onSceneStart();
       nextScene = null;
 
       window.createRenderTargets();
@@ -227,7 +227,7 @@ public abstract class Application {
     LOGGER.debug("Disposing application");
 
     if (currentScene != null) {
-      currentScene.onApplicationDispose();
+      currentScene.onSceneDispose();
     }
   }
 }
