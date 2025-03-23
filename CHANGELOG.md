@@ -16,6 +16,7 @@
 - Added `Column` container class which lays its children vertically
 - Added `Text` UI class which renders text on the `Window` UI target
 - Added `Image` UI class which renders an image on the `Window` UI target
+- Added `Align` UI container which align its only child based on `Alignment` enum
 - Added `Center` UI container which centers its only child
 
 ### Changed

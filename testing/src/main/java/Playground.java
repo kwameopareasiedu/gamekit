@@ -1,5 +1,6 @@
 import dev.gamekit.core.Window;
 import dev.gamekit.core.*;
+import dev.gamekit.ui.widgets.Align;
 import dev.gamekit.ui.widgets.Center;
 import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.utils.Alignment;
@@ -34,7 +35,10 @@ public class Playground extends Scene {
     img.getSize().set(300, 150);
 
     uiManager.setRoot(
-      new Center(text)
+      new Align(
+        new Center(img),
+        Alignment.BOTTOM_RIGHT
+      )
     );
   }
 

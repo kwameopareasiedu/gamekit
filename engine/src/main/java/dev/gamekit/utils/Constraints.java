@@ -37,7 +37,7 @@ public class Constraints {
   @Override
   public String toString() {
     return String.format(
-      getClass().getName() + "%d<=width<=%d,%d<=height<=%d",
+      getClass().getName() + "[%d<=width<=%d,%d<=height<=%d]",
       minWidth, maxWidth, minHeight, maxHeight
     );
   }

@@ -71,7 +71,6 @@ public class Text extends Node {
     computedSize.set(computedWidth, computedHeight);
   }
 
-  @SuppressWarnings("DataFlowIssue")
   @Override
   public Appearance getAppearance() {
     Appearance appearance = super.getAppearance();
