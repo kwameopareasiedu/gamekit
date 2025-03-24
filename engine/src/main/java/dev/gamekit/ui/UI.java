@@ -35,7 +35,7 @@ public class UI implements State.Observer<Object> {
     return state;
   }
 
-  public void setRoot(Node root) {
+  public void createRoot(Node root) {
     this.root = root;
 
     Window win = Window.getInstance();

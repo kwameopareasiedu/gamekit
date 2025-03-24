@@ -42,8 +42,8 @@ public class Text extends Node {
     shadowOffset = new Position(0, 0);
   }
 
-  public static Builder create(String text) {
-    return new Builder(text);
+  public static Text create(String text) {
+    return new Text(text);
   }
 
   @Override
@@ -88,6 +88,56 @@ public class Text extends Node {
   }
 
   /**
+   * Sets the font family of this text. The name of the
+   * font should match an installed font on the system
+   */
+  public Text withFontFamily(String fontFamily) {
+    this.fontFamily = fontFamily;
+    return this;
+  }
+
+  public Text withFontStyle(int fontStyle) {
+    this.fontStyle = fontStyle;
+    return this;
+  }
+
+  public Text withFontSize(int fontSize) {
+    this.fontSize = fontSize;
+    return this;
+  }
+
+  public Text withBackgroundColor(Color backgroundColor) {
+    this.backgroundColor = backgroundColor;
+    return this;
+  }
+
+  public Text withColor(Color color) {
+    this.color = color;
+    return this;
+  }
+
+  /** Sets the font of this text. If set, this overrides {@link #fontFamily} value */
+  public Text withFont(Font font) {
+    this.font = font;
+    return this;
+  }
+
+  public Text withShadow(boolean shadowEnabled) {
+    this.shadowEnabled = shadowEnabled;
+    return this;
+  }
+
+  public Text withShadowOffset(int x, int y) {
+    this.shadowOffset.set(x, y);
+    return this;
+  }
+
+  public Text withShadowColor(Color color) {
+    this.shadowColor = color;
+    return this;
+  }
+
+  /**
    * Determines if the font should be updated.
    * This is done by checking if the {@link #fontFamily},
    * {@link #fontSize} or {@link #fontStyle} have changed
@@ -97,65 +147,5 @@ public class Text extends Node {
       !renderFont.getFamily().equals(fontFamily) ||
       renderFont.getSize() != fontSize ||
       renderFont.getStyle() != fontStyle;
-  }
-
-  public static class Builder {
-    private final Text instance;
-
-    private Builder(String text) {
-      instance = new Text(text);
-    }
-
-    public Text get() { return instance; }
-
-    /**
-     * Sets the font family of this text. The name of the
-     * font should match an installed font on the system
-     */
-    public Builder withFontFamily(String fontFamily) {
-      instance.fontFamily = fontFamily;
-      return this;
-    }
-
-    public Builder withFontStyle(int fontStyle) {
-      instance.fontStyle = fontStyle;
-      return this;
-    }
-
-    public Builder withFontSize(int fontSize) {
-      instance.fontSize = fontSize;
-      return this;
-    }
-
-    public Builder withBackgroundColor(Color backgroundColor) {
-      instance.backgroundColor = backgroundColor;
-      return this;
-    }
-
-    public Builder withColor(Color color) {
-      instance.color = color;
-      return this;
-    }
-
-    /** Sets the font of this text. If set, this overrides {@link #fontFamily} value */
-    public Builder withFont(Font font) {
-      instance.font = font;
-      return this;
-    }
-
-    public Builder withShadow(boolean shadowEnabled) {
-      instance.shadowEnabled = shadowEnabled;
-      return this;
-    }
-
-    public Builder withShadowOffset(int x, int y) {
-      instance.shadowOffset.set(x, y);
-      return this;
-    }
-
-    public Builder withShadowColor(Color color) {
-      instance.shadowColor = color;
-      return this;
-    }
   }
 }

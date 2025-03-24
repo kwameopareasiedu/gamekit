@@ -39,8 +39,8 @@ public class Image extends Node {
     }
   }
 
-  public static Builder create(String src) {
-    return new Builder(src);
+  public static Image create(String src) {
+    return new Image(src);
   }
 
   @Override
@@ -99,6 +99,16 @@ public class Image extends Node {
     }
   }
 
+  public Image withSize(int width, int height) {
+    this.size.set(width, height);
+    return this;
+  }
+
+  public Image withFit(Fit fit) {
+    this.fit = fit;
+    return this;
+  }
+
   /** Determines how the image should be resized/fitted in its bounds */
   public enum Fit {
     /** Resize the image to fit within the bounds */
@@ -107,25 +117,5 @@ public class Image extends Node {
     CROP,
     /** Stretch the image to completely cover the bounds */
     STRETCH
-  }
-
-  public static class Builder {
-    private final Image instance;
-
-    private Builder(String src) {
-      instance = new Image(src);
-    }
-
-    public Image get() { return instance; }
-
-    public Builder withSize(int width, int height) {
-      instance.size.set(width, height);
-      return this;
-    }
-
-    public Builder withFit(Fit fit) {
-      instance.fit = fit;
-      return this;
-    }
   }
 }
