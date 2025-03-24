@@ -27,16 +27,6 @@ public class Playground extends Scene {
   @Override
   public void onStart() {
     super.onStart();
-    Text text = new Text("The quick brown fox jumps over the lazy dog");
-    text.setBackgroundColor(Color.BLACK);
-
-    Text text2 = new Text("I've got a shadow");
-    text2.toggleShadow(true);
-    text2.setShadowColor(Color.LIGHT_GRAY);
-    text2.setShadowOffset(2, 3);
-
-    Text text3 = new Text("Text 3");
-
     Image img = new Image("wide-img.jpg");
     img.getSize().set(300, 150);
 
@@ -45,9 +35,15 @@ public class Playground extends Scene {
         new Column(
           List.of(
             img,
-            text,
+            Text.create("another text").withShadow(true).withShadowColor(Color.BLACK).withShadowOffset(2, 3).get(),
             new Row(
-              List.of(text2, new Padding(text3, new Spacing(15)))
+              List.of(
+                Text.create("with bg color text").withBackgroundColor(Color.BLACK).get(),
+                new Padding(
+                  Text.create("text 3").get(),
+                  new Spacing(15)
+                )
+              )
             )
           )
         ),
