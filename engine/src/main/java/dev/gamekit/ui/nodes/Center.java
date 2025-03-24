@@ -1,4 +1,4 @@
-package dev.gamekit.ui.widgets;
+package dev.gamekit.ui.nodes;
 
 import dev.gamekit.ui.Node;
 import dev.gamekit.utils.Alignment;

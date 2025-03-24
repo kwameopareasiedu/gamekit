@@ -85,7 +85,7 @@ public class Animation {
   }
 
   /** Called internally by the application game loop to update this animation */
-  public void update() {
+  public void onUpdate() {
     if (state == State.RUNNING) {
       value = clamp(value + 0.001 * rate * Application.FRAME_TIME, 0, 1);
 

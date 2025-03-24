@@ -1,4 +1,4 @@
-package dev.gamekit.ui.widgets;
+package dev.gamekit.ui.nodes;
 
 import dev.gamekit.ui.Container;
 import dev.gamekit.ui.Node;
@@ -20,6 +20,7 @@ public class Align extends Container {
     this.child = child;
     this.children = List.of(child);
     this.alignment = alignment;
+    child.setParent(this);
   }
 
   public static Builder create(Node child, Alignment alignment) {
@@ -30,12 +31,12 @@ public class Align extends Container {
   protected List<Node> getChildren() { return children; }
 
   @Override
-  public void onLayout(Constraints constraints) {
+  protected void onLayout(Constraints constraints) {
     Constraints c = constraints.update(
       0, constraints.maxWidth, 0, constraints.maxHeight
     );
 
-    child.onLayout(c);
+    child.computeLayout(c);
 
     Size childSize = child.getComputedSize();
     int computedWidth = clamp(childSize.width, constraints.minWidth, constraints.maxWidth);

@@ -1,4 +1,4 @@
-package dev.gamekit.ui.widgets;
+package dev.gamekit.ui.nodes;
 
 import dev.gamekit.ui.Container;
 import dev.gamekit.ui.Node;
@@ -15,6 +15,7 @@ public class Row extends Container {
     if (children == null)
       throw new NullPointerException("Row children cannot be null");
     this.children = List.of(children);
+    this.children.forEach(c -> c.setParent(this));
   }
 
   public static Builder create(Node... children) {
@@ -27,14 +28,14 @@ public class Row extends Container {
   }
 
   @Override
-  public void onLayout(Constraints constraints) {
+  protected void onLayout(Constraints constraints) {
     Constraints cc = new Constraints(0, constraints.maxWidth, 0, constraints.maxHeight);
     List<Node> children = getChildren();
     int currentX = 0;
     int maxHeight = 0;
 
     for (var child : children) {
-      child.onLayout(cc);
+      child.computeLayout(cc);
       child.getComputedPosition().set(currentX, 0);
 
       Size childSize = child.getComputedSize();

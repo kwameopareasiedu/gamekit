@@ -1,4 +1,4 @@
-package dev.gamekit.ui.widgets;
+package dev.gamekit.ui.nodes;
 
 import dev.gamekit.ui.Container;
 import dev.gamekit.ui.Node;
@@ -20,6 +20,7 @@ public class Padding extends Container {
     this.child = child;
     this.children = List.of(child);
     this.padding = padding;
+    child.setParent(this);
   }
 
   public static Builder create(Node child, Spacing padding) {
@@ -30,12 +31,12 @@ public class Padding extends Container {
   protected List<Node> getChildren() { return children; }
 
   @Override
-  public void onLayout(Constraints constraints) {
+  protected void onLayout(Constraints constraints) {
     Constraints c = constraints.update(
       0, constraints.maxWidth, 0, constraints.maxHeight
     );
 
-    child.onLayout(c);
+    child.computeLayout(c);
 
     Size childSize = child.getComputedSize();
 
@@ -53,7 +54,7 @@ public class Padding extends Container {
         0, computedHeight - padding.getVertical()
       );
 
-      child.onLayout(cc);
+      child.computeLayout(cc);
     }
 
     child.getComputedPosition().set(padding.left, padding.top);

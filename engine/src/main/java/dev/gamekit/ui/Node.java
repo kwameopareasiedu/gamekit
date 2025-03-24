@@ -1,6 +1,5 @@
 package dev.gamekit.ui;
 
-import dev.gamekit.core.Renderer;
 import dev.gamekit.utils.Constraints;
 import dev.gamekit.utils.Position;
 import dev.gamekit.utils.Size;
@@ -17,6 +16,8 @@ public abstract class Node {
   protected final Position computedPosition;
   protected final Size intrinsicSize;
   protected final Size computedSize;
+  protected Node parent;
+  protected Constraints constraints;
 
   private Appearance appearance;
 
@@ -25,25 +26,40 @@ public abstract class Node {
     computedPosition = new Position(0, 0);
     intrinsicSize = new Size(0, 0);
     computedSize = new Size(0, 0);
+    parent = null;
   }
 
   /**
-   * Abstract method which the node uses to lay itself out.
-   * It receives a {@link Constraints} object which it
-   * <b>must respect</b> when determining its size.
+   * Computes the layout for the node, respecting the given {@link Constraints} object
    * <p>
-   * The goal of this method is to set the {@link #computedSize}
-   * which is required for rendering the node.
-   * @param constraints Constraints from the parent or window
+   * This is called by either the parent node if this node is a child
+   * or by the {@link UI} if it is the root node.
+   * <p>
+   * The goal of this method is to set the {@link #computedSize} and
+   * {@link #computedPosition} which is used during rendering phase.
+   * <p>
+   * Since this method is marked as {@code final}, subclasses should override
+   * the {@link #onLayout(Constraints)} method instead to perform their layout
    */
-  public abstract void onLayout(Constraints constraints);
+  public final void computeLayout(Constraints constraints) {
+    this.constraints = constraints;
+    this.onLayout(constraints);
+  }
 
   /**
-   * Creates and returns the {@link Appearance} object of the node.
-   * The node renders its content onto the {@link Appearance#image}
-   * @return The {@link BufferedImage} representation of this node
+   * Delegate method which subclasses use to compute their layout when requested.
+   * <p>
+   * It is passed a {@link Constraints} object which it <b>must respect</b>.
    */
-  public Appearance getAppearance() {
+  protected abstract void onLayout(Constraints constraints);
+
+  /**
+   * Returns the {@link Appearance} of this node for rendering
+   * <p>
+   * This method is {@code final} and delegates the actual drawing to
+   * {@link #onRender(Graphics2D)}.
+   */
+  public final Appearance getAppearance() {
     if (appearance == null ||
       appearance.image.getWidth() != computedSize.width ||
       appearance.image.getHeight() != computedSize.height) {
@@ -52,34 +68,25 @@ public abstract class Node {
       appearance = new Appearance(image);
     }
 
+    onRender(appearance.graphics);
+
     return appearance;
   }
 
   /**
-   * Renders the node's {@link #getAppearance() appearance}
-   * on the current {@link dev.gamekit.core.Window Window}
+   * Delegate method which subclasses use to draw themselves when requested.
    * <p>
-   * <i>This is only called if the node is at the root level of the scene's UI hierarchy</i>
+   * It is passed a {@link Graphics2D} object from the appearance for drawing.
    */
-  public final void onRender() { Renderer.drawNode(this); }
+  protected abstract void onRender(Graphics2D g);
 
-  /**
-   * Returns the computed position of the node
-   * @return The computed position
-   */
   public Position getComputedPosition() { return computedPosition; }
 
-  /**
-   * Returns the computed size of the node
-   * @return The computed size
-   */
   public Size getComputedSize() { return computedSize; }
 
-  /**
-   * Returns the intrinsic size of the node
-   * @return The intrinsic size
-   */
   public Size getIntrinsicSize() { return intrinsicSize; }
+
+  public void setParent(Node parent) { this.parent = parent; }
 
   /**
    * Appearance contains a {@link BufferedImage} and a
@@ -89,7 +96,6 @@ public abstract class Node {
     public final BufferedImage image;
     public final Graphics2D graphics;
 
-    /** Creates a new appearance from the given image */
     private Appearance(BufferedImage image) {
       this.image = image;
       this.graphics = image.createGraphics();

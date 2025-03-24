@@ -8,11 +8,11 @@ import dev.gamekit.utils.Constraints;
  * Manages UI handling within a {@link dev.gamekit.core.Scene Scene}.
  * A {@link dev.gamekit.core.Scene Scene} must only contain 1 instance of this
  */
-public class UIManager {
+public class UI {
   private Constraints windowConstraints;
   private Node root;
 
-  public UIManager() {
+  public UI() {
     Window win = Window.getInstance();
 
     windowConstraints = new Constraints(

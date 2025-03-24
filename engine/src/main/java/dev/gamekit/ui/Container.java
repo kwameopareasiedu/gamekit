@@ -8,9 +8,7 @@ import java.util.List;
 /** Base class for all UI containers in the engine */
 public abstract class Container extends Node {
   @Override
-  public final Appearance getAppearance() {
-    Appearance appearance = super.getAppearance();
-    Graphics2D g = appearance.graphics;
+  public final void onRender(Graphics2D g) {
     List<Node> children = getChildren();
 
     g.setColor(Constants.TRANSPARENT_COLOR);
@@ -26,8 +24,6 @@ public abstract class Container extends Node {
         null
       )
     );
-
-    return appearance;
   }
 
   /**

@@ -1,4 +1,4 @@
-package dev.gamekit.ui.widgets;
+package dev.gamekit.ui.nodes;
 
 import dev.gamekit.core.Renderer;
 import dev.gamekit.ui.Node;
@@ -47,7 +47,7 @@ public class Text extends Node {
   }
 
   @Override
-  public void onLayout(Constraints constraints) {
+  protected void onLayout(Constraints constraints) {
     if (shouldUpdateRenderFont()) {
       LOGGER.debug("Creating new render font");
       renderFont = font != null
@@ -73,10 +73,7 @@ public class Text extends Node {
   }
 
   @Override
-  public Appearance getAppearance() {
-    Appearance appearance = super.getAppearance();
-    Graphics2D g = appearance.graphics;
-
+  public final void onRender(Graphics2D g) {
     g.setBackground(backgroundColor);
     g.clearRect(0, 0, computedSize.width, computedSize.height);
     g.setFont(renderFont);
@@ -88,7 +85,6 @@ public class Text extends Node {
 
     g.setColor(color);
     g.drawString(text, 0, fontSize);
-    return appearance;
   }
 
   /**

@@ -1,4 +1,4 @@
-package dev.gamekit.ui.widgets;
+package dev.gamekit.ui.nodes;
 
 import dev.gamekit.core.IO;
 import dev.gamekit.ui.Node;
@@ -44,7 +44,7 @@ public class Image extends Node {
   }
 
   @Override
-  public void onLayout(Constraints constraints) {
+  protected void onLayout(Constraints constraints) {
     intrinsicSize.set(srcImg.getWidth(), srcImg.getHeight());
 
     int computedWidth = clamp(
@@ -61,10 +61,7 @@ public class Image extends Node {
   }
 
   @Override
-  public Appearance getAppearance() {
-    Appearance appearance = super.getAppearance();
-    Graphics2D g = appearance.graphics;
-
+  public final void onRender(Graphics2D g) {
     int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
 
     switch (fit) {
@@ -100,8 +97,6 @@ public class Image extends Node {
       this.dx2 = dx2;
       this.dy2 = dy2;
     }
-
-    return appearance;
   }
 
   /** Determines how the image should be resized/fitted in its bounds */
