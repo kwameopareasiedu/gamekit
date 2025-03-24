@@ -1,10 +1,9 @@
-package dev.gamekit.ui.nodes;
+package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.IO;
-import dev.gamekit.ui.Node;
 import dev.gamekit.utils.Constants;
-import dev.gamekit.utils.Constraints;
-import dev.gamekit.utils.Size;
+import dev.gamekit.ui.Constraints;
+import dev.gamekit.ui.Size;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -13,8 +12,8 @@ import java.awt.image.BufferedImage;
 
 import static dev.gamekit.utils.Math.clamp;
 
-/** A {@link Node} which loads a <b>resource image</b> and renders it to the screen */
-public class Image extends Node {
+/** A {@link Widget} which loads a <b>resource image</b> and renders it to the screen */
+public class Image extends Widget {
   private static final Logger LOGGER = LogManager.getLogger();
 
   protected final String src;

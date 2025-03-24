@@ -1,4 +1,4 @@
-package dev.gamekit.utils;
+package dev.gamekit.ui;
 
 /** An immutable container for range values for width and height */
 public class Constraints {

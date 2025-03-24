@@ -1,34 +1,32 @@
-package dev.gamekit.ui.nodes;
+package dev.gamekit.ui.widgets;
 
-import dev.gamekit.ui.Container;
-import dev.gamekit.ui.Node;
-import dev.gamekit.utils.Constraints;
-import dev.gamekit.utils.Size;
-import dev.gamekit.utils.Spacing;
+import dev.gamekit.ui.Constraints;
+import dev.gamekit.ui.Size;
+import dev.gamekit.ui.Spacing;
 
 import java.util.List;
 
 import static dev.gamekit.utils.Math.clamp;
 
-/** A {@link Node} which pads its single child with spacing */
-public class Padding extends Container {
-  protected final Node child;
-  protected final List<Node> children;
+/** A {@link Widget} which pads its single child with spacing */
+public class Padding extends Parent {
+  protected final Widget child;
+  protected final List<Widget> children;
   protected Spacing padding;
 
-  protected Padding(Node child, Spacing padding) {
+  protected Padding(Widget child, Spacing padding) {
     this.child = child;
     this.children = List.of(child);
     this.padding = padding;
     child.setParent(this);
   }
 
-  public static Builder create(Node child, Spacing padding) {
-    return new Builder(child, padding);
+  public static Padding create(Widget child, Spacing padding) {
+    return new Padding(child, padding);
   }
 
   @Override
-  protected List<Node> getChildren() { return children; }
+  protected List<Widget> getChildren() { return children; }
 
   @Override
   protected void onLayout(Constraints constraints) {
@@ -58,15 +56,5 @@ public class Padding extends Container {
     }
 
     child.getComputedPosition().set(padding.left, padding.top);
-  }
-
-  public static class Builder {
-    private final Padding instance;
-
-    private Builder(Node child, Spacing padding) {
-      instance = new Padding(child, padding);
-    }
-
-    public Padding get() { return instance; }
   }
 }

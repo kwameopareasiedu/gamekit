@@ -1,36 +1,34 @@
-package dev.gamekit.ui.nodes;
+package dev.gamekit.ui.widgets;
 
-import dev.gamekit.ui.Container;
-import dev.gamekit.ui.Node;
-import dev.gamekit.utils.Constraints;
-import dev.gamekit.utils.Size;
+import dev.gamekit.ui.Constraints;
+import dev.gamekit.ui.Size;
 
 import java.util.List;
 
-/** Column container arranges its children vertically */
-public class Row extends Container {
-  protected final List<Node> children;
+/** Column container arranges its children horizontally */
+public class Row extends Parent {
+  protected final List<Widget> children;
 
-  protected Row(Node... children) {
+  protected Row(Widget... children) {
     if (children == null)
       throw new NullPointerException("Row children cannot be null");
     this.children = List.of(children);
     this.children.forEach(c -> c.setParent(this));
   }
 
-  public static Builder create(Node... children) {
-    return new Builder(children);
+  public static Row create(Widget... children) {
+    return new Row(children);
   }
 
   @Override
-  protected List<Node> getChildren() {
+  protected List<Widget> getChildren() {
     return children;
   }
 
   @Override
   protected void onLayout(Constraints constraints) {
     Constraints cc = new Constraints(0, constraints.maxWidth, 0, constraints.maxHeight);
-    List<Node> children = getChildren();
+    List<Widget> children = getChildren();
     int currentX = 0;
     int maxHeight = 0;
 
@@ -47,15 +45,5 @@ public class Row extends Container {
 
     intrinsicSize.set(currentX, maxHeight);
     computedSize.set(currentX, maxHeight);
-  }
-
-  public static class Builder {
-    private final Row instance;
-
-    private Builder(Node... children) {
-      instance = new Row(children);
-    }
-
-    public Row get() { return instance; }
   }
 }

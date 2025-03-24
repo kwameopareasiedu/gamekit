@@ -1,18 +1,20 @@
 package dev.gamekit.ui;
 
+import dev.gamekit.ui.widgets.Widget;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /** Al observer UI state class which forms the basis UI reactivity in GameKit */
 public class State<T> {
   protected final List<Observer<T>> observers;
-  protected final List<Node> nodes;
+  protected final List<Widget> widgets;
   protected T value;
 
   public State(T value) {
     this.value = value;
     observers = new ArrayList<>();
-    nodes = new ArrayList<>();
+    widgets = new ArrayList<>();
   }
 
   public void set(T value) {
@@ -34,10 +36,10 @@ public class State<T> {
     }
   }
 
-  /** Binds a {@link Node} to be repainted when the state value changes */
-  public void bindNode(Node node) {
-    if (node != null && !nodes.contains(node)) {
-      nodes.add(node);
+  /** Binds a {@link Widget} to be repainted when the state value changes */
+  public void bindNode(Widget widget) {
+    if (widget != null && !widgets.contains(widget)) {
+      widgets.add(widget);
     }
   }
 

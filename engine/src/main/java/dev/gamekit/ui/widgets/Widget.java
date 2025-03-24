@@ -1,28 +1,41 @@
-package dev.gamekit.ui;
+package dev.gamekit.ui.widgets;
 
-import dev.gamekit.utils.Constraints;
-import dev.gamekit.utils.Position;
-import dev.gamekit.utils.Size;
+import dev.gamekit.ui.Constraints;
+import dev.gamekit.ui.Position;
+import dev.gamekit.ui.Size;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-/** Base class for all UI elements in the engine */
-public abstract class Node {
+/**
+ * A widget is an abstract representation of a portion of
+ * a {@link dev.gamekit.core.Scene Scene's} user interface.
+ * <p>
+ * When the scene is loaded it calls the widget tree to perform
+ * layout after which it is rendered to the {@link dev.gamekit.core.Window Window}
+ * <p>
+ * Subclasses must implement the {@link #onLayout(Constraints)} and
+ * {@link #onRender(Graphics2D)} to compute their position and size
+ * <p>
+ * Widget layout is based on the
+ * <a href="https://docs.flutter.dev/ui/layout/constraints">box-constraint</a>
+ * model which is used in Flutter, where constraints go down the tree,
+ * size go up and parents set positions
+ */
+public abstract class Widget {
   private static final Logger LOGGER = LogManager.getLogger();
 
   protected final Position computedPosition;
   protected final Size intrinsicSize;
   protected final Size computedSize;
-  protected Node parent;
+  protected Widget parent;
   protected Constraints constraints;
 
   private Appearance appearance;
 
-  /** Creates a new node with default parameters */
-  public Node() {
+  public Widget() {
     computedPosition = new Position(0, 0);
     intrinsicSize = new Size(0, 0);
     computedSize = new Size(0, 0);
@@ -30,10 +43,11 @@ public abstract class Node {
   }
 
   /**
-   * Computes the layout for the node, respecting the given {@link Constraints} object
+   * Computes the layout for the widget
    * <p>
-   * This is called by either the parent node if this node is a child
-   * or by the {@link UI} if it is the root node.
+   * This is called by either the parent widget or window and receives
+   * the {@link Constraints} from its parent or the window, and the
+   * resulting computed size must always respect this constraint
    * <p>
    * The goal of this method is to set the {@link #computedSize} and
    * {@link #computedPosition} which is used during rendering phase.
@@ -47,14 +61,13 @@ public abstract class Node {
   }
 
   /**
-   * Delegate method which subclasses use to compute their layout when requested.
-   * <p>
-   * It is passed a {@link Constraints} object which it <b>must respect</b>.
+   * Delegate method which performs the actual layout and is passed the
+   * constraints from {@link #computeLayout(Constraints)}.
    */
   protected abstract void onLayout(Constraints constraints);
 
   /**
-   * Returns the {@link Appearance} of this node for rendering
+   * Returns the {@link Appearance} of this widget which is used for rendering
    * <p>
    * This method is {@code final} and delegates the actual drawing to
    * {@link #onRender(Graphics2D)}.
@@ -74,9 +87,9 @@ public abstract class Node {
   }
 
   /**
-   * Delegate method which subclasses use to draw themselves when requested.
-   * <p>
-   * It is passed a {@link Graphics2D} object from the appearance for drawing.
+   * Delegate method which performs the actual rendering and is
+   * passed a {@link Graphics2D} object from the internal
+   * {@link BufferedImage}.
    */
   protected abstract void onRender(Graphics2D g);
 
@@ -86,7 +99,7 @@ public abstract class Node {
 
   public Size getIntrinsicSize() { return intrinsicSize; }
 
-  public void setParent(Node parent) { this.parent = parent; }
+  public void setParent(Widget parent) { this.parent = parent; }
 
   /**
    * Appearance contains a {@link BufferedImage} and a

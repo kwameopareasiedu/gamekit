@@ -1,6 +1,6 @@
 package dev.gamekit.core;
 
-import dev.gamekit.ui.Node;
+import dev.gamekit.ui.widgets.Widget;
 import dev.gamekit.utils.Constants;
 
 import java.awt.*;
@@ -216,15 +216,15 @@ public final class Renderer {
   }
 
   /**
-   * Draws a UI {@link Node} to the window's UI target
-   * @param node The node to draw
+   * Draws a UI {@link Widget} to the window's UI target
+   * @param widget The node to draw
    */
-  public static void drawUI(Node node) {
+  public static void drawUI(Widget widget) {
     Graphics2D g = Window.getInstance().getUiGraphics();
     g.drawImage(
-      node.getAppearance().image,
-      node.getComputedPosition().x, node.getComputedPosition().y,
-      node.getComputedSize().width, node.getComputedSize().height,
+      widget.getAppearance().image,
+      widget.getComputedPosition().x, widget.getComputedPosition().y,
+      widget.getComputedSize().width, widget.getComputedSize().height,
       null
     );
   }

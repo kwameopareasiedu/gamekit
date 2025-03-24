@@ -1,15 +1,24 @@
-package dev.gamekit.ui;
+package dev.gamekit.ui.widgets;
 
 import dev.gamekit.utils.Constants;
 
 import java.awt.*;
 import java.util.List;
 
-/** Base class for all UI containers in the engine */
-public abstract class Container extends Node {
+/**
+ * A parent is a special {@link Widget} which can contain children.
+ * <p>
+ * Since a scene can only have one root widget, parents are responsible
+ * for rendering their children unto themselves which in turn are rendered
+ * to their parent or the window
+ * <p>
+ * Parent widgets can be children of other parent widgets with no change
+ * to how layout is performed due to the box-constraint model used.
+ */
+public abstract class Parent extends Widget {
   @Override
   public final void onRender(Graphics2D g) {
-    List<Node> children = getChildren();
+    List<Widget> children = getChildren();
 
     g.setColor(Constants.TRANSPARENT_COLOR);
     g.fillRect(0, 0, computedSize.width, computedSize.height);
@@ -30,7 +39,6 @@ public abstract class Container extends Node {
    * Abstract method which returns the list of children to iterate over.
    * This method exists because some containers may either have a
    * single child or multiple children.
-   * @return the list of child nodes
    */
-  protected abstract List<Node> getChildren();
+  protected abstract List<Widget> getChildren();
 }

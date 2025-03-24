@@ -1,8 +1,8 @@
-package dev.gamekit.utils;
+package dev.gamekit.ui;
 
-import dev.gamekit.ui.Node;
+import dev.gamekit.ui.widgets.Widget;
 
-/** Represents the position of a {@link Node} in screen space */
+/** Represents the position of a {@link Widget} in screen space */
 public class Position {
   public int x;
   public int y;

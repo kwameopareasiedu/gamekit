@@ -1,36 +1,34 @@
-package dev.gamekit.ui.nodes;
+package dev.gamekit.ui.widgets;
 
-import dev.gamekit.ui.Container;
-import dev.gamekit.ui.Node;
-import dev.gamekit.utils.Constraints;
-import dev.gamekit.utils.Size;
+import dev.gamekit.ui.Constraints;
+import dev.gamekit.ui.Size;
 
 import java.util.List;
 
-/** Column container arranges its children horizontally */
-public class Column extends Container {
-  protected final List<Node> children;
+/** Column container arranges its children vertically */
+public class Column extends Parent {
+  protected final List<Widget> children;
 
-  protected Column(Node... children) {
+  protected Column(Widget... children) {
     if (children == null)
       throw new NullPointerException("Column children cannot be null");
     this.children = List.of(children);
     this.children.forEach(c -> c.setParent(this));
   }
 
-  public static Builder create(Node... children) {
-    return new Builder(children);
+  public static Column create(Widget... children) {
+    return new Column(children);
   }
 
   @Override
-  protected List<Node> getChildren() {
+  protected List<Widget> getChildren() {
     return children;
   }
 
   @Override
   protected void onLayout(Constraints constraints) {
     Constraints cc = new Constraints(0, constraints.maxWidth, 0, constraints.maxHeight);
-    List<Node> children = getChildren();
+    List<Widget> children = getChildren();
     int currentY = 0;
     int maxWidth = 0;
 
@@ -47,15 +45,5 @@ public class Column extends Container {
 
     intrinsicSize.set(maxWidth, currentY);
     computedSize.set(maxWidth, currentY);
-  }
-
-  public static class Builder {
-    private final Column instance;
-
-    private Builder(Node... children) {
-      instance = new Column(children);
-    }
-
-    public Column get() { return instance; }
   }
 }

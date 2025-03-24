@@ -1,15 +1,14 @@
 import dev.gamekit.core.Window;
 import dev.gamekit.core.*;
+import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.State;
-import dev.gamekit.ui.nodes.Image;
-import dev.gamekit.ui.nodes.*;
+import dev.gamekit.ui.widgets.Image;
+import dev.gamekit.ui.widgets.*;
 import dev.gamekit.utils.Alignment;
-import dev.gamekit.utils.Spacing;
 
 import java.awt.*;
 
 public class Playground extends Scene {
-//  private int x = 0, y = 0;
   private final State<Integer> x = ui.createState(0);
   private final State<Integer> y = ui.createState(0);
 
@@ -30,21 +29,21 @@ public class Playground extends Scene {
   public void onStart() {
     super.onStart();
 
-    ui.setRoot(
+    ui.createRoot(
       Align.create(
         Column.create(
-          Image.create("wide-img.jpg").withSize(300, 150).get(),
-          Text.create("another text").withShadow(true).withShadowColor(Color.BLACK).withShadowOffset(2, 3).get(),
+          Image.create("wide-img.jpg").withSize(300, 150),
+          Text.create("another text").withShadow(true).withShadowColor(Color.BLACK).withShadowOffset(2, 3),
           Row.create(
-            Text.create("with bg color text").withBackgroundColor(Color.BLACK).get(),
+            Text.create("with bg color text").withBackgroundColor(Color.BLACK),
             Padding.create(
-              Text.create("text 3").withColor(Color.BLACK).get(),
+              Text.create("text 3").withColor(Color.BLACK),
               new Spacing(15)
-            ).get()
-          ).get()
-        ).get(),
+            )
+          )
+        ),
         Alignment.CENTER
-      ).get()
+      )
     );
   }
 

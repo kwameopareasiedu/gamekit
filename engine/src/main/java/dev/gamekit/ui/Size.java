@@ -1,8 +1,8 @@
-package dev.gamekit.utils;
+package dev.gamekit.ui;
 
-import dev.gamekit.ui.Node;
+import dev.gamekit.ui.widgets.Widget;
 
-/** Represents the width and height dimension of a {@link Node} */
+/** Represents the width and height dimension of a {@link Widget} */
 public class Size {
   public int width;
   public int height;

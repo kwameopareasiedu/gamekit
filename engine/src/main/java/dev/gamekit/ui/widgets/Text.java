@@ -1,10 +1,9 @@
-package dev.gamekit.ui.nodes;
+package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.Renderer;
-import dev.gamekit.ui.Node;
 import dev.gamekit.utils.Constants;
-import dev.gamekit.utils.Constraints;
-import dev.gamekit.utils.Position;
+import dev.gamekit.ui.Constraints;
+import dev.gamekit.ui.Position;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,9 +11,9 @@ import java.awt.*;
 
 import static dev.gamekit.utils.Math.clamp;
 
-/** A {@link Node} which renders text to the screen */
+/** A {@link Widget} which renders text to the screen */
 @SuppressWarnings("MagicConstant")
-public class Text extends Node {
+public class Text extends Widget {
   private static final Logger LOGGER = LogManager.getLogger();
 
   protected String text;

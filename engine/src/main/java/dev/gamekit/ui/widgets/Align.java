@@ -1,34 +1,32 @@
-package dev.gamekit.ui.nodes;
+package dev.gamekit.ui.widgets;
 
-import dev.gamekit.ui.Container;
-import dev.gamekit.ui.Node;
 import dev.gamekit.utils.Alignment;
-import dev.gamekit.utils.Constraints;
-import dev.gamekit.utils.Size;
+import dev.gamekit.ui.Constraints;
+import dev.gamekit.ui.Size;
 
 import java.util.List;
 
 import static dev.gamekit.utils.Math.clamp;
 
-/** A {@link Node} which aligns its single child based on an {@link Alignment} */
-public class Align extends Container {
-  protected final Node child;
-  protected final List<Node> children;
+/** A {@link Widget} which aligns its single child within itself */
+public class Align extends Parent {
+  protected final Widget child;
+  protected final List<Widget> children;
   protected Alignment alignment;
 
-  protected Align(Node child, Alignment alignment) {
+  protected Align(Widget child, Alignment alignment) {
     this.child = child;
     this.children = List.of(child);
     this.alignment = alignment;
     child.setParent(this);
   }
 
-  public static Builder create(Node child, Alignment alignment) {
-    return new Builder(child, alignment);
+  public static Align create(Widget child, Alignment alignment) {
+    return new Align(child, alignment);
   }
 
   @Override
-  protected List<Node> getChildren() { return children; }
+  protected List<Widget> getChildren() { return children; }
 
   @Override
   protected void onLayout(Constraints constraints) {
@@ -87,20 +85,5 @@ public class Align extends Container {
     }
 
     child.getComputedPosition().set(drawX, drawY);
-  }
-
-  public static class Builder {
-    private final Align instance;
-
-    private Builder(Node child, Alignment alignment) {
-      instance = new Align(child, alignment);
-    }
-
-    public Align get() { return instance; }
-
-    public Builder withAlignment(Alignment alignment) {
-      instance.alignment = alignment;
-      return this;
-    }
   }
 }

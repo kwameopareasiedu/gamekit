@@ -1,8 +1,8 @@
-package dev.gamekit.utils;
+package dev.gamekit.ui;
 
-import dev.gamekit.ui.Node;
+import dev.gamekit.ui.widgets.Widget;
 
-/** Represents a padding or margin of a {@link Node} */
+/** Represents a padding or margin of a {@link Widget} */
 public class Spacing {
   public int top;
   public int right;

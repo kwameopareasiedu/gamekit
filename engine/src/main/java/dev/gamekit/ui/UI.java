@@ -2,7 +2,7 @@ package dev.gamekit.ui;
 
 import dev.gamekit.core.Renderer;
 import dev.gamekit.core.Window;
-import dev.gamekit.utils.Constraints;
+import dev.gamekit.ui.widgets.Widget;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,7 +14,7 @@ public class UI implements State.Observer<Object> {
   private static final Logger LOGGER = LogManager.getLogger();
 
   private Constraints windowConstraints;
-  private Node root;
+  private Widget root;
   private boolean invalidated = true;
 
   public UI() {
@@ -35,7 +35,7 @@ public class UI implements State.Observer<Object> {
     return state;
   }
 
-  public void createRoot(Node root) {
+  public void createRoot(Widget root) {
     this.root = root;
 
     Window win = Window.getInstance();
@@ -48,7 +48,7 @@ public class UI implements State.Observer<Object> {
     );
 
     this.root.computeLayout(windowConstraints);
-    this.root.computedPosition.set(0, 0);
+    this.root.getComputedPosition().set(0, 0);
   }
 
   public void onRender() {
