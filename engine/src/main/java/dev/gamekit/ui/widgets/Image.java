@@ -13,29 +13,22 @@ import java.awt.image.BufferedImage;
 
 import static dev.gamekit.utils.Math.clamp;
 
-/**
- * A {@link Node} which loads an image from
- * a resource path and renders it to the screen
- */
+/** A {@link Node} which loads a <b>resource image</b> and renders it to the screen */
 public class Image extends Node {
   private static final Logger LOGGER = LogManager.getLogger();
 
   protected final String src;
-  protected final BufferedImage srcImg;
-  protected final Size size;
-  protected final Fit fit;
+  protected Size size;
+  protected Fit fit;
+
+  private final BufferedImage srcImg;
 
   /* Draw bounds stored and only redrawn if they change */
   private int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
 
-  public Image(String src) {
-    this(src, Fit.FIT);
-  }
-
-  /** Creates a new Image node from the resource path and fit parameters */
-  public Image(String src, Fit fit) {
+  protected Image(String src) {
     this.src = src;
-    this.fit = fit;
+    this.fit = Fit.FIT;
     this.size = new Size(0, 0);
     srcImg = IO.loadImageResource(src);
 
@@ -44,6 +37,10 @@ public class Image extends Node {
         String.format("Unable to load image at %s", src)
       );
     }
+  }
+
+  public static Builder create(String src) {
+    return new Builder(src);
   }
 
   @Override
@@ -107,14 +104,33 @@ public class Image extends Node {
     return appearance;
   }
 
-  /**
-   * Returns the preferred size of this image.
-   * @return the preferred size of this image
-   */
-  public Size getSize() { return size; }
-
   /** Determines how the image should be resized/fitted in its bounds */
   public enum Fit {
-    FIT, CROP, STRETCH
+    /** Resize the image to fit within the bounds */
+    FIT,
+    /** Cutout the portions of the image which are outside the bounds */
+    CROP,
+    /** Stretch the image to completely cover the bounds */
+    STRETCH
+  }
+
+  public static class Builder {
+    private final Image instance;
+
+    private Builder(String src) {
+      instance = new Image(src);
+    }
+
+    public Image get() { return instance; }
+
+    public Builder withSize(int width, int height) {
+      instance.size.set(width, height);
+      return this;
+    }
+
+    public Builder withFit(Fit fit) {
+      instance.fit = fit;
+      return this;
+    }
   }
 }

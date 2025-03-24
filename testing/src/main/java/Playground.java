@@ -27,14 +27,12 @@ public class Playground extends Scene {
   @Override
   public void onStart() {
     super.onStart();
-    Image img = new Image("wide-img.jpg");
-    img.getSize().set(300, 150);
 
     uiManager.setRoot(
       new Align(
         new Column(
           List.of(
-            img,
+            Image.create("wide-img.jpg").withSize(300, 150).get(),
             Text.create("another text").withShadow(true).withShadowColor(Color.BLACK).withShadowOffset(2, 3).get(),
             new Row(
               List.of(

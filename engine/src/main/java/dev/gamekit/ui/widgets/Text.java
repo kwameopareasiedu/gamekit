@@ -92,8 +92,9 @@ public class Text extends Node {
   }
 
   /**
-   * Indicates whether the {@link #renderFont} should be updated
-   * @return Whether the render font should be updated
+   * Determines if the font should be updated.
+   * This is done by checking if the {@link #fontFamily},
+   * {@link #fontSize} or {@link #fontStyle} have changed
    */
   private boolean shouldUpdateRenderFont() {
     return renderFont == null ||
@@ -102,99 +103,60 @@ public class Text extends Node {
       renderFont.getStyle() != fontStyle;
   }
 
-  /** Builder class for {@link Text} which configures an instance */
   public static class Builder {
     private final Text instance;
 
-    protected Builder(String text) {
+    private Builder(String text) {
       instance = new Text(text);
     }
 
-    /**
-     * Returns the configured {@link Text} instance
-     * @return the configured instance
-     */
     public Text get() { return instance; }
 
     /**
-     * Sets the font family of this text.
-     * <p>
-     * The name of the font should match an installed font on the system
-     * @param fontFamily The text font family
+     * Sets the font family of this text. The name of the
+     * font should match an installed font on the system
      */
     public Builder withFontFamily(String fontFamily) {
       instance.fontFamily = fontFamily;
       return this;
     }
 
-    /**
-     * Sets the font style of this text
-     * @param fontStyle The text font style
-     */
     public Builder withFontStyle(int fontStyle) {
       instance.fontStyle = fontStyle;
       return this;
     }
 
-    /**
-     * Sets the font size of this text
-     * @param fontSize The text font size
-     */
     public Builder withFontSize(int fontSize) {
       instance.fontSize = fontSize;
       return this;
     }
 
-    /**
-     * Sets the background color of this text
-     * @param backgroundColor The text background color
-     */
     public Builder withBackgroundColor(Color backgroundColor) {
       instance.backgroundColor = backgroundColor;
+      return this;
+    }
 
-    return this;}
-
-    /**
-     * Sets the color of this text
-     * @param color The text color
-     */
     public Builder withColor(Color color) {
       instance.color = color;
       return this;
     }
 
-    /**
-     * Sets the font of this text. If set, this overrides {@link #fontFamily} value
-     * @param font The text font
-     */
+    /** Sets the font of this text. If set, this overrides {@link #fontFamily} value */
     public Builder withFont(Font font) {
       instance.font = font;
       return this;
     }
 
-    /**
-     * Enables or disabled the drop shadow of this text
-     * @param enabled The drop shadow state
-     */
-    public Builder withShadow(boolean enabled) {
-      instance.shadowEnabled = enabled;
+    public Builder withShadow(boolean shadowEnabled) {
+      instance.shadowEnabled = shadowEnabled;
       return this;
     }
 
-    /**
-     * Sets the shadow offset of this text
-     * @param x The horizontal offset. This can be negative
-     * @param y The vertical offset. This can be negative
-     */
     public Builder withShadowOffset(int x, int y) {
       instance.shadowOffset.set(x, y);
       return this;
     }
 
-    /**
-     * Sets the shadow color of this text
-     * @param color The text shadow color
-     */
     public Builder withShadowColor(Color color) {
       instance.shadowColor = color;
       return this;
