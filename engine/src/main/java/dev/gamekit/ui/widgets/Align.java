@@ -16,14 +16,14 @@ public class Align extends Container {
   protected final List<Node> children;
   protected Alignment alignment;
 
-  public Align(Node child) {
-    this(child, Alignment.CENTER);
-  }
-
-  public Align(Node child, Alignment alignment) {
+  protected Align(Node child, Alignment alignment) {
     this.child = child;
     this.children = List.of(child);
     this.alignment = alignment;
+  }
+
+  public static Builder create(Node child, Alignment alignment) {
+    return new Builder(child, alignment);
   }
 
   @Override
@@ -88,11 +88,18 @@ public class Align extends Container {
     child.getComputedPosition().set(drawX, drawY);
   }
 
-  /**
-   * Sets the alignment of this container's child
-   * @param alignment The child's alignment
-   */
-  public void setAlignment(Alignment alignment) {
-    this.alignment = alignment;
+  public static class Builder {
+    private final Align instance;
+
+    private Builder(Node child, Alignment alignment) {
+      instance = new Align(child, alignment);
+    }
+
+    public Align get() { return instance; }
+
+    public Builder withAlignment(Alignment alignment) {
+      instance.alignment = alignment;
+      return this;
+    }
   }
 }

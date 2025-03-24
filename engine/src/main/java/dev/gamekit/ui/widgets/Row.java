@@ -11,10 +11,14 @@ import java.util.List;
 public class Row extends Container {
   protected final List<Node> children;
 
-  public Row(List<Node> children) {
+  protected Row(Node... children) {
     if (children == null)
       throw new NullPointerException("Row children cannot be null");
-    this.children = children;
+    this.children = List.of(children);
+  }
+
+  public static Builder create(Node... children) {
+    return new Builder(children);
   }
 
   @Override
@@ -42,5 +46,15 @@ public class Row extends Container {
 
     intrinsicSize.set(currentX, maxHeight);
     computedSize.set(currentX, maxHeight);
+  }
+
+  public static class Builder {
+    private final Row instance;
+
+    private Builder(Node... children) {
+      instance = new Row(children);
+    }
+
+    public Row get() { return instance; }
   }
 }

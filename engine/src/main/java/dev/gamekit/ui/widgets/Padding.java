@@ -16,23 +16,14 @@ public class Padding extends Container {
   protected final List<Node> children;
   protected Spacing padding;
 
-  /**
-   * Creates a new Padding with a child and zero object
-   * @param child   The child node
-   */
-  public Padding(Node child) {
-    this(child, new Spacing(0));
-  }
-
-  /**
-   * Creates a new Padding with a child and padding object
-   * @param child   The child node
-   * @param padding The padding around the child
-   */
-  public Padding(Node child, Spacing padding) {
+  protected Padding(Node child, Spacing padding) {
     this.child = child;
     this.children = List.of(child);
     this.padding = padding;
+  }
+
+  public static Builder create(Node child, Spacing padding) {
+    return new Builder(child, padding);
   }
 
   @Override
@@ -68,11 +59,13 @@ public class Padding extends Container {
     child.getComputedPosition().set(padding.left, padding.top);
   }
 
-  /**
-   * Sets the padding of this container's child
-   * @param padding The child's padding
-   */
-  public void setPadding(Spacing padding) {
-    this.padding = padding;
+  public static class Builder {
+    private final Padding instance;
+
+    private Builder(Node child, Spacing padding) {
+      instance = new Padding(child, padding);
+    }
+
+    public Padding get() { return instance; }
   }
 }

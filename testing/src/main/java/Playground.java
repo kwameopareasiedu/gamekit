@@ -6,7 +6,6 @@ import dev.gamekit.utils.Alignment;
 import dev.gamekit.utils.Spacing;
 
 import java.awt.*;
-import java.util.List;
 
 public class Playground extends Scene {
   private int x = 0, y = 0;
@@ -29,24 +28,20 @@ public class Playground extends Scene {
     super.onStart();
 
     uiManager.setRoot(
-      new Align(
-        new Column(
-          List.of(
-            Image.create("wide-img.jpg").withSize(300, 150).get(),
-            Text.create("another text").withShadow(true).withShadowColor(Color.BLACK).withShadowOffset(2, 3).get(),
-            new Row(
-              List.of(
-                Text.create("with bg color text").withBackgroundColor(Color.BLACK).get(),
-                new Padding(
-                  Text.create("text 3").get(),
-                  new Spacing(15)
-                )
-              )
-            )
-          )
-        ),
+      Align.create(
+        Column.create(
+          Image.create("wide-img.jpg").withSize(300, 150).get(),
+          Text.create("another text").withShadow(true).withShadowColor(Color.BLACK).withShadowOffset(2, 3).get(),
+          Row.create(
+            Text.create("with bg color text").withBackgroundColor(Color.BLACK).get(),
+            Padding.create(
+              Text.create("text 3").withColor(Color.BLACK).get(),
+              new Spacing(15)
+            ).get()
+          ).get()
+        ).get(),
         Alignment.CENTER
-      )
+      ).get()
     );
   }
 

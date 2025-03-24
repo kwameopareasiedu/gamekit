@@ -11,10 +11,14 @@ import java.util.List;
 public class Column extends Container {
   protected final List<Node> children;
 
-  public Column(List<Node> children) {
+  protected Column(Node... children) {
     if (children == null)
       throw new NullPointerException("Column children cannot be null");
-    this.children = children;
+    this.children = List.of(children);
+  }
+
+  public static Builder create(Node... children) {
+    return new Builder(children);
   }
 
   @Override
@@ -42,5 +46,15 @@ public class Column extends Container {
 
     intrinsicSize.set(maxWidth, currentY);
     computedSize.set(maxWidth, currentY);
+  }
+
+  public static class Builder {
+    private final Column instance;
+
+    private Builder(Node... children) {
+      instance = new Column(children);
+    }
+
+    public Column get() { return instance; }
   }
 }
