@@ -55,19 +55,22 @@ public final class Renderer {
   /** Ends a previously called {@code beginGroup()} */
   public static void endGroup() { CURRENT_STATE.discard(); }
 
-  /** Fills the viewport with a specified color */
-  public static void clear() {
+  /** Clears the {@link Window} scene target with current state color */
+  public static void clearScene() {
     // Clear scene target
     applyGraphicsState();
     int x = 0, y = 0, w = Window.getInstance().getRenderWidth(), h = Window.getInstance().getRenderHeight();
     var pt = Camera.getInstance().transformPoint(x, y);
     g.fillRect(-pt.x, -pt.y, w, h);
     resetGraphicsState();
+  }
 
-    // Clear ui target
-    Graphics2D gui = Window.getInstance().getUiGraphics();
-    gui.setBackground(Constants.TRANSPARENT_COLOR);
-    gui.clearRect(0, 0, w, h);
+  /** Clears the {@link Window} UI target with transparent */
+  public static void clearUI() {
+    int w = Window.getInstance().getRenderWidth(), h = Window.getInstance().getRenderHeight();
+    Graphics2D g = Window.getInstance().getUiGraphics();
+    g.setBackground(Constants.TRANSPARENT_COLOR);
+    g.clearRect(0, 0, w, h);
   }
 
   /**
@@ -216,7 +219,7 @@ public final class Renderer {
    * Draws a UI {@link Node} to the window's UI target
    * @param node The node to draw
    */
-  public static void drawNode(Node node) {
+  public static void drawUI(Node node) {
     Graphics2D g = Window.getInstance().getUiGraphics();
     g.drawImage(
       node.getAppearance().image,

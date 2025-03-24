@@ -1,14 +1,17 @@
 import dev.gamekit.core.Window;
 import dev.gamekit.core.*;
-import dev.gamekit.ui.widgets.Image;
-import dev.gamekit.ui.widgets.*;
+import dev.gamekit.ui.State;
+import dev.gamekit.ui.nodes.Image;
+import dev.gamekit.ui.nodes.*;
 import dev.gamekit.utils.Alignment;
 import dev.gamekit.utils.Spacing;
 
 import java.awt.*;
 
 public class Playground extends Scene {
-  private int x = 0, y = 0;
+//  private int x = 0, y = 0;
+  private final State<Integer> x = ui.createState(0);
+  private final State<Integer> y = ui.createState(0);
 
   public Playground() {
     super("Main Scene");
@@ -27,7 +30,7 @@ public class Playground extends Scene {
   public void onStart() {
     super.onStart();
 
-    uiManager.setRoot(
+    ui.setRoot(
       Align.create(
         Column.create(
           Image.create("wide-img.jpg").withSize(300, 150).get(),
@@ -50,9 +53,11 @@ public class Playground extends Scene {
     super.onUpdate();
 
     if (Input.isKeyPressed(Input.KEY_SPACE)) {
-      x = y = 50;
+      x.set(50);
+      y.set(50);
     } else {
-      x = y = 0;
+      x.set(0);
+      y.set(0);
     }
   }
 
@@ -61,15 +66,15 @@ public class Playground extends Scene {
     super.onRender();
     // Clear the screen with black
     Renderer.setColor(Color.DARK_GRAY);
-    Renderer.clear();
+    Renderer.clearScene();
 
     Renderer.setColor(Color.RED);
-    Renderer.fillRoundRect(x - 50, y - 50, 100, 100, 10, 10);
+    Renderer.fillRoundRect(x.get() - 50, y.get() - 50, 100, 100, 10, 10);
     Renderer.setColor(Color.YELLOW);
-    Renderer.fillRoundRect(x + 50, y - 50, 100, 100, 10, 10);
+    Renderer.fillRoundRect(x.get() + 50, y.get() - 50, 100, 100, 10, 10);
     Renderer.setColor(Color.GREEN);
-    Renderer.fillRoundRect(x + 50, y + 50, 100, 100, 10, 10);
+    Renderer.fillRoundRect(x.get() + 50, y.get() + 50, 100, 100, 10, 10);
     Renderer.setColor(Color.CYAN);
-    Renderer.fillRoundRect(x - 50, y + 50, 100, 100, 10, 10);
+    Renderer.fillRoundRect(x.get() - 50, y.get() + 50, 100, 100, 10, 10);
   }
 }

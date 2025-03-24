@@ -111,7 +111,6 @@ public abstract class Scene {
   void onSceneUpdate() {
     onUpdate();
     props.forEach((k, v) -> v.onUpdate());
-    ui.onUpdate();
   }
 
   /**

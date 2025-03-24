@@ -44,7 +44,7 @@ public class CalibrationTest extends Scene {
   public void onRender() {
     super.onRender();
     Renderer.setColor(Color.BLACK);
-    Renderer.clear();
+    Renderer.clearScene();
 
     Renderer.beginGroup();
     Renderer.setColor(Color.BLUE);
