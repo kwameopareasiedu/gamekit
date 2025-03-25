@@ -17,9 +17,9 @@ import java.util.Map;
  * A scene can also display a {@link Widget} tree which forms its user interface
  */
 public abstract class Scene {
-  private static final Logger LOGGER = LogManager.getLogger();
   static Scene current;
 
+  protected final Logger logger = LogManager.getLogger(getClass());
   protected final String name;
   protected final Map<Integer, Prop> props;
 
@@ -36,7 +36,7 @@ public abstract class Scene {
     props = new HashMap<>();
     widgetStateObserver = (state) -> {
       WidgetState<Object> widgetState = (WidgetState<Object>) state;
-      LOGGER.debug(widgetState);
+      logger.debug(widgetState);
     };
   }
 
@@ -45,16 +45,12 @@ public abstract class Scene {
 
   public String getName() { return name; }
 
-  public WidgetState.Observer<Object> getWidgetStateObserver() {
-    return widgetStateObserver;
-  }
-
   public void addProp(Prop prop) {
-    LOGGER.debug("Adding child: [{} - {}]", prop.internalId, prop.name);
+    logger.debug("Adding child: [{} - {}]", prop.internalId, prop.name);
 
     if (!props.containsKey(prop.internalId)) {
       Application.getInstance().scheduleTask(() -> {
-        LOGGER.debug("Added child: {} ({})", prop.name, prop.internalId);
+        logger.debug("Added child: {} ({})", prop.name, prop.internalId);
         props.put(prop.internalId, prop);
         if (!prop.ready) prop.onStart();
       });
@@ -62,11 +58,11 @@ public abstract class Scene {
   }
 
   public void removeProp(Prop prop) {
-    LOGGER.debug("Removing child: [{} - {}]", prop.internalId, prop.name);
+    logger.debug("Removing child: [{} - {}]", prop.internalId, prop.name);
 
     if (props.containsKey(prop.internalId)) {
       Application.getInstance().scheduleTask(() -> {
-        LOGGER.debug("Removed child: {} ({})", prop.name, prop.internalId);
+        logger.debug("Removed child: {} ({})", prop.name, prop.internalId);
         props.remove(prop.internalId, prop);
         if (prop.ready) prop.onDispose();
       });
@@ -111,12 +107,12 @@ public abstract class Scene {
    * {@link Prop#onStart() onStart()} on each child prop
    */
   final void start() {
-    LOGGER.debug("Starting scene");
+    logger.debug("Starting scene");
 
     var widgetStatesToBind = WidgetState.STATES_TO_BIND_TO_SCENE;
 
     if (!widgetStatesToBind.isEmpty()) {
-      LOGGER.debug("Binding pending states: {}", widgetStatesToBind.size());
+      logger.debug("Binding pending states: {}", widgetStatesToBind.size());
       widgetStatesToBind.forEach(state -> state.bindObserver(widgetStateObserver));
       widgetStatesToBind.clear();
     }
@@ -146,7 +142,7 @@ public abstract class Scene {
     props.forEach((k, v) -> v.onRender());
 
     if (widgetTree != null && widgetTreeInvalidated) {
-      LOGGER.debug("Rendering widget tree");
+      logger.debug("Rendering widget tree");
       Renderer.clearUI();
       Renderer.drawUI(widgetTree);
       widgetTreeInvalidated = false;
@@ -159,7 +155,7 @@ public abstract class Scene {
    * on each child prop before calling {@link #onDispose()}
    */
   final void dispose() {
-    LOGGER.debug("Disposing scene");
+    logger.debug("Disposing scene");
     props.forEach((k, v) -> v.onDispose());
     onDispose();
   }

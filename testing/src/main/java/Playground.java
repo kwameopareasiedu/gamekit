@@ -1,16 +1,16 @@
 import dev.gamekit.core.Window;
 import dev.gamekit.core.*;
+import dev.gamekit.ui.Alignment;
 import dev.gamekit.ui.Spacing;
-import dev.gamekit.ui.State;
+import dev.gamekit.ui.WidgetState;
 import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.ui.widgets.*;
-import dev.gamekit.utils.Alignment;
 
 import java.awt.*;
 
 public class Playground extends Scene {
-  private final State<Integer> x = ui.createState(0);
-  private final State<Integer> y = ui.createState(0);
+  private final WidgetState<Integer> x = new WidgetState<>(0);
+  private final WidgetState<Integer> y = new WidgetState<>(0);
 
   public Playground() {
     super("Main Scene");
@@ -29,7 +29,7 @@ public class Playground extends Scene {
   public void onStart() {
     super.onStart();
 
-    ui.createRoot(
+    createWidgetTree(
       Align.create(
         Column.create(
           Image.create("wide-img.jpg").withSize(300, 150),
@@ -68,12 +68,12 @@ public class Playground extends Scene {
     Renderer.clearScene();
 
     Renderer.setColor(Color.RED);
-    Renderer.fillRoundRect(x.get() - 50, y.get() - 50, 100, 100, 10, 10);
+    Renderer.fillRoundRect(-50 - x.get(), -50 - y.get(), 100, 100, 10, 10);
     Renderer.setColor(Color.YELLOW);
-    Renderer.fillRoundRect(x.get() + 50, y.get() - 50, 100, 100, 10, 10);
+    Renderer.fillRoundRect(50 + x.get(), -50 - y.get(), 100, 100, 10, 10);
     Renderer.setColor(Color.GREEN);
-    Renderer.fillRoundRect(x.get() + 50, y.get() + 50, 100, 100, 10, 10);
+    Renderer.fillRoundRect(50 + x.get(), 50 + y.get(), 100, 100, 10, 10);
     Renderer.setColor(Color.CYAN);
-    Renderer.fillRoundRect(x.get() - 50, y.get() + 50, 100, 100, 10, 10);
+    Renderer.fillRoundRect(-50 - x.get(), 50 + y.get(), 100, 100, 10, 10);
   }
 }

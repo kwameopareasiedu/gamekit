@@ -1,11 +1,9 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.Renderer;
-import dev.gamekit.utils.Constants;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Position;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import dev.gamekit.utils.Constants;
 
 import java.awt.*;
 
@@ -14,8 +12,6 @@ import static dev.gamekit.utils.Math.clamp;
 /** A {@link Widget} which renders text to the screen */
 @SuppressWarnings("MagicConstant")
 public class Text extends Widget {
-  private static final Logger LOGGER = LogManager.getLogger();
-
   protected String text;
   protected String fontFamily;
   protected int fontStyle;
@@ -48,7 +44,7 @@ public class Text extends Widget {
   @Override
   protected void onLayout(Constraints constraints) {
     if (shouldUpdateRenderFont()) {
-      LOGGER.debug("Creating new render font");
+      logger.debug("Creating new render font");
       renderFont = font != null
         ? font.deriveFont(fontStyle, fontSize)
         : new Font(fontFamily, fontStyle, fontSize);

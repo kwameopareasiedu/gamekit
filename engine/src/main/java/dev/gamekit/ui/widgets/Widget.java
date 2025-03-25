@@ -25,8 +25,7 @@ import java.awt.image.BufferedImage;
  * size go up and parents set positions
  */
 public abstract class Widget {
-  private static final Logger LOGGER = LogManager.getLogger();
-
+  protected final Logger logger = LogManager.getLogger(getClass());
   protected final Position computedPosition;
   protected final Size intrinsicSize;
   protected final Size computedSize;
@@ -76,7 +75,7 @@ public abstract class Widget {
     if (appearance == null ||
       appearance.image.getWidth() != computedSize.width ||
       appearance.image.getHeight() != computedSize.height) {
-      LOGGER.debug("Creating appearance");
+      logger.debug("Creating appearance");
       BufferedImage image = new BufferedImage(computedSize.width, computedSize.height, BufferedImage.TYPE_INT_ARGB);
       appearance = new Appearance(image);
     }

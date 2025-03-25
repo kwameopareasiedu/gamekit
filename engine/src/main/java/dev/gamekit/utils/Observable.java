@@ -22,9 +22,15 @@ public class Observable<T> {
     if (notify) notifyObservers();
   }
 
-  public void set(ObjectStateSetter<T> setter) {
+  /**
+   * Sets the value by passing the current value through an updater
+   * interface method. This is useful for updating object values
+   * @param setter The updater object
+   * @param notify Whether to notify listeners
+   */
+  public void set(ObjectValueUpdater<T> setter, boolean notify) {
     setter.setValue(value);
-    notifyObservers();
+    if (notify) notifyObservers();
   }
 
   public T get() { return value; }
@@ -50,7 +56,7 @@ public class Observable<T> {
     void onChange(Observable<T> observable);
   }
 
-  public interface ObjectStateSetter<T> {
+  public interface ObjectValueUpdater<T> {
     void setValue(T current);
   }
 }

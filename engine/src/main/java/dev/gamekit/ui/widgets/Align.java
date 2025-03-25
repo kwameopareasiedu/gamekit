@@ -1,6 +1,6 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.utils.Alignment;
+import dev.gamekit.ui.Alignment;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Size;
 

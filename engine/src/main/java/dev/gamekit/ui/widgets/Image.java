@@ -1,11 +1,9 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.IO;
-import dev.gamekit.utils.Constants;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Size;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import dev.gamekit.utils.Constants;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -14,8 +12,6 @@ import static dev.gamekit.utils.Math.clamp;
 
 /** A {@link Widget} which loads a <b>resource image</b> and renders it to the screen */
 public class Image extends Widget {
-  private static final Logger LOGGER = LogManager.getLogger();
-
   protected final String src;
   protected Size size;
   protected Fit fit;
@@ -86,7 +82,7 @@ public class Image extends Widget {
     }
 
     if (this.dx1 != dx1 || this.dy1 != dy1 || this.dx2 != dx2 || this.dy2 != dy2) {
-      LOGGER.debug("Re-rendering image");
+      logger.debug("Rendering");
       g.setBackground(Constants.TRANSPARENT_COLOR);
       g.clearRect(0, 0, computedSize.width, computedSize.height);
       g.drawImage(srcImg, dx1, dy1, dx2, dy2, 0, 0, intrinsicSize.width, intrinsicSize.height, null);

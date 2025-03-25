@@ -1,4 +1,4 @@
-package dev.gamekit.utils;
+package dev.gamekit.ui;
 
 /** Represents the alignment of an object relative to another */
 public enum Alignment {
