@@ -34,7 +34,7 @@ public class Spacing {
     this.left = left;
   }
 
-  /** Returns the sum of the top and bottom spacing*/
+  /** Returns the sum of the top and bottom spacing */
   public int getVertical() { return top + bottom; }
 
   /** Returns the sum of the left and right spacing */
@@ -65,5 +65,14 @@ public class Spacing {
       getClass().getName() + "[top=%d,right=%d,bottom=%d,left=%d]",
       top, right, bottom, left
     );
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj instanceof Spacing
+      && ((Spacing) obj).top == top
+      && ((Spacing) obj).right == right
+      && ((Spacing) obj).bottom == bottom
+      && ((Spacing) obj).left == left;
   }
 }

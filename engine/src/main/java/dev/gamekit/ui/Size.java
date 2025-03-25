@@ -33,4 +33,11 @@ public class Size {
   public String toString() {
     return String.format(getClass().getName() + "[width=%d,height=%d]", width, height);
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj instanceof Size
+      && ((Size) obj).width == width
+      && ((Size) obj).height == height;
+  }
 }

@@ -4,21 +4,17 @@ import dev.gamekit.ui.Alignment;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Size;
 
-import java.util.List;
+import java.util.Objects;
 
 import static dev.gamekit.utils.Math.clamp;
 
-/** A {@link Widget} which aligns its single child within itself */
-public class Align extends Parent {
-  protected final Widget child;
-  protected final List<Widget> children;
+/** A {@link Parent} which aligns its single child within itself */
+public class Align extends SingleChildParent {
   protected Alignment alignment;
 
   protected Align(Widget child, Alignment alignment) {
-    this.child = child;
-    this.children = List.of(child);
+    super(child);
     this.alignment = alignment;
-    child.setParent(this);
   }
 
   public static Align create(Widget child, Alignment alignment) {
@@ -26,10 +22,7 @@ public class Align extends Parent {
   }
 
   @Override
-  protected List<Widget> getChildren() { return children; }
-
-  @Override
-  protected void onLayout(Constraints constraints) {
+  protected void performLayout(Constraints constraints) {
     child.computeLayout(
       new Constraints(
         0, constraints.maxWidth(),
@@ -86,5 +79,15 @@ public class Align extends Parent {
     }
 
     child.getComputedPosition().set(drawX, drawY);
+  }
+
+  @Override
+  protected boolean stateEquals(Widget widget) {
+    if (widget instanceof Align alignWidget) {
+      return Objects.equals(child, alignWidget.child)
+        && Objects.equals(alignment, alignWidget.alignment);
+    }
+
+    return false;
   }
 }

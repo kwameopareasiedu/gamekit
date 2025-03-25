@@ -7,6 +7,7 @@ import dev.gamekit.utils.Constants;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Objects;
 
 import static dev.gamekit.utils.Math.clamp;
 
@@ -39,7 +40,7 @@ public class Image extends Widget {
   }
 
   @Override
-  protected void onLayout(Constraints constraints) {
+  protected void performLayout(Constraints constraints) {
     intrinsicSize.set(srcImg.getWidth(), srcImg.getHeight());
 
     int computedWidth = clamp(
@@ -56,7 +57,7 @@ public class Image extends Widget {
   }
 
   @Override
-  public final void onRender(Graphics2D g) {
+  public final void performRender(Graphics2D g) {
     int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
 
     switch (fit) {
@@ -92,6 +93,17 @@ public class Image extends Widget {
       this.dx2 = dx2;
       this.dy2 = dy2;
     }
+  }
+
+  @Override
+  protected boolean stateEquals(Widget widget) {
+    if (widget instanceof Image imageWidget) {
+      return Objects.equals(src, imageWidget.src)
+        && Objects.equals(fit, imageWidget.fit)
+        && Objects.equals(size, imageWidget.size);
+    }
+
+    return false;
   }
 
   public Image withSize(int width, int height) {

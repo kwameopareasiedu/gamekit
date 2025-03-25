@@ -26,10 +26,10 @@ public class Observable<T> {
    * Sets the value by passing the current value through an updater
    * interface method. This is useful for updating object values
    * @param setter The updater object
-   * @param notify Whether to notify listeners
+   * @param notify Whether to notify observers
    */
   public void set(ObjectValueUpdater<T> setter, boolean notify) {
-    setter.setValue(value);
+    setter.onUpdate(value);
     if (notify) notifyObservers();
   }
 
@@ -57,6 +57,6 @@ public class Observable<T> {
   }
 
   public interface ObjectValueUpdater<T> {
-    void setValue(T current);
+    void onUpdate(T current);
   }
 }

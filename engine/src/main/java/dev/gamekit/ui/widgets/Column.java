@@ -3,17 +3,12 @@ package dev.gamekit.ui.widgets;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Size;
 
-import java.util.List;
+import java.util.Objects;
 
-/** Column container arranges its children vertically */
-public class Column extends Parent {
-  protected final List<Widget> children;
-
+/** A {@link Parent} which arranges its children vertically */
+public class Column extends MultiChildParent {
   protected Column(Widget... children) {
-    if (children == null)
-      throw new NullPointerException("Column children cannot be null");
-    this.children = List.of(children);
-    this.children.forEach(c -> c.setParent(this));
+    super(children);
   }
 
   public static Column create(Widget... children) {
@@ -21,14 +16,8 @@ public class Column extends Parent {
   }
 
   @Override
-  protected List<Widget> getChildren() {
-    return children;
-  }
-
-  @Override
-  protected void onLayout(Constraints constraints) {
+  protected void performLayout(Constraints constraints) {
     Constraints cc = new Constraints(0, constraints.maxWidth(), 0, constraints.maxHeight());
-    List<Widget> children = getChildren();
     int currentY = 0;
     int maxWidth = 0;
 
@@ -48,5 +37,14 @@ public class Column extends Parent {
 
     intrinsicSize.set(maxWidth, currentY);
     computedSize.set(maxWidth, currentY);
+  }
+
+  @Override
+  protected boolean stateEquals(Widget widget) {
+    if (widget instanceof Column columnWidget) {
+      return Objects.equals(children, columnWidget.children);
+    }
+
+    return false;
   }
 }

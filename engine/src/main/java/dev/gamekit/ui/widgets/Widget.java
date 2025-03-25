@@ -16,8 +16,8 @@ import java.awt.image.BufferedImage;
  * When the scene is loaded it calls the widget tree to perform
  * layout after which it is rendered to the {@link dev.gamekit.core.Window Window}
  * <p>
- * Subclasses must implement the {@link #onLayout(Constraints)} and
- * {@link #onRender(Graphics2D)} to compute their position and size
+ * Subclasses must implement the {@link #performLayout(Constraints)} and
+ * {@link #performRender(Graphics2D)} to compute their position and size
  * <p>
  * Widget layout is based on the
  * <a href="https://docs.flutter.dev/ui/layout/constraints">box-constraint</a>
@@ -41,6 +41,16 @@ public abstract class Widget {
     parent = null;
   }
 
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof Widget widget))
+      return false;
+    return stateEquals(widget);
+  }
+
+  /** Delegate method which returns {@code true} if this widget has the same state as {@code widget} */
+  protected abstract boolean stateEquals(Widget widget);
+
   /**
    * Computes the layout for the widget
    * <p>
@@ -52,24 +62,24 @@ public abstract class Widget {
    * {@link #computedPosition} which is used during rendering phase.
    * <p>
    * Since this method is marked as {@code final}, subclasses should override
-   * the {@link #onLayout(Constraints)} method instead to perform their layout
+   * the {@link #performLayout(Constraints)} method instead to perform their layout
    */
   public final void computeLayout(Constraints constraints) {
     this.constraints = constraints;
-    this.onLayout(constraints);
+    this.performLayout(constraints);
   }
 
   /**
    * Delegate method which performs the actual layout and is passed the
    * constraints from {@link #computeLayout(Constraints)}.
    */
-  protected abstract void onLayout(Constraints constraints);
+  protected abstract void performLayout(Constraints constraints);
 
   /**
    * Returns the {@link Appearance} of this widget which is used for rendering
    * <p>
    * This method is {@code final} and delegates the actual drawing to
-   * {@link #onRender(Graphics2D)}.
+   * {@link #performRender(Graphics2D)}.
    */
   public final Appearance getAppearance() {
     if (appearance == null ||
@@ -80,7 +90,7 @@ public abstract class Widget {
       appearance = new Appearance(image);
     }
 
-    onRender(appearance.graphics);
+    performRender(appearance.graphics);
 
     return appearance;
   }
@@ -90,7 +100,7 @@ public abstract class Widget {
    * passed a {@link Graphics2D} object from the internal
    * {@link BufferedImage}.
    */
-  protected abstract void onRender(Graphics2D g);
+  protected abstract void performRender(Graphics2D g);
 
   public Position getComputedPosition() { return computedPosition; }
 

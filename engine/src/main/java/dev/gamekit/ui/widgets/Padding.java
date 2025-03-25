@@ -4,21 +4,17 @@ import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Size;
 import dev.gamekit.ui.Spacing;
 
-import java.util.List;
+import java.util.Objects;
 
 import static dev.gamekit.utils.Math.clamp;
 
-/** A {@link Widget} which pads its single child with spacing */
-public class Padding extends Parent {
-  protected final Widget child;
-  protected final List<Widget> children;
+/** A {@link Parent} which adds padding around its single child */
+public class Padding extends SingleChildParent {
   protected Spacing padding;
 
   protected Padding(Widget child, Spacing padding) {
-    this.child = child;
-    this.children = List.of(child);
+    super(child);
     this.padding = padding;
-    child.setParent(this);
   }
 
   public static Padding create(Widget child, Spacing padding) {
@@ -26,10 +22,7 @@ public class Padding extends Parent {
   }
 
   @Override
-  protected List<Widget> getChildren() { return children; }
-
-  @Override
-  protected void onLayout(Constraints constraints) {
+  protected void performLayout(Constraints constraints) {
     child.computeLayout(
       new Constraints(
         0, constraints.maxWidth(),
@@ -57,5 +50,15 @@ public class Padding extends Parent {
     }
 
     child.getComputedPosition().set(padding.left, padding.top);
+  }
+
+  @Override
+  protected boolean stateEquals(Widget widget) {
+    if (widget instanceof Padding paddingWidget) {
+      return Objects.equals(child, paddingWidget.child)
+        && Objects.equals(padding, paddingWidget.padding);
+    }
+
+    return false;
   }
 }

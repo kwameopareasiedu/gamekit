@@ -6,6 +6,7 @@ import dev.gamekit.ui.Position;
 import dev.gamekit.utils.Constants;
 
 import java.awt.*;
+import java.util.Objects;
 
 import static dev.gamekit.utils.Math.clamp;
 
@@ -42,7 +43,7 @@ public class Text extends Widget {
   }
 
   @Override
-  protected void onLayout(Constraints constraints) {
+  protected void performLayout(Constraints constraints) {
     if (shouldUpdateRenderFont()) {
       logger.debug("Creating new render font");
       renderFont = font != null
@@ -68,7 +69,7 @@ public class Text extends Widget {
   }
 
   @Override
-  public final void onRender(Graphics2D g) {
+  public final void performRender(Graphics2D g) {
     g.setBackground(backgroundColor);
     g.clearRect(0, 0, computedSize.width, computedSize.height);
     g.setFont(renderFont);
@@ -80,6 +81,24 @@ public class Text extends Widget {
 
     g.setColor(color);
     g.drawString(text, 0, fontSize);
+  }
+
+  @Override
+  protected boolean stateEquals(Widget widget) {
+    if (widget instanceof Text textWidget) {
+      return Objects.equals(text, textWidget.text) &&
+        Objects.equals(fontFamily, textWidget.fontFamily) &&
+        Objects.equals(fontStyle, textWidget.fontStyle) &&
+        Objects.equals(fontSize, textWidget.fontSize) &&
+        Objects.equals(color, textWidget.color) &&
+        Objects.equals(backgroundColor, textWidget.backgroundColor) &&
+        Objects.equals(font, textWidget.font) &&
+        Objects.equals(shadowEnabled, textWidget.shadowEnabled) &&
+        Objects.equals(shadowOffset, textWidget.shadowOffset) &&
+        Objects.equals(shadowColor, textWidget.shadowColor);
+    }
+
+    return false;
   }
 
   /**

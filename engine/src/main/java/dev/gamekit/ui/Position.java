@@ -27,4 +27,11 @@ public class Position {
   public String toString() {
     return String.format(getClass().getName() + "[x-coordinate=%d,y-coordinate=%d]", x, y);
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj instanceof Position
+      && ((Position) obj).x == x
+      && ((Position) obj).y == y;
+  }
 }
