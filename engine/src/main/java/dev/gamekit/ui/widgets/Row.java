@@ -3,8 +3,6 @@ package dev.gamekit.ui.widgets;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Size;
 
-import java.util.Objects;
-
 /** A {@link Parent} which arranges its children horizontally */
 public class Row extends MultiChildParent {
   protected Row(Widget... children) {
@@ -41,10 +39,6 @@ public class Row extends MultiChildParent {
 
   @Override
   protected boolean stateEquals(Widget widget) {
-    if (widget instanceof Row rowWidget) {
-      return Objects.equals(children, rowWidget.children);
-    }
-
-    return false;
+    return true;
   }
 }
