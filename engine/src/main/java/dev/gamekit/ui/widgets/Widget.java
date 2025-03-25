@@ -108,6 +108,8 @@ public abstract class Widget {
 
   public Size getIntrinsicSize() { return intrinsicSize; }
 
+  public Widget getParent() { return parent; }
+
   public void setParent(Widget parent) { this.parent = parent; }
 
   /**

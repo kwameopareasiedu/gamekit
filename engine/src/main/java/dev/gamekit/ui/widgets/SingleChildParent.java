@@ -29,4 +29,12 @@ public abstract class SingleChildParent extends Parent {
       null
     );
   }
+
+  public Widget getChild() { return child; }
+
+  public final void updateChild(Widget newChild) {
+    child.setParent(null);
+    child = newChild;
+    child.setParent(this);
+  }
 }

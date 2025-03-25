@@ -1,13 +1,14 @@
 package dev.gamekit.core;
 
 import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.WidgetState;
+import dev.gamekit.ui.widgets.MultiChildParent;
+import dev.gamekit.ui.widgets.Parent;
+import dev.gamekit.ui.widgets.SingleChildParent;
 import dev.gamekit.ui.widgets.Widget;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A scene is a collection of {@link Prop props} interacting with each other
@@ -23,8 +24,12 @@ public abstract class Scene {
   protected final String name;
   protected final Map<Integer, Prop> props;
 
-  private final WidgetState.Observer<Object> widgetStateObserver;
-  private boolean widgetTreeInvalidated = true;
+  private final Queue<Widget> currentWidgetsCompareQueue;
+  private final Queue<Widget> newWidgetsCompareQueue;
+  private final List<Widget> widgetInitList;
+  private boolean widgetTreeNeedsUpdate = false;
+  private boolean widgetTreeNeedsRender = true;
+  private Constraints windowConstraints;
   private Widget widgetTree;
 
   /**
@@ -34,10 +39,9 @@ public abstract class Scene {
   public Scene(String name) {
     this.name = name;
     props = new HashMap<>();
-    widgetStateObserver = (state) -> {
-      WidgetState<Object> widgetState = (WidgetState<Object>) state;
-      logger.debug(widgetState);
-    };
+    currentWidgetsCompareQueue = new ArrayDeque<>();
+    newWidgetsCompareQueue = new ArrayDeque<>();
+    widgetInitList = new ArrayList<>();
   }
 
   /** Returns the currently loaded scene instance */
@@ -45,7 +49,7 @@ public abstract class Scene {
 
   public String getName() { return name; }
 
-  public void addProp(Prop prop) {
+  protected void addProp(Prop prop) {
     logger.debug("Adding child: [{} - {}]", prop.internalId, prop.name);
 
     if (!props.containsKey(prop.internalId)) {
@@ -57,7 +61,7 @@ public abstract class Scene {
     }
   }
 
-  public void removeProp(Prop prop) {
+  protected void removeProp(Prop prop) {
     logger.debug("Removing child: [{} - {}]", prop.internalId, prop.name);
 
     if (props.containsKey(prop.internalId)) {
@@ -70,35 +74,29 @@ public abstract class Scene {
   }
 
   /** Called by {@link #start()} to set up the scene */
-  public void onStart() { }
+  protected void onStart() { }
 
   /** Called by {@link #update()} to update the scene */
-  public void onUpdate() { }
+  protected void onUpdate() { }
 
   /** Called by {@link #render()} to render the scene */
-  public void onRender() { }
+  protected void onRender() { }
 
   /** Called by {@link #dispose()} to dispose the scene */
-  public void onDispose() { }
+  protected void onDispose() { }
 
-  /** Sets the {@code widget} as the root UI element. */
-  protected void createWidgetTree(Widget widget) {
-    if (widgetTree != null) {
-      throw new IllegalStateException("Widget tree is already present");
-    }
+  /**
+   * Called by {@link #start()} to create the widget tree for the UI
+   * Can be overridden by subclasses if they wish to create a UI
+   */
+  protected Widget onCreateWidgetTree() {
+    return null;
+  }
 
-    Window win = Window.getInstance();
-
-    Constraints cs = new Constraints(
-      win.getRenderWidth(),
-      win.getRenderWidth(),
-      win.getRenderHeight(),
-      win.getRenderHeight()
-    );
-
-    widget.computeLayout(cs);
-    widget.getComputedPosition().set(0, 0);
-    this.widgetTree = widget;
+  /** Indicates that the widget tree should be updated based on a state change */
+  protected final void updateWidgetTree(WidgetTreeUpdater updater) {
+    updater.onUpdate();
+    widgetTreeNeedsUpdate = true;
   }
 
   /**
@@ -109,12 +107,17 @@ public abstract class Scene {
   final void start() {
     logger.debug("Starting scene");
 
-    var widgetStatesToBind = WidgetState.STATES_TO_BIND_TO_SCENE;
+    Window window = Window.getInstance();
+    windowConstraints = new Constraints(
+      window.getRenderWidth(),
+      window.getRenderWidth(),
+      window.getRenderHeight(),
+      window.getRenderHeight()
+    );
 
-    if (!widgetStatesToBind.isEmpty()) {
-      logger.debug("Binding pending states: {}", widgetStatesToBind.size());
-      widgetStatesToBind.forEach(state -> state.bindObserver(widgetStateObserver));
-      widgetStatesToBind.clear();
+    widgetTree = onCreateWidgetTree();
+    if (widgetTree != null) {
+      widgetTree.computeLayout(windowConstraints);
     }
 
     onStart();
@@ -129,6 +132,11 @@ public abstract class Scene {
   final void update() {
     onUpdate();
     props.forEach((k, v) -> v.onUpdate());
+
+    if (widgetTree != null && widgetTreeNeedsUpdate) {
+      updateWidgetTreeImpl();
+      widgetTreeNeedsUpdate = false;
+    }
   }
 
   /**
@@ -141,11 +149,11 @@ public abstract class Scene {
     onRender();
     props.forEach((k, v) -> v.onRender());
 
-    if (widgetTree != null && widgetTreeInvalidated) {
+    if (widgetTree != null && widgetTreeNeedsRender) {
       logger.debug("Rendering widget tree");
       Renderer.clearUI();
       Renderer.drawUI(widgetTree);
-      widgetTreeInvalidated = false;
+      widgetTreeNeedsRender = false;
     }
   }
 
@@ -158,5 +166,67 @@ public abstract class Scene {
     logger.debug("Disposing scene");
     props.forEach((k, v) -> v.onDispose());
     onDispose();
+  }
+
+  /**
+   * Updates the UI by creating a new tree, comparing to the current
+   * tree and re-rendering the subtrees that have changed. This is
+   * the reconciliation step
+   */
+  private void updateWidgetTreeImpl() {
+    // TODO Monitor performance and consider moving to a new thread if necessary
+
+    widgetInitList.clear();
+    currentWidgetsCompareQueue.clear();
+    currentWidgetsCompareQueue.add(widgetTree);
+
+    Widget newTree = onCreateWidgetTree();
+    newWidgetsCompareQueue.clear();
+    newWidgetsCompareQueue.add(newTree);
+
+    while (true) {
+      Widget currentWidget = currentWidgetsCompareQueue.poll();
+      Widget newWidget = newWidgetsCompareQueue.poll();
+
+      if (currentWidget == null && newWidget == null)
+        break;
+
+      if (!Objects.equals(currentWidget, newWidget)) {
+        // Widget tree differs at this point, reconcile subtrees at this depth
+        Parent currentWidgetParent = (Parent) currentWidget.getParent();
+
+        if (currentWidgetParent == null) {
+          widgetTree = newWidget;
+          widgetInitList.add(newWidget);
+        } else if (currentWidgetParent instanceof SingleChildParent currentParent) {
+          currentParent.updateChild(newWidget);
+          widgetInitList.add(currentParent);
+        } else if (currentWidgetParent instanceof MultiChildParent currentParent) {
+          int index = currentParent.getChildren().indexOf(currentWidget);
+          currentParent.updateChild(newWidget, index);
+          widgetInitList.add(currentParent);
+        }
+      } else if (currentWidget instanceof SingleChildParent currentParent
+        && newWidget instanceof SingleChildParent newParent) {
+        // Add child of SingleChildParent to queue for processing
+        currentWidgetsCompareQueue.add(currentParent.getChild());
+        newWidgetsCompareQueue.add(newParent.getChild());
+      } else if (currentWidget instanceof MultiChildParent currentParent
+        && newWidget instanceof MultiChildParent newParent) {
+        // Add children of MultiChildParent to queue for processing
+        currentWidgetsCompareQueue.addAll(currentParent.getChildren());
+        newWidgetsCompareQueue.addAll(newParent.getChildren());
+      }
+    }
+
+    for (Widget widget : widgetInitList) {
+      widget.computeLayout(windowConstraints);
+    }
+
+    widgetTreeNeedsRender = !widgetInitList.isEmpty();
+  }
+
+  public interface WidgetTreeUpdater{
+    void onUpdate();
   }
 }
