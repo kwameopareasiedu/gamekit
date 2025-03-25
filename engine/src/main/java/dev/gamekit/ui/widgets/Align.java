@@ -30,15 +30,16 @@ public class Align extends Parent {
 
   @Override
   protected void onLayout(Constraints constraints) {
-    Constraints c = constraints.update(
-      0, constraints.maxWidth, 0, constraints.maxHeight
+    child.computeLayout(
+      new Constraints(
+        0, constraints.maxWidth(),
+        0, constraints.maxHeight()
+      )
     );
 
-    child.computeLayout(c);
-
     Size childSize = child.getComputedSize();
-    int computedWidth = clamp(childSize.width, constraints.minWidth, constraints.maxWidth);
-    int computedHeight = clamp(childSize.height, constraints.minHeight, constraints.maxHeight);
+    int computedWidth = clamp(childSize.width, constraints.minWidth(), constraints.maxWidth());
+    int computedHeight = clamp(childSize.height, constraints.minHeight(), constraints.maxHeight());
 
     intrinsicSize.set(childSize.width, childSize.height);
     computedSize.set(computedWidth, computedHeight);

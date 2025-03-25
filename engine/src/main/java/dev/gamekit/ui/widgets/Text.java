@@ -62,8 +62,8 @@ public class Text extends Widget {
 
     intrinsicSize.set(intrinsicWidth, intrinsicHeight);
 
-    int computedWidth = clamp(intrinsicSize.width, constraints.minWidth, constraints.maxWidth);
-    int computedHeight = clamp(intrinsicSize.height, constraints.minHeight, constraints.maxHeight);
+    int computedWidth = clamp(intrinsicSize.width, constraints.minWidth(), constraints.maxWidth());
+    int computedHeight = clamp(intrinsicSize.height, constraints.minHeight(), constraints.maxHeight());
     computedSize.set(computedWidth, computedHeight);
   }
 

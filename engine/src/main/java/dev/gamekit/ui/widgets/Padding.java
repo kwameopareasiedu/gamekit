@@ -30,11 +30,12 @@ public class Padding extends Parent {
 
   @Override
   protected void onLayout(Constraints constraints) {
-    Constraints c = constraints.update(
-      0, constraints.maxWidth, 0, constraints.maxHeight
+    child.computeLayout(
+      new Constraints(
+        0, constraints.maxWidth(),
+        0, constraints.maxHeight()
+      )
     );
-
-    child.computeLayout(c);
 
     Size childSize = child.getComputedSize();
 
@@ -42,17 +43,17 @@ public class Padding extends Parent {
     int intrinsicHeight = childSize.height + padding.getVertical();
     intrinsicSize.set(intrinsicWidth, intrinsicHeight);
 
-    int computedWidth = clamp(intrinsicWidth, constraints.minWidth, constraints.maxWidth);
-    int computedHeight = clamp(intrinsicHeight, constraints.minHeight, constraints.maxHeight);
+    int computedWidth = clamp(intrinsicWidth, constraints.minWidth(), constraints.maxWidth());
+    int computedHeight = clamp(intrinsicHeight, constraints.minHeight(), constraints.maxHeight());
     computedSize.set(computedWidth, computedHeight);
 
     if (intrinsicWidth > computedWidth || intrinsicHeight > computedHeight) {
-      Constraints cc = new Constraints(
-        0, computedWidth - padding.getHorizontal(),
-        0, computedHeight - padding.getVertical()
+      child.computeLayout(
+        new Constraints(
+          0, computedWidth - padding.getHorizontal(),
+          0, computedHeight - padding.getVertical()
+        )
       );
-
-      child.computeLayout(cc);
     }
 
     child.getComputedPosition().set(padding.left, padding.top);

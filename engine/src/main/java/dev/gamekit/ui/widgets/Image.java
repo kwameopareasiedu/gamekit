@@ -44,12 +44,12 @@ public class Image extends Widget {
 
     int computedWidth = clamp(
       size.width > 0 ? size.width : intrinsicSize.width,
-      constraints.minWidth, constraints.maxWidth
+      constraints.minWidth(), constraints.maxWidth()
     );
 
     int computedHeight = clamp(
       size.height > 0 ? size.height : intrinsicSize.height,
-      constraints.minHeight, constraints.maxHeight
+      constraints.minHeight(), constraints.maxHeight()
     );
 
     computedSize.set(computedWidth, computedHeight);

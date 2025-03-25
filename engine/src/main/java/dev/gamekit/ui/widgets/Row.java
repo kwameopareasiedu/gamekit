@@ -27,7 +27,7 @@ public class Row extends Parent {
 
   @Override
   protected void onLayout(Constraints constraints) {
-    Constraints cc = new Constraints(0, constraints.maxWidth, 0, constraints.maxHeight);
+    Constraints cc = new Constraints(0, constraints.maxWidth(), 0, constraints.maxHeight());
     List<Widget> children = getChildren();
     int currentX = 0;
     int maxHeight = 0;
@@ -40,7 +40,10 @@ public class Row extends Parent {
 
       currentX += childSize.width;
       maxHeight = Math.max(maxHeight, childSize.height);
-      cc = cc.update(0, cc.maxWidth - childSize.width, 0, cc.maxHeight);
+      cc = new Constraints(
+        0, cc.maxWidth() - childSize.width,
+        0, cc.maxHeight()
+      );
     }
 
     intrinsicSize.set(currentX, maxHeight);
