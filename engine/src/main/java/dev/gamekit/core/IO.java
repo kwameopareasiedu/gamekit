@@ -35,7 +35,6 @@ public class IO {
    */
   public static BufferedImage loadImageResource(String path) {
     if (CACHE.containsKey(path)) {
-      LOGGER.debug("Loaded cached image resource at {}", path);
       return (BufferedImage) CACHE.get(path);
     }
 
@@ -61,7 +60,6 @@ public class IO {
    */
   public static Font loadFontResource(String path) {
     if (CACHE.containsKey(path)) {
-      LOGGER.debug("Loaded cached font resource at {}", path);
       return (Font) CACHE.get(path);
     }
 

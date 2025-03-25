@@ -26,10 +26,8 @@ public abstract class Scene {
 
   private final Queue<Widget> currentWidgetsCompareQueue;
   private final Queue<Widget> newWidgetsCompareQueue;
-  private final List<Widget> widgetInitList;
   private boolean widgetTreeNeedsUpdate = false;
   private boolean widgetTreeNeedsRender = true;
-  private Constraints windowConstraints;
   private Widget widgetTree;
 
   /**
@@ -41,7 +39,6 @@ public abstract class Scene {
     props = new HashMap<>();
     currentWidgetsCompareQueue = new ArrayDeque<>();
     newWidgetsCompareQueue = new ArrayDeque<>();
-    widgetInitList = new ArrayList<>();
   }
 
   /** Returns the currently loaded scene instance */
@@ -107,17 +104,19 @@ public abstract class Scene {
   final void start() {
     logger.debug("Starting scene");
 
-    Window window = Window.getInstance();
-    windowConstraints = new Constraints(
-      window.getRenderWidth(),
-      window.getRenderWidth(),
-      window.getRenderHeight(),
-      window.getRenderHeight()
-    );
-
     widgetTree = onCreateWidgetTree();
+
     if (widgetTree != null) {
-      widgetTree.computeLayout(windowConstraints);
+      Window window = Window.getInstance();
+
+      widgetTree.computeLayout(
+        new Constraints(
+          window.getRenderWidth(),
+          window.getRenderWidth(),
+          window.getRenderHeight(),
+          window.getRenderHeight()
+        )
+      );
     }
 
     onStart();
@@ -151,8 +150,7 @@ public abstract class Scene {
 
     if (widgetTree != null && widgetTreeNeedsRender) {
       logger.debug("Rendering widget tree");
-      Renderer.clearUI();
-      Renderer.drawUI(widgetTree);
+      Renderer.drawWidget(widgetTree);
       widgetTreeNeedsRender = false;
     }
   }
@@ -176,42 +174,40 @@ public abstract class Scene {
   private void updateWidgetTreeImpl() {
     // TODO Monitor performance and consider moving to a new thread if necessary
 
-    widgetInitList.clear();
-    currentWidgetsCompareQueue.clear();
-    currentWidgetsCompareQueue.add(widgetTree);
-
     Widget newTree = onCreateWidgetTree();
-    newWidgetsCompareQueue.clear();
     newWidgetsCompareQueue.add(newTree);
 
+    currentWidgetsCompareQueue.add(widgetTree);
+    boolean widgetTreeUpdated = false;
+
     while (true) {
-      Widget currentWidget = currentWidgetsCompareQueue.poll();
+      Widget treeWidget = currentWidgetsCompareQueue.poll();
       Widget newWidget = newWidgetsCompareQueue.poll();
 
-      if (currentWidget == null && newWidget == null)
+      if (treeWidget == null && newWidget == null)
         break;
 
-      if (!Objects.equals(currentWidget, newWidget)) {
+      if (!Objects.equals(treeWidget, newWidget)) {
         // Widget tree differs at this point, reconcile subtrees at this depth
-        Parent currentWidgetParent = (Parent) currentWidget.getParent();
+        Parent treeWidgetParent = (Parent) treeWidget.getParent();
 
-        if (currentWidgetParent == null) {
+        if (treeWidgetParent == null) {
           widgetTree = newWidget;
-          widgetInitList.add(newWidget);
-        } else if (currentWidgetParent instanceof SingleChildParent currentParent) {
+          widgetTreeUpdated = true;
+        } else if (treeWidgetParent instanceof SingleChildParent currentParent) {
           currentParent.updateChild(newWidget);
-          widgetInitList.add(currentParent);
-        } else if (currentWidgetParent instanceof MultiChildParent currentParent) {
-          int index = currentParent.getChildren().indexOf(currentWidget);
+          widgetTreeUpdated = true;
+        } else if (treeWidgetParent instanceof MultiChildParent currentParent) {
+          int index = currentParent.getChildren().indexOf(treeWidget);
           currentParent.updateChild(newWidget, index);
-          widgetInitList.add(currentParent);
+          widgetTreeUpdated = true;
         }
-      } else if (currentWidget instanceof SingleChildParent currentParent
+      } else if (treeWidget instanceof SingleChildParent currentParent
         && newWidget instanceof SingleChildParent newParent) {
         // Add child of SingleChildParent to queue for processing
         currentWidgetsCompareQueue.add(currentParent.getChild());
         newWidgetsCompareQueue.add(newParent.getChild());
-      } else if (currentWidget instanceof MultiChildParent currentParent
+      } else if (treeWidget instanceof MultiChildParent currentParent
         && newWidget instanceof MultiChildParent newParent) {
         // Add children of MultiChildParent to queue for processing
         currentWidgetsCompareQueue.addAll(currentParent.getChildren());
@@ -219,14 +215,25 @@ public abstract class Scene {
       }
     }
 
-    for (Widget widget : widgetInitList) {
-      widget.computeLayout(windowConstraints);
+    if (widgetTreeUpdated) {
+      Window window = Window.getInstance();
+
+      widgetTree.computeLayout(
+        new Constraints(
+          window.getRenderWidth(),
+          window.getRenderWidth(),
+          window.getRenderHeight(),
+          window.getRenderHeight()
+        )
+      );
     }
 
-    widgetTreeNeedsRender = !widgetInitList.isEmpty();
+    widgetTreeNeedsRender = widgetTreeUpdated;
+    currentWidgetsCompareQueue.clear();
+    newWidgetsCompareQueue.clear();
   }
 
-  public interface WidgetTreeUpdater{
+  public interface WidgetTreeUpdater {
     void onUpdate();
   }
 }

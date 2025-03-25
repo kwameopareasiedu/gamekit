@@ -17,15 +17,14 @@ public abstract class SingleChildParent extends Parent {
 
   @Override
   public final void performRender(Graphics2D g) {
-    g.setColor(Constants.TRANSPARENT_COLOR);
-    g.fillRect(0, 0, computedSize.width, computedSize.height);
+    g.setBackground(Constants.TRANSPARENT_COLOR);
+    g.clearRect(0, 0, computedBounds.width, computedBounds.height);
 
-    // The children are drawn in the container's image instead of calling their onRender.
-    // This allows for clipping if the child's bounds fall outside that of the container.
+    // Renders its children within self to enable clipping
     g.drawImage(
       child.getAppearance().image,
-      child.getComputedPosition().x,
-      child.getComputedPosition().y,
+      child.computedBounds.x,
+      child.computedBounds.y,
       null
     );
   }

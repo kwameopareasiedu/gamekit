@@ -2,7 +2,6 @@ package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.Renderer;
 import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.Position;
 import dev.gamekit.utils.Constants;
 
 import java.awt.*;
@@ -21,7 +20,8 @@ public class Text extends Widget {
   protected Color backgroundColor;
   protected Font font;
   protected boolean shadowEnabled;
-  protected Position shadowOffset;
+  protected int shadowOffsetX;
+  protected int shadowOffsetY;
   protected Color shadowColor;
 
   private Font renderFont;
@@ -35,7 +35,8 @@ public class Text extends Widget {
     color = Color.WHITE;
     backgroundColor = Constants.TRANSPARENT_COLOR;
     font = Constants.DEFAULT_FONT;
-    shadowOffset = new Position(0, 0);
+    shadowOffsetX = 0;
+    shadowOffsetY = 0;
   }
 
   public static Text create(String text) {
@@ -53,30 +54,30 @@ public class Text extends Widget {
       fontFamily = renderFont.getFamily();
     }
 
-    int intrinsicWidth = fontMetrics.stringWidth(text);
-    int intrinsicHeight = fontMetrics.getHeight();
+    int textWidth = fontMetrics.stringWidth(text);
+    int textHeight = fontMetrics.getHeight();
 
     if (shadowEnabled) {
-      intrinsicWidth += Math.abs(shadowOffset.x);
-      intrinsicHeight += Math.abs(shadowOffset.y);
+      textWidth += Math.abs(shadowOffsetX);
+      textHeight += Math.abs(shadowOffsetY);
     }
 
-    intrinsicSize.set(intrinsicWidth, intrinsicHeight);
+    intrinsicBounds.setSize(textWidth, textHeight);
 
-    int computedWidth = clamp(intrinsicSize.width, constraints.minWidth(), constraints.maxWidth());
-    int computedHeight = clamp(intrinsicSize.height, constraints.minHeight(), constraints.maxHeight());
-    computedSize.set(computedWidth, computedHeight);
+    int computedWidth = clamp(intrinsicBounds.width, constraints.minWidth(), constraints.maxWidth());
+    int computedHeight = clamp(intrinsicBounds.height, constraints.minHeight(), constraints.maxHeight());
+    computedBounds.setSize(computedWidth, computedHeight);
   }
 
   @Override
   public final void performRender(Graphics2D g) {
     g.setBackground(backgroundColor);
-    g.clearRect(0, 0, computedSize.width, computedSize.height);
+    g.clearRect(0, 0, computedBounds.width, computedBounds.height);
     g.setFont(renderFont);
 
     if (shadowEnabled) {
       g.setColor(shadowColor);
-      g.drawString(text, shadowOffset.x, fontSize + shadowOffset.y);
+      g.drawString(text, shadowOffsetX, fontSize + shadowOffsetY);
     }
 
     g.setColor(color);
@@ -94,7 +95,8 @@ public class Text extends Widget {
         Objects.equals(backgroundColor, textWidget.backgroundColor) &&
         Objects.equals(font, textWidget.font) &&
         Objects.equals(shadowEnabled, textWidget.shadowEnabled) &&
-        Objects.equals(shadowOffset, textWidget.shadowOffset) &&
+        Objects.equals(shadowOffsetX, textWidget.shadowOffsetX) &&
+        Objects.equals(shadowOffsetY, textWidget.shadowOffsetY) &&
         Objects.equals(shadowColor, textWidget.shadowColor);
     }
 
@@ -142,7 +144,8 @@ public class Text extends Widget {
   }
 
   public Text withShadowOffset(int x, int y) {
-    this.shadowOffset.set(x, y);
+    this.shadowOffsetX = x;
+    this.shadowOffsetY = y;
     return this;
   }
 

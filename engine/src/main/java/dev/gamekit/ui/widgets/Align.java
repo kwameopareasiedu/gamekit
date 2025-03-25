@@ -2,7 +2,6 @@ package dev.gamekit.ui.widgets;
 
 import dev.gamekit.ui.Alignment;
 import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.Size;
 
 import java.util.Objects;
 
@@ -30,12 +29,20 @@ public class Align extends SingleChildParent {
       )
     );
 
-    Size childSize = child.getComputedSize();
-    int computedWidth = clamp(childSize.width, constraints.minWidth(), constraints.maxWidth());
-    int computedHeight = clamp(childSize.height, constraints.minHeight(), constraints.maxHeight());
+    int computedWidth = clamp(
+      child.computedBounds.width,
+      constraints.minWidth(),
+      constraints.maxWidth()
+    );
 
-    intrinsicSize.set(childSize.width, childSize.height);
-    computedSize.set(computedWidth, computedHeight);
+    int computedHeight = clamp(
+      child.computedBounds.height,
+      constraints.minHeight(),
+      constraints.maxHeight()
+    );
+
+    intrinsicBounds.setSize(child.computedBounds.width, child.computedBounds.height);
+    computedBounds.setSize(computedWidth, computedHeight);
 
     int drawX = 0, drawY = 0;
 
@@ -45,40 +52,40 @@ public class Align extends SingleChildParent {
         drawY = 0;
       }
       case TOP_CENTER -> {
-        drawX = computedSize.width / 2 - intrinsicSize.width / 2;
+        drawX = computedBounds.width / 2 - intrinsicBounds.width / 2;
         drawY = 0;
       }
       case TOP_RIGHT -> {
-        drawX = computedSize.width - intrinsicSize.width;
+        drawX = computedBounds.width - intrinsicBounds.width;
         drawY = 0;
       }
       case LEFT -> {
         drawX = 0;
-        drawY = computedSize.height / 2 - intrinsicSize.height / 2;
+        drawY = computedBounds.height / 2 - intrinsicBounds.height / 2;
       }
       case CENTER -> {
-        drawX = computedSize.width / 2 - intrinsicSize.width / 2;
-        drawY = computedSize.height / 2 - intrinsicSize.height / 2;
+        drawX = computedBounds.width / 2 - intrinsicBounds.width / 2;
+        drawY = computedBounds.height / 2 - intrinsicBounds.height / 2;
       }
       case RIGHT -> {
-        drawX = computedSize.width - intrinsicSize.width;
-        drawY = computedSize.height / 2 - intrinsicSize.height / 2;
+        drawX = computedBounds.width - intrinsicBounds.width;
+        drawY = computedBounds.height / 2 - intrinsicBounds.height / 2;
       }
       case BOTTOM_LEFT -> {
         drawX = 0;
-        drawY = computedSize.height - intrinsicSize.height;
+        drawY = computedBounds.height - intrinsicBounds.height;
       }
       case BOTTOM_CENTER -> {
-        drawX = computedSize.width / 2 - intrinsicSize.width / 2;
-        drawY = computedSize.height - intrinsicSize.height;
+        drawX = computedBounds.width / 2 - intrinsicBounds.width / 2;
+        drawY = computedBounds.height - intrinsicBounds.height;
       }
       case BOTTOM_RIGHT -> {
-        drawX = computedSize.width - intrinsicSize.width;
-        drawY = computedSize.height - intrinsicSize.height;
+        drawX = computedBounds.width - intrinsicBounds.width;
+        drawY = computedBounds.height - intrinsicBounds.height;
       }
     }
 
-    child.getComputedPosition().set(drawX, drawY);
+    child.computedBounds.setPosition(drawX, drawY);
   }
 
   @Override

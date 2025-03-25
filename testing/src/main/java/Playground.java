@@ -16,7 +16,7 @@ public class Playground extends Scene {
   }
 
   public static void main(String[] args) {
-    Window.setFullscreen(false);
+    Window.setFullscreen(true);
     Window.setResolution(Window.Resolution._800_600);
     Application game = new Application("Playground") { };
 
@@ -28,20 +28,19 @@ public class Playground extends Scene {
   protected Widget onCreateWidgetTree() {
     return Align.create(
       Column.create(
-        Image.create("wide-img.jpg")
-          .withSize(300, 150),
+        Padding.create(
+          Image.create("wide-img.jpg")
+            .withSize(300, 150),
+          new Spacing(x)
+        ),
         Text.create("another text")
           .withShadow(true)
           .withShadowColor(Color.BLACK)
-          .withShadowOffset(2, 3),
+          .withShadowOffset(10, 4),
         Row.create(
-          Text.create(text)
-            .withBackgroundColor(Color.BLACK),
-          Padding.create(
-            Text.create("text 3")
-              .withColor(Color.BLACK),
-            new Spacing(15)
-          )
+          Text.create(text),
+          Text.create("text 3")
+            .withColor(Color.BLACK)
         )
       ),
       Alignment.CENTER
@@ -49,24 +48,19 @@ public class Playground extends Scene {
   }
 
   @Override
-  public void onStart() {
-    super.onStart();
-  }
-
-  @Override
   public void onUpdate() {
     super.onUpdate();
 
     if (Input.isKeyJustPressed(Input.KEY_SPACE)) {
-      updateWidgetTree(() -> text = "Kwame");
+      updateWidgetTree(() -> {
+        text = "Kwame";
+        x = y = 50;
+      });
     } else if (Input.isKeyJustReleased(Input.KEY_SPACE)) {
-      updateWidgetTree(() -> text = "Opare");
-    }
-
-    if (Input.isKeyPressed(Input.KEY_SPACE)) {
-      x = y = 50;
-    } else {
-      x = y = 0;
+      updateWidgetTree(() -> {
+        text = "Opare";
+        x = y = 0;
+      });
     }
   }
 

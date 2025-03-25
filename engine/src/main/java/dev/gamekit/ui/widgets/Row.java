@@ -1,7 +1,6 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.Size;
 
 /** A {@link Parent} which arranges its children horizontally */
 public class Row extends MultiChildParent {
@@ -15,26 +14,28 @@ public class Row extends MultiChildParent {
 
   @Override
   protected void performLayout(Constraints constraints) {
-    Constraints cc = new Constraints(0, constraints.maxWidth(), 0, constraints.maxHeight());
+    Constraints cc = new Constraints(
+      0, constraints.maxWidth(),
+      0, constraints.maxHeight()
+    );
+
     int currentX = 0;
     int maxHeight = 0;
 
     for (var child : children) {
       child.computeLayout(cc);
-      child.getComputedPosition().set(currentX, 0);
+      child.computedBounds.setPosition(currentX, 0);
 
-      Size childSize = child.getComputedSize();
-
-      currentX += childSize.width;
-      maxHeight = Math.max(maxHeight, childSize.height);
+      currentX += child.computedBounds.width;
+      maxHeight = Math.max(maxHeight, child.computedBounds.height);
       cc = new Constraints(
-        0, cc.maxWidth() - childSize.width,
+        0, cc.maxWidth() - child.computedBounds.width,
         0, cc.maxHeight()
       );
     }
 
-    intrinsicSize.set(currentX, maxHeight);
-    computedSize.set(currentX, maxHeight);
+    intrinsicBounds.setSize(currentX, maxHeight);
+    computedBounds.setSize(currentX, maxHeight);
   }
 
   @Override

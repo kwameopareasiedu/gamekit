@@ -2,7 +2,6 @@ package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.IO;
 import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.Size;
 import dev.gamekit.utils.Constants;
 
 import java.awt.*;
@@ -14,7 +13,8 @@ import static dev.gamekit.utils.Math.clamp;
 /** A {@link Widget} which loads a <b>resource image</b> and renders it to the screen */
 public class Image extends Widget {
   protected final String src;
-  protected Size size;
+  protected int width;
+  protected int height;
   protected Fit fit;
 
   private final BufferedImage srcImg;
@@ -25,7 +25,8 @@ public class Image extends Widget {
   protected Image(String src) {
     this.src = src;
     this.fit = Fit.FIT;
-    this.size = new Size(0, 0);
+    this.width = 0;
+    this.height = 0;
     srcImg = IO.loadImageResource(src);
 
     if (srcImg == null) {
@@ -41,19 +42,19 @@ public class Image extends Widget {
 
   @Override
   protected void performLayout(Constraints constraints) {
-    intrinsicSize.set(srcImg.getWidth(), srcImg.getHeight());
+    intrinsicBounds.setSize(srcImg.getWidth(), srcImg.getHeight());
 
     int computedWidth = clamp(
-      size.width > 0 ? size.width : intrinsicSize.width,
+      width > 0 ? width : intrinsicBounds.width,
       constraints.minWidth(), constraints.maxWidth()
     );
 
     int computedHeight = clamp(
-      size.height > 0 ? size.height : intrinsicSize.height,
+      height > 0 ? height : intrinsicBounds.height,
       constraints.minHeight(), constraints.maxHeight()
     );
 
-    computedSize.set(computedWidth, computedHeight);
+    computedBounds.setSize(computedWidth, computedHeight);
   }
 
   @Override
@@ -62,31 +63,30 @@ public class Image extends Widget {
 
     switch (fit) {
       case FIT, CROP -> {
-        double widthRatio = (double) computedSize.width / intrinsicSize.width;
-        double heightRatio = (double) computedSize.height / intrinsicSize.height;
+        double widthRatio = (double) computedBounds.width / intrinsicBounds.width;
+        double heightRatio = (double) computedBounds.height / intrinsicBounds.height;
 
         double scaleRatio = fit == Fit.FIT ?
-          intrinsicSize.width > intrinsicSize.height ? widthRatio : heightRatio :
-          intrinsicSize.width <= intrinsicSize.height ? widthRatio : heightRatio;
+          intrinsicBounds.width > intrinsicBounds.height ? widthRatio : heightRatio :
+          intrinsicBounds.width <= intrinsicBounds.height ? widthRatio : heightRatio;
 
-        int scaledWidth = (int) (intrinsicSize.width * scaleRatio);
-        int scaledHeight = (int) (intrinsicSize.height * scaleRatio);
-        dx1 = (computedSize.width - scaledWidth) / 2;
-        dy1 = (computedSize.height - scaledHeight) / 2;
+        int scaledWidth = (int) (intrinsicBounds.width * scaleRatio);
+        int scaledHeight = (int) (intrinsicBounds.height * scaleRatio);
+        dx1 = (computedBounds.width - scaledWidth) / 2;
+        dy1 = (computedBounds.height - scaledHeight) / 2;
         dx2 = dx1 + scaledWidth;
         dy2 = dy1 + scaledHeight;
       }
       case STRETCH -> {
-        dx2 = computedSize.width;
-        dy2 = computedSize.height;
+        dx2 = computedBounds.width;
+        dy2 = computedBounds.height;
       }
     }
 
     if (this.dx1 != dx1 || this.dy1 != dy1 || this.dx2 != dx2 || this.dy2 != dy2) {
-      logger.debug("Rendering");
       g.setBackground(Constants.TRANSPARENT_COLOR);
-      g.clearRect(0, 0, computedSize.width, computedSize.height);
-      g.drawImage(srcImg, dx1, dy1, dx2, dy2, 0, 0, intrinsicSize.width, intrinsicSize.height, null);
+      g.clearRect(0, 0, computedBounds.width, computedBounds.height);
+      g.drawImage(srcImg, dx1, dy1, dx2, dy2, 0, 0, intrinsicBounds.width, intrinsicBounds.height, null);
 
       this.dx1 = dx1;
       this.dy1 = dy1;
@@ -100,14 +100,16 @@ public class Image extends Widget {
     if (widget instanceof Image imageWidget) {
       return Objects.equals(src, imageWidget.src)
         && Objects.equals(fit, imageWidget.fit)
-        && Objects.equals(size, imageWidget.size);
+        && Objects.equals(width, imageWidget.width)
+        && Objects.equals(height, imageWidget.height);
     }
 
     return false;
   }
 
   public Image withSize(int width, int height) {
-    this.size.set(width, height);
+    this.width = width;
+    this.height = height;
     return this;
   }
 

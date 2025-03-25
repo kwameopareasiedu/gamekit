@@ -1,7 +1,6 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.Size;
 import dev.gamekit.ui.Spacing;
 
 import java.util.Objects;
@@ -30,15 +29,13 @@ public class Padding extends SingleChildParent {
       )
     );
 
-    Size childSize = child.getComputedSize();
-
-    int intrinsicWidth = childSize.width + padding.getHorizontal();
-    int intrinsicHeight = childSize.height + padding.getVertical();
-    intrinsicSize.set(intrinsicWidth, intrinsicHeight);
+    int intrinsicWidth = child.computedBounds.width + padding.getHorizontal();
+    int intrinsicHeight = child.computedBounds.height + padding.getVertical();
+    intrinsicBounds.setSize(intrinsicWidth, intrinsicHeight);
 
     int computedWidth = clamp(intrinsicWidth, constraints.minWidth(), constraints.maxWidth());
     int computedHeight = clamp(intrinsicHeight, constraints.minHeight(), constraints.maxHeight());
-    computedSize.set(computedWidth, computedHeight);
+    computedBounds.setSize(computedWidth, computedHeight);
 
     if (intrinsicWidth > computedWidth || intrinsicHeight > computedHeight) {
       child.computeLayout(
@@ -49,7 +46,7 @@ public class Padding extends SingleChildParent {
       );
     }
 
-    child.getComputedPosition().set(padding.left, padding.top);
+    child.computedBounds.setPosition(padding.left, padding.top);
   }
 
   @Override

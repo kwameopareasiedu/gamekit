@@ -1,5 +1,6 @@
 package dev.gamekit.core;
 
+import dev.gamekit.ui.Bounds;
 import dev.gamekit.ui.widgets.Widget;
 import dev.gamekit.utils.Constants;
 
@@ -63,14 +64,6 @@ public final class Renderer {
     var pt = Camera.getInstance().transformPoint(x, y);
     g.fillRect(-pt.x, -pt.y, w, h);
     resetGraphicsState();
-  }
-
-  /** Clears the {@link Window} UI target with transparent */
-  public static void clearUI() {
-    int w = Window.getInstance().getRenderWidth(), h = Window.getInstance().getRenderHeight();
-    Graphics2D g = Window.getInstance().getUiGraphics();
-    g.setBackground(Constants.TRANSPARENT_COLOR);
-    g.clearRect(0, 0, w, h);
   }
 
   /**
@@ -219,12 +212,20 @@ public final class Renderer {
    * Draws a UI {@link Widget} to the window's UI target
    * @param widget The node to draw
    */
-  public static void drawUI(Widget widget) {
-    Graphics2D g = Window.getInstance().getUiGraphics();
+  public static void drawWidget(Widget widget) {
+    Window win = Window.getInstance();
+    Graphics2D g = win.getUiGraphics();
+    Widget.Appearance appearance = widget.getAppearance();
+    Bounds widgetBounds = widget.getComputedBounds();
+
+    g.setBackground(Constants.TRANSPARENT_COLOR);
+    g.clearRect(0, 0, win.getRenderWidth(), win.getRenderHeight());
     g.drawImage(
-      widget.getAppearance().image,
-      widget.getComputedPosition().x, widget.getComputedPosition().y,
-      widget.getComputedSize().width, widget.getComputedSize().height,
+      appearance.image,
+      widgetBounds.x,
+      widgetBounds.y,
+      widgetBounds.width,
+      widgetBounds.height,
       null
     );
   }

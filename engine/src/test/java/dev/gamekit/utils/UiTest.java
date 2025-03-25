@@ -1,7 +1,6 @@
 package dev.gamekit.utils;
 
-import dev.gamekit.ui.Position;
-import dev.gamekit.ui.Size;
+import dev.gamekit.ui.Bounds;
 import dev.gamekit.ui.Spacing;
 import org.junit.jupiter.api.Test;
 
@@ -60,48 +59,62 @@ public class UiTest {
   }
 
   @Test
-  public void sizeTest() {
-    Size size = new Size(10);
-    assertEquals(10, size.width);
-    assertEquals(10, size.height);
+  public void boundsTest() {
+    Bounds bounds = new Bounds(15, 20, 75, 100);
+    assertEquals(15, bounds.x);
+    assertEquals(20, bounds.y);
+    assertEquals(75, bounds.width);
+    assertEquals(100, bounds.height);
 
-    Size size2 = new Size(15, 20);
-    assertEquals(15, size2.width);
-    assertEquals(20, size2.height);
+    Bounds bounds2 = new Bounds(bounds);
+    assertEquals(15, bounds2.x);
+    assertEquals(20, bounds2.y);
+    assertEquals(75, bounds2.width);
+    assertEquals(100, bounds2.height);
 
-    Size size3 = new Size(size);
-    assertEquals(10, size3.width);
-    assertEquals(10, size3.height);
+    bounds.setPosition(29, 43);
+    assertEquals(29, bounds.x);
+    assertEquals(43, bounds.y);
 
-    size.set(29, 43);
-    assertEquals(29, size.width);
-    assertEquals(43, size.height);
+    bounds.set(bounds2);
+    assertEquals(15, bounds.x);
+    assertEquals(20, bounds.y);
+    assertEquals(75, bounds.width);
+    assertEquals(100, bounds.height);
 
-    size.set(50);
-    assertEquals(50, size.width);
-    assertEquals(50, size.height);
+    bounds.setPosition(21, 23);
+    assertEquals(21, bounds.x);
+    assertEquals(23, bounds.y);
 
-    size.set(size2);
-    assertEquals(15, size.width);
-    assertEquals(20, size.height);
-  }
+    bounds.setSize(93, 104);
+    assertEquals(93, bounds.width);
+    assertEquals(104, bounds.height);
 
-  @Test
-  public void positionTest() {
-    Position position = new Position(15, 20);
-    assertEquals(15, position.x);
-    assertEquals(20, position.y);
+    bounds.set(0, 0, 50, 50);
+    bounds2.set(30, 0, 100, 100);
+    bounds.extend(bounds2);
 
-    Position position2 = new Position(position);
-    assertEquals(15, position2.x);
-    assertEquals(20, position2.y);
+    assertEquals(0, bounds.x);
+    assertEquals(0, bounds.y);
+    assertEquals(130, bounds.width);
+    assertEquals(100, bounds.height);
 
-    position.set(29, 43);
-    assertEquals(29, position.x);
-    assertEquals(43, position.y);
+    bounds.set(0, 0, 50, 50);
+    bounds2.set(25, -10, 200, 150);
+    bounds.extend(bounds2);
 
-    position.set(position2);
-    assertEquals(15, position.x);
-    assertEquals(20, position.y);
+    assertEquals(0, bounds.x);
+    assertEquals(-10, bounds.y);
+    assertEquals(225, bounds.width);
+    assertEquals(150, bounds.height);
+
+    bounds.set(25, 25, 50, 50);
+    bounds2.set(10, 30, 25, 10);
+    bounds.extend(bounds2);
+
+    assertEquals(10, bounds.x);
+    assertEquals(25, bounds.y);
+    assertEquals(65, bounds.width);
+    assertEquals(50, bounds.height);
   }
 }
