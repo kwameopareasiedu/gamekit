@@ -1,6 +1,8 @@
 package dev.gamekit.core;
 
-import dev.gamekit.ui.UI;
+import dev.gamekit.ui.Constraints;
+import dev.gamekit.ui.WidgetState;
+import dev.gamekit.ui.widgets.Widget;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -8,11 +10,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A representation of a logical part of your application.
- * This can be a main menu, testing area or a level within your game.
+ * A scene is a collection of {@link Prop props} interacting with each other
+ * to form a logic part of your application. This can be a main menu, or a
+ * level within your game.
  * <p>
- * A scene can contain {@link Prop props} which interact with each other
- * to implement the goal of the scene.
+ * A scene can also display a {@link Widget} tree which forms its user interface
  */
 public abstract class Scene {
   private static final Logger LOGGER = LogManager.getLogger();
@@ -20,7 +22,10 @@ public abstract class Scene {
 
   protected final String name;
   protected final Map<Integer, Prop> props;
-  protected final UI ui;
+
+  private final WidgetState.Observer<Object> widgetStateObserver;
+  private boolean widgetTreeInvalidated = true;
+  private Widget widgetTree;
 
   /**
    * Creates a scene with the given name
@@ -29,107 +34,131 @@ public abstract class Scene {
   public Scene(String name) {
     this.name = name;
     props = new HashMap<>();
-    ui = new UI();
+    widgetStateObserver = (state) -> {
+      WidgetState<Object> widgetState = (WidgetState<Object>) state;
+      LOGGER.debug(widgetState);
+    };
   }
 
-  /**
-   * Returns the currently loaded scene instance
-   * @return {@link Scene} The active scene of the application
-   */
+  /** Returns the currently loaded scene instance */
   public static Scene getCurrent() { return current; }
 
-  /**
-   * Returns the name of the scene
-   * @return The name of the scene
-   */
   public String getName() { return name; }
 
-  /**
-   * Adds a {@link Prop} object to this scene
-   * @param prop The prop to be added
-   */
-  public void addChild(Prop prop) {
+  public WidgetState.Observer<Object> getWidgetStateObserver() {
+    return widgetStateObserver;
+  }
+
+  public void addProp(Prop prop) {
     LOGGER.debug("Adding child: [{} - {}]", prop.internalId, prop.name);
 
     if (!props.containsKey(prop.internalId)) {
       Application.getInstance().scheduleTask(() -> {
+        LOGGER.debug("Added child: {} ({})", prop.name, prop.internalId);
         props.put(prop.internalId, prop);
-
         if (!prop.ready) prop.onStart();
-
-        LOGGER.debug("Added child: [{} - {}]", prop.internalId, prop.name);
       });
     }
   }
 
-  /**
-   * Removes a {@link Prop} object from this scene
-   * @param prop The prop to be removed
-   */
-  public void removeChild(Prop prop) {
+  public void removeProp(Prop prop) {
     LOGGER.debug("Removing child: [{} - {}]", prop.internalId, prop.name);
 
     if (props.containsKey(prop.internalId)) {
       Application.getInstance().scheduleTask(() -> {
+        LOGGER.debug("Removed child: {} ({})", prop.name, prop.internalId);
         props.remove(prop.internalId, prop);
-
         if (prop.ready) prop.onDispose();
-
-        LOGGER.debug("Removed child: [{} - {}]", prop.internalId, prop.name);
       });
     }
   }
 
-  /** Overridable method to add scene setup logic. This is called once. */
+  /** Called by {@link #start()} to set up the scene */
   public void onStart() { }
 
-  /** Overridable method to add scene update logic */
+  /** Called by {@link #update()} to update the scene */
   public void onUpdate() { }
 
-  /** Overridable method to add scene render logic */
+  /** Called by {@link #render()} to render the scene */
   public void onRender() { }
 
-  /** Overridable method to add scene update logic This is called once. */
+  /** Called by {@link #dispose()} to dispose the scene */
   public void onDispose() { }
+
+  /** Sets the {@code widget} as the root UI element. */
+  protected void createWidgetTree(Widget widget) {
+    if (widgetTree != null) {
+      throw new IllegalStateException("Widget tree is already present");
+    }
+
+    Window win = Window.getInstance();
+
+    Constraints cs = new Constraints(
+      win.getRenderWidth(),
+      win.getRenderWidth(),
+      win.getRenderHeight(),
+      win.getRenderHeight()
+    );
+
+    widget.computeLayout(cs);
+    widget.getComputedPosition().set(0, 0);
+    this.widgetTree = widget;
+  }
 
   /**
    * Called by {@link Application} to initialize the scene.
-   * <p>
-   * This calls {@link #onStart()} before calling {@link Prop#onStart() onStart()} on each child prop
+   * This calls {@link #onStart()} before calling
+   * {@link Prop#onStart() onStart()} on each child prop
    */
-  void onSceneStart() {
+  final void start() {
     LOGGER.debug("Starting scene");
+
+    var widgetStatesToBind = WidgetState.STATES_TO_BIND_TO_SCENE;
+
+    if (!widgetStatesToBind.isEmpty()) {
+      LOGGER.debug("Binding pending states: {}", widgetStatesToBind.size());
+      widgetStatesToBind.forEach(state -> state.bindObserver(widgetStateObserver));
+      widgetStatesToBind.clear();
+    }
+
     onStart();
     props.forEach((k, v) -> v.onStart());
   }
 
   /**
    * Called by {@link Application} to update the scene.
-   * <p>
-   * This calls {@link #onUpdate()} before calling {@link Prop#onUpdate() onUpdate()} on each child prop
+   * This calls {@link #onUpdate()} before calling
+   * {@link Prop#onUpdate() onUpdate()} on each child prop
    */
-  void onSceneUpdate() {
+  final void update() {
     onUpdate();
     props.forEach((k, v) -> v.onUpdate());
   }
 
   /**
    * Called by {@link Application} to render the scene.
-   * <p>
-   * This calls {@link #onRender()} before calling {@link Prop#onRender() onRender()} on each child prop
+   * This calls {@link #onRender()} first, then calls
+   * {@link Prop#onRender() onRender()} on each child prop
+   * and finally renders the widget tree, if set
    */
-  void onSceneRender() {
+  final void render() {
     onRender();
     props.forEach((k, v) -> v.onRender());
-    ui.onRender();
+
+    if (widgetTree != null && widgetTreeInvalidated) {
+      LOGGER.debug("Rendering widget tree");
+      Renderer.clearUI();
+      Renderer.drawUI(widgetTree);
+      widgetTreeInvalidated = false;
+    }
   }
 
   /**
    * Called by {@link Application} to render the scene.
-   * <p>
-   * This calls {@link Prop#onDispose() onDispose()} on each child prop before calling {@link #onDispose()}
+   * This calls {@link Prop#onDispose() onDispose()}
+   * on each child prop before calling {@link #onDispose()}
    */
-  void onSceneDispose() {
+  final void dispose() {
     LOGGER.debug("Disposing scene");
     props.forEach((k, v) -> v.onDispose());
     onDispose();

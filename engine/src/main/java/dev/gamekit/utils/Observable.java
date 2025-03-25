@@ -17,8 +17,9 @@ public class Observable<T> {
   }
 
   public void set(T value) {
+    boolean notify = value != this.value;
     this.value = value;
-    notifyObservers();
+    if (notify) notifyObservers();
   }
 
   public void set(ObjectStateSetter<T> setter) {
@@ -41,8 +42,12 @@ public class Observable<T> {
     }
   }
 
+  /**
+   * Interface for an observer which is notified
+   * when an observable is updated
+   */
   public interface Observer<T> {
-    void onChange(Observable<T> state);
+    void onChange(Observable<T> observable);
   }
 
   public interface ObjectStateSetter<T> {
