@@ -25,11 +25,15 @@ import java.awt.image.BufferedImage;
  * size go up and parents set positions
  */
 public abstract class Widget {
+  private static final boolean DEBUG_DRAW = true;
+  private static final BasicStroke DEBUG_OUTLINE_STROKE = new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+
   protected final Logger logger = LogManager.getLogger(getClass());
   protected final Position computedPosition;
-  protected final Size intrinsicSize;
   protected final Size computedSize;
+  protected final Size intrinsicSize;
   protected Widget parent;
+  protected boolean parentUsesSize;
   protected Constraints constraints;
 
   private Appearance appearance;
@@ -43,9 +47,11 @@ public abstract class Widget {
 
   @Override
   public boolean equals(Object obj) {
-    if (!(obj instanceof Widget widget))
-      return false;
-    return stateEquals(widget);
+    if (obj instanceof Widget widget) {
+      return stateEquals(widget);
+    }
+
+    return false;
   }
 
   /** Delegate method which returns {@code true} if this widget has the same state as {@code widget} */
@@ -61,8 +67,9 @@ public abstract class Widget {
    * The goal of this method is to set the {@link #computedSize} and
    * {@link #computedPosition} which is used during rendering phase.
    * <p>
-   * Since this method is marked as {@code final}, subclasses should override
-   * the {@link #performLayout(Constraints)} method instead to perform their layout
+   * Since this method is marked as {@code final}, subclasses should
+   * override the {@link #performLayout(Constraints)} method instead
+   * to perform their layout
    */
   public final void computeLayout(Constraints constraints) {
     this.constraints = constraints;
@@ -92,6 +99,12 @@ public abstract class Widget {
 
     performRender(appearance.graphics);
 
+    if (DEBUG_DRAW) {
+      appearance.graphics.setColor(Color.CYAN);
+      appearance.graphics.setStroke(DEBUG_OUTLINE_STROKE);
+      appearance.graphics.drawRect(0, 0, computedSize.width, computedSize.height);
+    }
+
     return appearance;
   }
 
@@ -110,7 +123,14 @@ public abstract class Widget {
 
   public Widget getParent() { return parent; }
 
-  public void setParent(Widget parent) { this.parent = parent; }
+  /**
+   * Sets the parent widget and indicates whether the parent uses its size.
+   * If {@code parentUsesSize} is set, the parent marked as needing layout when the child is
+   */
+  public void setParent(Widget parent, boolean parentUsesSize) {
+    this.parent = parent;
+    this.parentUsesSize = parent != null && parentUsesSize;
+  }
 
   /**
    * Appearance contains a {@link BufferedImage} and a

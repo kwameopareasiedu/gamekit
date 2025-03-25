@@ -28,12 +28,18 @@ public class Playground extends Scene {
   protected Widget onCreateWidgetTree() {
     return Align.create(
       Column.create(
-        Image.create("wide-img.jpg").withSize(300, 150),
-        Text.create("another text").withShadow(true).withShadowColor(Color.BLACK).withShadowOffset(2, 3),
+        Image.create("wide-img.jpg")
+          .withSize(300, 150),
+        Text.create("another text")
+          .withShadow(true)
+          .withShadowColor(Color.BLACK)
+          .withShadowOffset(2, 3),
         Row.create(
-          Text.create(text).withBackgroundColor(Color.BLACK),
+          Text.create(text)
+            .withBackgroundColor(Color.BLACK),
           Padding.create(
-            Text.create("text 3").withColor(Color.BLACK),
+            Text.create("text 3")
+              .withColor(Color.BLACK),
             new Spacing(15)
           )
         )
