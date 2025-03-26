@@ -29,7 +29,7 @@ public class Timeout {
    * Called internally by the application to update the timeout by decrementing its duration till it reaches 0.
    * When the duration reaches zero, then the task's {@link Task#run() run()} method is executed.
    */
-  public void update() {
+  public void onUpdate() {
     if (!completed) {
       duration = java.lang.Math.max(0, duration - Application.FRAME_TIME);
 

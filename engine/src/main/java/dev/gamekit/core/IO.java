@@ -24,7 +24,7 @@ import java.util.Objects;
  */
 public class IO {
   private static final Logger LOGGER = LogManager.getLogger();
-  private static final Map<String, Object> cache = new HashMap<>();
+  private static final Map<String, Object> CACHE = new HashMap<>();
 
   private IO() { }
 
@@ -34,9 +34,8 @@ public class IO {
    * @return {@link BufferedImage} The loaded image or {@code null} if an error occurred during loading
    */
   public static BufferedImage loadImageResource(String path) {
-    if (cache.containsKey(path)) {
-      LOGGER.debug("Loaded cached image resource at {}", path);
-      return (BufferedImage) cache.get(path);
+    if (CACHE.containsKey(path)) {
+      return (BufferedImage) CACHE.get(path);
     }
 
     try {
@@ -45,7 +44,7 @@ public class IO {
       URI assetUri = Objects.requireNonNull(assetUrl).toURI();
       File assetFile = new File(assetUri);
       BufferedImage image = ImageIO.read(assetFile);
-      cache.put(path, image);
+      CACHE.put(path, image);
       return image;
     } catch (URISyntaxException | IOException e) {
       LOGGER.error("Unable to load image resource at {}", path);
@@ -60,9 +59,8 @@ public class IO {
    * @return {@link BufferedImage} The loaded image or {@code null} if an error occurred during loading
    */
   public static Font loadFontResource(String path) {
-    if (cache.containsKey(path)) {
-      LOGGER.debug("Loaded cached font resource at {}", path);
-      return (Font) cache.get(path);
+    if (CACHE.containsKey(path)) {
+      return (Font) CACHE.get(path);
     }
 
     try {

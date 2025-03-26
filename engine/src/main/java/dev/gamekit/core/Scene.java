@@ -1,6 +1,6 @@
 package dev.gamekit.core;
 
-import dev.gamekit.ui.UIManager;
+import dev.gamekit.ui.widgets.Widget;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -8,19 +8,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A representation of a logical part of your application.
- * This can be a main menu, testing area or a level within your game.
+ * A scene is a collection of {@link Prop props} interacting with each other
+ * to form a logic part of your application. This can be a main menu, or a
+ * level within your game.
  * <p>
- * A scene can contain {@link Prop props} which interact with each other
- * to implement the goal of the scene.
+ * A scene can also display a user interface
  */
-public abstract class Scene {
-  private static final Logger LOGGER = LogManager.getLogger();
+public abstract class Scene implements UI.WidgetTreeCreator {
   static Scene current;
 
+  protected final Logger logger = LogManager.getLogger(getClass());
   protected final String name;
   protected final Map<Integer, Prop> props;
-  protected final UIManager uiManager;
+
+  private UI ui;
 
   /**
    * Creates a scene with the given name
@@ -29,109 +30,101 @@ public abstract class Scene {
   public Scene(String name) {
     this.name = name;
     props = new HashMap<>();
-    uiManager = new UIManager();
   }
 
-  /**
-   * Returns the currently loaded scene instance
-   * @return {@link Scene} The active scene of the application
-   */
+  /** Returns the currently loaded scene instance */
   public static Scene getCurrent() { return current; }
 
-  /**
-   * Returns the name of the scene
-   * @return The name of the scene
-   */
   public String getName() { return name; }
 
-  /**
-   * Adds a {@link Prop} object to this scene
-   * @param prop The prop to be added
-   */
-  public void addChild(Prop prop) {
-    LOGGER.debug("Adding child: [{} - {}]", prop.internalId, prop.name);
+  protected void addProp(Prop prop) {
+    logger.debug("Adding child: [{} - {}]", prop.internalId, prop.name);
 
     if (!props.containsKey(prop.internalId)) {
       Application.getInstance().scheduleTask(() -> {
+        logger.debug("Added child: {} ({})", prop.name, prop.internalId);
         props.put(prop.internalId, prop);
-
         if (!prop.ready) prop.onStart();
-
-        LOGGER.debug("Added child: [{} - {}]", prop.internalId, prop.name);
       });
     }
   }
 
-  /**
-   * Removes a {@link Prop} object from this scene
-   * @param prop The prop to be removed
-   */
-  public void removeChild(Prop prop) {
-    LOGGER.debug("Removing child: [{} - {}]", prop.internalId, prop.name);
+  protected void removeProp(Prop prop) {
+    logger.debug("Removing child: [{} - {}]", prop.internalId, prop.name);
 
     if (props.containsKey(prop.internalId)) {
       Application.getInstance().scheduleTask(() -> {
+        logger.debug("Removed child: {} ({})", prop.name, prop.internalId);
         props.remove(prop.internalId, prop);
-
         if (prop.ready) prop.onDispose();
-
-        LOGGER.debug("Removed child: [{} - {}]", prop.internalId, prop.name);
       });
     }
   }
 
-  /** Overridable method to add scene setup logic. This is called once. */
-  public void onStart() { }
+  /** Called by {@link #start()} to set up the scene */
+  protected void onStart() { }
 
-  /** Overridable method to add scene update logic */
-  public void onUpdate() { }
+  /** Called by {@link #update()} to update the scene */
+  protected void onUpdate() { }
 
-  /** Overridable method to add scene render logic */
-  public void onRender() { }
+  /** Called by {@link #render()} to render the scene */
+  protected void onRender() { }
 
-  /** Overridable method to add scene update logic This is called once. */
-  public void onDispose() { }
+  /** Called by {@link #dispose()} to dispose the scene */
+  protected void onDispose() { }
+
+  @Override
+  public Widget onCreateUI() { return null; }
+
+  /** Indicates that the widget tree should be updated based on a state change */
+  protected final void updateUI(UI.WidgetTreeUpdater updater) {
+    updater.onUpdate();
+    ui.triggerUpdate();
+  }
 
   /**
    * Called by {@link Application} to initialize the scene.
-   * <p>
-   * This calls {@link #onStart()} before calling {@link Prop#onStart() onStart()} on each child prop
+   * This calls {@link #onStart()} before calling
+   * {@link Prop#onStart() onStart()} on each child prop
    */
-  void onSceneStart() {
-    LOGGER.debug("Starting scene");
+  final void start() {
+    logger.debug("Starting scene");
+    ui = new UI(this);
+    ui.setWidgetTree(onCreateUI());
     onStart();
     props.forEach((k, v) -> v.onStart());
   }
 
   /**
    * Called by {@link Application} to update the scene.
-   * <p>
-   * This calls {@link #onUpdate()} before calling {@link Prop#onUpdate() onUpdate()} on each child prop
+   * This calls {@link #onUpdate()} before calling
+   * {@link Prop#onUpdate() onUpdate()} on each child prop
    */
-  void onSceneUpdate() {
+  final void update() {
     onUpdate();
     props.forEach((k, v) -> v.onUpdate());
-    uiManager.onUpdate();
+    ui.update();
   }
 
   /**
    * Called by {@link Application} to render the scene.
-   * <p>
-   * This calls {@link #onRender()} before calling {@link Prop#onRender() onRender()} on each child prop
+   * This calls {@link #onRender()} first, then calls
+   * {@link Prop#onRender() onRender()} on each child prop
+   * and finally renders the widget tree, if set
    */
-  void onSceneRender() {
+  final void render() {
     onRender();
     props.forEach((k, v) -> v.onRender());
-    uiManager.onRender();
+    ui.render();
   }
 
   /**
    * Called by {@link Application} to render the scene.
-   * <p>
-   * This calls {@link Prop#onDispose() onDispose()} on each child prop before calling {@link #onDispose()}
+   * This calls {@link Prop#onDispose() onDispose()}
+   * on each child prop before calling {@link #onDispose()}
    */
-  void onSceneDispose() {
-    LOGGER.debug("Disposing scene");
+  final void dispose() {
+    logger.debug("Disposing scene");
     props.forEach((k, v) -> v.onDispose());
     onDispose();
   }

@@ -39,7 +39,7 @@ public class AnimationTesting extends Scene {
     super.onRender();
     // Clear the screen with black
     Renderer.setColor(Color.BLACK);
-    Renderer.clear();
+    Renderer.clearScene();
 
     Renderer.setColor(Color.CYAN);
     Renderer.fillCircle(0, toInt(-200 * bounceAnimation.getValue()), 50);

@@ -1,46 +1,45 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.ui.Container;
-import dev.gamekit.ui.Node;
-import dev.gamekit.utils.Constraints;
-import dev.gamekit.utils.Size;
+import dev.gamekit.ui.Constraints;
 
-import java.util.List;
+/** A {@link Parent} which arranges its children vertically */
+public class Column extends MultiChildParent {
+  protected Column(Widget... children) {
+    super(children);
+  }
 
-/** Column container arranges its children horizontally */
-public class Column extends Container {
-  protected final List<Node> children;
-
-  public Column(List<Node> children) {
-    if (children == null)
-      throw new NullPointerException("Column children cannot be null");
-    this.children = children;
+  public static Column create(Widget... children) {
+    return new Column(children);
   }
 
   @Override
-  protected List<Node> getChildren() {
-    return children;
-  }
+  protected void performLayout(Constraints constraints) {
+    Constraints cc = new Constraints(
+      0, constraints.maxWidth(),
+      0, constraints.maxHeight()
+    );
 
-  @Override
-  public void onLayout(Constraints constraints) {
-    Constraints cc = new Constraints(0, constraints.maxWidth, 0, constraints.maxHeight);
-    List<Node> children = getChildren();
     int currentY = 0;
     int maxWidth = 0;
 
     for (var child : children) {
-      child.onLayout(cc);
-      child.getComputedPosition().set(0, currentY);
+      child.computeLayout(cc);
+      child.computedBounds.setPosition(0, currentY);
 
-      Size childSize = child.getComputedSize();
-
-      currentY += childSize.height;
-      maxWidth = Math.max(maxWidth, childSize.width);
-      cc = cc.update(0, cc.maxWidth, 0, cc.maxHeight - childSize.height);
+      currentY += child.computedBounds.height;
+      maxWidth = Math.max(maxWidth, child.computedBounds.width);
+      cc = new Constraints(
+        0, cc.maxWidth(),
+        0, cc.maxHeight() - child.computedBounds.height
+      );
     }
 
-    intrinsicSize.set(maxWidth, currentY);
-    computedSize.set(maxWidth, currentY);
+    intrinsicBounds.setSize(maxWidth, currentY);
+    computedBounds.setSize(maxWidth, currentY);
+  }
+
+  @Override
+  protected boolean stateEquals(Widget widget) {
+    return true;
   }
 }

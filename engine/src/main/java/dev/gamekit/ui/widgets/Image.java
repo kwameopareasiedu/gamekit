@@ -1,42 +1,32 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.IO;
-import dev.gamekit.ui.Node;
+import dev.gamekit.ui.Constraints;
 import dev.gamekit.utils.Constants;
-import dev.gamekit.utils.Constraints;
-import dev.gamekit.utils.Size;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Objects;
 
 import static dev.gamekit.utils.Math.clamp;
 
-/**
- * A {@link Node} which loads an image from
- * a resource path and renders it to the screen
- */
-public class Image extends Node {
-  private static final Logger LOGGER = LogManager.getLogger();
-
+/** A {@link Widget} which loads a <b>resource image</b> and renders it to the screen */
+public class Image extends Widget {
   protected final String src;
-  protected final BufferedImage srcImg;
-  protected final Size size;
-  protected final Fit fit;
+  protected int width;
+  protected int height;
+  protected Fit fit;
+
+  private final BufferedImage srcImg;
 
   /* Draw bounds stored and only redrawn if they change */
   private int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
 
-  public Image(String src) {
-    this(src, Fit.FIT);
-  }
-
-  /** Creates a new Image node from the resource path and fit parameters */
-  public Image(String src, Fit fit) {
+  protected Image(String src) {
     this.src = src;
-    this.fit = fit;
-    this.size = new Size(0, 0);
+    this.fit = Fit.FIT;
+    this.width = 0;
+    this.height = 0;
     srcImg = IO.loadImageResource(src);
 
     if (srcImg == null) {
@@ -46,75 +36,95 @@ public class Image extends Node {
     }
   }
 
-  @Override
-  public void onLayout(Constraints constraints) {
-    intrinsicSize.set(srcImg.getWidth(), srcImg.getHeight());
-
-    int computedWidth = clamp(
-      size.width > 0 ? size.width : intrinsicSize.width,
-      constraints.minWidth, constraints.maxWidth
-    );
-
-    int computedHeight = clamp(
-      size.height > 0 ? size.height : intrinsicSize.height,
-      constraints.minHeight, constraints.maxHeight
-    );
-
-    computedSize.set(computedWidth, computedHeight);
+  public static Image create(String src) {
+    return new Image(src);
   }
 
   @Override
-  public Appearance getAppearance() {
-    Appearance appearance = super.getAppearance();
-    Graphics2D g = appearance.graphics;
+  protected void performLayout(Constraints constraints) {
+    intrinsicBounds.setSize(srcImg.getWidth(), srcImg.getHeight());
 
+    int computedWidth = clamp(
+      width > 0 ? width : intrinsicBounds.width,
+      constraints.minWidth(), constraints.maxWidth()
+    );
+
+    int computedHeight = clamp(
+      height > 0 ? height : intrinsicBounds.height,
+      constraints.minHeight(), constraints.maxHeight()
+    );
+
+    computedBounds.setSize(computedWidth, computedHeight);
+  }
+
+  @Override
+  public final void performRender(Graphics2D g) {
     int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
 
     switch (fit) {
       case FIT, CROP -> {
-        double widthRatio = (double) computedSize.width / intrinsicSize.width;
-        double heightRatio = (double) computedSize.height / intrinsicSize.height;
+        double widthRatio = (double) computedBounds.width / intrinsicBounds.width;
+        double heightRatio = (double) computedBounds.height / intrinsicBounds.height;
 
         double scaleRatio = fit == Fit.FIT ?
-          intrinsicSize.width > intrinsicSize.height ? widthRatio : heightRatio :
-          intrinsicSize.width <= intrinsicSize.height ? widthRatio : heightRatio;
+          intrinsicBounds.width > intrinsicBounds.height ? widthRatio : heightRatio :
+          intrinsicBounds.width <= intrinsicBounds.height ? widthRatio : heightRatio;
 
-        int scaledWidth = (int) (intrinsicSize.width * scaleRatio);
-        int scaledHeight = (int) (intrinsicSize.height * scaleRatio);
-        dx1 = (computedSize.width - scaledWidth) / 2;
-        dy1 = (computedSize.height - scaledHeight) / 2;
+        int scaledWidth = (int) (intrinsicBounds.width * scaleRatio);
+        int scaledHeight = (int) (intrinsicBounds.height * scaleRatio);
+        dx1 = (computedBounds.width - scaledWidth) / 2;
+        dy1 = (computedBounds.height - scaledHeight) / 2;
         dx2 = dx1 + scaledWidth;
         dy2 = dy1 + scaledHeight;
       }
       case STRETCH -> {
-        dx2 = computedSize.width;
-        dy2 = computedSize.height;
+        dx2 = computedBounds.width;
+        dy2 = computedBounds.height;
       }
     }
 
     if (this.dx1 != dx1 || this.dy1 != dy1 || this.dx2 != dx2 || this.dy2 != dy2) {
-      LOGGER.debug("Re-rendering image");
       g.setBackground(Constants.TRANSPARENT_COLOR);
-      g.clearRect(0, 0, computedSize.width, computedSize.height);
-      g.drawImage(srcImg, dx1, dy1, dx2, dy2, 0, 0, intrinsicSize.width, intrinsicSize.height, null);
+      g.clearRect(0, 0, computedBounds.width, computedBounds.height);
+      g.drawImage(srcImg, dx1, dy1, dx2, dy2, 0, 0, intrinsicBounds.width, intrinsicBounds.height, null);
 
       this.dx1 = dx1;
       this.dy1 = dy1;
       this.dx2 = dx2;
       this.dy2 = dy2;
     }
-
-    return appearance;
   }
 
-  /**
-   * Returns the preferred size of this image.
-   * @return the preferred size of this image
-   */
-  public Size getSize() { return size; }
+  @Override
+  protected boolean stateEquals(Widget widget) {
+    if (widget instanceof Image imageWidget) {
+      return Objects.equals(src, imageWidget.src)
+        && Objects.equals(fit, imageWidget.fit)
+        && Objects.equals(width, imageWidget.width)
+        && Objects.equals(height, imageWidget.height);
+    }
+
+    return false;
+  }
+
+  public Image withSize(int width, int height) {
+    this.width = width;
+    this.height = height;
+    return this;
+  }
+
+  public Image withFit(Fit fit) {
+    this.fit = fit;
+    return this;
+  }
 
   /** Determines how the image should be resized/fitted in its bounds */
   public enum Fit {
-    FIT, CROP, STRETCH
+    /** Resize the image to fit within the bounds */
+    FIT,
+    /** Cutout the portions of the image which are outside the bounds */
+    CROP,
+    /** Stretch the image to completely cover the bounds */
+    STRETCH
   }
 }

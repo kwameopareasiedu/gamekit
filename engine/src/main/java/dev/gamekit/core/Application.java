@@ -19,8 +19,9 @@ import java.util.List;
 @SuppressWarnings("BusyWait")
 public abstract class Application {
   public static final long FRAME_TIME = 1000 / 90;
-  private static final Logger LOGGER = LogManager.getLogger();
   private static Application instance;
+
+  protected final Logger logger = LogManager.getLogger(getClass());
 
   private final List<Timeout> timeouts;
   private final List<Animation> animations;
@@ -31,7 +32,7 @@ public abstract class Application {
 
   /** Creates an application with a title */
   public Application(String title) {
-    LOGGER.debug("Created application \"{}\"", title);
+    logger.debug("Created application \"{}\"", title);
 
     window = new Window(title);
     timeouts = new ArrayList<>();
@@ -53,16 +54,16 @@ public abstract class Application {
    */
   public void loadScene(Scene scene) {
     if (scene == null) {
-      LOGGER.fatal("Load scene called with a null scene");
+      logger.fatal("Load scene called with a null scene");
       throw new NullPointerException("Unable to load a null scene");
     }
 
-    LOGGER.debug("Queued scene: {}", scene.getName());
+    logger.debug("Queued scene: {}", scene.getName());
     this.nextScene = scene;
   }
 
   /**
-   * Schedule a task to be executed immediately 
+   * Schedule a task to be executed immediately
    * after the end of the current frame.
    * @param task Task to execute
    * @see #scheduleTask(Task, long)
@@ -132,14 +133,14 @@ public abstract class Application {
       onDispose();
       System.exit(0);
     } catch (Exception e) {
-      LOGGER.error("Application loop raised an exception", e);
+      logger.error("Application loop raised an exception", e);
       System.exit(-1);
     }
   }
 
   /** Sets up Gamekit's internals before starting the game loop */
   private void onSetup() {
-    LOGGER.debug("Initializing application");
+    logger.debug("Initializing application");
 
     window.getFrame().addKeyListener(Input.INSTANCE);
     window.getFrame().addMouseListener(Input.INSTANCE);
@@ -149,7 +150,7 @@ public abstract class Application {
       @Override
       public void windowClosing(WindowEvent e) {
         super.windowClosing(e);
-        LOGGER.debug("Received window closing event");
+        logger.debug("Received window closing event");
         isRunning = false;
       }
     });
@@ -164,16 +165,16 @@ public abstract class Application {
   private void onUpdate() {
     if (!animations.isEmpty()) {
       for (var anim : animations)
-        anim.update();
+        anim.onUpdate();
     }
 
     if (!timeouts.isEmpty()) {
       for (var timeout : timeouts)
-        timeout.update();
+        timeout.onUpdate();
     }
 
     if (currentScene != null) {
-      currentScene.onSceneUpdate();
+      currentScene.update();
     }
   }
 
@@ -181,7 +182,7 @@ public abstract class Application {
   private void onRender() {
     if (currentScene != null) {
       Camera.getInstance().update();
-      currentScene.onSceneRender();
+      currentScene.render();
     }
 
     window.redraw();
@@ -207,14 +208,14 @@ public abstract class Application {
       animations.clear();
 
       if (currentScene != null) {
-        currentScene.onSceneDispose();
-        LOGGER.debug("Switching scene: {} -> {}", currentScene.getName(), nextScene.getName());
+        currentScene.dispose();
+        logger.debug("Switching scene: {} -> {}", currentScene.getName(), nextScene.getName());
       } else {
-        LOGGER.debug("Loading scene: {}", nextScene.getName());
+        logger.debug("Loading scene: {}", nextScene.getName());
       }
 
       currentScene = nextScene;
-      currentScene.onSceneStart();
+      currentScene.start();
       nextScene = null;
 
       window.createRenderTargets();
@@ -224,10 +225,10 @@ public abstract class Application {
 
   /** Runs cleanup code before exiting the application */
   protected void onDispose() {
-    LOGGER.debug("Disposing application");
+    logger.debug("Disposing application");
 
     if (currentScene != null) {
-      currentScene.onSceneDispose();
+      currentScene.dispose();
     }
   }
 }

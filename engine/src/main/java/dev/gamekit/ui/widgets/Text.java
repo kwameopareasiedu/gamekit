@@ -1,22 +1,17 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.Renderer;
-import dev.gamekit.ui.Node;
+import dev.gamekit.ui.Constraints;
 import dev.gamekit.utils.Constants;
-import dev.gamekit.utils.Constraints;
-import dev.gamekit.utils.Position;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.awt.*;
+import java.util.Objects;
 
 import static dev.gamekit.utils.Math.clamp;
 
-/** A {@link Node} which renders text to the screen */
+/** A {@link Widget} which renders text to the screen */
 @SuppressWarnings("MagicConstant")
-public class Text extends Node {
-  private static final Logger LOGGER = LogManager.getLogger();
-
+public class Text extends Widget {
   protected String text;
   protected String fontFamily;
   protected int fontStyle;
@@ -25,13 +20,14 @@ public class Text extends Node {
   protected Color backgroundColor;
   protected Font font;
   protected boolean shadowEnabled;
-  protected Position shadowOffset;
+  protected int shadowOffsetX;
+  protected int shadowOffsetY;
   protected Color shadowColor;
 
   private Font renderFont;
   private FontMetrics fontMetrics;
 
-  public Text(String text) {
+  protected Text(String text) {
     this.text = text;
     fontFamily = "FFF Forward";
     fontStyle = Font.PLAIN;
@@ -39,13 +35,18 @@ public class Text extends Node {
     color = Color.WHITE;
     backgroundColor = Constants.TRANSPARENT_COLOR;
     font = Constants.DEFAULT_FONT;
-    shadowOffset = new Position(0, 0);
+    shadowOffsetX = 0;
+    shadowOffsetY = 0;
+  }
+
+  public static Text create(String text) {
+    return new Text(text);
   }
 
   @Override
-  public void onLayout(Constraints constraints) {
+  protected void performLayout(Constraints constraints) {
     if (shouldUpdateRenderFont()) {
-      LOGGER.debug("Creating new render font");
+      logger.debug("Creating new render font");
       renderFont = font != null
         ? font.deriveFont(fontStyle, fontSize)
         : new Font(fontFamily, fontStyle, fontSize);
@@ -53,106 +54,110 @@ public class Text extends Node {
       fontFamily = renderFont.getFamily();
     }
 
-    int intrinsicWidth = fontMetrics.stringWidth(text);
-    int intrinsicHeight = fontMetrics.getHeight();
+    int textWidth = fontMetrics.stringWidth(text);
+    int textHeight = fontMetrics.getHeight();
 
     if (shadowEnabled) {
-      intrinsicWidth += Math.abs(shadowOffset.x);
-      intrinsicHeight += Math.abs(shadowOffset.y);
+      textWidth += Math.abs(shadowOffsetX);
+      textHeight += Math.abs(shadowOffsetY);
     }
 
-    intrinsicSize.set(intrinsicWidth, intrinsicHeight);
+    intrinsicBounds.setSize(textWidth, textHeight);
 
-    int computedWidth = clamp(intrinsicSize.width, constraints.minWidth, constraints.maxWidth);
-    int computedHeight = clamp(intrinsicSize.height, constraints.minHeight, constraints.maxHeight);
-    computedSize.set(computedWidth, computedHeight);
+    int computedWidth = clamp(intrinsicBounds.width, constraints.minWidth(), constraints.maxWidth());
+    int computedHeight = clamp(intrinsicBounds.height, constraints.minHeight(), constraints.maxHeight());
+    computedBounds.setSize(computedWidth, computedHeight);
   }
 
   @Override
-  public Appearance getAppearance() {
-    Appearance appearance = super.getAppearance();
-    Graphics2D g = appearance.graphics;
-
+  public final void performRender(Graphics2D g) {
     g.setBackground(backgroundColor);
-    g.clearRect(0, 0, computedSize.width, computedSize.height);
+    g.clearRect(0, 0, computedBounds.width, computedBounds.height);
     g.setFont(renderFont);
 
     if (shadowEnabled) {
       g.setColor(shadowColor);
-      g.drawString(text, shadowOffset.x, fontSize + shadowOffset.y);
+      g.drawString(text, shadowOffsetX, fontSize + shadowOffsetY);
     }
 
     g.setColor(color);
     g.drawString(text, 0, fontSize);
-    return appearance;
+  }
+
+  @Override
+  protected boolean stateEquals(Widget widget) {
+    if (widget instanceof Text textWidget) {
+      return Objects.equals(text, textWidget.text) &&
+        Objects.equals(fontFamily, textWidget.fontFamily) &&
+        Objects.equals(fontStyle, textWidget.fontStyle) &&
+        Objects.equals(fontSize, textWidget.fontSize) &&
+        Objects.equals(color, textWidget.color) &&
+        Objects.equals(backgroundColor, textWidget.backgroundColor) &&
+        Objects.equals(font, textWidget.font) &&
+        Objects.equals(shadowEnabled, textWidget.shadowEnabled) &&
+        Objects.equals(shadowOffsetX, textWidget.shadowOffsetX) &&
+        Objects.equals(shadowOffsetY, textWidget.shadowOffsetY) &&
+        Objects.equals(shadowColor, textWidget.shadowColor);
+    }
+
+    return false;
   }
 
   /**
-   * Sets the text of this text
-   * @param text The text content
+   * Sets the font family of this text. The name of the
+   * font should match an installed font on the system
    */
-  public void setText(String text) { this.text = text; }
+  public Text withFontFamily(String fontFamily) {
+    this.fontFamily = fontFamily;
+    return this;
+  }
+
+  public Text withFontStyle(int fontStyle) {
+    this.fontStyle = fontStyle;
+    return this;
+  }
+
+  public Text withFontSize(int fontSize) {
+    this.fontSize = fontSize;
+    return this;
+  }
+
+  public Text withBackgroundColor(Color backgroundColor) {
+    this.backgroundColor = backgroundColor;
+    return this;
+  }
+
+  public Text withColor(Color color) {
+    this.color = color;
+    return this;
+  }
+
+  /** Sets the font of this text. If set, this overrides {@link #fontFamily} value */
+  public Text withFont(Font font) {
+    this.font = font;
+    return this;
+  }
+
+  public Text withShadow(boolean shadowEnabled) {
+    this.shadowEnabled = shadowEnabled;
+    return this;
+  }
+
+  public Text withShadowOffset(int x, int y) {
+    this.shadowOffsetX = x;
+    this.shadowOffsetY = y;
+    return this;
+  }
+
+  public Text withShadowColor(Color color) {
+    this.shadowColor = color;
+    return this;
+  }
 
   /**
-   * Sets the font family of this text.
-   * <p>
-   * The name of the font should match an installed font on the system
-   * @param fontFamily The text font family
-   */
-  public void setFontFamily(String fontFamily) { this.fontFamily = fontFamily; }
-
-  /**
-   * Sets the font style of this text
-   * @param fontStyle The text font style
-   */
-  public void setFontStyle(int fontStyle) { this.fontStyle = fontStyle; }
-
-  /**
-   * Sets the font size of this text
-   * @param fontSize The text font size
-   */
-  public void setFontSize(int fontSize) { this.fontSize = fontSize; }
-
-  /**
-   * Sets the background color of this text
-   * @param backgroundColor The text background color
-   */
-  public void setBackgroundColor(Color backgroundColor) { this.backgroundColor = backgroundColor; }
-
-  /**
-   * Sets the color of this text
-   * @param color The text color
-   */
-  public void setColor(Color color) { this.color = color; }
-
-  /**
-   * Sets the font of this text. If set, this overrides {@link #fontFamily} value
-   * @param font The text font
-   */
-  public void setFont(Font font) { this.font = font; }
-
-  /**
-   * Enables or disabled the drop shadow of this text
-   * @param enabled The drop shadow state
-   */
-  public void toggleShadow(boolean enabled) { shadowEnabled = enabled; }
-
-  /**
-   * Sets the shadow offset of this text
-   * @param x The horizontal offset. This can be negative
-   * @param y The vertical offset. This can be negative
-   */
-  public void setShadowOffset(int x, int y) { shadowOffset.set(x, y); }
-
-  /**
-   * Sets the shadow color of this text
-   * @param color The text shadow color
-   */
-  public void setShadowColor(Color color) { shadowColor = color; }
-
-  /**
-   * Indicates whether the {@link #renderFont} should be updated
-   * @return Whether the render font should be updated
+   * Determines if the font should be updated.
+   * This is done by checking if the {@link #fontFamily},
+   * {@link #fontSize} or {@link #fontStyle} have changed
    */
   private boolean shouldUpdateRenderFont() {
     return renderFont == null ||

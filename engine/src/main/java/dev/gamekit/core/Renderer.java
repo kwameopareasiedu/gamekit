@@ -1,8 +1,5 @@
 package dev.gamekit.core;
 
-import dev.gamekit.ui.Node;
-import dev.gamekit.utils.Constants;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -55,19 +52,14 @@ public final class Renderer {
   /** Ends a previously called {@code beginGroup()} */
   public static void endGroup() { CURRENT_STATE.discard(); }
 
-  /** Fills the viewport with a specified color */
-  public static void clear() {
+  /** Clears the {@link Window} scene target with current state color */
+  public static void clearScene() {
     // Clear scene target
     applyGraphicsState();
     int x = 0, y = 0, w = Window.getInstance().getRenderWidth(), h = Window.getInstance().getRenderHeight();
     var pt = Camera.getInstance().transformPoint(x, y);
     g.fillRect(-pt.x, -pt.y, w, h);
     resetGraphicsState();
-
-    // Clear ui target
-    Graphics2D gui = Window.getInstance().getUiGraphics();
-    gui.setBackground(Constants.TRANSPARENT_COLOR);
-    gui.clearRect(0, 0, w, h);
   }
 
   /**
@@ -210,20 +202,6 @@ public final class Renderer {
     int x1 = x0 + width, y1 = y0 - height;
     g.drawImage(img, x0, -y0, x1, -y1, 0, 0, img.getWidth(), img.getHeight(), null);
     resetGraphicsState();
-  }
-
-  /**
-   * Draws a UI {@link Node} to the window's UI target
-   * @param node The node to draw
-   */
-  public static void drawNode(Node node) {
-    Graphics2D g = Window.getInstance().getUiGraphics();
-    g.drawImage(
-      node.getAppearance().image,
-      node.getComputedPosition().x, node.getComputedPosition().y,
-      node.getComputedSize().width, node.getComputedSize().height,
-      null
-    );
   }
 
   /**

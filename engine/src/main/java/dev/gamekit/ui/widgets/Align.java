@@ -1,48 +1,48 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.ui.Container;
-import dev.gamekit.ui.Node;
-import dev.gamekit.utils.Alignment;
-import dev.gamekit.utils.Constraints;
-import dev.gamekit.utils.Size;
+import dev.gamekit.ui.Alignment;
+import dev.gamekit.ui.Constraints;
 
-import java.util.List;
+import java.util.Objects;
 
 import static dev.gamekit.utils.Math.clamp;
 
-/** A {@link Node} which aligns its single child based on an {@link Alignment} */
-public class Align extends Container {
-  protected final Node child;
-  protected final List<Node> children;
+/** A {@link Parent} which aligns its single child within itself */
+public class Align extends SingleChildParent {
   protected Alignment alignment;
 
-  public Align(Node child) {
-    this(child, Alignment.CENTER);
-  }
-
-  public Align(Node child, Alignment alignment) {
-    this.child = child;
-    this.children = List.of(child);
+  protected Align(Widget child, Alignment alignment) {
+    super(child);
     this.alignment = alignment;
   }
 
-  @Override
-  protected List<Node> getChildren() { return children; }
+  public static Align create(Widget child, Alignment alignment) {
+    return new Align(child, alignment);
+  }
 
   @Override
-  public void onLayout(Constraints constraints) {
-    Constraints c = constraints.update(
-      0, constraints.maxWidth, 0, constraints.maxHeight
+  protected void performLayout(Constraints constraints) {
+    child.computeLayout(
+      new Constraints(
+        0, constraints.maxWidth(),
+        0, constraints.maxHeight()
+      )
     );
 
-    child.onLayout(c);
+    int computedWidth = clamp(
+      child.computedBounds.width,
+      constraints.minWidth(),
+      constraints.maxWidth()
+    );
 
-    Size childSize = child.getComputedSize();
-    int computedWidth = clamp(childSize.width, constraints.minWidth, constraints.maxWidth);
-    int computedHeight = clamp(childSize.height, constraints.minHeight, constraints.maxHeight);
+    int computedHeight = clamp(
+      child.computedBounds.height,
+      constraints.minHeight(),
+      constraints.maxHeight()
+    );
 
-    intrinsicSize.set(childSize.width, childSize.height);
-    computedSize.set(computedWidth, computedHeight);
+    intrinsicBounds.setSize(child.computedBounds.width, child.computedBounds.height);
+    computedBounds.setSize(computedWidth, computedHeight);
 
     int drawX = 0, drawY = 0;
 
@@ -52,47 +52,49 @@ public class Align extends Container {
         drawY = 0;
       }
       case TOP_CENTER -> {
-        drawX = computedSize.width / 2 - intrinsicSize.width / 2;
+        drawX = computedBounds.width / 2 - intrinsicBounds.width / 2;
         drawY = 0;
       }
       case TOP_RIGHT -> {
-        drawX = computedSize.width - intrinsicSize.width;
+        drawX = computedBounds.width - intrinsicBounds.width;
         drawY = 0;
       }
       case LEFT -> {
         drawX = 0;
-        drawY = computedSize.height / 2 - intrinsicSize.height / 2;
+        drawY = computedBounds.height / 2 - intrinsicBounds.height / 2;
       }
       case CENTER -> {
-        drawX = computedSize.width / 2 - intrinsicSize.width / 2;
-        drawY = computedSize.height / 2 - intrinsicSize.height / 2;
+        drawX = computedBounds.width / 2 - intrinsicBounds.width / 2;
+        drawY = computedBounds.height / 2 - intrinsicBounds.height / 2;
       }
       case RIGHT -> {
-        drawX = computedSize.width - intrinsicSize.width;
-        drawY = computedSize.height / 2 - intrinsicSize.height / 2;
+        drawX = computedBounds.width - intrinsicBounds.width;
+        drawY = computedBounds.height / 2 - intrinsicBounds.height / 2;
       }
       case BOTTOM_LEFT -> {
         drawX = 0;
-        drawY = computedSize.height - intrinsicSize.height;
+        drawY = computedBounds.height - intrinsicBounds.height;
       }
       case BOTTOM_CENTER -> {
-        drawX = computedSize.width / 2 - intrinsicSize.width / 2;
-        drawY = computedSize.height - intrinsicSize.height;
+        drawX = computedBounds.width / 2 - intrinsicBounds.width / 2;
+        drawY = computedBounds.height - intrinsicBounds.height;
       }
       case BOTTOM_RIGHT -> {
-        drawX = computedSize.width - intrinsicSize.width;
-        drawY = computedSize.height - intrinsicSize.height;
+        drawX = computedBounds.width - intrinsicBounds.width;
+        drawY = computedBounds.height - intrinsicBounds.height;
       }
     }
 
-    child.getComputedPosition().set(drawX, drawY);
+    child.computedBounds.setPosition(drawX, drawY);
   }
 
-  /**
-   * Sets the alignment of this container's child
-   * @param alignment The child's alignment
-   */
-  public void setAlignment(Alignment alignment) {
-    this.alignment = alignment;
+  @Override
+  protected boolean stateEquals(Widget widget) {
+    if (widget instanceof Align alignWidget) {
+      return Objects.equals(child, alignWidget.child)
+        && Objects.equals(alignment, alignWidget.alignment);
+    }
+
+    return false;
   }
 }

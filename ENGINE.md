@@ -5,25 +5,32 @@ function.
 
 ## Application
 
-This is the heart of a GameKit program. A game or application must extend this class to do anything with the engine.
+`dev.gamekit.core.Application`
+
+`Application` is the heart of a GameKit program. Your game must extend this class to do anything with the engine.
 
 `Application` runs a fixed-step game loop which processes input, updates and renders the current scene and runs
 end-of-frame tasks. This fixed time step approach makes sure during lag spikes don't overshoot logic and physics
 updates.
 
-When the application is run, it sets up the engine internals which include:
+### Startup
+
+When your game is run, it sets up the engine internals which include:
 
 - Creating the window object
 - Attaching keyboard and mouse listeners to the window
 - Making the window visible
 
+### Game Loop
+
 After setup, the game loop starts which runs the following until the application exits:
 
-- Captures keyboard and mouse input
-- Updates running animations
-- Updates active timeout tasks
+- Capture keyboard and mouse input
+- Update running animations
+- Update active timeout tasks
 - Update the active scene
-- Renders the current scene to the window
+- Render the current scene to the window
+- Perform scheduled end of frame tasks
 
 The game loops continues running until the close event is received on the window. When this happens, the loop is halted
 and the application runs its dispose logic before exiting. You can override the `onDispose()` to custom cleanup before
@@ -33,82 +40,61 @@ To access the application from anywhere in the application, use `Application.get
 
 ## Window
 
-This is the [JFrame](https://docs.oracle.com/javase/8/docs/api/javax/swing/JFrame.html) window which displays the
-application.
+`dev.gamekit.core.Window`
 
-In screen space, the origin (I.e. (0,0)) is at the top-left of the screen, +x is to the right of the screen and +y is to
-the bottom of the screen. This doesn't translate to world/scene space which uses a cartesian coordinate system where the
-origin is at the center of the screen, +x is to the right and +y is upwards.
+`Window` manages the view frame in which the game is displayed. Since this is a Java Swing project, the frame is
+a [JFrame](https://docs.oracle.com/javase/8/docs/api/javax/swing/JFrame.html) object.
+
+### Screen Space vs World Space
+
+In screen space, the origin, `(0,0)` is at the top-left of the screen, `+x` is to the right of the screen and `+y` is
+down the screen.
+
+This doesn't translate to world/scene space which uses a cartesian coordinate system where the origin is at the center
+of the screen, `+x` is to the right and `+y` is upwards.
 
 ![](./docs/assets/screen-space-vs-world-space.png)
 
-To allow for both world/scene space and screen space rendering, `Window` provides
-two [BufferedImage](https://docs.oracle.com/javase/8/docs/api/java/awt/image/BufferedImage.html)
-objects; one for rendering scene elements the other for rendering screen elements.
+### Multiple Render Targets
 
-At the end of `Application.onRender()`, the window is redrawn with the content of the scene layer and text layer.
+Due to this, `Window` provides
+two [BufferedImage](https://docs.oracle.com/javase/8/docs/api/java/awt/image/BufferedImage.html) targets for
+rendering. One configured for screen space rendering for your UI and the other configured for world rendering (I.e. your
+scene).
 
-| Method                               | Description                               |
-|--------------------------------------|-------------------------------------------|
-| `public static Window getInstance()` | Get the current instance of the window    |
-| `public int getWidth()`              | Get the width of the window               |
-| `public int getHeight()`             | Get the height of the window              |
-| `public int getCenterX()`            | Get the x-coordinate of the window center |
-| `public int getCenterY()`            | Get the y-coordinate of the window center |
+### Multi Resolution & Fullscreen Support
+
+`Window` supports multiple resolution, ranging from 640x480 to native resolution. Higher resolutions appear best but at
+a performance cost and vice versa.
+
+You can also configure your game to launch in a windowed mode or full screen.This is done before the application starts
+and cannot be changed at runtime.
 
 ## Renderer
 
-Static class containing all supported draw calls of the engine.
+`dev.gamekit.core.Renderer`
 
-`Renderer` can be setup with options before a drawing function is called to apply values to it (E.g. setting the color,
-stroke, font, etc)
+So `Application` manages your game and `Window` manages the view frame, but how do we get stuff drawn unto the screen?
 
-> NB: By default, options are reset after each draw call. To preserve options for another draw call, use the
-`beginGroup()` and `endGroup()` methods.
+That's where `Renderer` comes in. It's a static utility class containing all the supported draw functions of the engine.
+This includes drawing lines, arcs, curves, shapes (rects, ovals) and images.
 
-| Method                                                                                                | Description                                                                                                                   |
-|-------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
-| `public static void setBackground(Color color)`                                                       | Sets the background color for the next draw call                                                                              |
-| `public static void setStroke(Stroke stroke)`                                                         | Sets the stroke for the next draw call                                                                                        |
-| `public static void setPaint(Paint paint)`                                                            | Sets the paint for the next draw call                                                                                         |
-| `public static void setColor(Color color)`                                                            | Sets the color for the next draw call                                                                                         |
-| `public static void setFont(Font font)`                                                               | Sets the font for the next draw call                                                                                          |
-| `public static void beginGroup()`                                                                     | Configures the renderer to not reset options after next draw call. Useful for multiple draw calls which share similar options |
-| `public static void endGroup()`                                                                       | Ends a previously called `beginGroup()`                                                                                       |
-| `public static void clear()`                                                                          | Fills the viewport with a specified color                                                                                     |
-| `public static void line(int x1, int y1, int x2, int y2)`                                             | Draws a line from (x1, y1) to (x2, y2)                                                                                        |
-| `public static void lineV(int x, int y1, int y2)`                                                     | Draws a vertical line from (x, y1), to (x, y2)                                                                                |
-| `public static void lineH(int x1, int y, int x2)`                                                     | Draws a horizontal line from (x1, y), to (x2, y)                                                                              |
-| `public static void fillRect(int x, int y, int width, int height)`                                    | Fills a center-origin rect at (x, y) with width and height                                                                    |
-| `public static void drawRect(int x, int y, int width, int height)`                                    | Draws a center-origin rect at (x, y) with width and height                                                                    |
-| `public static void fillRoundRect(int x, int y, int width, int height, int arcWidth, int archHeight)` | Fills a center-origin rounded rect at (x, y) with width, height and arc radii                                                 |
-| `public static void drawRoundRect(int x, int y, int width, int height, int arcWidth, int archHeight)` | Draws a center-origin rounded rect at (x, y) with width, height and arc radii                                                 |
-| `public static void fillOval(int x, int y, int width, int height)`                                    | Fills a center-origin oval at (x, y) with width and height                                                                    |
-| `public static void drawOval(int x, int y, int width, int height)`                                    | Draws a center-origin oval at (x, y) with width and height                                                                    |
-| `public static void fillCircle(int x, int y, int radius)`                                             | Fills a center-origin circle at (x, y) with radius                                                                            |
-| `public static void drawCircle(int x, int y, int radius)`                                             | Draws a center-origin circle at (x, y) with radius                                                                            |
-
-## Camera
-
-Singleton class which controls which part of the game world is rendered in the `Window`.
-
-`Camera` allows you to pan around the game world as well as zooming. Internally, `Camera` controls the 3x3
-transformation matrix of the Window graphics object.
-
-| Method                                      | Description                                                          |
-|---------------------------------------------|----------------------------------------------------------------------|
-| `public static Camera getInstance()`        | Get the current instance of the camera                               |
-| `public void lookAt(double x, double y)`    | Pan the camera such that point (x, y) is at the center of the screen |
-| `public void setZoom(double zoom)`          | Sets the zoom of the camera                                          |
-| `public Point transformPoint(int x, int y)` | Projects the point (x, y) into the camera's local space              |
+Before calling a draw function, you can set attributes like, color, stroke, paint to be applied. By default, these are
+reset after the draw function is done, but `Renderer` allows you to configure this behaviour.
 
 ## Input
 
-Singleton class responsible for capturing keyboard and mouse inputs for use in the game.
+`dev.gamekit.core.Input`
 
-Input exports static constants which map to
+`Input` provides mechanisms for detecting keyboard key and mouse button events. You can detect `pressed`, `released` and
+`held` for any key or button.
+
+When the game is launched, `Application` attaches `Input` as an event listener for `Window`. During each frame, `Input`
+preserves a snapshot of the current key and button states, which the scene can then read from in the update phase.
+
+`Input` contains public static constants which map to
 Java's [KeyEvent](https://docs.oracle.com/javase/8/docs/api/java/awt/event/KeyEvent.html) constants so they can be used
-interchangeably. An example is shown below
+interchangeably. An example is shown below:
 
 ```java
 import java.awt.event.KeyEvent;
@@ -130,18 +116,61 @@ public class MyAwesomeGame extends Scene {
 }
 ```
 
-| Method                                                 | Description                                            |
-|--------------------------------------------------------|--------------------------------------------------------|
-| `public static boolean isKeyPressed(int keyCode)`      | Check if a key is being held down in the current frame |
-| `public static boolean isKeyJustPressed(int keyCode)`  | Check if a key just pressed in the current frame       |
-| `public static boolean isKeyJustReleased(int keyCode)` | Check if a key just released in the current frame      |
-
 ## IO
 
-Static class responsible for resource loading and file output. `IO` caches resources loaded, prevent multiple disk reads
-for the same and improving performance.
+`dev.gamekit.core.IO`
 
-| Method                                               | Description                                        |
-|------------------------------------------------------|----------------------------------------------------|
-| `public static BufferedImage loadImage(String path)` | Loads and caches an image at the specified path    |
-| `public static Font loadFont(String path)`           | Loads and caches a font file at the specified path |
+`IO` is GameKit's asset loader. It allows you to access files placed in the resource directories of your application.
+This includes images and font.
+
+For other files, `IO` can open a [
+BufferedReader](https://docs.oracle.com/javase/8/docs/api/java/io/BufferedReader.html) for efficient reads (I.e. Not
+reading all the file in memory).
+
+Assets loaded by `IO` are cached using the file path as a key. When the same file path is requested, the cache responds,
+improving your game's performance.
+
+## Scene
+
+`dev.gamekit.core.Scene`
+
+`Scene` represents a logical part of your game. This can be a main menu or a level in your game.
+
+Simple scenes can have all the logic contained within them, but more complex scenes can contain `Prop` objects which can
+be scripted to interact with each other.
+
+Each `Scene` can also render a user interface (UI) which is a collection of `Widget` (More on this later).
+
+`Scene` has five (5) lifecycle methods which can be overridden.
+
+- `onStart()` is called **once** when `Application` loads the scene. This is meant for one-time setup tasks.
+- `onUpdate()` is called every frame to update the state of the scene. `Application` will try and call this at the
+  desired FPS.
+- `onRender()` is called every frame after `onUpdate()` to draw the state of the scene to `Window`
+- `onDispose()` is called **once** when the scene is about to be unloaded during a scene switch
+- `onCreateUI()` is called when the scene is build the user interface. This is also called when the UI needs to be
+  updated (E.g. updating a variable which the UI depends on)
+
+## Camera
+
+`dev.gamekit.core.Camera`
+
+`Camera` is a utility which provides functions to control which part of a `Scene` is being rendered to `Window`. These
+include:
+
+- Panning around in the scene
+- Zooming in/out
+
+It does this by updating the transform matrix of `Window`
+scene [BufferedImage](https://docs.oracle.com/javase/8/docs/api/java/awt/image/BufferedImage.html).
+
+## UI
+
+`dev.gamekit.core.UI`
+
+`UI` manages the user interface of `Scene`. It works with `Scene` to create the user interface and update it when
+dependent variables in the scene change.
+
+This allows for a declarative approach to user interfaces in GameKit.
+
+`UI` is internally managed by `Scene` so the developer doesn't need to worry about its function.

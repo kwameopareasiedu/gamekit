@@ -52,19 +52,11 @@ public class Animation {
     value = 0;
   }
 
-  /**
-   * Returns the state of this animation
-   * @return {@link State} The animation state
-   */
   public State getState() { return state; }
 
-  /**
-   * Returns the current animation value
-   * @return The animation value
-   */
   public double getValue() {
     if (curve == null) return value;
-    else return curve.transform(value);
+    return curve.transform(value);
   }
 
   /** Starts this animation and changes its state to {@link State#RUNNING} */
@@ -76,16 +68,15 @@ public class Animation {
   }
 
   /**
-   * Stops this animation and changes its state to {@link State#ENDED}
-   * <p>
-   * An ended animation cannot be restarted.
+   * Stops this animation and changes its state to {@link State#ENDED}.
+   * Ended animation cannot be restarted.
    */
   public void stop() {
     state = State.ENDED;
   }
 
   /** Called internally by the application game loop to update this animation */
-  public void update() {
+  public void onUpdate() {
     if (state == State.RUNNING) {
       value = clamp(value + 0.001 * rate * Application.FRAME_TIME, 0, 1);
 

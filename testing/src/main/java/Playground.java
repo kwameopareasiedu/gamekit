@@ -1,22 +1,22 @@
 import dev.gamekit.core.Window;
 import dev.gamekit.core.*;
+import dev.gamekit.ui.Alignment;
+import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.ui.widgets.*;
-import dev.gamekit.utils.Alignment;
-import dev.gamekit.utils.Spacing;
 
 import java.awt.*;
-import java.util.List;
 
 public class Playground extends Scene {
-  private int x = 0, y = 0;
+  int x = 0, y = 0;
+  String text = "Kwame";
 
   public Playground() {
     super("Main Scene");
   }
 
   public static void main(String[] args) {
-    Window.setFullscreen(true);
+    Window.setFullscreen(false);
     Window.setResolution(Window.Resolution._800_600);
     Application game = new Application("Playground") { };
 
@@ -25,34 +25,23 @@ public class Playground extends Scene {
   }
 
   @Override
-  public void onStart() {
-    super.onStart();
-    Text text = new Text("The quick brown fox jumps over the lazy dog");
-    text.setBackgroundColor(Color.BLACK);
-
-    Text text2 = new Text("I've got a shadow");
-    text2.toggleShadow(true);
-    text2.setShadowColor(Color.LIGHT_GRAY);
-    text2.setShadowOffset(2, 3);
-
-    Text text3 = new Text("Text 3");
-
-    Image img = new Image("wide-img.jpg");
-    img.getSize().set(300, 150);
-
-    uiManager.setRoot(
-      new Align(
-        new Column(
-          List.of(
-            img,
-            text,
-            new Row(
-              List.of(text2, new Padding(text3, new Spacing(15)))
-            )
-          )
+  public Widget onCreateUI() {
+    return Align.create(
+      Column.create(
+        Padding.create(
+          Image.create("wide-img.jpg").withSize(300, 150),
+          new Spacing(x)
         ),
-        Alignment.CENTER
-      )
+        Text.create("another text").withShadow(true).withShadowColor(Color.BLACK).withShadowOffset(10, 4),
+        Row.create(
+          Text.create(text),
+          Padding.create(
+            Text.create("text 3").withColor(Color.BLACK),
+            new Spacing(x)
+          )
+        )
+      ),
+      Alignment.CENTER
     );
   }
 
@@ -60,10 +49,16 @@ public class Playground extends Scene {
   public void onUpdate() {
     super.onUpdate();
 
-    if (Input.isKeyPressed(Input.KEY_SPACE)) {
-      x = y = 50;
-    } else {
-      x = y = 0;
+    if (Input.isKeyJustPressed(Input.KEY_SPACE)) {
+      updateUI(() -> {
+        text = "Kwame";
+        x = y = 50;
+      });
+    } else if (Input.isKeyJustReleased(Input.KEY_SPACE)) {
+      updateUI(() -> {
+        text = "Opare";
+        x = y = 0;
+      });
     }
   }
 
@@ -72,15 +67,15 @@ public class Playground extends Scene {
     super.onRender();
     // Clear the screen with black
     Renderer.setColor(Color.DARK_GRAY);
-    Renderer.clear();
+    Renderer.clearScene();
 
-    Renderer.setColor(Color.RED);
-    Renderer.fillRoundRect(x - 50, y - 50, 100, 100, 10, 10);
-    Renderer.setColor(Color.YELLOW);
-    Renderer.fillRoundRect(x + 50, y - 50, 100, 100, 10, 10);
-    Renderer.setColor(Color.GREEN);
-    Renderer.fillRoundRect(x + 50, y + 50, 100, 100, 10, 10);
-    Renderer.setColor(Color.CYAN);
-    Renderer.fillRoundRect(x - 50, y + 50, 100, 100, 10, 10);
+//    Renderer.setColor(Color.RED);
+//    Renderer.fillRoundRect(-50 - x, -50 - y, 100, 100, 10, 10);
+//    Renderer.setColor(Color.YELLOW);
+//    Renderer.fillRoundRect(50 + x, -50 - y, 100, 100, 10, 10);
+//    Renderer.setColor(Color.GREEN);
+//    Renderer.fillRoundRect(50 + x, 50 + y, 100, 100, 10, 10);
+//    Renderer.setColor(Color.CYAN);
+//    Renderer.fillRoundRect(-50 - x, 50 + y, 100, 100, 10, 10);
   }
 }

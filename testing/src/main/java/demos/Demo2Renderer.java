@@ -37,7 +37,7 @@ public class Demo2Renderer extends Scene {
     super.onRender();
     // Clear the screen with dark gray
     Renderer.setColor(Color.DARK_GRAY);
-    Renderer.clear();
+    Renderer.clearScene();
     // Draw a red box
     Renderer.setColor(Color.RED);
     Renderer.fillRect(0, 0, 100, 100);

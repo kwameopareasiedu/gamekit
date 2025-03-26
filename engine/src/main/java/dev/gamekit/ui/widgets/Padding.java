@@ -1,78 +1,61 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.ui.Container;
-import dev.gamekit.ui.Node;
-import dev.gamekit.utils.Constraints;
-import dev.gamekit.utils.Size;
-import dev.gamekit.utils.Spacing;
+import dev.gamekit.ui.Constraints;
+import dev.gamekit.ui.Spacing;
 
-import java.util.List;
+import java.util.Objects;
 
 import static dev.gamekit.utils.Math.clamp;
 
-/** A {@link Node} which pads its single child with spacing */
-public class Padding extends Container {
-  protected final Node child;
-  protected final List<Node> children;
+/** A {@link Parent} which adds padding around its single child */
+public class Padding extends SingleChildParent {
   protected Spacing padding;
 
-  /**
-   * Creates a new Padding with a child and zero object
-   * @param child   The child node
-   */
-  public Padding(Node child) {
-    this(child, new Spacing(0));
-  }
-
-  /**
-   * Creates a new Padding with a child and padding object
-   * @param child   The child node
-   * @param padding The padding around the child
-   */
-  public Padding(Node child, Spacing padding) {
-    this.child = child;
-    this.children = List.of(child);
+  protected Padding(Widget child, Spacing padding) {
+    super(child);
     this.padding = padding;
   }
 
-  @Override
-  protected List<Node> getChildren() { return children; }
+  public static Padding create(Widget child, Spacing padding) {
+    return new Padding(child, padding);
+  }
 
   @Override
-  public void onLayout(Constraints constraints) {
-    Constraints c = constraints.update(
-      0, constraints.maxWidth, 0, constraints.maxHeight
+  protected void performLayout(Constraints constraints) {
+    child.computeLayout(
+      new Constraints(
+        0, constraints.maxWidth(),
+        0, constraints.maxHeight()
+      )
     );
 
-    child.onLayout(c);
+    int intrinsicWidth = child.computedBounds.width + padding.getHorizontal();
+    int intrinsicHeight = child.computedBounds.height + padding.getVertical();
+    intrinsicBounds.setSize(intrinsicWidth, intrinsicHeight);
 
-    Size childSize = child.getComputedSize();
-
-    int intrinsicWidth = childSize.width + padding.getHorizontal();
-    int intrinsicHeight = childSize.height + padding.getVertical();
-    intrinsicSize.set(intrinsicWidth, intrinsicHeight);
-
-    int computedWidth = clamp(intrinsicWidth, constraints.minWidth, constraints.maxWidth);
-    int computedHeight = clamp(intrinsicHeight, constraints.minHeight, constraints.maxHeight);
-    computedSize.set(computedWidth, computedHeight);
+    int computedWidth = clamp(intrinsicWidth, constraints.minWidth(), constraints.maxWidth());
+    int computedHeight = clamp(intrinsicHeight, constraints.minHeight(), constraints.maxHeight());
+    computedBounds.setSize(computedWidth, computedHeight);
 
     if (intrinsicWidth > computedWidth || intrinsicHeight > computedHeight) {
-      Constraints cc = new Constraints(
-        0, computedWidth - padding.getHorizontal(),
-        0, computedHeight - padding.getVertical()
+      child.computeLayout(
+        new Constraints(
+          0, computedWidth - padding.getHorizontal(),
+          0, computedHeight - padding.getVertical()
+        )
       );
-
-      child.onLayout(cc);
     }
 
-    child.getComputedPosition().set(padding.left, padding.top);
+    child.computedBounds.setPosition(padding.left, padding.top);
   }
 
-  /**
-   * Sets the padding of this container's child
-   * @param padding The child's padding
-   */
-  public void setPadding(Spacing padding) {
-    this.padding = padding;
+  @Override
+  protected boolean stateEquals(Widget widget) {
+    if (widget instanceof Padding paddingWidget) {
+      return Objects.equals(child, paddingWidget.child)
+        && Objects.equals(padding, paddingWidget.padding);
+    }
+
+    return false;
   }
 }
