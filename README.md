@@ -5,7 +5,7 @@ Java [Swing](https://docs.oracle.com/javase/tutorial/uiswing/index.html) and doe
 based and not GPU based.
 
 GameKit is in no way a AAA engine and has limitations due to it not using OpenGL, but performance is decent enough for
-small games.
+small to medium-sized games.
 
 ## Full Documentation
 
