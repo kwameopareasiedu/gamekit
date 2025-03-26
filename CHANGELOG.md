@@ -4,16 +4,26 @@
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+## 0.3.0-SNAPSHOT-1
+
+### Added
+
 - Added `static void setResolution(Resolution resolution)` to `Window` class
 - Added `static void setFullscreen(boolean fullScreen)` to `Window` class
 - Implemented mouse button detection in `Input` class
 - Added `static boolean isButtonPressed(int buttonCode)` to `Input` class
 - Added `static boolean isButtonJustPressed(int buttonCode)` to `Input` class
 - Added `static boolean isButtonJustReleased(int buttonCode)` to `Input` class
-- Added abstract `Widget` class which is the base class of all UI elements 
+- Added abstract `Widget` class which is the base class of all UI elements
 - Added abstract `Parent` which is a `Widget` which contain other widgets
-- Added abstract `SingleChildParent` which is a `Parent` that has only one child widget 
-- Added abstract `MultiChildParent` which is a `Parent` that container multiple child widgets 
+- Added abstract `SingleChildParent` which is a `Parent` that has only one child widget
+- Added abstract `MultiChildParent` which is a `Parent` that container multiple child widgets
 - Added `Row` which is a `MultiChildParent` that lays its children horizontally
 - Added `Column` which is a `MultiChildParent` that lays its children vertically
 - Added `Text` which is a `Widget` that renders text

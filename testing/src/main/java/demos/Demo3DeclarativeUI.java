@@ -1,3 +1,5 @@
+package demos;
+
 import dev.gamekit.core.Window;
 import dev.gamekit.core.*;
 import dev.gamekit.ui.Alignment;
@@ -7,20 +9,20 @@ import dev.gamekit.ui.widgets.*;
 
 import java.awt.*;
 
-public class Playground extends Scene {
+public class Demo3DeclarativeUI extends Scene {
   int x = 0, y = 0;
   String text = "Kwame";
 
-  public Playground() {
+  public Demo3DeclarativeUI() {
     super("Main Scene");
   }
 
   public static void main(String[] args) {
     Window.setFullscreen(false);
     Window.setResolution(Window.Resolution._800_600);
-    Application game = new Application("Playground") { };
+    Application game = new Application("Demo 3 - Declarative UI") { };
 
-    game.loadScene(new Playground());
+    game.loadScene(new Demo3DeclarativeUI());
     game.run();
   }
 
@@ -66,16 +68,7 @@ public class Playground extends Scene {
   public void onRender() {
     super.onRender();
     // Clear the screen with black
-    Renderer.setColor(Color.DARK_GRAY);
+    Renderer.setColor(Color.BLACK);
     Renderer.clear();
-
-//    Renderer.setColor(Color.RED);
-//    Renderer.fillRoundRect(-50 - x, -50 - y, 100, 100, 10, 10);
-//    Renderer.setColor(Color.YELLOW);
-//    Renderer.fillRoundRect(50 + x, -50 - y, 100, 100, 10, 10);
-//    Renderer.setColor(Color.GREEN);
-//    Renderer.fillRoundRect(50 + x, 50 + y, 100, 100, 10, 10);
-//    Renderer.setColor(Color.CYAN);
-//    Renderer.fillRoundRect(-50 - x, 50 + y, 100, 100, 10, 10);
   }
 }

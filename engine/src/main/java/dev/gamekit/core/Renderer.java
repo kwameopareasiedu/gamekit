@@ -53,7 +53,7 @@ public final class Renderer {
   public static void endGroup() { CURRENT_STATE.discard(); }
 
   /** Clears the {@link Window} scene target with current state color */
-  public static void clearScene() {
+  public static void clear() {
     // Clear scene target
     applyGraphicsState();
     int x = 0, y = 0, w = Window.getInstance().getRenderWidth(), h = Window.getInstance().getRenderHeight();
