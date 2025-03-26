@@ -1,5 +1,6 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.ui.Appearance;
 import dev.gamekit.ui.Bounds;
 import dev.gamekit.ui.Constraints;
 import org.apache.logging.log4j.LogManager;
@@ -121,18 +122,4 @@ public abstract class Widget {
    * {@link BufferedImage}.
    */
   protected abstract void performRender(Graphics2D g);
-
-  /**
-   * Appearance contains a {@link BufferedImage} and a
-   * {@link Graphics2D} object which draws to the image
-   */
-  public static class Appearance {
-    public final BufferedImage image;
-    public final Graphics2D graphics;
-
-    private Appearance(BufferedImage image) {
-      this.image = image;
-      this.graphics = image.createGraphics();
-    }
-  }
 }

@@ -1,5 +1,6 @@
 package dev.gamekit.core;
 
+import dev.gamekit.ui.Appearance;
 import dev.gamekit.ui.Bounds;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.widgets.MultiChildParent;
@@ -132,7 +133,7 @@ final class UI {
 
     Window win = Window.getInstance();
     Graphics2D g = win.getUiGraphics();
-    Widget.Appearance appearance = tree.getAppearance();
+    Appearance appearance = tree.getAppearance();
     Bounds widgetBounds = tree.getComputedBounds();
 
     g.setBackground(Constants.TRANSPARENT_COLOR);
