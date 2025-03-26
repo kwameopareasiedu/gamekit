@@ -19,7 +19,7 @@ import java.util.Queue;
  * UI manages the user interface within for {@link Scene}.
  * A {@link Scene} will contain a single instance of UI
  */
-public final class UI {
+final class UI {
   private static final Logger LOGGER = LogManager.getLogger();
 
   private final Queue<Widget> currentWidgetQueue;
@@ -48,7 +48,10 @@ public final class UI {
   /** Sets the widget tree and triggers the layout computation */
   public void setWidgetTree(Widget tree) {
     this.tree = tree;
-    this.tree.computeLayout(windowConstraints);
+
+    if (this.tree != null) {
+      this.tree.computeLayout(windowConstraints);
+    }
   }
 
   public void triggerUpdate() {

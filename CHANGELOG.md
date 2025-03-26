@@ -10,15 +10,19 @@
 - Added `static boolean isButtonPressed(int buttonCode)` to `Input` class
 - Added `static boolean isButtonJustPressed(int buttonCode)` to `Input` class
 - Added `static boolean isButtonJustReleased(int buttonCode)` to `Input` class
-- Added abstract `Node` class which is the base class of all UI elements 
-- Added abstract `Container` class which is the base class of all container UI elements
-- Added `Row` container class which lays its children horizontally
-- Added `Column` container class which lays its children vertically
-- Added `Text` UI class which renders text on the `Window` UI target
-- Added `Image` UI class which renders an image on the `Window` UI target
-- Added `Align` UI container which align its only child based on `Alignment` enum
-- Added `Center` UI container which centers its only child
-- Added `Padding` UI container which pads its only child with some spacing
+- Added abstract `Widget` class which is the base class of all UI elements 
+- Added abstract `Parent` which is a `Widget` which contain other widgets
+- Added abstract `SingleChildParent` which is a `Parent` that has only one child widget 
+- Added abstract `MultiChildParent` which is a `Parent` that container multiple child widgets 
+- Added `Row` which is a `MultiChildParent` that lays its children horizontally
+- Added `Column` which is a `MultiChildParent` that lays its children vertically
+- Added `Text` which is a `Widget` that renders text
+- Added `Image` which is a `Widget` that renders a resource image
+- Added `Align` which is a `SingleChildParent` that align its child within itself
+- Added `Center` which is an `Align` with center alignment
+- Added `Padding` which is a `SingleChildParent` that adds spacing around its child
+- Added `Spacing` class which represents space around a widget
+- Added `UI` class which manages the user interface for a `Scene`
 
 ### Changed
 
@@ -31,6 +35,7 @@
 - Removed deprecated ~~`AnimationCurves`~~ class.
 - Removed ~~`void setSize(int width, int height)`~~ from `Window` class
 - Removed ~~`void maximize()`~~ from `Window` class
+- Removed deprecated ~~`AnimationCurves`~~ class
 
 ## v0.2.1-SNAPSHOT
 
