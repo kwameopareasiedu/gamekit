@@ -1,9 +1,5 @@
 package dev.gamekit.core;
 
-import dev.gamekit.ui.Bounds;
-import dev.gamekit.ui.widgets.Widget;
-import dev.gamekit.utils.Constants;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -206,28 +202,6 @@ public final class Renderer {
     int x1 = x0 + width, y1 = y0 - height;
     g.drawImage(img, x0, -y0, x1, -y1, 0, 0, img.getWidth(), img.getHeight(), null);
     resetGraphicsState();
-  }
-
-  /**
-   * Draws a UI {@link Widget} to the window's UI target
-   * @param widget The node to draw
-   */
-  public static void drawWidget(Widget widget) {
-    Window win = Window.getInstance();
-    Graphics2D g = win.getUiGraphics();
-    Widget.Appearance appearance = widget.getAppearance();
-    Bounds widgetBounds = widget.getComputedBounds();
-
-    g.setBackground(Constants.TRANSPARENT_COLOR);
-    g.clearRect(0, 0, win.getRenderWidth(), win.getRenderHeight());
-    g.drawImage(
-      appearance.image,
-      widgetBounds.x,
-      widgetBounds.y,
-      widgetBounds.width,
-      widgetBounds.height,
-      null
-    );
   }
 
   /**

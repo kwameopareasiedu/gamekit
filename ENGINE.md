@@ -148,7 +148,7 @@ Each `Scene` can also render a user interface (UI) which is a collection of `Wid
   desired FPS.
 - `onRender()` is called every frame after `onUpdate()` to draw the state of the scene to `Window`
 - `onDispose()` is called **once** when the scene is about to be unloaded during a scene switch
-- `onCreateWidgetTree()` is called when the scene is ready to draw the UI. This is also called when the UI needs to be
+- `onCreateUI()` is called when the scene is build the user interface. This is also called when the UI needs to be
   updated (E.g. updating a variable which the UI depends on)
 
 ## Camera
@@ -163,3 +163,14 @@ include:
 
 It does this by updating the transform matrix of `Window`
 scene [BufferedImage](https://docs.oracle.com/javase/8/docs/api/java/awt/image/BufferedImage.html).
+
+## UI
+
+`dev.gamekit.core.UI`
+
+`UI` manages the user interface of `Scene`. It works with `Scene` to create the user interface and update it when
+dependent variables in the scene change.
+
+This allows for a declarative approach to user interfaces in GameKit.
+
+`UI` is internally managed by `Scene` so the developer doesn't need to worry about its function.

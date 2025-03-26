@@ -25,7 +25,7 @@ public class Playground extends Scene {
   }
 
   @Override
-  protected Widget onCreateWidgetTree() {
+  public Widget onCreateUI() {
     return Align.create(
       Column.create(
         Padding.create(
@@ -50,12 +50,12 @@ public class Playground extends Scene {
     super.onUpdate();
 
     if (Input.isKeyJustPressed(Input.KEY_SPACE)) {
-      updateWidgetTree(() -> {
+      updateUI(() -> {
         text = "Kwame";
         x = y = 50;
       });
     } else if (Input.isKeyJustReleased(Input.KEY_SPACE)) {
-      updateWidgetTree(() -> {
+      updateUI(() -> {
         text = "Opare";
         x = y = 0;
       });
