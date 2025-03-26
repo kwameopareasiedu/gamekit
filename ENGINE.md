@@ -77,7 +77,7 @@ and cannot be changed at runtime.
 So `Application` manages your game and `Window` manages the view frame, but how do we get stuff drawn unto the screen?
 
 That's where `Renderer` comes in. It's a static utility class containing all the supported draw functions of the engine.
-This includes drawing lines, arcs, curves and shapes (rects, ovals).
+This includes drawing lines, arcs, curves, shapes (rects, ovals) and images.
 
 Before calling a draw function, you can set attributes like, color, stroke, paint to be applied. By default, these are
 reset after the draw function is done, but `Renderer` allows you to configure this behaviour.
@@ -130,23 +130,36 @@ reading all the file in memory).
 Assets loaded by `IO` are cached using the file path as a key. When the same file path is requested, the cache responds,
 improving your game's performance.
 
+## Scene
+
+`dev.gamekit.core.Scene`
+
+`Scene` represents a logical part of your game. This can be a main menu or a level in your game.
+
+Simple scenes can have all the logic contained within them, but more complex scenes can contain `Prop` objects which can
+be scripted to interact with each other.
+
+Each `Scene` can also render a user interface (UI) which is a collection of `Widget` (More on this later).
+
+`Scene` has five (5) lifecycle methods which can be overridden.
+
+- `onStart()` is called **once** when `Application` loads the scene. This is meant for one-time setup tasks.
+- `onUpdate()` is called every frame to update the state of the scene. `Application` will try and call this at the
+  desired FPS.
+- `onRender()` is called every frame after `onUpdate()` to draw the state of the scene to `Window`
+- `onDispose()` is called **once** when the scene is about to be unloaded during a scene switch
+- `onCreateWidgetTree()` is called when the scene is ready to draw the UI. This is also called when the UI needs to be
+  updated (E.g. updating a variable which the UI depends on)
+
 ## Camera
 
-Singleton class which controls which part of the game world is rendered in the `Window`.
+`dev.gamekit.core.Camera`
 
-`Camera` allows you to pan around the game world as well as zooming. Internally, `Camera` controls the 3x3
-transformation matrix of the Window graphics object.
+`Camera` is a utility which provides functions to control which part of a `Scene` is being rendered to `Window`. These
+include:
 
-| Method                                      | Description                                                          |
-|---------------------------------------------|----------------------------------------------------------------------|
-| `public static Camera getInstance()`        | Get the current instance of the camera                               |
-| `public void lookAt(double x, double y)`    | Pan the camera such that point (x, y) is at the center of the screen |
-| `public void setZoom(double zoom)`          | Sets the zoom of the camera                                          |
-| `public Point transformPoint(int x, int y)` | Projects the point (x, y) into the camera's local space              |
+- Panning around in the scene
+- Zooming in/out
 
-| Method                                                 | Description                                            |
-|--------------------------------------------------------|--------------------------------------------------------|
-| `public static boolean isKeyPressed(int keyCode)`      | Check if a key is being held down in the current frame |
-| `public static boolean isKeyJustPressed(int keyCode)`  | Check if a key just pressed in the current frame       |
-| `public static boolean isKeyJustReleased(int keyCode)` | Check if a key just released in the current frame      |
-
+It does this by updating the transform matrix of `Window`
+scene [BufferedImage](https://docs.oracle.com/javase/8/docs/api/java/awt/image/BufferedImage.html).
