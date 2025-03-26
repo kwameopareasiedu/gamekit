@@ -16,7 +16,7 @@ public class Playground extends Scene {
   }
 
   public static void main(String[] args) {
-    Window.setFullscreen(true);
+    Window.setFullscreen(false);
     Window.setResolution(Window.Resolution._800_600);
     Application game = new Application("Playground") { };
 
@@ -29,18 +29,16 @@ public class Playground extends Scene {
     return Align.create(
       Column.create(
         Padding.create(
-          Image.create("wide-img.jpg")
-            .withSize(300, 150),
+          Image.create("wide-img.jpg").withSize(300, 150),
           new Spacing(x)
         ),
-        Text.create("another text")
-          .withShadow(true)
-          .withShadowColor(Color.BLACK)
-          .withShadowOffset(10, 4),
+        Text.create("another text").withShadow(true).withShadowColor(Color.BLACK).withShadowOffset(10, 4),
         Row.create(
           Text.create(text),
-          Text.create("text 3")
-            .withColor(Color.BLACK)
+          Padding.create(
+            Text.create("text 3").withColor(Color.BLACK),
+            new Spacing(x)
+          )
         )
       ),
       Alignment.CENTER
@@ -71,13 +69,13 @@ public class Playground extends Scene {
     Renderer.setColor(Color.DARK_GRAY);
     Renderer.clearScene();
 
-    Renderer.setColor(Color.RED);
-    Renderer.fillRoundRect(-50 - x, -50 - y, 100, 100, 10, 10);
-    Renderer.setColor(Color.YELLOW);
-    Renderer.fillRoundRect(50 + x, -50 - y, 100, 100, 10, 10);
-    Renderer.setColor(Color.GREEN);
-    Renderer.fillRoundRect(50 + x, 50 + y, 100, 100, 10, 10);
-    Renderer.setColor(Color.CYAN);
-    Renderer.fillRoundRect(-50 - x, 50 + y, 100, 100, 10, 10);
+//    Renderer.setColor(Color.RED);
+//    Renderer.fillRoundRect(-50 - x, -50 - y, 100, 100, 10, 10);
+//    Renderer.setColor(Color.YELLOW);
+//    Renderer.fillRoundRect(50 + x, -50 - y, 100, 100, 10, 10);
+//    Renderer.setColor(Color.GREEN);
+//    Renderer.fillRoundRect(50 + x, 50 + y, 100, 100, 10, 10);
+//    Renderer.setColor(Color.CYAN);
+//    Renderer.fillRoundRect(-50 - x, 50 + y, 100, 100, 10, 10);
   }
 }
