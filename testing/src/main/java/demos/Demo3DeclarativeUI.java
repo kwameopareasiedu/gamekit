@@ -6,6 +6,7 @@ import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.ui.widgets.*;
+import dev.gamekit.utils.Resolution;
 
 import java.awt.*;
 
@@ -18,10 +19,7 @@ public class Demo3DeclarativeUI extends Scene {
   }
 
   public static void main(String[] args) {
-    Window.setFullscreen(false);
-    Window.setResolution(Window.Resolution._800_600);
     Application game = new Application("Demo 3 - Declarative UI") { };
-
     game.loadScene(new Demo3DeclarativeUI());
     game.run();
   }

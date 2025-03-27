@@ -10,9 +10,21 @@
 
 ### Removed
 
+## 0.3.0-SNAPSHOT-3
+
+### Added
+
+- Added constructor `Application(Config)` which can be used to set the title, resolution and fullscreen mode
+
+### Removed
+
+- Removed ~~`static setResolution(Resolution)`~~ from `Window` class
+- Removed ~~`static setFullscreen(boolean)`~~ from `Window` class
+
 ## 0.3.0-SNAPSHOT-2
 
 ### Added
+
 - Added `Flex` which is a `MultiChildParent` which lays its children out along a single axis
 - Added `FixedSize` which is a `SingleChildParent` which enforces a fixed size on its child
 - Added `gapSize` property to `Row` and `Column` widgets
@@ -31,12 +43,12 @@
 
 ### Added
 
-- Added `static void setResolution(Resolution resolution)` to `Window` class
-- Added `static void setFullscreen(boolean fullScreen)` to `Window` class
+- Added `static void setResolution(Resolution)` to `Window` class
+- Added `static void setFullscreen(boolean)` to `Window` class
 - Implemented mouse button detection in `Input` class
-- Added `static boolean isButtonPressed(int buttonCode)` to `Input` class
-- Added `static boolean isButtonJustPressed(int buttonCode)` to `Input` class
-- Added `static boolean isButtonJustReleased(int buttonCode)` to `Input` class
+- Added `static boolean isButtonPressed(int)` to `Input` class
+- Added `static boolean isButtonJustPressed(int)` to `Input` class
+- Added `static boolean isButtonJustReleased(int)` to `Input` class
 - Added abstract `Widget` class which is the base class of all UI elements
 - Added abstract `Parent` which is a `Widget` which contain other widgets
 - Added abstract `SingleChildParent` which is a `Parent` that has only one child widget
@@ -57,10 +69,10 @@
 
 ### Removed
 
-- Removed ~~`void scheduleFrameEndTask(Task task)`~~ from `Application` class. To schedule end of frame task, use
-  `void scheduleTask(Task task)` instead
+- Removed ~~`void scheduleFrameEndTask(Task)`~~ from `Application` class. To schedule end of frame task, use
+  `void scheduleTask(Task)` instead
 - Removed deprecated ~~`AnimationCurves`~~ class.
-- Removed ~~`void setSize(int width, int height)`~~ from `Window` class
+- Removed ~~`void setSize(int, int)`~~ from `Window` class
 - Removed ~~`void maximize()`~~ from `Window` class
 - Removed deprecated ~~`AnimationCurves`~~ class
 
@@ -83,19 +95,18 @@
 
 ### Added
 
-- Added `static BufferedReader loadBufferedResource(String path)` to `IO` class which returns a `BufferedReader` to a
+- Added `static BufferedReader loadBufferedResource(String)` to `IO` class which returns a `BufferedReader` to a
   resource at the specified path
-- Added `void setSize(int width, int height)` to `Window` class which resizes the current instance frame to the new
-  width and height.
+- Added `void setSize(int, int)` to `Window` class which resizes the current instance frame to the new width and height.
 - Added `void maximize()` to `Window` class which maximizes the current instance frame.
-- Added `void scheduleTimerTask(long timeout, Task task)` to `Application` which schedules a task to be run after the
+- Added `void scheduleTimerTask(long, Task)` to `Application` which schedules a task to be run after the
   timeout has elapsed
 
 ### Changed
 
-- Renamed ~~`static BufferedImage loadImage(String path)`~~ to `static BufferedImage loadImageResource(String path)` in
-  `IO` class.
-- Renamed ~~`static Font loadFont(String path)`~~ to `static BufferedImage loadFontResource(String path)` in `IO` class.
-- Renamed ~~`void runAnimation(Animation animation)`~~ to `void scheduleAnimation(Animation animation)` in `Application`
+- Renamed ~~`static BufferedImage loadImage(String)`~~ to `static BufferedImage loadImageResource(String)` in `IO`
+  class.
+- Renamed ~~`static Font loadFont(String)`~~ to `static BufferedImage loadFontResource(String)` in `IO` class.
+- Renamed ~~`void runAnimation(Animation)`~~ to `void scheduleAnimation(Animation)` in `Application`
   class.
 - Modified `Window` to start in windowed mode instead of maximized

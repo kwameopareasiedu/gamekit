@@ -3,6 +3,7 @@ package demos;
 import dev.gamekit.core.Application;
 import dev.gamekit.core.Window;
 import dev.gamekit.core.Scene;
+import dev.gamekit.utils.Resolution;
 
 /**
  * This demo shows how GameKit is used its simplest form.
@@ -20,10 +21,7 @@ public class Demo1BasicWindow extends Scene {
   }
 
   public static void main(String[] args) {
-    Window.setFullscreen(false);
-    Window.setResolution(Window.Resolution._800_600);
     Application game = new Application("Demo 1 - Basic Window") { };
-
     game.loadScene(new Demo1BasicWindow());
     game.run();
   }

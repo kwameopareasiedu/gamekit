@@ -2,6 +2,7 @@ package demos;
 
 import dev.gamekit.core.*;
 import dev.gamekit.core.Window;
+import dev.gamekit.utils.Resolution;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -21,7 +22,6 @@ public class CalibrationTest extends Scene {
   }
 
   public static void main(String[] args) {
-    Window.setResolution(Window.Resolution._800_600);
     Application game = new Application("Calibration Test") { };
     game.loadScene(new CalibrationTest());
     game.run();

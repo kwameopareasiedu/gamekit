@@ -1,6 +1,8 @@
 package dev.gamekit.core;
 
 import dev.gamekit.animation.Animation;
+import dev.gamekit.utils.Config;
+import dev.gamekit.utils.Resolution;
 import dev.gamekit.utils.Task;
 import dev.gamekit.utils.Timeout;
 import org.apache.logging.log4j.LogManager;
@@ -30,22 +32,22 @@ public abstract class Application {
   private Scene currentScene;
   private Scene nextScene;
 
-  /** Creates an application with a title */
   public Application(String title) {
-    logger.debug("Created application \"{}\"", title);
+    this(new Config(title, Resolution.SVGA, false));
+  }
 
-    window = new Window(title);
-    timeouts = new ArrayList<>();
-    animations = new ArrayList<>();
-    isRunning = true;
+  public Application(Config config) {
+    logger.debug("Created application \"{}\"", config.title());
+    logger.debug("Configuration: {}",config);
+
+    this.window = new Window(config);
+    this.timeouts = new ArrayList<>();
+    this.animations = new ArrayList<>();
+    this.isRunning = true;
 
     Application.instance = this;
   }
 
-  /**
-   * Returns the current instance of the application
-   * @return The current application instance
-   */
   public static Application getInstance() { return instance; }
 
   /**
@@ -62,15 +64,8 @@ public abstract class Application {
     this.nextScene = scene;
   }
 
-  /**
-   * Schedule a task to be executed immediately
-   * after the end of the current frame.
-   * @param task Task to execute
-   * @see #scheduleTask(Task, long)
-   */
-  public void scheduleTask(Task task) {
-    scheduleTask(task, 0);
-  }
+  /** Schedule a task to be executed immediately after the end of the current frame. */
+  public void scheduleTask(Task task) { scheduleTask(task, 0); }
 
   /**
    * Schedule a task to be executed after some time.
@@ -89,7 +84,7 @@ public abstract class Application {
   /**
    * Schedule an animation to the application. Animation are updated before the scene's
    * {@code onUpdate()} to ensure current values are used by the scene.
-   * @param animation {@link Animation} The animation to add
+   * @param animation The animation to add
    */
   public void scheduleAnimation(Animation animation) {
     if (!animations.contains(animation)) {

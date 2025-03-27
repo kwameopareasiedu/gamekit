@@ -1,5 +1,7 @@
 package dev.gamekit.core;
 
+import dev.gamekit.utils.Config;
+import dev.gamekit.utils.Resolution;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -11,29 +13,30 @@ import java.awt.image.BufferedImage;
 public final class Window {
   private static final Logger LOGGER = LogManager.getLogger();
 
-  private static boolean isFullScreen = false;
-  private static Resolution resolution = Resolution.FULL;
   private static Window instance;
 
+  private final Config config;
   private final Dimension renderSize;
   private final Point center;
   private final double scaleRatio;
   private final JFrame frame;
-  private BufferedImage renderTarget;
-  private BufferedImage sceneTarget;
-  private BufferedImage uiTarget;
+  private BufferedImage renderBuffer;
   private Graphics2D renderGraphics;
+  private BufferedImage sceneBuffer;
   private Graphics2D sceneGraphics;
+  private BufferedImage uiBuffer;
   private Graphics2D uiGraphics;
 
-  Window(String title) {
-    renderSize = new Dimension(resolution.width, resolution.height);
-    center = new Point(resolution.width / 2, resolution.height / 2);
+  Window(Config config) {
+    this.config = config;
 
-    frame = new JFrame(title);
+    renderSize = new Dimension(config.resolution().width(), config.resolution().height());
+    center = new Point(config.resolution().width() / 2, config.resolution().height() / 2);
+
+    frame = new JFrame(config.title());
     frame.getContentPane().setBackground(Color.BLACK);
 
-    if (Window.isFullScreen) {
+    if (config.isFullScreen()) {
       frame.setUndecorated(true);
 
       GraphicsEnvironment
@@ -42,13 +45,13 @@ public final class Window {
         .setFullScreenWindow(frame);
 
       scaleRatio = Math.min(
-        (double) Resolution.FULL.width / resolution.width,
-        (double) Resolution.FULL.height / resolution.height
+        (double) Resolution.NATIVE.width() / config.resolution().width(),
+        (double) Resolution.NATIVE.height() / config.resolution().height()
       );
     } else {
       Dimension d = new Dimension(
-        resolution.width,
-        resolution.height
+        config.resolution().width(),
+        config.resolution().height()
       );
 
       frame.setMinimumSize(d);
@@ -65,81 +68,30 @@ public final class Window {
 
     Window.instance = this;
 
-    LOGGER.debug("Resolution: {}x{}", resolution.width, resolution.height);
-    LOGGER.debug("Fullscreen: {}", isFullScreen);
     LOGGER.debug("Scale Ratio: {}", scaleRatio);
   }
 
-  /**
-   * Returns the current instance of the window
-   * @return The current window instance
-   */
   public static Window getInstance() { return instance; }
 
-  /**
-   * Sets the resolution of the {@link Window} before starting the application
-   * <p>
-   * After the {@code Window} instance is created, this method does nothing
-   * @param resolution The resolution of the window
-   */
-  public static void setResolution(Resolution resolution) {
-    if (Window.instance == null) {
-      Window.resolution = resolution;
-    }
-  }
-
-  /**
-   * Sets whether the {@link Window} should launch in full screen or in windowed mode
-   * <p>
-   * After the {@code Window} instance is created, this method does nothing
-   * @param fullscreen The fullscreen state
-   */
-  public static void setFullscreen(boolean fullscreen) {
-    if (Window.instance == null) {
-      Window.isFullScreen = fullscreen;
-    }
-  }
-
-  /**
-   * Returns the width of the {@link JFrame frame}
-   * @return The width of the {@link JFrame frame}
-   */
+  /** Returns the width of the {@link JFrame frame} */
   public int getFrameWidth() { return frame.getWidth(); }
 
-  /**
-   * Returns the height of the {@link JFrame frame}
-   * @return The height of the {@link JFrame frame}
-   */
+  /** Returns the height of the {@link JFrame frame} */
   public int getFrameHeight() { return frame.getHeight(); }
 
-  /**
-   * Returns the width of the render target
-   * @return The width of the render target
-   */
+  /** Returns the width of the render target */
   public int getRenderWidth() { return renderSize.width; }
 
-  /**
-   * Returns the height of the render target
-   * @return The height of the render target
-   */
+  /** Returns the height of the render target */
   public int getRenderHeight() { return renderSize.height; }
 
-  /**
-   * Returns the x component of the center point of the render target
-   * @return The x component of the center point of the render target
-   */
+  /** Returns the x component of the center point of the render target */
   public int getCenterX() { return center.x; }
 
-  /**
-   * Returns the y component of the center point of the render target
-   * @return The y component of the center point of the render target
-   */
+  /** Returns the y component of the center point of the render target */
   public int getCenterY() { return center.y; }
 
-  /**
-   * Returns the resolution scale ratio
-   * @return The resolution scale ratio
-   */
+  /** Returns the resolution scale ratio */
   public double getScaleRatio() { return scaleRatio; }
 
   JFrame getFrame() { return frame; }
@@ -149,7 +101,7 @@ public final class Window {
   Graphics2D getUiGraphics() { return uiGraphics; }
 
   void redraw() {
-    if (Window.isFullScreen) {
+    if (config.isFullScreen()) {
       int scaledWidth = (int) (renderSize.width * scaleRatio);
       int scaledHeight = (int) (renderSize.height * scaleRatio);
       int dx1 = (int) (0.5 * (frame.getWidth() - scaledWidth));
@@ -157,47 +109,29 @@ public final class Window {
       int dx2 = dx1 + scaledWidth;
       int dy2 = dy1 + scaledHeight;
 
-      renderGraphics.drawImage(sceneTarget, dx1, dy1, dx2, dy2, 0, 0, renderSize.width, renderSize.height, null);
-      renderGraphics.drawImage(uiTarget, dx1, dy1, dx2, dy2, 0, 0, renderSize.width, renderSize.height, null);
+      renderGraphics.drawImage(sceneBuffer, dx1, dy1, dx2, dy2, 0, 0, renderSize.width, renderSize.height, null);
+      renderGraphics.drawImage(uiBuffer, dx1, dy1, dx2, dy2, 0, 0, renderSize.width, renderSize.height, null);
     } else {
-      renderGraphics.drawImage(sceneTarget, null, 0, 0);
-      renderGraphics.drawImage(uiTarget, null, 0, 0);
+      renderGraphics.drawImage(sceneBuffer, null, 0, 0);
+      renderGraphics.drawImage(uiBuffer, null, 0, 0);
     }
 
     Graphics2D frameGraphics = (Graphics2D) frame.getGraphics();
-    frameGraphics.drawImage(renderTarget, null, 0, 0);
+    frameGraphics.drawImage(renderBuffer, null, 0, 0);
   }
 
   void createRenderTargets() {
-    sceneTarget = new BufferedImage(renderSize.width, renderSize.height, BufferedImage.TYPE_INT_ARGB);
-    sceneGraphics = sceneTarget.createGraphics();
+    sceneBuffer = new BufferedImage(renderSize.width, renderSize.height, BufferedImage.TYPE_INT_ARGB);
+    sceneGraphics = sceneBuffer.createGraphics();
     sceneGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     sceneGraphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
-    uiTarget = new BufferedImage(renderSize.width, renderSize.height, BufferedImage.TYPE_INT_ARGB);
-    uiGraphics = uiTarget.createGraphics();
+    uiBuffer = new BufferedImage(renderSize.width, renderSize.height, BufferedImage.TYPE_INT_ARGB);
+    uiGraphics = uiBuffer.createGraphics();
     uiGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     uiGraphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
-    renderTarget = new BufferedImage(Resolution.FULL.width, Resolution.FULL.height, BufferedImage.TYPE_INT_ARGB);
-    renderGraphics = renderTarget.createGraphics();
-  }
-
-  public record Resolution(int width, int height) {
-    public static final Resolution _640_480 = new Resolution(640, 480);
-    public static final Resolution _800_600 = new Resolution(800, 600);
-    public static final Resolution _1024_768 = new Resolution(1024, 768);
-    public static final Resolution _1280_720 = new Resolution(1280, 720);
-    public static final Resolution _1366_768 = new Resolution(1366, 768);
-    public static final Resolution _1920_1080 = new Resolution(1920, 1080);
-    public static final Resolution FULL = new Resolution(
-      Toolkit.getDefaultToolkit().getScreenSize().width,
-      Toolkit.getDefaultToolkit().getScreenSize().height
-    );
-
-    @Override
-    public String toString() {
-      return String.format(getClass().getName() + "[width=%d,height=%d]", width, height);
-    }
+    renderBuffer = new BufferedImage(Resolution.NATIVE.width(), Resolution.NATIVE.height(), BufferedImage.TYPE_INT_ARGB);
+    renderGraphics = renderBuffer.createGraphics();
   }
 }
