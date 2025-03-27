@@ -43,7 +43,7 @@ public class Column extends Flex {
     int computedHeight = constraints.constrainHeight(intrinsicBounds.height);
     computedBounds.setSize(computedWidth, computedHeight);
 
-    int spaceBetween = (computedHeight - intrinsicBounds.height) / (children.size() - 1);
+    int spaceBetween = (computedHeight - intrinsicBounds.height) / Math.max(children.size() - 1, 1);
     int newGapSize = gapSize + spaceBetween;
 
     int newY = switch (mainAxisAlignment) {

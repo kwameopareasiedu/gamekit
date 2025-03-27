@@ -43,7 +43,7 @@ public class Row extends Flex {
     int computedHeight = constraints.constrainHeight(maxHeight);
     computedBounds.setSize(computedWidth, computedHeight);
 
-    int spaceBetween = (computedWidth - intrinsicBounds.width) / (children.size() - 1);
+    int spaceBetween = (computedWidth - intrinsicBounds.width) / Math.max(children.size() - 1, 1);
     int newGapSize = gapSize + spaceBetween;
 
     int newX = switch (mainAxisAlignment) {

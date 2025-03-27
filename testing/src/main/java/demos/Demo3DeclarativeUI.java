@@ -1,12 +1,12 @@
 package demos;
 
-import dev.gamekit.core.Window;
-import dev.gamekit.core.*;
-import dev.gamekit.ui.enums.Alignment;
+import dev.gamekit.core.Application;
+import dev.gamekit.core.Input;
+import dev.gamekit.core.Renderer;
+import dev.gamekit.core.Scene;
 import dev.gamekit.ui.Spacing;
-import dev.gamekit.ui.widgets.Image;
+import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.widgets.*;
-import dev.gamekit.utils.Resolution;
 
 import java.awt.*;
 
@@ -29,7 +29,7 @@ public class Demo3DeclarativeUI extends Scene {
     return Align.create(
       Column.create(
         Padding.create(
-          Image.create("wide-img.jpg").withSize(300, 150),
+          ImageRes.create("wide-img.jpg").withSize(300, 150),
           new Spacing(x)
         ),
         Text.create("another text").withShadow(true).withShadowColor(Color.BLACK).withShadowOffset(10, 4),

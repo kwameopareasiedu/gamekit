@@ -1,5 +1,6 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.core.IO;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.enums.ImageFit;
 import dev.gamekit.utils.Constants;
@@ -8,32 +9,39 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
-/** A {@link Widget} which renders a given {@link BufferedImage} to the screen */
-public class Image extends Widget {
-  protected final BufferedImage image;
-  protected ImageFit imageFit;
+/** A {@link Widget} which loads a <b>resource image</b> and renders it to the screen */
+public class ImageRes extends Widget {
+  protected final String src;
   protected int width;
   protected int height;
+  protected ImageFit imageFit;
+
+  private final BufferedImage srcImg;
 
   /* Draw bounds stored and only redrawn if they change */
   private int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
 
-  protected Image(BufferedImage image) {
-    if (image == null)
-      throw new NullPointerException("Image cannot be null");
-    this.image = image;
+  protected ImageRes(String src) {
+    this.src = src;
     this.imageFit = ImageFit.FIT;
     this.width = 0;
     this.height = 0;
+    srcImg = IO.loadImageResource(src);
+
+    if (srcImg == null) {
+      throw new NullPointerException(
+        String.format("Unable to load image at %s", src)
+      );
+    }
   }
 
-  public static Image create(BufferedImage image) {
-    return new Image(image);
+  public static ImageRes create(String src) {
+    return new ImageRes(src);
   }
 
   @Override
   protected void performLayout(Constraints constraints) {
-    intrinsicBounds.setSize(image.getWidth(), image.getHeight());
+    intrinsicBounds.setSize(srcImg.getWidth(), srcImg.getHeight());
 
     int computedWidth = constraints.constrainWidth(width > 0 ? width : intrinsicBounds.width);
     int computedHeight = constraints.constrainHeight(height > 0 ? height : intrinsicBounds.height);
@@ -69,7 +77,7 @@ public class Image extends Widget {
     if (this.dx1 != dx1 || this.dy1 != dy1 || this.dx2 != dx2 || this.dy2 != dy2) {
       g.setBackground(Constants.TRANSPARENT_COLOR);
       g.clearRect(0, 0, computedBounds.width, computedBounds.height);
-      g.drawImage(image, dx1, dy1, dx2, dy2, 0, 0, intrinsicBounds.width, intrinsicBounds.height, null);
+      g.drawImage(srcImg, dx1, dy1, dx2, dy2, 0, 0, intrinsicBounds.width, intrinsicBounds.height, null);
 
       this.dx1 = dx1;
       this.dy1 = dy1;
@@ -80,8 +88,8 @@ public class Image extends Widget {
 
   @Override
   protected boolean stateEquals(Widget widget) {
-    if (widget instanceof Image imageWidget) {
-      return Objects.equals(image, imageWidget.image)
+    if (widget instanceof ImageRes imageWidget) {
+      return Objects.equals(src, imageWidget.src)
         && Objects.equals(imageFit, imageWidget.imageFit)
         && Objects.equals(width, imageWidget.width)
         && Objects.equals(height, imageWidget.height);
@@ -90,13 +98,13 @@ public class Image extends Widget {
     return false;
   }
 
-  public Image withSize(int width, int height) {
+  public ImageRes withSize(int width, int height) {
     this.width = width;
     this.height = height;
     return this;
   }
 
-  public Image withImageFit(ImageFit imageFit) {
+  public ImageRes withImageFit(ImageFit imageFit) {
     this.imageFit = imageFit;
     return this;
   }

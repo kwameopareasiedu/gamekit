@@ -1,7 +1,4 @@
-import dev.gamekit.core.Application;
-import dev.gamekit.core.Input;
-import dev.gamekit.core.Renderer;
-import dev.gamekit.core.Scene;
+import dev.gamekit.core.*;
 import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
@@ -13,10 +10,12 @@ import dev.gamekit.utils.Config;
 import dev.gamekit.utils.Resolution;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class Playground extends Scene {
   int x = 0, y = 0;
   String text = "Kwame";
+  BufferedImage bufferedImage = IO.loadImageResource("square-img.jpg");
 
   public Playground() {
     super("Main Scene");
@@ -37,7 +36,10 @@ public class Playground extends Scene {
         600, 480,
         Column.create(
             Padding.create(
-              Image.create("wide-img.jpg").withSize(300, 150),
+              Row.create(
+                ImageRes.create("wide-img.jpg").withSize(300, 150),
+                Image.create(bufferedImage).withSize(300, 150)
+              ),
               new Spacing(x)
             ),
             Text.create("Hello World")

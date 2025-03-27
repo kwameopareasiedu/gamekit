@@ -15,6 +15,11 @@
 ### Added
 
 - Added constructor `Application(Config)` which can be used to set the title, resolution and fullscreen mode
+- Added `ImageRes` which is a widget that renders a **resource image**
+
+### Changed
+
+- Modified `Image` widget to render a given image instead
 
 ### Removed
 
