@@ -13,10 +13,6 @@ public abstract class Flex extends MultiChildParent {
 
   public Flex(Widget... children) {
     super(children);
-
-    if (children.length == 0)
-      throw new IllegalArgumentException("Flex must have at least one child");
-
     gapSize = 0;
     mainAxisAlignment = MainAxisAlignment.START;
     crossAxisAlignment = CrossAxisAlignment.START;

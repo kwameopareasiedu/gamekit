@@ -36,9 +36,9 @@ public class Playground extends Scene {
         600, 480,
         Column.create(
             Padding.create(
-              Row.create(
+              Stack.create(
                 ImageRes.create("wide-img.jpg").withSize(300, 150),
-                Image.create(bufferedImage).withSize(300, 150)
+                Image.create(bufferedImage).withSize(400, 200)
               ),
               new Spacing(x)
             ),
@@ -60,7 +60,7 @@ public class Playground extends Scene {
               .withCrossAxisAlignment(CrossAxisAlignment.STRETCH)
               .withGapSize(10)
           ).withMainAxisAlignment(MainAxisAlignment.SPACE_BETWEEN)
-          .withCrossAxisAlignment(CrossAxisAlignment.STRETCH)
+          .withCrossAxisAlignment(CrossAxisAlignment.CENTER)
           .withGapSize(10)
       ),
       Alignment.CENTER

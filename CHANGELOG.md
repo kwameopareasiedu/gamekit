@@ -1,21 +1,12 @@
 # ChangeLog
 
-## UNRELEASED
-
-### Added
-
-### Changed
-
-### Deprecated
-
-### Removed
-
-## 0.3.0-SNAPSHOT-3
+## 0.3.0-SNAPSHOT-3 [UNRELEASED]
 
 ### Added
 
 - Added constructor `Application(Config)` which can be used to set the title, resolution and fullscreen mode
 - Added `ImageRes` which is a widget that renders a **resource image**
+- Added `Stack` which is a `MultiChildParent` which stacks its children on top of each other
 
 ### Changed
 

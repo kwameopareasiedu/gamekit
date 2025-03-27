@@ -12,7 +12,9 @@ public abstract class MultiChildParent extends Parent {
 
   public MultiChildParent(Widget... children) {
     if (children == null)
-      throw new IllegalArgumentException("Children of MultiChildParent cannot be null");
+      throw new IllegalArgumentException("MultiChildParent children cannot be null");
+    if (children.length == 0)
+      throw new IllegalArgumentException("MultiChildParent must have at least one child");
     this.children = new ArrayList<>(List.of(children));
     this.children.forEach(c -> c.setParent(this));
   }
