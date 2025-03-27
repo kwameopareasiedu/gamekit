@@ -2,6 +2,7 @@ package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.IO;
 import dev.gamekit.ui.Constraints;
+import dev.gamekit.ui.enums.ImageFit;
 import dev.gamekit.utils.Constants;
 
 import java.awt.*;
@@ -13,7 +14,7 @@ public class Image extends Widget {
   protected final String src;
   protected int width;
   protected int height;
-  protected Fit fit;
+  protected ImageFit imageFit;
 
   private final BufferedImage srcImg;
 
@@ -22,7 +23,7 @@ public class Image extends Widget {
 
   protected Image(String src) {
     this.src = src;
-    this.fit = Fit.FIT;
+    this.imageFit = ImageFit.FIT;
     this.width = 0;
     this.height = 0;
     srcImg = IO.loadImageResource(src);
@@ -51,12 +52,12 @@ public class Image extends Widget {
   public final void performRender(Graphics2D g) {
     int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
 
-    switch (fit) {
+    switch (imageFit) {
       case FIT, CROP -> {
         double widthRatio = (double) computedBounds.width / intrinsicBounds.width;
         double heightRatio = (double) computedBounds.height / intrinsicBounds.height;
 
-        double scaleRatio = fit == Fit.FIT ?
+        double scaleRatio = imageFit == ImageFit.FIT ?
           intrinsicBounds.width > intrinsicBounds.height ? widthRatio : heightRatio :
           intrinsicBounds.width <= intrinsicBounds.height ? widthRatio : heightRatio;
 
@@ -89,7 +90,7 @@ public class Image extends Widget {
   protected boolean stateEquals(Widget widget) {
     if (widget instanceof Image imageWidget) {
       return Objects.equals(src, imageWidget.src)
-        && Objects.equals(fit, imageWidget.fit)
+        && Objects.equals(imageFit, imageWidget.imageFit)
         && Objects.equals(width, imageWidget.width)
         && Objects.equals(height, imageWidget.height);
     }
@@ -103,18 +104,8 @@ public class Image extends Widget {
     return this;
   }
 
-  public Image withFit(Fit fit) {
-    this.fit = fit;
+  public Image withImageFit(ImageFit imageFit) {
+    this.imageFit = imageFit;
     return this;
-  }
-
-  /** Determines how the image should be resized/fitted in its bounds */
-  public enum Fit {
-    /** Resize the image to fit within the bounds */
-    FIT,
-    /** Cutout the portions of the image which are outside the bounds */
-    CROP,
-    /** Stretch the image to completely cover the bounds */
-    STRETCH
   }
 }

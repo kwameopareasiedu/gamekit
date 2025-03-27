@@ -1,7 +1,10 @@
 import dev.gamekit.core.Window;
 import dev.gamekit.core.*;
-import dev.gamekit.ui.Alignment;
+import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.Spacing;
+import dev.gamekit.ui.enums.CrossAxisAlignment;
+import dev.gamekit.ui.enums.MainAxisAlignment;
+import dev.gamekit.ui.enums.TextAlignment;
 import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.ui.widgets.*;
 
@@ -35,6 +38,7 @@ public class Playground extends Scene {
               new Spacing(x)
             ),
             Text.create("Hello World")
+              .withAlignment(TextAlignment.END)
               .withShadow(true)
               .withShadowColor(Color.BLACK)
               .withShadowOffset(10, 4)
@@ -47,11 +51,11 @@ public class Playground extends Scene {
                   .withColor(Color.CYAN),
                 new Spacing(x)
               )
-            ).withMainAxisAlignment(Flex.MainAxisAlignment.SPACE_BETWEEN)
-              .withCrossAxisAlignment(Flex.CrossAxisAlignment.STRETCH)
+            ).withMainAxisAlignment(MainAxisAlignment.SPACE_BETWEEN)
+              .withCrossAxisAlignment(CrossAxisAlignment.STRETCH)
               .withGapSize(10)
-          ).withMainAxisAlignment(Flex.MainAxisAlignment.SPACE_BETWEEN)
-          .withCrossAxisAlignment(Flex.CrossAxisAlignment.STRETCH)
+          ).withMainAxisAlignment(MainAxisAlignment.SPACE_BETWEEN)
+          .withCrossAxisAlignment(CrossAxisAlignment.STRETCH)
           .withGapSize(10)
       ),
       Alignment.CENTER

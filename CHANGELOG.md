@@ -18,12 +18,14 @@
 - Added `gapSize` property to `Row` and `Column` widgets
 - Added `mainAxisAlignment` property to `Row` and `Column` widgets
 - Added `crossAxisAlignment` property to `Row` and `Column` widgets
+- Added `alignment` property to `Text` widget
 
 ### Changed
 
 - Modified `IO` to load using input streams
 - Modified `Column` to extend `Flex` instead of `MultiChildParent`
 - Modified `Row` to extend `Flex` instead of `MultiChildParent`
+- Moved all UI related enums to `dev.gamekit.ui.enums` package
 
 ## 0.3.0-SNAPSHOT-1
 

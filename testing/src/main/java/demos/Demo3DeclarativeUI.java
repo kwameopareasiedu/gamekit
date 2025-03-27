@@ -2,7 +2,7 @@ package demos;
 
 import dev.gamekit.core.Window;
 import dev.gamekit.core.*;
-import dev.gamekit.ui.Alignment;
+import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.ui.widgets.*;

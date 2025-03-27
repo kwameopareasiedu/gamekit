@@ -1,6 +1,6 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.ui.Alignment;
+import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.Constraints;
 
 import java.util.Objects;

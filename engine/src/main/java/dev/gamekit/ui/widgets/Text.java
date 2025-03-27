@@ -2,6 +2,7 @@ package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.Renderer;
 import dev.gamekit.ui.Constraints;
+import dev.gamekit.ui.enums.TextAlignment;
 import dev.gamekit.utils.Constants;
 
 import java.awt.*;
@@ -17,6 +18,7 @@ public class Text extends Widget {
   protected Color color;
   protected Color backgroundColor;
   protected Font font;
+  protected TextAlignment alignment;
   protected boolean shadowEnabled;
   protected int shadowOffsetX;
   protected int shadowOffsetY;
@@ -31,6 +33,7 @@ public class Text extends Widget {
     fontStyle = Font.PLAIN;
     fontSize = 16;
     color = Color.WHITE;
+    alignment = TextAlignment.START;
     backgroundColor = Constants.TRANSPARENT_COLOR;
     font = Constants.DEFAULT_FONT;
     shadowOffsetX = 0;
@@ -73,13 +76,19 @@ public class Text extends Widget {
     g.clearRect(0, 0, computedBounds.width, computedBounds.height);
     g.setFont(renderFont);
 
+    int textOffset = switch (alignment) {
+      case CENTER -> computedBounds.width / 2 - intrinsicBounds.width / 2;
+      case END -> computedBounds.width - intrinsicBounds.width;
+      default -> 0;
+    };
+
     if (shadowEnabled) {
       g.setColor(shadowColor);
-      g.drawString(text, shadowOffsetX, fontSize + shadowOffsetY);
+      g.drawString(text, textOffset + shadowOffsetX, fontSize + shadowOffsetY);
     }
 
     g.setColor(color);
-    g.drawString(text, 0, fontSize);
+    g.drawString(text, textOffset, fontSize);
   }
 
   @Override
@@ -133,6 +142,11 @@ public class Text extends Widget {
   /** Sets the font of this text. If set, this overrides {@link #fontFamily} value */
   public Text withFont(Font font) {
     this.font = font;
+    return this;
+  }
+
+  public Text withAlignment(TextAlignment alignment) {
+    this.alignment = alignment;
     return this;
   }
 

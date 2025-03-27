@@ -22,7 +22,7 @@ import java.awt.image.BufferedImage;
  * size go up and parents set positions
  */
 public abstract class Widget {
-  private static final boolean DEBUG_DRAW = true;
+  private static final boolean DEBUG_DRAW = false;
   private static final BasicStroke DEBUG_OUTLINE_STROKE = new BasicStroke(
     2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND
   );

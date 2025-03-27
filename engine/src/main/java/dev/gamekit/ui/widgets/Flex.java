@@ -1,5 +1,8 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.ui.enums.CrossAxisAlignment;
+import dev.gamekit.ui.enums.MainAxisAlignment;
+
 import java.util.Objects;
 
 /** A {@link MultiChildParent} which arranges its children linearly along one axis */
@@ -15,6 +18,17 @@ public abstract class Flex extends MultiChildParent {
     crossAxisAlignment = CrossAxisAlignment.START;
   }
 
+  @Override
+  protected boolean stateEquals(Widget widget) {
+    if (widget instanceof Flex flexWidget) {
+      return Objects.equals(gapSize, flexWidget.gapSize) &&
+        Objects.equals(mainAxisAlignment, flexWidget.mainAxisAlignment) &&
+        Objects.equals(crossAxisAlignment, flexWidget.crossAxisAlignment);
+    }
+
+    return false;
+  }
+
   public Flex withGapSize(int gapSize) {
     this.gapSize = gapSize;
     return this;
@@ -28,24 +42,5 @@ public abstract class Flex extends MultiChildParent {
   public Flex withCrossAxisAlignment(CrossAxisAlignment axisAlignment) {
     this.crossAxisAlignment = axisAlignment;
     return this;
-  }
-
-  @Override
-  protected boolean stateEquals(Widget widget) {
-    if (widget instanceof Flex flexWidget) {
-      return Objects.equals(gapSize, flexWidget.gapSize) &&
-        Objects.equals(mainAxisAlignment, flexWidget.mainAxisAlignment) &&
-        Objects.equals(crossAxisAlignment, flexWidget.crossAxisAlignment);
-    }
-
-    return false;
-  }
-
-  public enum MainAxisAlignment {
-    START, CENTER, END, SPACE_BETWEEN
-  }
-
-  public enum CrossAxisAlignment {
-    START, CENTER, END, STRETCH
   }
 }

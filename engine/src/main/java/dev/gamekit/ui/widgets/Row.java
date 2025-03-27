@@ -23,7 +23,6 @@ public class Row extends Flex {
     int maxHeight = 0;
     Widget lastChild = children.get(children.size() - 1);
 
-
     for (var child : children) {
       child.computeLayout(cc);
       child.computedBounds.setPosition(currentX, 0);
@@ -79,14 +78,5 @@ public class Row extends Flex {
         }
       }
     }
-  }
-
-  @Override
-  protected boolean stateEquals(Widget widget) {
-    if (widget instanceof Row rowWidget) {
-      return super.stateEquals(rowWidget);
-    }
-
-    return false;
   }
 }

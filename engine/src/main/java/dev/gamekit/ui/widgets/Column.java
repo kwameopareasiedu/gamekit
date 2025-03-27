@@ -79,13 +79,4 @@ public class Column extends Flex {
       }
     }
   }
-
-  @Override
-  protected boolean stateEquals(Widget widget) {
-    if (widget instanceof Column columnWidget) {
-      return super.stateEquals(columnWidget);
-    }
-
-    return false;
-  }
 }
