@@ -12,49 +12,35 @@ public final class Renderer {
 
   private Renderer() { }
 
-  /**
-   * Sets the background color for the next draw call
-   * @param color {@link Color} The background color to use for the next draw call
-   */
+  /** Sets the background {@link Color color} to use for the next draw call */
   public static void setBackground(Color color) { CURRENT_STATE.bgColor = color; }
 
-  /**
-   * Sets the stroke for the next draw call
-   * @param stroke {@link Stroke} The stroke object to use for the next draw call
-   */
+  /** Sets the {@link Stroke stroke} to use for the next draw call */
   public static void setStroke(Stroke stroke) { CURRENT_STATE.stroke = stroke; }
 
-  /**
-   * Sets the paint for the next draw call
-   * @param paint {@link Paint} The paint object to use for the next draw call
-   */
+  /** Sets the {@link Paint paint} to use for the next draw call */
   public static void setPaint(Paint paint) { CURRENT_STATE.paint = paint; }
 
-  /**
-   * Sets the color for the next draw call
-   * @param color {@link Color} The foreground color to use for the next draw call
-   */
+  /** Sets the foreground {@link Color color} to use for the next draw call */
   public static void setColor(Color color) { CURRENT_STATE.color = color; }
 
   /**
-   * Sets the font for the next draw call
-   * @param font {@link Font} The font to use for the next draw call
-   */
-  public static void setFont(Font font) { CURRENT_STATE.font = font; }
-
-  /**
-   * Configures the renderer to not reset options after next draw call.
+   * By default, the state (I.e. fg/bg color, stroke or paint)
+   * of the renderer resets after each draw call.
    * <p>
-   * Useful for multiple draw calls which share similar options
+   * Calling {@code beginGroup()} disables this behaviour,
+   * preserving the values until {@link #endGroup()} is called
    */
   public static void beginGroup() { CURRENT_STATE.preserve(); }
 
-  /** Ends a previously called {@code beginGroup()} */
+  /**
+   * Restores the default behaviour of clearing the state after each draw call.
+   * @see #beginGroup()
+   */
   public static void endGroup() { CURRENT_STATE.discard(); }
 
-  /** Clears the {@link Window} scene target with current state background color */
+  /** Clears the {@link Window} scene buffer with current state background color */
   public static void clear() {
-    // Clear scene target
     applyGraphicsState();
     int x = 0, y = 0, w = Window.getInstance().getRenderWidth(), h = Window.getInstance().getRenderHeight();
     var pt = Camera.getInstance().transformPoint(x, y);
@@ -292,10 +278,7 @@ public final class Renderer {
     Font font;
     private boolean preserve;
 
-    /**
-     * Copies the state of a {@link Graphics2D} object
-     * @param g The Graphics2D object
-     */
+    /** Copies the state of a {@link Graphics2D} object */
     void save(Graphics2D g) {
       bgColor = g.getBackground();
       stroke = g.getStroke();
@@ -304,10 +287,7 @@ public final class Renderer {
       font = g.getFont();
     }
 
-    /**
-     * Applies the internal state to a {@link Graphics2D} object
-     * @param g The Graphics2D object
-     */
+    /** Applies the internal state to a {@link Graphics2D} object */
     void apply(Graphics2D g) {
       g.setBackground(bgColor);
       g.setStroke(stroke != null ? stroke : DEFAULT_STROKE);
@@ -318,8 +298,8 @@ public final class Renderer {
 
     /**
      * Activates the preserve mode of this state.
-     * <p>
-     * In preserve mode, calls to {@link #reset()} are ignored
+     * In preserve mode, calls to {@link #reset()}
+     * are ignored
      * @see #discard()
      */
     void preserve() {
@@ -340,6 +320,8 @@ public final class Renderer {
      * Resets the internal state to null.
      * <p>
      * If preserve mode is activated, this does nothing
+     * @see #preserve()
+     * @see #discard()
      */
     void reset() {
       if (preserve) return;

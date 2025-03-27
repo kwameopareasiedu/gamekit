@@ -64,7 +64,7 @@ public final class Window {
     frame.setBackground(Color.BLACK);
     frame.pack();
 
-    createRenderTargets();
+    createRenderBuffers();
 
     Window.instance = this;
 
@@ -79,16 +79,16 @@ public final class Window {
   /** Returns the height of the {@link JFrame frame} */
   public int getFrameHeight() { return frame.getHeight(); }
 
-  /** Returns the width of the render target */
+  /** Returns the width of the render buffer */
   public int getRenderWidth() { return renderSize.width; }
 
-  /** Returns the height of the render target */
+  /** Returns the height of the render buffer */
   public int getRenderHeight() { return renderSize.height; }
 
-  /** Returns the x component of the center point of the render target */
+  /** Returns the x component of the center point of the render buffer */
   public int getCenterX() { return center.x; }
 
-  /** Returns the y component of the center point of the render target */
+  /** Returns the y component of the center point of the render buffer */
   public int getCenterY() { return center.y; }
 
   /** Returns the resolution scale ratio */
@@ -120,7 +120,7 @@ public final class Window {
     frameGraphics.drawImage(renderBuffer, null, 0, 0);
   }
 
-  void createRenderTargets() {
+  void createRenderBuffers() {
     sceneBuffer = new BufferedImage(renderSize.width, renderSize.height, BufferedImage.TYPE_INT_ARGB);
     sceneGraphics = sceneBuffer.createGraphics();
     sceneGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

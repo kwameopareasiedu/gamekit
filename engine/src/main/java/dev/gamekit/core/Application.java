@@ -38,7 +38,7 @@ public abstract class Application {
 
   public Application(Config config) {
     logger.debug("Created application \"{}\"", config.title());
-    logger.debug("Configuration: {}",config);
+    logger.debug("Configuration: {}", config);
 
     this.window = new Window(config);
     this.timeouts = new ArrayList<>();
@@ -50,10 +50,7 @@ public abstract class Application {
 
   public static Application getInstance() { return instance; }
 
-  /**
-   * Queues a scene to be loaded after the end of the current frame
-   * @param scene {@link Scene} Scene to load
-   */
+  /** Schedules a scene to be loaded after the end of the current frame */
   public void loadScene(Scene scene) {
     if (scene == null) {
       logger.fatal("Load scene called with a null scene");
@@ -82,9 +79,8 @@ public abstract class Application {
   }
 
   /**
-   * Schedule an animation to the application. Animation are updated before the scene's
+   * Schedule an animation to run. Animations are updated before the scene's
    * {@code onUpdate()} to ensure current values are used by the scene.
-   * @param animation The animation to add
    */
   public void scheduleAnimation(Animation animation) {
     if (!animations.contains(animation)) {
@@ -92,14 +88,17 @@ public abstract class Application {
     }
   }
 
-  /** Quit the current {@link Application} by dispatching a {@code WINDOW_CLOSING} event to its window */
+  /**
+   * Quit the current {@link Application} by dispatching
+   * a {@code WINDOW_CLOSING} event to its window
+   */
   public void quit() {
     window.getFrame().dispatchEvent(
       new WindowEvent(window.getFrame(), WindowEvent.WINDOW_CLOSING)
     );
   }
 
-  /** Begin the game loop of this application */
+  /** Begins the game loop of this application */
   public void run() {
     try {
       onSetup();
@@ -173,7 +172,10 @@ public abstract class Application {
     }
   }
 
-  /** Applies the camera's transformation on the window screen and renders the active scene */
+  /**
+   * Applies the camera's transformation on the
+   * window screen and renders the active scene
+   */
   private void onRender() {
     if (currentScene != null) {
       Camera.getInstance().update();
@@ -184,9 +186,12 @@ public abstract class Application {
   }
 
   /**
-   * Runs end-of-frame tasks, removes ended animations and timeouts from the queue.
-   * <p>
-   * If a new scene has been queued, the scene switch occurs here.
+   * Runs end-of-frame tasks which include:
+   * <ul>
+   *   <li>Removing ended animations</li>
+   *   <li>Removing completed timeouts</li>
+   *   <li>Loading a scheduled scene</li>
+   * </ul>
    */
   private void onFrameEnd() {
     if (!animations.isEmpty()) {
@@ -213,7 +218,7 @@ public abstract class Application {
       currentScene.start();
       nextScene = null;
 
-      window.createRenderTargets();
+      window.createRenderBuffers();
       Scene.current = currentScene;
     }
   }

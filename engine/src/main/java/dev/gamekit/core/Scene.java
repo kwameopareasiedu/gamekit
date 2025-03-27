@@ -23,10 +23,7 @@ public abstract class Scene implements UI.WidgetTreeCreator {
 
   private UI ui;
 
-  /**
-   * Creates a scene with the given name
-   * @param name The name of the scene for logging purposes
-   */
+  /** Creates a scene with the given name */
   public Scene(String name) {
     this.name = name;
     props = new HashMap<>();

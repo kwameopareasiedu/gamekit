@@ -14,9 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Static class responsible for resource loading and file output.
- * <p>
- * IO caches resources loaded, prevent multiple disk reads for the same and improving performance.
+ * Static class responsible for resource loading and file output. IO caches resources
+ * loaded, prevent multiple disk reads for the same and improving performance.
  */
 public class IO {
   private static final Logger LOGGER = LogManager.getLogger();
