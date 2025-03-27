@@ -27,25 +27,32 @@ public class Playground extends Scene {
   @Override
   public Widget onCreateUI() {
     return Align.create(
-      Column.create(
-        Padding.create(
-          Image.create("wide-img.jpg").withSize(300, 150),
-          new Spacing(x)
-        ),
-        Text.create("Hello World")
-          .withShadow(true)
-          .withShadowColor(Color.BLACK)
-          .withShadowOffset(10, 4)
-          .withFontStyle(Font.BOLD),
-        Row.create(
-          Text.create(text)
-            .withFontSize(24),
-          Padding.create(
-            Text.create("Another Text")
-              .withColor(Color.CYAN),
-            new Spacing(x)
-          )
-        )
+      FixedSize.create(
+        600, 480,
+        Column.create(
+            Padding.create(
+              Image.create("wide-img.jpg").withSize(300, 150),
+              new Spacing(x)
+            ),
+            Text.create("Hello World")
+              .withShadow(true)
+              .withShadowColor(Color.BLACK)
+              .withShadowOffset(10, 4)
+              .withFontStyle(Font.BOLD),
+            Row.create(
+              Text.create(text)
+                .withFontSize(24),
+              Padding.create(
+                Text.create("Another Text")
+                  .withColor(Color.CYAN),
+                new Spacing(x)
+              )
+            ).withMainAxisAlignment(Flex.MainAxisAlignment.SPACE_BETWEEN)
+              .withCrossAxisAlignment(Flex.CrossAxisAlignment.STRETCH)
+              .withGapSize(10)
+          ).withMainAxisAlignment(Flex.MainAxisAlignment.SPACE_BETWEEN)
+          .withCrossAxisAlignment(Flex.CrossAxisAlignment.STRETCH)
+          .withGapSize(10)
       ),
       Alignment.CENTER
     );
@@ -75,13 +82,13 @@ public class Playground extends Scene {
     Renderer.setColor(Color.DARK_GRAY);
     Renderer.clear();
 
-//    Renderer.setColor(Color.RED);
-//    Renderer.fillRoundRect(-50 - x, -50 - y, 100, 100, 10, 10);
-//    Renderer.setColor(Color.YELLOW);
-//    Renderer.fillRoundRect(50 + x, -50 - y, 100, 100, 10, 10);
-//    Renderer.setColor(Color.GREEN);
-//    Renderer.fillRoundRect(50 + x, 50 + y, 100, 100, 10, 10);
-//    Renderer.setColor(Color.CYAN);
-//    Renderer.fillRoundRect(-50 - x, 50 + y, 100, 100, 10, 10);
+    //    Renderer.setColor(Color.RED);
+    //    Renderer.fillRoundRect(-50 - x, -50 - y, 100, 100, 10, 10);
+    //    Renderer.setColor(Color.YELLOW);
+    //    Renderer.fillRoundRect(50 + x, -50 - y, 100, 100, 10, 10);
+    //    Renderer.setColor(Color.GREEN);
+    //    Renderer.fillRoundRect(50 + x, 50 + y, 100, 100, 10, 10);
+    //    Renderer.setColor(Color.CYAN);
+    //    Renderer.fillRoundRect(-50 - x, 50 + y, 100, 100, 10, 10);
   }
 }

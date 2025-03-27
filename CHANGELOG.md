@@ -12,9 +12,18 @@
 
 ## 0.3.0-SNAPSHOT-2
 
+### Added
+- Added `Flex` which is a `MultiChildParent` which lays its children out along a single axis
+- Added `FixedSize` which is a `SingleChildParent` which enforces a fixed size on its child
+- Added `gapSize` property to `Row` and `Column` widgets
+- Added `mainAxisAlignment` property to `Row` and `Column` widgets
+- Added `crossAxisAlignment` property to `Row` and `Column` widgets
+
 ### Changed
 
 - Modified `IO` to load using input streams
+- Modified `Column` to extend `Flex` instead of `MultiChildParent`
+- Modified `Row` to extend `Flex` instead of `MultiChildParent`
 
 ## 0.3.0-SNAPSHOT-1
 

@@ -31,6 +31,7 @@ public abstract class Widget {
   protected final Bounds computedBounds;
   protected final Bounds previousBounds;
   protected final Bounds intrinsicBounds;
+  protected Constraints constraints;
   protected Widget parent;
   protected boolean needsRepaint;
 
@@ -76,6 +77,7 @@ public abstract class Widget {
    * to perform their layout
    */
   public final void computeLayout(Constraints constraints) {
+    this.constraints = constraints;
     performLayout(constraints);
     needsRepaint = !computedBounds.equals(previousBounds);
   }

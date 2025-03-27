@@ -7,8 +7,6 @@ import dev.gamekit.utils.Constants;
 import java.awt.*;
 import java.util.Objects;
 
-import static dev.gamekit.utils.Math.clamp;
-
 /** A {@link Widget} which renders text to the screen */
 @SuppressWarnings("MagicConstant")
 public class Text extends Widget {
@@ -64,8 +62,8 @@ public class Text extends Widget {
 
     intrinsicBounds.setSize(textWidth, textHeight);
 
-    int computedWidth = clamp(intrinsicBounds.width, constraints.minWidth(), constraints.maxWidth());
-    int computedHeight = clamp(intrinsicBounds.height, constraints.minHeight(), constraints.maxHeight());
+    int computedWidth = constraints.constrainWidth(textWidth);
+    int computedHeight = constraints.constrainHeight(textHeight);
     computedBounds.setSize(computedWidth, computedHeight);
   }
 

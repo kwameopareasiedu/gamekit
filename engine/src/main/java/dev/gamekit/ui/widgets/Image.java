@@ -8,8 +8,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
-import static dev.gamekit.utils.Math.clamp;
-
 /** A {@link Widget} which loads a <b>resource image</b> and renders it to the screen */
 public class Image extends Widget {
   protected final String src;
@@ -44,16 +42,8 @@ public class Image extends Widget {
   protected void performLayout(Constraints constraints) {
     intrinsicBounds.setSize(srcImg.getWidth(), srcImg.getHeight());
 
-    int computedWidth = clamp(
-      width > 0 ? width : intrinsicBounds.width,
-      constraints.minWidth(), constraints.maxWidth()
-    );
-
-    int computedHeight = clamp(
-      height > 0 ? height : intrinsicBounds.height,
-      constraints.minHeight(), constraints.maxHeight()
-    );
-
+    int computedWidth = constraints.constrainWidth(width > 0 ? width : intrinsicBounds.width);
+    int computedHeight = constraints.constrainHeight(height > 0 ? height : intrinsicBounds.height);
     computedBounds.setSize(computedWidth, computedHeight);
   }
 

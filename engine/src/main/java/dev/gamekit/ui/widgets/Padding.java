@@ -5,8 +5,6 @@ import dev.gamekit.ui.Spacing;
 
 import java.util.Objects;
 
-import static dev.gamekit.utils.Math.clamp;
-
 /** A {@link Parent} which adds padding around its single child */
 public class Padding extends SingleChildParent {
   protected Spacing padding;
@@ -33,8 +31,8 @@ public class Padding extends SingleChildParent {
     int intrinsicHeight = child.computedBounds.height + padding.getVertical();
     intrinsicBounds.setSize(intrinsicWidth, intrinsicHeight);
 
-    int computedWidth = clamp(intrinsicWidth, constraints.minWidth(), constraints.maxWidth());
-    int computedHeight = clamp(intrinsicHeight, constraints.minHeight(), constraints.maxHeight());
+    int computedWidth = constraints.constrainWidth(intrinsicWidth);
+    int computedHeight = constraints.constrainHeight(intrinsicHeight);
     computedBounds.setSize(computedWidth, computedHeight);
 
     if (intrinsicWidth > computedWidth || intrinsicHeight > computedHeight) {

@@ -5,8 +5,6 @@ import dev.gamekit.ui.Constraints;
 
 import java.util.Objects;
 
-import static dev.gamekit.utils.Math.clamp;
-
 /** A {@link Parent} which aligns its single child within itself */
 public class Align extends SingleChildParent {
   protected Alignment alignment;
@@ -29,19 +27,10 @@ public class Align extends SingleChildParent {
       )
     );
 
-    int computedWidth = clamp(
-      child.computedBounds.width,
-      constraints.minWidth(),
-      constraints.maxWidth()
-    );
-
-    int computedHeight = clamp(
-      child.computedBounds.height,
-      constraints.minHeight(),
-      constraints.maxHeight()
-    );
-
     intrinsicBounds.setSize(child.computedBounds.width, child.computedBounds.height);
+
+    int computedWidth = constraints.constrainWidth(child.computedBounds.width);
+    int computedHeight = constraints.constrainHeight(child.computedBounds.height);
     computedBounds.setSize(computedWidth, computedHeight);
 
     int drawX = 0, drawY = 0;
