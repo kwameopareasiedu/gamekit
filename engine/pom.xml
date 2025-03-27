@@ -11,7 +11,7 @@
   </parent>
 
   <artifactId>engine</artifactId>
-  <version>0.3.0-SNAPSHOT-1</version>
+  <version>0.3.0-SNAPSHOT-2</version>
   <packaging>jar</packaging>
 
   <properties>

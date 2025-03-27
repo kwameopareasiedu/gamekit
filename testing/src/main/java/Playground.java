@@ -32,11 +32,17 @@ public class Playground extends Scene {
           Image.create("wide-img.jpg").withSize(300, 150),
           new Spacing(x)
         ),
-        Text.create("another text").withShadow(true).withShadowColor(Color.BLACK).withShadowOffset(10, 4),
+        Text.create("Hello World")
+          .withShadow(true)
+          .withShadowColor(Color.BLACK)
+          .withShadowOffset(10, 4)
+          .withFontStyle(Font.BOLD),
         Row.create(
-          Text.create(text),
+          Text.create(text)
+            .withFontSize(24),
           Padding.create(
-            Text.create("text 3").withColor(Color.BLACK),
+            Text.create("Another Text")
+              .withColor(Color.CYAN),
             new Spacing(x)
           )
         )

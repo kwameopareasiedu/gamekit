@@ -29,7 +29,7 @@ public class Text extends Widget {
 
   protected Text(String text) {
     this.text = text;
-    fontFamily = "FFF Forward";
+    fontFamily = Constants.DEFAULT_FONT_NAME;
     fontStyle = Font.PLAIN;
     fontSize = 16;
     color = Color.WHITE;
@@ -55,7 +55,7 @@ public class Text extends Widget {
     }
 
     int textWidth = fontMetrics.stringWidth(text);
-    int textHeight = fontMetrics.getHeight();
+    int textHeight = (int) (1.5 * fontMetrics.getHeight());
 
     if (shadowEnabled) {
       textWidth += Math.abs(shadowOffsetX);

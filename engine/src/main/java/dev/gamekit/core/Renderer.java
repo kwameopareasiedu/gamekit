@@ -52,13 +52,13 @@ public final class Renderer {
   /** Ends a previously called {@code beginGroup()} */
   public static void endGroup() { CURRENT_STATE.discard(); }
 
-  /** Clears the {@link Window} scene target with current state color */
+  /** Clears the {@link Window} scene target with current state background color */
   public static void clear() {
     // Clear scene target
     applyGraphicsState();
     int x = 0, y = 0, w = Window.getInstance().getRenderWidth(), h = Window.getInstance().getRenderHeight();
     var pt = Camera.getInstance().transformPoint(x, y);
-    g.fillRect(-pt.x, -pt.y, w, h);
+    g.clearRect(-pt.x, -pt.y, w, h);
     resetGraphicsState();
   }
 

@@ -10,6 +10,12 @@
 
 ### Removed
 
+## 0.3.0-SNAPSHOT-2
+
+### Changed
+
+- Modified `IO` to load using input streams
+
 ## 0.3.0-SNAPSHOT-1
 
 ### Added
