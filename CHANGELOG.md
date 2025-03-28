@@ -14,8 +14,8 @@
 
 ### Removed
 
-- Removed ~~`static setResolution(Resolution)`~~ from `Window` class
-- Removed ~~`static setFullscreen(boolean)`~~ from `Window` class
+- Removed `static setResolution(Resolution)` from `Window` class
+- Removed `static setFullscreen(boolean)` from `Window` class
 
 ## 0.3.0-SNAPSHOT-2
 
@@ -65,12 +65,12 @@
 
 ### Removed
 
-- Removed ~~`void scheduleFrameEndTask(Task)`~~ from `Application` class. To schedule end of frame task, use
+- Removed `void scheduleFrameEndTask(Task)` from `Application` class. To schedule end of frame task, use
   `void scheduleTask(Task)` instead
-- Removed deprecated ~~`AnimationCurves`~~ class.
-- Removed ~~`void setSize(int, int)`~~ from `Window` class
-- Removed ~~`void maximize()`~~ from `Window` class
-- Removed deprecated ~~`AnimationCurves`~~ class
+- Removed deprecated `AnimationCurves` class.
+- Removed `void setSize(int, int)` from `Window` class
+- Removed `void maximize()` from `Window` class
+- Removed deprecated `AnimationCurves` class
 
 ## v0.2.1-SNAPSHOT
 
@@ -100,9 +100,9 @@
 
 ### Changed
 
-- Renamed ~~`static BufferedImage loadImage(String)`~~ to `static BufferedImage loadImageResource(String)` in `IO`
+- Renamed `static BufferedImage loadImage(String)` to `static BufferedImage loadImageResource(String)` in `IO`
   class.
-- Renamed ~~`static Font loadFont(String)`~~ to `static BufferedImage loadFontResource(String)` in `IO` class.
-- Renamed ~~`void runAnimation(Animation)`~~ to `void scheduleAnimation(Animation)` in `Application`
+- Renamed `static Font loadFont(String)` to `static BufferedImage loadFontResource(String)` in `IO` class.
+- Renamed `void runAnimation(Animation)` to `void scheduleAnimation(Animation)` in `Application`
   class.
 - Modified `Window` to start in windowed mode instead of maximized
