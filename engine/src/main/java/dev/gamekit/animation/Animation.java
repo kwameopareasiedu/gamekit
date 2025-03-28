@@ -15,6 +15,8 @@ import static dev.gamekit.utils.Math.clamp;
 public class Animation {
   private final RepeatMode repeatMode;
   private final AnimationCurve curve;
+  private ValueListener valueListener;
+  private StateListener stateListener;
   private double rate;
   private State state;
   private double value;
@@ -54,15 +56,26 @@ public class Animation {
 
   public State getState() { return state; }
 
-  public double getValue() {
-    if (curve == null) return value;
-    return curve.transform(value);
+  public double getValue() { return curve != null ? curve.get(value) : value; }
+
+  /** Sets the value listener and returns this animation */
+  public Animation setValueListener(ValueListener listener) {
+    this.valueListener = listener;
+    return this;
+  }
+
+  /** Sets the state listener and returns this animation */
+  public Animation setStateListener(StateListener listener) {
+    this.stateListener = listener;
+    return this;
   }
 
   /** Starts this animation and changes its state to {@link State#RUNNING} */
   public void start() {
     if (state == State.IDLE) {
       state = State.RUNNING;
+      if (stateListener != null)
+        stateListener.onStateChanged(state);
       Application.getInstance().scheduleAnimation(this);
     }
   }
@@ -73,16 +86,23 @@ public class Animation {
    */
   public void stop() {
     state = State.ENDED;
+    if (stateListener != null)
+      stateListener.onStateChanged(state);
   }
 
   /** Called internally by the application game loop to update this animation */
-  public void onUpdate() {
+  public void update() {
     if (state == State.RUNNING) {
       value = clamp(value + 0.001 * rate * Application.FRAME_TIME, 0, 1);
+      if (valueListener != null) valueListener.onValueChanged(value);
 
       if ((value >= 1 && rate > 0) || (value <= 0 && rate < 0)) {
         switch (repeatMode) {
-          case NONE -> state = State.ENDED;
+          case NONE -> {
+            state = State.ENDED;
+            if (stateListener != null)
+              stateListener.onStateChanged(state);
+          }
           case RESTART -> value = 0;
           case REVERSE -> rate *= -1;
         }
@@ -96,5 +116,20 @@ public class Animation {
 
   public enum RepeatMode {
     NONE, RESTART, REVERSE
+  }
+
+  /** Callback interface for animation value changes */
+  public interface ValueListener {
+    /**
+     * Called with the new base value of the animation
+     * without apply the animation curve transformation
+     */
+    void onValueChanged(double value);
+  }
+
+  /** Callback interface for animation state changes */
+  public interface StateListener {
+    /** Called with the new state of the animation */
+    void onStateChanged(State state);
   }
 }

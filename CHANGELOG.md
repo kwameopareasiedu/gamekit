@@ -7,6 +7,8 @@
 - Added constructor `Application(Config)` which can be used to set the title, resolution and fullscreen mode
 - Added `ImageRes` which is a widget that renders a **resource image**
 - Added `Stack` which is a `MultiChildParent` which stacks its children on top of each other
+- Added `Animation setValueListener(ValueListener)` to `Animation` to be notified of value changes
+- Added `Animation setStateListener(StateListener)` to `Animation` to be notified of state changes
 
 ### Changed
 
@@ -58,10 +60,6 @@
 - Added `Padding` which is a `SingleChildParent` that adds spacing around its child
 - Added `Spacing` class which represents space around a widget
 - Added `UI` class which manages the user interface for a `Scene`
-
-### Changed
-
-### Deprecated
 
 ### Removed
 

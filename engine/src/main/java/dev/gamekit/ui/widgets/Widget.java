@@ -59,7 +59,10 @@ public abstract class Widget {
     return false;
   }
 
-  /** Delegate method which returns {@code true} if this widget has the same state as {@code widget} */
+  /**
+   * Delegate method which returns {@code true} if this
+   * widget has the same state as {@code widget}
+   */
   protected abstract boolean stateEquals(Widget widget);
 
   /**
@@ -73,8 +76,8 @@ public abstract class Widget {
    * which controls where on the screen the widget is rendered.
    * <p>
    * Since this method is marked as {@code final}, subclasses should
-   * override the {@link #performLayout} method instead
-   * to perform their layout
+   * override the {@link #performLayout} method instead to perform
+   * their layout
    */
   public final void computeLayout(Constraints constraints) {
     this.constraints = constraints;
@@ -83,8 +86,8 @@ public abstract class Widget {
   }
 
   /**
-   * Delegate method which performs the actual layout and is passed the
-   * constraints from {@link #computeLayout(Constraints)}.
+   * Delegate method which performs the actual layout and is passed
+   * the constraints from {@link #computeLayout(Constraints)}.
    */
   protected abstract void performLayout(Constraints constraints);
 
@@ -119,8 +122,8 @@ public abstract class Widget {
   }
 
   /**
-   * Delegate method which performs the actual rendering and is
-   * passed a {@link Graphics2D} object from the internal
+   * Delegate method which performs the actual rendering and
+   * is passed a {@link Graphics2D} object from the internal
    * {@link BufferedImage}.
    */
   protected abstract void performRender(Graphics2D g);

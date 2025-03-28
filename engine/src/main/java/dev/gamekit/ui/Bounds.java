@@ -73,10 +73,10 @@ public class Bounds {
 
   @Override
   public boolean equals(Object obj) {
-    return obj instanceof Bounds
-      && ((Bounds) obj).x == x
-      && ((Bounds) obj).y == y
-      && ((Bounds) obj).width == width
-      && ((Bounds) obj).height == height;
+    return obj instanceof Bounds boundsObject
+      && x == boundsObject.x
+      && y == boundsObject.y
+      && width == boundsObject.width
+      && height == boundsObject.height;
   }
 }

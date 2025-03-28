@@ -159,7 +159,7 @@ public abstract class Application {
   private void onUpdate() {
     if (!animations.isEmpty()) {
       for (var anim : animations)
-        anim.onUpdate();
+        anim.update();
     }
 
     if (!timeouts.isEmpty()) {
