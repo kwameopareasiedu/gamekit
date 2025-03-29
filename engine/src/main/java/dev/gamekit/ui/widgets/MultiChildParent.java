@@ -1,5 +1,6 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.ui.Appearance;
 import dev.gamekit.utils.Constants;
 
 import java.awt.*;
@@ -25,14 +26,18 @@ public abstract class MultiChildParent extends Parent {
     g.clearRect(0, 0, computedBounds.width, computedBounds.height);
 
     // Renders its children within self to enable clipping
-    children.forEach(child ->
-      g.drawImage(
-        child.getAppearance().image,
-        child.computedBounds.x,
-        child.computedBounds.y,
-        null
-      )
-    );
+    children.forEach(child -> {
+      Appearance childAppearance = child.getAppearance();
+
+      if (childAppearance != null) {
+        g.drawImage(
+          childAppearance.image,
+          child.computedBounds.x,
+          child.computedBounds.y,
+          null
+        );
+      }
+    });
   }
 
   public List<Widget> getChildren() { return children; }

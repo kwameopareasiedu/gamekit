@@ -1,4 +1,11 @@
 import dev.gamekit.core.*;
+import dev.gamekit.ui.Spacing;
+import dev.gamekit.ui.enums.Alignment;
+import dev.gamekit.ui.enums.CrossAxisAlignment;
+import dev.gamekit.ui.enums.MainAxisAlignment;
+import dev.gamekit.ui.enums.TextAlignment;
+import dev.gamekit.ui.widgets.Image;
+import dev.gamekit.ui.widgets.*;
 import dev.gamekit.utils.Config;
 import dev.gamekit.utils.Position;
 import dev.gamekit.utils.Resolution;
@@ -19,7 +26,7 @@ public class Playground extends Scene {
 
   public static void main(String[] args) {
     Application game = new Application(
-      new Config("Playground", Resolution.SVGA, true)
+      new Config("Playground", Resolution.SVGA, false)
     ) { };
     game.loadScene(new Playground());
     game.run();
@@ -50,5 +57,45 @@ public class Playground extends Scene {
     Renderer.fillRoundRect(50 + x, 50 + y, 100, 100, 10, 10);
     Renderer.setColor(Color.CYAN);
     Renderer.fillRoundRect(-50 + x, 50 + y, 100, 100, 10, 10);
+  }
+
+  @Override
+  public Widget onCreateUI() {
+    return Align.create(
+      FixedSize.create(
+        640, 480,
+        Column.create(
+            Padding.create(
+              GestureDetector.create(
+                Stack.create(
+                  ImageRes.create("wide-img.jpg").withSize(300, 150),
+                  Image.create(bufferedImage).withSize(400, 200)
+                )
+              ),
+              new Spacing(x)
+            ),
+            Text.create("Hello World")
+              .withAlignment(TextAlignment.END)
+              .withShadow(true)
+              .withShadowColor(Color.BLACK)
+              .withShadowOffset(10, 4)
+              .withFontStyle(Font.BOLD),
+            Row.create(
+                Text.create(text)
+                  .withFontSize(24),
+                Padding.create(
+                  Text.create("Another Text")
+                    .withColor(Color.CYAN),
+                  new Spacing(x)
+                )
+              ).withMainAxisAlignment(MainAxisAlignment.SPACE_BETWEEN)
+              .withCrossAxisAlignment(CrossAxisAlignment.STRETCH)
+              .withGapSize(10)
+          ).withMainAxisAlignment(MainAxisAlignment.SPACE_BETWEEN)
+          .withCrossAxisAlignment(CrossAxisAlignment.CENTER)
+          .withGapSize(10)
+      ),
+      Alignment.CENTER
+    );
   }
 }

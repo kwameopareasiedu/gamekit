@@ -1,5 +1,6 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.ui.Appearance;
 import dev.gamekit.utils.Constants;
 
 import java.awt.*;
@@ -21,12 +22,16 @@ public abstract class SingleChildParent extends Parent {
     g.clearRect(0, 0, computedBounds.width, computedBounds.height);
 
     // Renders its children within self to enable clipping
-    g.drawImage(
-      child.getAppearance().image,
-      child.computedBounds.x,
-      child.computedBounds.y,
-      null
-    );
+    Appearance childAppearance = child.getAppearance();
+
+    if (childAppearance != null) {
+      g.drawImage(
+        childAppearance.image,
+        child.computedBounds.x,
+        child.computedBounds.y,
+        null
+      );
+    }
   }
 
   public Widget getChild() { return child; }

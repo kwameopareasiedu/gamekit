@@ -1,8 +1,10 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.core.UI;
 import dev.gamekit.ui.Appearance;
 import dev.gamekit.ui.Bounds;
 import dev.gamekit.ui.Constraints;
+import dev.gamekit.ui.events.Event;
 import dev.gamekit.utils.Config;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -98,7 +100,8 @@ public abstract class Widget {
    * {@link #performRender(Graphics2D)}.
    */
   public final Appearance getAppearance() {
-    if (appearance == null || needsRepaint) {
+    if ((appearance == null || needsRepaint) &&
+      computedBounds.width > 0 && computedBounds.height > 0) {
       BufferedImage image = new BufferedImage(
         computedBounds.width,
         computedBounds.height,
@@ -108,12 +111,14 @@ public abstract class Widget {
       appearance = new Appearance(image);
     }
 
-    performRender(appearance.graphics);
+    if (appearance != null) {
+      performRender(appearance.graphics);
 
-    if (Config.DEBUG_DRAW) {
-      appearance.graphics.setColor(Color.CYAN);
-      appearance.graphics.setStroke(DEBUG_OUTLINE_STROKE);
-      appearance.graphics.drawRect(0, 0, computedBounds.width, computedBounds.height);
+      if (Config.DEBUG_DRAW) {
+        appearance.graphics.setColor(Color.CYAN);
+        appearance.graphics.setStroke(DEBUG_OUTLINE_STROKE);
+        appearance.graphics.drawRect(0, 0, computedBounds.width, computedBounds.height);
+      }
     }
 
     previousBounds.set(computedBounds);
@@ -127,4 +132,29 @@ public abstract class Widget {
    * {@link BufferedImage}.
    */
   protected abstract void performRender(Graphics2D g);
+
+  /**
+   * Called by the {@link UI} manager to handle an event generated for this widget.
+   * This should be overridden by subclasses to handle different event types
+   */
+  public void handleEvent(Event event) { /* No-op */ }
+
+  /**
+   * Determines if point (x, y) falls within
+   * the absolute bounds of this widget
+   */
+  public boolean hitTest(int x, int y) {
+    int absoluteX = computedBounds.x;
+    int absoluteY = computedBounds.y;
+    Widget parent = this.parent;
+
+    while (parent != null) {
+      absoluteX += parent.computedBounds.x;
+      absoluteY += parent.computedBounds.y;
+      parent = parent.parent;
+    }
+
+    return absoluteX <= x && x <= absoluteX + computedBounds.width &&
+      absoluteY <= y && y <= absoluteY + computedBounds.height;
+  }
 }

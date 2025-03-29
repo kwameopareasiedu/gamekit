@@ -3,11 +3,14 @@ package dev.gamekit.core;
 import dev.gamekit.ui.Appearance;
 import dev.gamekit.ui.Bounds;
 import dev.gamekit.ui.Constraints;
+import dev.gamekit.ui.events.Event;
+import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.widgets.MultiChildParent;
 import dev.gamekit.ui.widgets.Parent;
 import dev.gamekit.ui.widgets.SingleChildParent;
 import dev.gamekit.ui.widgets.Widget;
 import dev.gamekit.utils.Constants;
+import dev.gamekit.utils.Position;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,6 +18,7 @@ import java.awt.*;
 import java.util.ArrayDeque;
 import java.util.Objects;
 import java.util.Queue;
+import java.util.Stack;
 
 /**
  * UI manages the user interface within for {@link Scene}.
@@ -23,13 +27,17 @@ import java.util.Queue;
 public final class UI {
   private static final Logger LOGGER = LogManager.getLogger();
 
-  private final Queue<Widget> currentWidgetQueue;
-  private final Queue<Widget> newWidgetQueue;
   private final WidgetTreeCreator treeCreator;
   private final Constraints windowConstraints;
+  private final Queue<Widget> currentWidgetQueue;
+  private final Queue<Widget> newWidgetQueue;
+  private final Queue<Widget> eventHitTestQueue;
+  private final Stack<Widget> eventNotifyStack;
+  private final Position mousePosition;
   private Widget tree;
   private boolean needsUpdate = false;
   private boolean needsRepaint = true;
+  private int currentMouseY = 0;
 
   public UI(WidgetTreeCreator treeCreator) {
     Window window = Window.getInstance();
@@ -44,9 +52,15 @@ public final class UI {
     this.treeCreator = treeCreator;
     this.currentWidgetQueue = new ArrayDeque<>();
     this.newWidgetQueue = new ArrayDeque<>();
+    this.eventHitTestQueue = new ArrayDeque<>();
+    this.eventNotifyStack = new Stack<>();
+    this.mousePosition = new Position();
   }
 
-  /** Uses the {@link Window} UI graphics object to retrieve the {@link FontMetrics} for a given font */
+  /**
+   * Uses the {@link Window} UI graphics object to
+   * retrieve the {@link FontMetrics} for a given font
+   */
   public static FontMetrics getFontMetrics(Font font) {
     return Window.getInstance().getUiGraphics().getFontMetrics(font);
   }
@@ -75,9 +89,48 @@ public final class UI {
    * is set to trigger a re-render.
    */
   public void update() {
-    if (tree == null || !needsUpdate)
+    if (tree != null && needsUpdate)
+      updateTree();
+
+    Event inputEvent = inputEventAvailable();
+
+    if (inputEvent != null)
+      dispatchEvent(inputEvent);
+  }
+
+  /** Draws the {@link Widget} tree to the {@link Window} UI target */
+  public void render() {
+    if (tree == null || tree.getAppearance() == null || !needsRepaint)
       return;
 
+    LOGGER.debug("Rendering UI");
+
+    Window win = Window.getInstance();
+    Graphics2D g = win.getUiGraphics();
+    Appearance appearance = tree.getAppearance();
+    Bounds widgetBounds = tree.getComputedBounds();
+
+    g.setBackground(Constants.TRANSPARENT_COLOR);
+    g.clearRect(0, 0, win.getRenderWidth(), win.getRenderHeight());
+    g.drawImage(
+      appearance.image,
+      widgetBounds.x,
+      widgetBounds.y,
+      widgetBounds.width,
+      widgetBounds.height,
+      null
+    );
+
+    needsRepaint = false;
+  }
+
+  /**
+   * When called, this method generates a new widget tree and
+   * compares it to the current one. If any widget has changed,
+   * the subtree is replaced, the layout is recomputed and the
+   * {@link #needsRepaint} flag is set
+   */
+  private void updateTree() {
     Widget newTree = treeCreator.onCreateUI();
     newWidgetQueue.add(newTree);
 
@@ -129,30 +182,54 @@ public final class UI {
     needsUpdate = false;
   }
 
-  /** Draws the {@link Widget} tree to the {@link Window} UI target */
-  public void render() {
-    if (tree == null || !needsRepaint)
-      return;
+  /**
+   * Monitors the {@link Input} class and generates
+   * events if an action of interest has occurred
+   */
+  private Event inputEventAvailable() {
+    Position mousePos = Input.getMousePosition();
 
-    LOGGER.debug("Rendering UI");
+    if (mousePos.x != mousePosition.x || mousePos.y != mousePosition.y) {
+      mousePosition.set(mousePos);
+      // Mouse position has changed, dispatch mouse event
+      return new MouseEvent(null, mousePos.x, mousePos.y);
+    }
 
-    Window win = Window.getInstance();
-    Graphics2D g = win.getUiGraphics();
-    Appearance appearance = tree.getAppearance();
-    Bounds widgetBounds = tree.getComputedBounds();
+    return null;
+  }
 
-    g.setBackground(Constants.TRANSPARENT_COLOR);
-    g.clearRect(0, 0, win.getRenderWidth(), win.getRenderHeight());
-    g.drawImage(
-      appearance.image,
-      widgetBounds.x,
-      widgetBounds.y,
-      widgetBounds.width,
-      widgetBounds.height,
-      null
-    );
+  private void dispatchEvent(Event event) {
+    eventHitTestQueue.clear();
+    eventNotifyStack.clear();
 
-    needsRepaint = false;
+    if (tree != null) {
+      Position pos = Input.getMousePosition();
+      eventHitTestQueue.add(tree);
+
+      while (!eventHitTestQueue.isEmpty()) {
+        Widget widget = eventHitTestQueue.poll();
+
+        if (widget.hitTest(pos.x, pos.y))
+          eventNotifyStack.push(widget);
+
+        if (widget instanceof SingleChildParent parent) {
+          eventHitTestQueue.add(parent.getChild());
+        } else if (widget instanceof MultiChildParent parent) {
+          eventHitTestQueue.addAll(parent.getChildren());
+        }
+      }
+
+      if (!eventNotifyStack.isEmpty()) {
+        while (!eventNotifyStack.isEmpty()) {
+          Widget widget = eventNotifyStack.pop();
+
+          if (event.isHandled())
+            break;
+
+          widget.handleEvent(event);
+        }
+      }
+    }
   }
 
   public interface WidgetTreeCreator {
