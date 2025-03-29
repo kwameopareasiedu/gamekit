@@ -206,6 +206,7 @@ public abstract class Application {
 
     if (nextScene != null) {
       animations.clear();
+      timeouts.clear();
 
       if (currentScene != null) {
         currentScene.dispose();

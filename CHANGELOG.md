@@ -9,15 +9,20 @@
 - Added `Stack` which is a `MultiChildParent` which stacks its children on top of each other
 - Added `Animation setValueListener(ValueListener)` to `Animation` to be notified of value changes
 - Added `Animation setStateListener(StateListener)` to `Animation` to be notified of state changes
+- Added `static Position screenToWorldPoint(int, int)` to `Camera` which transforms a screen-space position into a world
+  position
 
 ### Changed
 
 - Modified `Image` widget to render a given image instead
+- Changed `Camera` class to a utility class. Instead of `Camera.getInstance().<METHOD>`, use `Camera.<METHOD>`
 
 ### Removed
 
-- Removed `static setResolution(Resolution)` from `Window` class
-- Removed `static setFullscreen(boolean)` from `Window` class
+- Removed `static void setResolution(Resolution)` from `Window` class
+- Removed `static void setFullscreen(boolean)` from `Window` class
+- Removed `static Camera getInstance()` from `Camera` class
+- Removed `Point transformPoint(int, int)` from `Camera` class
 
 ## 0.3.0-SNAPSHOT-2
 

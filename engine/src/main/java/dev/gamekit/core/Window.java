@@ -50,7 +50,6 @@ public final class Window {
         (double) Resolution.NATIVE.width() / config.resolution().width(),
         (double) Resolution.NATIVE.height() / config.resolution().height()
       );
-      inverseScaleRatio = 1.0 / scaleRatio;
     } else {
       Dimension d = new Dimension(
         config.resolution().width(),
@@ -61,8 +60,9 @@ public final class Window {
       frame.setPreferredSize(d);
       frame.setResizable(false);
       scaleRatio = 1;
-      inverseScaleRatio = 1.0 / scaleRatio;
     }
+
+    inverseScaleRatio = 1.0 / scaleRatio;
 
     frame.setLocationRelativeTo(null);
     frame.setBackground(Color.BLACK);

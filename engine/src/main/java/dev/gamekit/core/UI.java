@@ -20,7 +20,7 @@ import java.util.Queue;
  * UI manages the user interface within for {@link Scene}.
  * A {@link Scene} will contain a single instance of UI
  */
-final class UI {
+public final class UI {
   private static final Logger LOGGER = LogManager.getLogger();
 
   private final Queue<Widget> currentWidgetQueue;
@@ -44,6 +44,11 @@ final class UI {
     this.treeCreator = treeCreator;
     this.currentWidgetQueue = new ArrayDeque<>();
     this.newWidgetQueue = new ArrayDeque<>();
+  }
+
+  /** Uses the {@link Window} UI graphics object to retrieve the {@link FontMetrics} for a given font */
+  public static FontMetrics getFontMetrics(Font font) {
+    return Window.getInstance().getUiGraphics().getFontMetrics(font);
   }
 
   /** Sets the widget tree and triggers the layout computation */

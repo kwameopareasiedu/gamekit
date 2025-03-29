@@ -191,16 +191,6 @@ public final class Renderer {
   }
 
   /**
-   * Uses the {@link Window} UI graphics object to
-   * retrieve the {@link FontMetrics} for a given font
-   * @param font The font whose metrics to return
-   * @return The font metrics of the font
-   */
-  public static FontMetrics getFontMetrics(Font font) {
-    return Window.getInstance().getUiGraphics().getFontMetrics(font);
-  }
-
-  /**
    * Internal method for drawing or filling ovals
    * @see #drawOval(int, int, int, int)
    * @see #fillOval(int, int, int, int)
