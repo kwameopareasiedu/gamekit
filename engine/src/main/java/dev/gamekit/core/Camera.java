@@ -1,5 +1,7 @@
 package dev.gamekit.core;
 
+import dev.gamekit.utils.Position;
+
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 
@@ -8,52 +10,38 @@ import java.awt.geom.AffineTransform;
  * the game world is rendered in the {@link Window}
  */
 public final class Camera {
-  private static final Camera INSTANCE = new Camera();
-  static final Point pointCache = new Point();
-  private final AffineTransform transform;
-  private double x = 0;
-  private double y = 0;
-  private double zoom = 1;
+  private static final Point POINT_CACHE = new Point();
+  private static final Position POSITION_CACHE = new Position();
 
-  /** Creates a new Camera instance */
-  private Camera() {
-    transform = new AffineTransform(1, 0, 0, -1, 0, 0);
+  private static final AffineTransform transform = new AffineTransform(1, 0, 0, -1, 0, 0);
+  private static double x = 0;
+  private static double y = 0;
+  private static double zoom = 1;
+
+  /** Transforms a screen-space point (x,y) to the world-space */
+  public static Position screenToWorldPoint(int x, int y) {
+    Window window = Window.getInstance();
+    POINT_CACHE.setLocation(x - window.getRenderWidth(), -y);
+    transform.transform(POINT_CACHE, POINT_CACHE);
+    POSITION_CACHE.set(POINT_CACHE);
+    return POSITION_CACHE;
   }
 
-  /** Returns the current instance of the camera */
-  public static Camera getInstance() { return INSTANCE; }
-
-  public Point transformPoint(int x, int y) {
-    pointCache.setLocation(x, y);
-    transform.transform(pointCache, pointCache);
-    return pointCache;
+  /** Pan the camera such that point (x, y) is at the center of the {@link Window} */
+  public static void lookAt(double x, double y) {
+    Camera.x = x;
+    Camera.y = -y;
   }
 
-  /**
-   * Pan the camera such that point (x, y)
-   * is at the center of the {@link Window}
-   * @param x The x-coordinate of the point
-   * @param y The y-coordinate of the point
-   */
-  public void lookAt(double x, double y) {
-    this.x = x;
-    this.y = -y;
-  }
+  /** Sets the zoom level of the camera, clamped to a min of 1 */
+  public static void setZoom(double zoom) { Camera.zoom = Math.max(zoom, 1); }
 
-  /**
-   * Sets the zoom level of the camera. The zoom
-   * level is clamped to a minimum value of 1
-   * @param zoom The zoom level
-   */
-  public void setZoom(double zoom) {
-    this.zoom = Math.max(zoom, 1);
-  }
+  public static double getX() { return x; }
 
-  /**
-   * Applies the camera's position and zoom
-   * to the current window's transform matrix
-   */
-  void update() {
+  public static double getY() { return y; }
+
+  /** Applies the camera's position and zoom to the current window's transform matrix */
+  static void update() {
     Window window = Window.getInstance();
     int centerX = window.getCenterX(), centerY = window.getCenterY();
     transform.setTransform(zoom, 0, 0, zoom, centerX - x, centerY - y);

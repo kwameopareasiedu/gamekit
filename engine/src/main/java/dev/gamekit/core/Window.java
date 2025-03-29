@@ -1,6 +1,7 @@
 package dev.gamekit.core;
 
 import dev.gamekit.utils.Config;
+import dev.gamekit.utils.Position;
 import dev.gamekit.utils.Resolution;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,7 +18,7 @@ public final class Window {
 
   private final Config config;
   private final Dimension renderSize;
-  private final Point center;
+  private final Position center;
   private final double scaleRatio;
   private final double inverseScaleRatio;
   private final JFrame frame;
@@ -32,7 +33,7 @@ public final class Window {
     this.config = config;
 
     renderSize = new Dimension(config.resolution().width(), config.resolution().height());
-    center = new Point(config.resolution().width() / 2, config.resolution().height() / 2);
+    center = new Position(config.resolution().width() / 2, config.resolution().height() / 2);
 
     frame = new JFrame(config.title());
     frame.getContentPane().setBackground(Color.BLACK);

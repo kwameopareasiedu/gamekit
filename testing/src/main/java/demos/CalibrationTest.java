@@ -1,8 +1,6 @@
 package demos;
 
 import dev.gamekit.core.*;
-import dev.gamekit.core.Window;
-import dev.gamekit.utils.Resolution;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -34,10 +32,10 @@ public class CalibrationTest extends Scene {
     time += 0.025;
     double x = 50 * Math.sin(time);
     double y = 50 * Math.cos(time);
-    Camera.getInstance().lookAt(x, y);
-    Camera.getInstance().setZoom(clamp(1 + Math.sin(time), 1, 2));
-    //    Camera.getInstance().lookAt(-200, -100);
-    Camera.getInstance().setZoom(1);
+    Camera.lookAt(x, y);
+    Camera.setZoom(clamp(1 + Math.sin(time), 1, 2));
+    //    Camera.lookAt(-200, -100);
+    Camera.setZoom(1);
   }
 
   @Override

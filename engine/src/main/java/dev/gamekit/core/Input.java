@@ -1,5 +1,7 @@
 package dev.gamekit.core;
 
+import dev.gamekit.utils.Position;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.stream.IntStream;
@@ -214,16 +216,16 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
   private final ActionState[] keyStates;
   private final ActionState[] buttonStates;
-  private final Point absoluteMousePosition;
-  private final Point mousePosition;
+  private final Position absMousePosition;
+  private final Position mousePosition;
   private boolean isFrozen = false;
 
   /** Creates a new Input instance */
   private Input() {
     keyStates = new ActionState[KEY_COUNT];
     buttonStates = new ActionState[BUTTON_COUNT];
-    absoluteMousePosition = new Point(MouseInfo.getPointerInfo().getLocation());
-    mousePosition = new Point(0, 0);
+    absMousePosition = new Position(MouseInfo.getPointerInfo().getLocation());
+    mousePosition = new Position(0, 0);
 
     IntStream.range(0, KEY_COUNT).forEach(
       i -> keyStates[i] = new ActionState()
@@ -285,7 +287,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
     return INSTANCE.buttonStates[buttonIndex].isJustReleased;
   }
 
-  public synchronized static Point getMousePosition() {
+  public synchronized static Position getMousePosition() {
     Window win = Window.getInstance();
     double scaleRatio = win.getScaleRatio();
     double frameWidth = win.getFrameWidth();
@@ -298,10 +300,10 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
     double scaledRenderHeight = renderHeight * scaleRatio;
     double left = 0.5 * (frameWidth - scaledRenderWidth);
     double top = 0.5 * (frameHeight - scaledRenderHeight);
-    double scaledMouseX = inverseScaleRatio * (INSTANCE.absoluteMousePosition.x - left);
-    double scaledMouseY = inverseScaleRatio * (INSTANCE.absoluteMousePosition.y - top);
+    double scaledMouseX = inverseScaleRatio * (INSTANCE.absMousePosition.x - left);
+    double scaledMouseY = inverseScaleRatio * (INSTANCE.absMousePosition.y - top);
 
-    INSTANCE.mousePosition.setLocation(
+    INSTANCE.mousePosition.set(
       (int) clamp(scaledMouseX, 0, renderWidth),
       (int) clamp(scaledMouseY, 0, renderHeight)
     );
@@ -370,16 +372,12 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
   @Override
   public synchronized void mouseDragged(MouseEvent e) {
-    if (!isFrozen) {
-      absoluteMousePosition.move(e.getX(), e.getY());
-    }
+    if (!isFrozen) absMousePosition.set(e.getX(), e.getY());
   }
 
   @Override
   public synchronized void mouseMoved(MouseEvent e) {
-    if (!isFrozen) {
-      absoluteMousePosition.move(e.getX(), e.getY());
-    }
+    if (!isFrozen) absMousePosition.set(e.getX(), e.getY());
   }
 
   @Override

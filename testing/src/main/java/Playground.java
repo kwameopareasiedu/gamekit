@@ -1,5 +1,6 @@
 import dev.gamekit.core.*;
 import dev.gamekit.utils.Config;
+import dev.gamekit.utils.Position;
 import dev.gamekit.utils.Resolution;
 
 import java.awt.*;
@@ -29,9 +30,10 @@ public class Playground extends Scene {
     super.onUpdate();
 
     if (Input.isButtonPressed(Input.BUTTON_LMB)) {
-      var pos = Input.getMousePosition();
-      x = pos.x;
-      y = pos.y;
+      Position mousePos = Input.getMousePosition();
+      Position pt = Camera.screenToWorldPoint(mousePos.x, mousePos.y);
+      x = pt.x;
+      y = pt.y;
     }
   }
 

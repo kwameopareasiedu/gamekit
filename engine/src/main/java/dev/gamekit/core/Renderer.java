@@ -43,8 +43,8 @@ public final class Renderer {
   public static void clear() {
     applyGraphicsState();
     int x = 0, y = 0, w = Window.getInstance().getRenderWidth(), h = Window.getInstance().getRenderHeight();
-    var pt = Camera.getInstance().transformPoint(x, y);
-    g.clearRect(-pt.x, -pt.y, w, h);
+    var pt = Camera.screenToWorldPoint(x, y);
+    g.clearRect(pt.x, -pt.y, w, h);
     resetGraphicsState();
   }
 

@@ -178,7 +178,7 @@ public abstract class Application {
    */
   private void onRender() {
     if (currentScene != null) {
-      Camera.getInstance().update();
+      Camera.update();
       currentScene.render();
     }
 
