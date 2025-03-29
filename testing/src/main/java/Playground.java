@@ -71,7 +71,7 @@ public class Playground extends Scene {
                   ImageRes.create("wide-img.jpg").withSize(300, 150),
                   Image.create(bufferedImage).withSize(400, 200)
                 )
-              ),
+              ).withClickListener(event -> System.out.println(event.getClass())),
               new Spacing(x)
             ),
             Text.create("Hello World")

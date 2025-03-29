@@ -117,19 +117,4 @@ public class Animation {
   public enum RepeatMode {
     NONE, RESTART, REVERSE
   }
-
-  /** Callback interface for animation value changes */
-  public interface ValueListener {
-    /**
-     * Called with the new base value of the animation
-     * without apply the animation curve transformation
-     */
-    void onValueChanged(double value);
-  }
-
-  /** Callback interface for animation state changes */
-  public interface StateListener {
-    /** Called with the new state of the animation */
-    void onStateChanged(State state);
-  }
 }
