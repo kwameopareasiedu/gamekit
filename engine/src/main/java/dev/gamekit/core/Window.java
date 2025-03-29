@@ -19,6 +19,7 @@ public final class Window {
   private final Dimension renderSize;
   private final Point center;
   private final double scaleRatio;
+  private final double inverseScaleRatio;
   private final JFrame frame;
   private BufferedImage renderBuffer;
   private Graphics2D renderGraphics;
@@ -48,6 +49,7 @@ public final class Window {
         (double) Resolution.NATIVE.width() / config.resolution().width(),
         (double) Resolution.NATIVE.height() / config.resolution().height()
       );
+      inverseScaleRatio = 1.0 / scaleRatio;
     } else {
       Dimension d = new Dimension(
         config.resolution().width(),
@@ -58,6 +60,7 @@ public final class Window {
       frame.setPreferredSize(d);
       frame.setResizable(false);
       scaleRatio = 1;
+      inverseScaleRatio = 1.0 / scaleRatio;
     }
 
     frame.setLocationRelativeTo(null);
@@ -93,6 +96,9 @@ public final class Window {
 
   /** Returns the resolution scale ratio */
   public double getScaleRatio() { return scaleRatio; }
+
+  /** Returns the inverse of the resolution scale ratio */
+  public double getInverseScaleRatio() { return inverseScaleRatio; }
 
   JFrame getFrame() { return frame; }
 

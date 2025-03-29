@@ -3,6 +3,7 @@ package dev.gamekit.ui.widgets;
 import dev.gamekit.ui.Appearance;
 import dev.gamekit.ui.Bounds;
 import dev.gamekit.ui.Constraints;
+import dev.gamekit.utils.Config;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,7 +23,6 @@ import java.awt.image.BufferedImage;
  * size go up and parents set positions
  */
 public abstract class Widget {
-  private static final boolean DEBUG_DRAW = false;
   private static final BasicStroke DEBUG_OUTLINE_STROKE = new BasicStroke(
     2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND
   );
@@ -110,7 +110,7 @@ public abstract class Widget {
 
     performRender(appearance.graphics);
 
-    if (DEBUG_DRAW) {
+    if (Config.DEBUG_DRAW) {
       appearance.graphics.setColor(Color.CYAN);
       appearance.graphics.setStroke(DEBUG_OUTLINE_STROKE);
       appearance.graphics.drawRect(0, 0, computedBounds.width, computedBounds.height);

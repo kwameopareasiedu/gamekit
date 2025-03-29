@@ -1,18 +1,21 @@
 package demos;
 
-import dev.gamekit.core.Application;
-import dev.gamekit.core.Input;
-import dev.gamekit.core.Renderer;
-import dev.gamekit.core.Scene;
+import dev.gamekit.core.*;
 import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.enums.Alignment;
+import dev.gamekit.ui.enums.CrossAxisAlignment;
+import dev.gamekit.ui.enums.MainAxisAlignment;
+import dev.gamekit.ui.enums.TextAlignment;
 import dev.gamekit.ui.widgets.*;
+import dev.gamekit.ui.widgets.Image;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class Demo3DeclarativeUI extends Scene {
   int x = 0, y = 0;
   String text = "Kwame";
+  BufferedImage bufferedImage = IO.loadImageResource("square-img.jpg");
 
   public Demo3DeclarativeUI() {
     super("Main Scene");
@@ -22,27 +25,6 @@ public class Demo3DeclarativeUI extends Scene {
     Application game = new Application("Demo 3 - Declarative UI") { };
     game.loadScene(new Demo3DeclarativeUI());
     game.run();
-  }
-
-  @Override
-  public Widget onCreateUI() {
-    return Align.create(
-      Column.create(
-        Padding.create(
-          ImageRes.create("wide-img.jpg").withSize(300, 150),
-          new Spacing(x)
-        ),
-        Text.create("another text").withShadow(true).withShadowColor(Color.BLACK).withShadowOffset(10, 4),
-        Row.create(
-          Text.create(text),
-          Padding.create(
-            Text.create("text 3").withColor(Color.BLACK),
-            new Spacing(x)
-          )
-        )
-      ),
-      Alignment.CENTER
-    );
   }
 
   @Override
@@ -68,5 +50,43 @@ public class Demo3DeclarativeUI extends Scene {
     // Clear the screen with black
     Renderer.setColor(Color.BLACK);
     Renderer.clear();
+  }
+
+  @Override
+  public Widget onCreateUI() {
+    return Align.create(
+      FixedSize.create(
+        600, 480,
+        Column.create(
+            Padding.create(
+              Stack.create(
+                ImageRes.create("wide-img.jpg").withSize(300, 150),
+                Image.create(bufferedImage).withSize(400, 200)
+              ),
+              new Spacing(x)
+            ),
+            Text.create("Hello World")
+              .withAlignment(TextAlignment.END)
+              .withShadow(true)
+              .withShadowColor(Color.BLACK)
+              .withShadowOffset(10, 4)
+              .withFontStyle(Font.BOLD),
+            Row.create(
+                Text.create(text)
+                  .withFontSize(24),
+                Padding.create(
+                  Text.create("Another Text")
+                    .withColor(Color.CYAN),
+                  new Spacing(x)
+                )
+              ).withMainAxisAlignment(MainAxisAlignment.SPACE_BETWEEN)
+              .withCrossAxisAlignment(CrossAxisAlignment.STRETCH)
+              .withGapSize(10)
+          ).withMainAxisAlignment(MainAxisAlignment.SPACE_BETWEEN)
+          .withCrossAxisAlignment(CrossAxisAlignment.CENTER)
+          .withGapSize(10)
+      ),
+      Alignment.CENTER
+    );
   }
 }

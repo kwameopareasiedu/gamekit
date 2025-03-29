@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.stream.IntStream;
 
+import static dev.gamekit.utils.Math.clamp;
+
 /**
  * Singleton class responsible for capturing keyboard and mouse inputs for use in the application.
  * <p>
@@ -213,7 +215,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   private final ActionState[] keyStates;
   private final ActionState[] buttonStates;
   private final Point absoluteMousePosition;
-  //  private final Point mousePosition;
+  private final Point mousePosition;
   private boolean isFrozen = false;
 
   /** Creates a new Input instance */
@@ -221,7 +223,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
     keyStates = new ActionState[KEY_COUNT];
     buttonStates = new ActionState[BUTTON_COUNT];
     absoluteMousePosition = new Point(MouseInfo.getPointerInfo().getLocation());
-    //    mousePosition = new Point(0, 0);
+    mousePosition = new Point(0, 0);
 
     IntStream.range(0, KEY_COUNT).forEach(
       i -> keyStates[i] = new ActionState()
@@ -283,18 +285,29 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
     return INSTANCE.buttonStates[buttonIndex].isJustReleased;
   }
 
-  //  public synchronized static Point getMousePosition() {
-  //    Window win = Window.getInstance();
-  //    double scaleRatio = win.getScaleRatio();
-  //    double offsetX = 0.5 * (win.getFrameWidth() - win.getRenderWidth() * scaleRatio);
-  //
-  //    INSTANCE.mousePosition.setLocation(
-  //      (int) clamp((INSTANCE.absoluteMousePosition.x / scaleRatio - offsetX), 0, win.getRenderWidth()),
-  //      (int) clamp((INSTANCE.absoluteMousePosition.y / scaleRatio), 0, win.getRenderHeight())
-  //    );
-  //
-  //    return INSTANCE.mousePosition;
-  //  }
+  public synchronized static Point getMousePosition() {
+    Window win = Window.getInstance();
+    double scaleRatio = win.getScaleRatio();
+    double frameWidth = win.getFrameWidth();
+    double frameHeight = win.getFrameHeight();
+    double renderWidth = win.getRenderWidth();
+    double renderHeight = win.getRenderHeight();
+    double inverseScaleRatio = win.getInverseScaleRatio();
+
+    double scaledRenderWidth = renderWidth * scaleRatio;
+    double scaledRenderHeight = renderHeight * scaleRatio;
+    double left = 0.5 * (frameWidth - scaledRenderWidth);
+    double top = 0.5 * (frameHeight - scaledRenderHeight);
+    double scaledMouseX = inverseScaleRatio * (INSTANCE.absoluteMousePosition.x - left);
+    double scaledMouseY = inverseScaleRatio * (INSTANCE.absoluteMousePosition.y - top);
+
+    INSTANCE.mousePosition.setLocation(
+      (int) clamp(scaledMouseX, 0, renderWidth),
+      (int) clamp(scaledMouseY, 0, renderHeight)
+    );
+
+    return INSTANCE.mousePosition;
+  }
 
   /**
    * Prevents Window input events from affecting the current input state.
