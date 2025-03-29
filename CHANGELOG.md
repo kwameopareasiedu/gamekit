@@ -11,6 +11,12 @@
 - Added `Animation setStateListener(StateListener)` to `Animation` to be notified of state changes
 - Added `static Position screenToWorldPoint(int, int)` to `Camera` which transforms a screen-space position into a world
   position
+- Added event generation and dispatch system to `UI` class
+- Added abstract `Event` class
+- Added abstract `MouseEvent` which is the `Event` for mouse events
+- Added `MouseMotionEvent` which is a `MouseEvent` dispatched when the mouse moves
+- Added `MouseClickEvent` which is a `MouseEvent` dispatched when a mouse button is released
+- Added `GestureDetector` which is a `Widget` for detecting UI events
 
 ### Changed
 

@@ -2,7 +2,8 @@ package dev.gamekit.ui.widgets;
 
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.events.Event;
-import dev.gamekit.ui.events.MouseEvent;
+import dev.gamekit.ui.events.MouseClickEvent;
+import dev.gamekit.ui.events.MouseMotionEvent;
 
 public class GestureDetector extends SingleChildParent {
   protected GestureDetector(Widget child) {
@@ -40,8 +41,10 @@ public class GestureDetector extends SingleChildParent {
   public void handleEvent(Event event) {
     super.handleEvent(event);
 
-    if (event instanceof MouseEvent mouseEvent) {
-      System.out.println(mouseEvent.x + " " + mouseEvent.y);
+    if (event instanceof MouseClickEvent clickEvent) {
+      System.out.println("Mouse click: " + clickEvent.x + " " + clickEvent.y + " " + clickEvent.buttonIndex);
+    } else if (event instanceof MouseMotionEvent motionEvent) {
+      System.out.println("Mouse moved: " + motionEvent.x + " " + motionEvent.y);
     }
   }
 }

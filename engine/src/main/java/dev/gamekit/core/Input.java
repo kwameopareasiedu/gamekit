@@ -206,8 +206,8 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   public static final int KEY_UNDEFINED = KeyEvent.VK_UNDEFINED;
 
   public static final int BUTTON_LMB = MouseEvent.BUTTON1;
-  public static final int BUTTON_RMB = MouseEvent.BUTTON2;
-  public static final int BUTTON_MMB = MouseEvent.BUTTON3;
+  public static final int BUTTON_RMB = MouseEvent.BUTTON3;
+  public static final int BUTTON_MMB = MouseEvent.BUTTON2;
 
   private static final int KEY_COUNT = 256;
   private static final int BUTTON_COUNT = 3;
@@ -357,7 +357,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   @Override
   public synchronized void mousePressed(MouseEvent e) {
     int buttonCode = e.getButton();
-    if (!isFrozen && buttonCode >= 1 && buttonCode < BUTTON_COUNT) {
+    if (!isFrozen && buttonCode >= 1) {
       buttonStates[buttonCode - 1].update(true);
     }
   }
@@ -365,7 +365,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   @Override
   public synchronized void mouseReleased(MouseEvent e) {
     int buttonCode = e.getButton();
-    if (!isFrozen && buttonCode >= 1 && buttonCode < BUTTON_COUNT) {
+    if (!isFrozen && buttonCode >= 1) {
       buttonStates[buttonCode - 1].update(false);
     }
   }

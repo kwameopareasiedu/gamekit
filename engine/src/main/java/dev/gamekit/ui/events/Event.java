@@ -10,15 +10,29 @@ import dev.gamekit.ui.widgets.Widget;
  * nature of the events.
  */
 public abstract class Event {
-  public final Widget target;
+  private Widget target;
   private boolean handled;
 
-  public Event(Widget target) {
-    this.target = target;
+  public Event() {
     this.handled = false;
   }
 
   public boolean isHandled() { return handled; }
 
+  /**
+   * Sets whether the event has been handled.
+   * Handled events are no longer propagated to ancestor widgets
+   */
   public void setHandled() { this.handled = true; }
+
+  public Widget getTarget() { return target; }
+
+  /**
+   * Internally called to set the target of the event.
+   * Attempts to call this externally will raise an {@link IllegalStateException}
+   */
+  public void setTarget(Widget target) {
+    if (this.target != null) throw new IllegalStateException("Attempting to set target of finalized Event");
+    this.target = target;
+  }
 }

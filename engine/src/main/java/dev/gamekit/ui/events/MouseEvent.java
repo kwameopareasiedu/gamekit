@@ -1,14 +1,15 @@
 package dev.gamekit.ui.events;
 
-import dev.gamekit.ui.widgets.Widget;
-
-/** Base for mouse related events */
-public class MouseEvent extends Event {
+/**
+ * Abstract base class for mouse related events.
+ * Contains an {@code (x, y)} for the screen location
+ * the event took place.
+ */
+public abstract class MouseEvent extends Event {
   public final int x;
   public final int y;
 
-  public MouseEvent(Widget target, int x, int y) {
-    super(target);
+  public MouseEvent(int x, int y) {
     this.x = x;
     this.y = y;
   }

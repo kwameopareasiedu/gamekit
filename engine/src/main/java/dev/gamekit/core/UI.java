@@ -4,7 +4,8 @@ import dev.gamekit.ui.Appearance;
 import dev.gamekit.ui.Bounds;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.events.Event;
-import dev.gamekit.ui.events.MouseEvent;
+import dev.gamekit.ui.events.MouseClickEvent;
+import dev.gamekit.ui.events.MouseMotionEvent;
 import dev.gamekit.ui.widgets.MultiChildParent;
 import dev.gamekit.ui.widgets.Parent;
 import dev.gamekit.ui.widgets.SingleChildParent;
@@ -37,7 +38,6 @@ public final class UI {
   private Widget tree;
   private boolean needsUpdate = false;
   private boolean needsRepaint = true;
-  private int currentMouseY = 0;
 
   public UI(WidgetTreeCreator treeCreator) {
     Window window = Window.getInstance();
@@ -189,10 +189,19 @@ public final class UI {
   private Event inputEventAvailable() {
     Position mousePos = Input.getMousePosition();
 
+    if (Input.isButtonJustReleased(Input.BUTTON_LMB))
+      return new MouseClickEvent(mousePos.x, mousePos.y, Input.BUTTON_LMB);
+
+    if (Input.isButtonJustReleased(Input.BUTTON_RMB))
+      return new MouseClickEvent(mousePos.x, mousePos.y, Input.BUTTON_RMB);
+
+    if (Input.isButtonJustReleased(Input.BUTTON_MMB))
+      return new MouseClickEvent(mousePos.x, mousePos.y, Input.BUTTON_MMB);
+
     if (mousePos.x != mousePosition.x || mousePos.y != mousePosition.y) {
+      MouseMotionEvent motionEvent = new MouseMotionEvent(mousePos.x, mousePos.y);
       mousePosition.set(mousePos);
-      // Mouse position has changed, dispatch mouse event
-      return new MouseEvent(null, mousePos.x, mousePos.y);
+      return motionEvent;
     }
 
     return null;
@@ -220,6 +229,8 @@ public final class UI {
       }
 
       if (!eventNotifyStack.isEmpty()) {
+        event.setTarget(eventNotifyStack.peek());
+
         while (!eventNotifyStack.isEmpty()) {
           Widget widget = eventNotifyStack.pop();
 
