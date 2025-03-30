@@ -21,7 +21,7 @@ public abstract class MultiChildParent extends Parent {
   }
 
   @Override
-  public final void performRender(Graphics2D g) {
+  public void performRender(Graphics2D g) {
     g.setBackground(Constants.TRANSPARENT_COLOR);
     g.clearRect(0, 0, computedBounds.width, computedBounds.height);
 

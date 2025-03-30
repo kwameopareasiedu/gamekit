@@ -46,9 +46,11 @@ public class GestureDetector extends SingleChildParent {
     super.handleEvent(event);
 
     if (event instanceof MouseMotionEvent motionEvent) {
-      if (motionListener != null) motionListener.onEvent(motionEvent);
+      if (motionListener != null)
+        motionListener.onEvent(motionEvent);
     } else if (event instanceof MouseClickEvent clickEvent) {
-      if (clickListener != null) clickListener.onEvent(clickEvent);
+      if (clickListener != null)
+        clickListener.onEvent(clickEvent);
     }
   }
 
