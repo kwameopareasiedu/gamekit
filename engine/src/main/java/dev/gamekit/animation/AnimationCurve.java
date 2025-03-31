@@ -2,7 +2,10 @@ package dev.gamekit.animation;
 
 import static dev.gamekit.utils.Constants.*;
 
-/** Animation curves transforms an animation's value from a (0 - 1) range to a point on a curve */
+/**
+ * Animation curves transforms an {@link Animation} value from a (0 - 1) range
+ * to a point on a curve equation defined in {@link #get(double)} method.
+ */
 public abstract class AnimationCurve {
   public static final AnimationCurve LINEAR = new AnimationCurve() {
     @Override
@@ -180,6 +183,6 @@ public abstract class AnimationCurve {
     }
   };
 
-  /** Returns the result of the curve equation at the specific value */
+  /** Returns the result of the curve equation at the given value */
   public abstract double get(double value);
 }

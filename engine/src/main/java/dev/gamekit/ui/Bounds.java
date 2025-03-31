@@ -14,7 +14,6 @@ public class Bounds {
     this(bounds.x, bounds.y, bounds.width, bounds.height);
   }
 
-  /** Creates a new bounds with explicit values for each side */
   public Bounds(int x, int y, int width, int height) {
     this.x = x;
     this.y = y;
@@ -48,6 +47,8 @@ public class Bounds {
   public void setWidth(int width) { this.width = width; }
 
   public void setHeight(int height) { this.height = height; }
+
+  public int getArea() { return width * height; }
 
   /** Copies values from another bounds object */
   public void set(Bounds bounds) {

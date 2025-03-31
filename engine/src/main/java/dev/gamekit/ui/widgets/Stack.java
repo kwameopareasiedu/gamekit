@@ -22,21 +22,22 @@ public class Stack extends MultiChildParent {
     );
 
     for (Widget child : children) {
-      child.computeLayout(childConstraints);
+      child.layout(childConstraints);
       maxWidth = Math.max(maxWidth, child.computedBounds.width);
       maxHeight = Math.max(maxHeight, child.computedBounds.height);
     }
 
     intrinsicBounds.setSize(maxWidth, maxHeight);
 
-    int computedWidth = constraints.constrainWidth(intrinsicBounds.width);
-    int computedHeight = constraints.constrainHeight(intrinsicBounds.height);
-    computedBounds.setSize(computedWidth, computedHeight);
+    computedBounds.setSize(
+      constraints.constrainWidth(intrinsicBounds.width),
+      constraints.constrainHeight(intrinsicBounds.height)
+    );
 
     for (Widget child : children) {
       child.computedBounds.setPosition(
-        computedWidth / 2 - child.computedBounds.width / 2,
-        computedHeight / 2 - child.computedBounds.height / 2
+        computedBounds.width / 2 - child.computedBounds.width / 2,
+        computedBounds.height / 2 - child.computedBounds.height / 2
       );
     }
   }

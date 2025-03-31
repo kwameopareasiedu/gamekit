@@ -18,7 +18,8 @@ public class Playground extends Scene {
 
   int x = 0, y = 0;
   String text = "Kwame";
-  BufferedImage bufferedImage = IO.loadImageResource("square-img.jpg");
+  BufferedImage squareImage = IO.loadImageResource("square-img.jpg");
+  BufferedImage wideImage = IO.loadImageResource("wide-img.jpg");
 
   public Playground() {
     super("Main Scene");
@@ -68,8 +69,8 @@ public class Playground extends Scene {
             Padding.create(
               GestureDetector.create(
                 Stack.create(
-                  ImageRes.create("wide-img.jpg").withSize(300, 150),
-                  Image.create(bufferedImage).withSize(400, 200)
+                  Image.create(wideImage).withSize(300, 150),
+                  Image.create(squareImage).withSize(400, 200)
                 )
               ).withClickListener(event -> System.out.println(event.getClass())),
               new Spacing(x)

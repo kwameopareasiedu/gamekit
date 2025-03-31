@@ -9,8 +9,8 @@ import static dev.gamekit.utils.Math.clamp;
  * The value can then be connected to any property for smooth transitions.
  * <p>
  * Animation can be set to run once or repeat (either restart or revers).
- * Additionally, an {@link AnimationCurve} can be attached to change how
- * the animation's value is interpolated.
+ * Additionally, an {@link AnimationCurve} can be attached to change how the
+ * animation's value is interpolated.
  */
 public class Animation {
   private final RepeatMode repeatMode;
@@ -21,31 +21,17 @@ public class Animation {
   private State state;
   private double value;
 
-  /**
-   * Creates a non-repeating animation with a duration
-   * @param duration The duration of this animation in seconds
-   */
   public Animation(double duration) {
     this(duration, RepeatMode.NONE, null);
   }
 
-  /**
-   * Creates an animation with a duration and repeat mode
-   * @param duration   The duration of this animation in seconds
-   * @param repeatMode The repeat mode of this animation
-   */
   public Animation(double duration, RepeatMode repeatMode) {
     this(duration, repeatMode, null);
   }
 
-  /**
-   * Creates an animation with a duration, repeat mode and animation curve
-   * @param duration   The duration of this animation in seconds
-   * @param repeatMode The repeat mode of this animation
-   * @param curve      The animation curve for transforming the value
-   */
   public Animation(double duration, RepeatMode repeatMode, AnimationCurve curve) {
-    if (duration <= 0) throw new IllegalArgumentException("Animation duration must be positive");
+    if (duration <= 0)
+      throw new IllegalArgumentException("Animation duration must be positive");
 
     this.repeatMode = repeatMode;
     this.curve = curve;
@@ -110,11 +96,26 @@ public class Animation {
     }
   }
 
+  /** Constants for the state of an {@link Animation} */
   public enum State {
-    IDLE, RUNNING, ENDED
+    /** Indicates a new animation which hasn't started */
+    IDLE,
+    /** Indicates a started animation */
+    RUNNING,
+    /** Indicates an ended or stopped animation */
+    ENDED
   }
 
+  /** Indicates how an animation behaves when it reaches its end */
   public enum RepeatMode {
-    NONE, RESTART, REVERSE
+    /**
+     * Indicates a running animation not repeat and transition to
+     * {@link State#ENDED} when at its end
+     */
+    NONE,
+    /** Indicates a running animation start over when at its end */
+    RESTART,
+    /** Indicates a running animation changes direction when at its end */
+    REVERSE
   }
 }

@@ -6,8 +6,8 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 
 /**
- * Singleton class which controls which part of
- * the game world is rendered in the {@link Window}
+ * Camera controls which part of the game world is visible in the {@link Window}.
+ * It does this by manipulating the window's {@link AffineTransform} object
  */
 public final class Camera {
   private static final Point POINT_CACHE = new Point();
@@ -21,13 +21,13 @@ public final class Camera {
   /** Transforms a screen-space point (x,y) to the world-space */
   public static Position screenToWorldPoint(int x, int y) {
     Window window = Window.getInstance();
-    POINT_CACHE.setLocation(x - window.getRenderWidth(), -y);
+    POINT_CACHE.setLocation(x - window.getDisplayWidth(), -y);
     transform.transform(POINT_CACHE, POINT_CACHE);
     POSITION_CACHE.set(POINT_CACHE);
     return POSITION_CACHE;
   }
 
-  /** Pan the camera such that point (x, y) is at the center of the {@link Window} */
+  /** Pan the camera to center point (x, y) within the {@link Window} */
   public static void lookAt(double x, double y) {
     Camera.x = x;
     Camera.y = -y;
@@ -40,11 +40,14 @@ public final class Camera {
 
   public static double getY() { return y; }
 
-  /** Applies the camera's position and zoom to the current window's transform matrix */
+  /**
+   * Applies the camera's position and zoom to the current window's transform
+   * matrix
+   */
   static void update() {
     Window window = Window.getInstance();
-    int centerX = window.getCenterX(), centerY = window.getCenterY();
-    transform.setTransform(zoom, 0, 0, zoom, centerX - x, centerY - y);
+    Position center = window.getCenter();
+    transform.setTransform(zoom, 0, 0, zoom, center.x - x, center.y - y);
     window.getSceneGraphics().setTransform(transform);
   }
 }

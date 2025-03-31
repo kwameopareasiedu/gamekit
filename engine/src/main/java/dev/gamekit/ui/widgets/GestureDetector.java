@@ -20,7 +20,7 @@ public class GestureDetector extends SingleChildParent {
 
   @Override
   protected void performLayout(Constraints constraints) {
-    child.computeLayout(
+    child.layout(
       new Constraints(
         0, constraints.maxWidth(),
         0, constraints.maxHeight()

@@ -10,6 +10,7 @@ public final class Constants {
   public static final String DEFAULT_FONT_NAME = "Dogical Pixel";
   public static final Font DEFAULT_FONT = IO.loadFontResource("dogicapixel.ttf");
   public static final Color TRANSPARENT_COLOR = new Color(0x0000000, true);
+
   // Animation curve related constants - Start
   public static final double C1 = 1.70158;
   public static final double C2 = C1 * 1.525;

@@ -61,16 +61,17 @@ public abstract class Application {
     this.nextScene = scene;
   }
 
-  /** Schedule a task to be executed immediately after the end of the current frame. */
+  /**
+   * Schedule a task to be executed immediately after the end of the current
+   * frame.
+   */
   public void scheduleTask(Task task) { scheduleTask(task, 0); }
 
   /**
-   * Schedule a task to be executed after some time.
+   * Schedule a task to be executed after some timeout in <b>milliseconds</b>.
    * <p>
-   * If {@code timeout} is zero, {@code task} is
-   * executed immediately after the current frame
-   * @param task    Task to execute
-   * @param timeout Timeout of this task in milliseconds
+   * If {@code timeout} is zero, {@code task} is executed immediately after the
+   * current frame
    */
   public void scheduleTask(Task task, long timeout) {
     if (timeout < 0)
@@ -79,8 +80,9 @@ public abstract class Application {
   }
 
   /**
-   * Schedule an animation to run. Animations are updated before the scene's
-   * {@code onUpdate()} to ensure current values are used by the scene.
+   * Schedule an {@link Animation} to run. Animations are updated before the
+   * scene's {@code onUpdate()} to ensure current values are available to the
+   * scene.
    */
   public void scheduleAnimation(Animation animation) {
     if (!animations.contains(animation)) {
@@ -89,8 +91,9 @@ public abstract class Application {
   }
 
   /**
-   * Quit the current {@link Application} by dispatching
-   * a {@code WINDOW_CLOSING} event to its window
+   * Quit the current {@link Application} by dispatching a
+   * {@link WindowEvent#WINDOW_CLOSING} event to the {@link Window}
+   * {@link javax.swing.JFrame frame}
    */
   public void quit() {
     window.getFrame().dispatchEvent(
@@ -153,8 +156,8 @@ public abstract class Application {
   }
 
   /**
-   * Called in each frame to update the active scene all
-   * running animations and timeouts have been updated
+   * Called in each frame to update the current scene all running animations and
+   * timeouts have been updated
    */
   private void onUpdate() {
     if (!animations.isEmpty()) {
@@ -173,8 +176,8 @@ public abstract class Application {
   }
 
   /**
-   * Applies the camera's transformation on the
-   * window screen and renders the active scene
+   * Applies the camera's transformation on the {@link Window} scene buffer and
+   * renders the current scene
    */
   private void onRender() {
     if (currentScene != null) {

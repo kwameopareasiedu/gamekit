@@ -9,10 +9,10 @@ import java.util.stream.IntStream;
 import static dev.gamekit.utils.Math.clamp;
 
 /**
- * Singleton class responsible for capturing keyboard and mouse inputs for use in the application.
+ * Input handles keyboard and mouse input detection for use in the application.
  * <p>
- * Input includes static constants which map to Java's {@link KeyEvent} constants
- * so they can be used interchangeably.
+ * Input includes static constants which map to Java's {@link KeyEvent}
+ * constants so they can be used interchangeably.
  */
 public final class Input implements KeyListener, MouseListener, MouseMotionListener {
   public static final int KEY_ENTER = KeyEvent.VK_ENTER;
@@ -220,7 +220,6 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   private final Position mousePosition;
   private boolean isFrozen = false;
 
-  /** Creates a new Input instance */
   private Input() {
     keyStates = new ActionState[KEY_COUNT];
     buttonStates = new ActionState[BUTTON_COUNT];
@@ -236,52 +235,28 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
     );
   }
 
-  /**
-   * Check if a key is being held down in the current frame
-   * @param keyCode The ASCII key code of the key to check
-   */
   public synchronized static boolean isKeyPressed(int keyCode) {
     return INSTANCE.keyStates[keyCode].isPressed;
   }
 
-  /**
-   * Check if a key just pressed in the current frame
-   * @param keyCode The ASCII key code of the key to check
-   */
   public synchronized static boolean isKeyJustPressed(int keyCode) {
     return INSTANCE.keyStates[keyCode].isJustPressed;
   }
 
-  /**
-   * Check if a key just released in the current frame
-   * @param keyCode The ASCII key code of the key to check
-   */
   public synchronized static boolean isKeyJustReleased(int keyCode) {
     return INSTANCE.keyStates[keyCode].isJustReleased;
   }
 
-  /**
-   * Check if a button is being held down in the current frame
-   * @param buttonCode The code of the button to check
-   */
   public synchronized static boolean isButtonPressed(int buttonCode) {
     int buttonIndex = buttonCode - 1;
     return INSTANCE.buttonStates[buttonIndex].isPressed;
   }
 
-  /**
-   * Check if a button just pressed in the current frame
-   * @param buttonCode The code of the button to check
-   */
   public synchronized static boolean isButtonJustPressed(int buttonCode) {
     int buttonIndex = buttonCode - 1;
     return INSTANCE.buttonStates[buttonIndex].isJustPressed;
   }
 
-  /**
-   * Check if a button just released in the current frame
-   * @param buttonCode The code of the button to check
-   */
   public synchronized static boolean isButtonJustReleased(int buttonCode) {
     int buttonIndex = buttonCode - 1;
     return INSTANCE.buttonStates[buttonIndex].isJustReleased;
@@ -289,12 +264,12 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
   public synchronized static Position getMousePosition() {
     Window win = Window.getInstance();
-    double scaleRatio = win.getScaleRatio();
+    double scaleRatio = win.getDisplayScaleRatio();
     double frameWidth = win.getFrameWidth();
     double frameHeight = win.getFrameHeight();
-    double renderWidth = win.getRenderWidth();
-    double renderHeight = win.getRenderHeight();
-    double inverseScaleRatio = win.getInverseScaleRatio();
+    double renderWidth = win.getDisplayWidth();
+    double renderHeight = win.getDisplayHeight();
+    double inverseScaleRatio = win.getInverseDisplayScaleRatio();
 
     double scaledRenderWidth = renderWidth * scaleRatio;
     double scaledRenderHeight = renderHeight * scaleRatio;
@@ -320,8 +295,8 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   }
 
   /**
-   * Resets the current state and allows Window
-   * input events to affect the current input state
+   * Resets the current state and allows Window input events to affect the
+   * current input state
    */
   static void reset() {
     IntStream.range(0, KEY_COUNT).forEach(

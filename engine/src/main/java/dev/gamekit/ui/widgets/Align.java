@@ -1,7 +1,7 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.Constraints;
+import dev.gamekit.ui.enums.Alignment;
 
 import java.util.Objects;
 
@@ -20,18 +20,22 @@ public class Align extends SingleChildParent {
 
   @Override
   protected void performLayout(Constraints constraints) {
-    child.computeLayout(
+    child.layout(
       new Constraints(
         0, constraints.maxWidth(),
         0, constraints.maxHeight()
       )
     );
 
-    intrinsicBounds.setSize(child.computedBounds.width, child.computedBounds.height);
+    intrinsicBounds.setSize(
+      child.computedBounds.width,
+      child.computedBounds.height
+    );
 
-    int computedWidth = constraints.constrainWidth(child.computedBounds.width);
-    int computedHeight = constraints.constrainHeight(child.computedBounds.height);
-    computedBounds.setSize(computedWidth, computedHeight);
+    computedBounds.setSize(
+      constraints.constrainWidth(child.computedBounds.width),
+      constraints.constrainHeight(child.computedBounds.height)
+    );
 
     int drawX = 0, drawY = 0;
 

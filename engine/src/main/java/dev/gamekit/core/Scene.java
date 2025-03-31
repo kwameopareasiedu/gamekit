@@ -23,13 +23,11 @@ public abstract class Scene implements UI.WidgetTreeCreator {
 
   private UI ui;
 
-  /** Creates a scene with the given name */
   public Scene(String name) {
     this.name = name;
     props = new HashMap<>();
   }
 
-  /** Returns the currently loaded scene instance */
   public static Scene getCurrent() { return current; }
 
   public String getName() { return name; }

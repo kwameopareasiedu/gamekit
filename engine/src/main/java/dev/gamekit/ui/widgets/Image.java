@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
-/** A {@link Widget} which renders a given {@link BufferedImage} to the screen */
+/** A {@link Widget} which renders a {@link BufferedImage} to the screen */
 public class Image extends Widget {
   protected final BufferedImage image;
   protected ImageFit imageFit;
@@ -21,6 +21,7 @@ public class Image extends Widget {
   protected Image(BufferedImage image) {
     if (image == null)
       throw new NullPointerException("Image cannot be null");
+
     this.image = image;
     this.imageFit = ImageFit.FIT;
     this.width = 0;

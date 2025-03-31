@@ -26,7 +26,6 @@ public class Spacing {
     this(vertical, horizontal, vertical, horizontal);
   }
 
-  /** Creates a new spacing with explicit values for each side */
   public Spacing(int top, int right, int bottom, int left) {
     this.top = top;
     this.right = right;
@@ -42,7 +41,6 @@ public class Spacing {
 
   public void set(int size) { set(size, size); }
 
-  /** Sets the vertical (top, bottom) and horizontal (left, right) spacing */
   public void set(int horizontal, int vertical) {
     set(vertical, horizontal, vertical, horizontal);
   }

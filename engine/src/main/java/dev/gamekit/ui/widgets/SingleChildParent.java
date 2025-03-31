@@ -1,9 +1,9 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.ui.Appearance;
 import dev.gamekit.utils.Constants;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /** A parent which contains only one child {@link Widget} */
 public abstract class SingleChildParent extends Parent {
@@ -22,11 +22,11 @@ public abstract class SingleChildParent extends Parent {
     g.clearRect(0, 0, computedBounds.width, computedBounds.height);
 
     // Renders its children within self to enable clipping
-    Appearance childAppearance = child.getAppearance();
+    BufferedImage childCanvasImage = child.render();
 
-    if (childAppearance != null) {
+    if (childCanvasImage != null) {
       g.drawImage(
-        childAppearance.image,
+        childCanvasImage,
         child.computedBounds.x,
         child.computedBounds.y,
         null

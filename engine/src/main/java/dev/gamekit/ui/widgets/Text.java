@@ -65,9 +65,10 @@ public class Text extends Widget {
 
     intrinsicBounds.setSize(textWidth, textHeight);
 
-    int computedWidth = constraints.constrainWidth(textWidth);
-    int computedHeight = constraints.constrainHeight(textHeight);
-    computedBounds.setSize(computedWidth, computedHeight);
+    computedBounds.setSize(
+      constraints.constrainWidth(textWidth),
+      constraints.constrainHeight(textHeight)
+    );
   }
 
   @Override

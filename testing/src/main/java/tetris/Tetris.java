@@ -205,7 +205,7 @@ public class Tetris extends Scene {
 
     Graphics2D g = null;
     g.setColor(CLEAR_COLOR);
-    g.fillRect(0, 0, Window.getInstance().getRenderWidth(), Window.getInstance().getRenderHeight());
+    g.fillRect(0, 0, Window.getInstance().getDisplayWidth(), Window.getInstance().getDisplayHeight());
     renderQueue(g);
     renderBoard(g);
     renderScore(g);
@@ -279,7 +279,7 @@ public class Tetris extends Scene {
   }
 
   private void renderQueue(Graphics2D g) {
-    int QUEUE_X = Window.getInstance().getRenderWidth() - QUEUE_W - PADDING_X;
+    int QUEUE_X = Window.getInstance().getDisplayWidth() - QUEUE_W - PADDING_X;
 
     Tetromino tetromino = Objects.requireNonNull(queue.peek());
     int[] offset = tetromino.getOffset();
@@ -330,7 +330,7 @@ public class Tetris extends Scene {
   }
 
   private void renderScore(Graphics2D g) {
-    int SCORE_X = Window.getInstance().getRenderWidth() - QUEUE_W - PADDING_X;
+    int SCORE_X = Window.getInstance().getDisplayWidth() - QUEUE_W - PADDING_X;
     int SCORE_Y = PADDING_Y + 256;
 
     g.translate(SCORE_X, SCORE_Y);
@@ -346,8 +346,8 @@ public class Tetris extends Scene {
   }
 
   private void renderPausePanel(Graphics2D g) {
-    int screenW = Window.getInstance().getRenderWidth();
-    int screenH = Window.getInstance().getRenderHeight();
+    int screenW = Window.getInstance().getDisplayWidth();
+    int screenH = Window.getInstance().getDisplayHeight();
     int panelX = (screenW - PAUSE_PANEL_W) / 2;
     int panelY = (screenH - PAUSE_PANEL_H) / 2;
 
@@ -376,8 +376,8 @@ public class Tetris extends Scene {
   }
 
   private void renderGameOverPanel(Graphics2D g) {
-    int screenW = Window.getInstance().getRenderWidth();
-    int screenH = Window.getInstance().getRenderHeight();
+    int screenW = Window.getInstance().getDisplayWidth();
+    int screenH = Window.getInstance().getDisplayHeight();
     int panelX = (screenW - GAME_OVER_PANEL_W) / 2;
     int panelY = (screenH - GAME_OVER_PANEL_H) / 2;
 

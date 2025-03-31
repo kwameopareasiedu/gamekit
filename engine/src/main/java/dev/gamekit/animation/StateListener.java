@@ -2,6 +2,6 @@ package dev.gamekit.animation;
 
 /** Callback interface for {@link Animation} state changes */
 public interface StateListener {
-  /** Called with the new state of the animation */
+  /** Called with the new {@link Animation.State} of the animation */
   void onStateChanged(Animation.State state);
 }

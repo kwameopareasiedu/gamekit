@@ -12,18 +12,19 @@ import dev.gamekit.ui.widgets.Image;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class Demo3DeclarativeUI extends Scene {
+public class Demo3UserInterface extends Scene {
   int x = 0, y = 0;
   String text = "Kwame";
-  BufferedImage bufferedImage = IO.loadImageResource("square-img.jpg");
+  BufferedImage squareImage = IO.loadImageResource("square-img.jpg");
+  BufferedImage wideImage = IO.loadImageResource("wide-img.jpg");
 
-  public Demo3DeclarativeUI() {
+  public Demo3UserInterface() {
     super("Main Scene");
   }
 
   public static void main(String[] args) {
     Application game = new Application("Demo 3 - Declarative UI") { };
-    game.loadScene(new Demo3DeclarativeUI());
+    game.loadScene(new Demo3UserInterface());
     game.run();
   }
 
@@ -60,8 +61,8 @@ public class Demo3DeclarativeUI extends Scene {
         Column.create(
             Padding.create(
               Stack.create(
-                ImageRes.create("wide-img.jpg").withSize(300, 150),
-                Image.create(bufferedImage).withSize(400, 200)
+                Image.create(wideImage).withSize(300, 150),
+                Image.create(squareImage).withSize(400, 200)
               ),
               new Spacing(x)
             ),
