@@ -2,7 +2,7 @@ package dev.gamekit.core;
 
 import dev.gamekit.ui.Bounds;
 import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.events.Event;
+import dev.gamekit.ui.events.InputEvent;
 import dev.gamekit.ui.events.MouseClickEvent;
 import dev.gamekit.ui.events.MouseMotionEvent;
 import dev.gamekit.ui.widgets.MultiChildParent;
@@ -16,10 +16,9 @@ import org.apache.logging.log4j.Logger;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayDeque;
-import java.util.Objects;
+import java.util.List;
 import java.util.Queue;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * UI manages the user interface within for {@link Scene}.
@@ -32,6 +31,7 @@ public final class UI {
   private final Constraints windowConstraints;
   private final Queue<Widget> eventHitTestQueue;
   private final Stack<Widget> eventNotifyStack;
+  private final List<InputEvent> availableInputEvents;
   private final Position mousePosition;
   private Widget tree;
   private boolean needsUpdate = false;
@@ -50,6 +50,7 @@ public final class UI {
     this.treeCreator = treeCreator;
     this.eventHitTestQueue = new ArrayDeque<>();
     this.eventNotifyStack = new Stack<>();
+    this.availableInputEvents = new ArrayList<>();
     this.mousePosition = new Position();
   }
 
@@ -89,10 +90,8 @@ public final class UI {
     if (tree != null && needsUpdate)
       updateTree();
 
-    Event inputEvent = inputEventAvailable();
-
-    if (inputEvent != null)
-      dispatchEvent(inputEvent);
+    if (inputEventsAvailable())
+      dispatchAvailableInputEvents();
   }
 
   /** Draws the {@link Widget} tree to the {@link Window} UI target */
@@ -186,28 +185,33 @@ public final class UI {
    * Monitors the {@link Input} class and generates events if an action of
    * interest has occurred
    */
-  private Event inputEventAvailable() {
-    Position mousePos = Input.getMousePosition();
+  private boolean inputEventsAvailable() {
+    availableInputEvents.clear();
 
-    if (Input.isButtonJustReleased(Input.BUTTON_LMB))
-      return new MouseClickEvent(mousePos.x, mousePos.y, Input.BUTTON_LMB);
+    boolean eventsAvailable = false;
+    Position newMousePos = Input.getMousePosition();
 
-    if (Input.isButtonJustReleased(Input.BUTTON_RMB))
-      return new MouseClickEvent(mousePos.x, mousePos.y, Input.BUTTON_RMB);
-
-    if (Input.isButtonJustReleased(Input.BUTTON_MMB))
-      return new MouseClickEvent(mousePos.x, mousePos.y, Input.BUTTON_MMB);
-
-    if (mousePos.x != mousePosition.x || mousePos.y != mousePosition.y) {
-      MouseMotionEvent motionEvent = new MouseMotionEvent(mousePos.x, mousePos.y);
-      mousePosition.set(mousePos);
-      return motionEvent;
+    if (Input.isButtonJustReleased(Input.BUTTON_LMB)) {
+      availableInputEvents.add(new MouseClickEvent(newMousePos.x, newMousePos.y, Input.BUTTON_LMB));
+      eventsAvailable = true;
+    } else if (Input.isButtonJustReleased(Input.BUTTON_RMB)) {
+      availableInputEvents.add(new MouseClickEvent(newMousePos.x, newMousePos.y, Input.BUTTON_RMB));
+      eventsAvailable = true;
+    } else if (Input.isButtonJustReleased(Input.BUTTON_MMB)) {
+      availableInputEvents.add(new MouseClickEvent(newMousePos.x, newMousePos.y, Input.BUTTON_MMB));
+      eventsAvailable = true;
     }
 
-    return null;
+    if (!mousePosition.equals(newMousePos)) {
+      availableInputEvents.add(new MouseMotionEvent(newMousePos.x, newMousePos.y));
+      eventsAvailable = true;
+    }
+
+    mousePosition.set(newMousePos);
+    return eventsAvailable;
   }
 
-  private void dispatchEvent(Event event) {
+  private void dispatchAvailableInputEvents() {
     eventHitTestQueue.clear();
     eventNotifyStack.clear();
 
@@ -229,15 +233,16 @@ public final class UI {
       }
 
       if (!eventNotifyStack.isEmpty()) {
-        event.setTarget(eventNotifyStack.peek());
+        for (InputEvent ev : availableInputEvents)
+          ev.setTarget(eventNotifyStack.peek());
 
         while (!eventNotifyStack.isEmpty()) {
           Widget widget = eventNotifyStack.pop();
 
-          if (event.isHandled())
-            break;
-
-          widget.handleEvent(event);
+          for (InputEvent ev : availableInputEvents) {
+            if (!ev.isHandled())
+              widget.handleEvent(ev);
+          }
         }
       }
     }

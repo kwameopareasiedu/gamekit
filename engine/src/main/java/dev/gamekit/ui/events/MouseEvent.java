@@ -4,7 +4,7 @@ package dev.gamekit.ui.events;
  * Abstract base class for mouse related events. Contains an {@code (x, y)} for
  * the screen location the event took place.
  */
-public abstract class MouseEvent extends Event {
+public abstract class MouseEvent extends InputEvent {
   public final int x;
   public final int y;
 

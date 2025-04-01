@@ -4,6 +4,7 @@ import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.enums.MainAxisAlignment;
 import dev.gamekit.ui.enums.TextAlignment;
+import dev.gamekit.ui.widgets.Button;
 import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.ui.widgets.*;
 import dev.gamekit.utils.Config;
@@ -67,7 +68,7 @@ public class Playground extends Scene {
         640, 480,
         Column.create(
             Padding.create(
-              GestureDetector.create(
+              Button.create(
                 Stack.create(
                   Image.create(wideImage).withSize(300, 150),
                   Image.create(squareImage).withSize(400, 200)

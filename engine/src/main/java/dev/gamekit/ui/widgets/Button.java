@@ -1,21 +1,20 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.events.Event;
+import dev.gamekit.ui.events.InputEvent;
 import dev.gamekit.ui.events.EventListener;
 import dev.gamekit.ui.events.MouseClickEvent;
-import dev.gamekit.ui.events.MouseMotionEvent;
 
-public class GestureDetector extends SingleChildParent {
-  protected EventListener<MouseMotionEvent> motionListener;
+/** A {@link Widget} which can be clicked to trigger an event */
+public class Button extends SingleChildParent {
   protected EventListener<MouseClickEvent> clickListener;
 
-  protected GestureDetector(Widget child) {
+  protected Button(Widget child) {
     super(child);
   }
 
-  public static GestureDetector create(Widget child) {
-    return new GestureDetector(child);
+  public static Button create(Widget child) {
+    return new Button(child);
   }
 
   @Override
@@ -42,24 +41,16 @@ public class GestureDetector extends SingleChildParent {
   }
 
   @Override
-  public void handleEvent(Event event) {
+  public void handleEvent(InputEvent event) {
     super.handleEvent(event);
 
-    if (event instanceof MouseMotionEvent motionEvent) {
-      if (motionListener != null)
-        motionListener.onEvent(motionEvent);
-    } else if (event instanceof MouseClickEvent clickEvent) {
+    if (event instanceof MouseClickEvent clickEvent) {
       if (clickListener != null)
         clickListener.onEvent(clickEvent);
     }
   }
 
-  public GestureDetector withMotionListener(EventListener<MouseMotionEvent> listener) {
-    this.motionListener = listener;
-    return this;
-  }
-
-  public GestureDetector withClickListener(EventListener<MouseClickEvent> listener) {
+  public Button withClickListener(EventListener<MouseClickEvent> listener) {
     this.clickListener = listener;
     return this;
   }

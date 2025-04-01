@@ -3,7 +3,7 @@ package dev.gamekit.ui.widgets;
 import dev.gamekit.core.UI;
 import dev.gamekit.ui.Bounds;
 import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.events.Event;
+import dev.gamekit.ui.events.InputEvent;
 import dev.gamekit.utils.Config;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -135,7 +135,7 @@ public abstract class Widget {
    * widget. This should be overridden by subclasses to handle different event
    * types
    */
-  public void handleEvent(Event event) { /* No-op */ }
+  public void handleEvent(InputEvent event) { /* No-op */ }
 
   /** Determines if point (x, y) falls within the absolute bounds of this widget */
   public boolean hitTest(int x, int y) {

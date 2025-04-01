@@ -8,11 +8,11 @@ import dev.gamekit.ui.widgets.Widget;
  * The {@link dev.gamekit.core.UI UI} class generates and dispatches events to
  * target widget based on the nature of the events.
  */
-public abstract class Event {
+public abstract class InputEvent {
   private Widget target;
   private boolean handled;
 
-  public Event() {
+  public InputEvent() {
     this.handled = false;
   }
 
