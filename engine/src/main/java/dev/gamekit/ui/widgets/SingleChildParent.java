@@ -3,6 +3,7 @@ package dev.gamekit.ui.widgets;
 import dev.gamekit.utils.Constants;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /** A parent which contains only one child {@link Widget} */
 public abstract class SingleChildParent extends Parent {
@@ -16,17 +17,21 @@ public abstract class SingleChildParent extends Parent {
   }
 
   @Override
-  public final void performRender(Graphics2D g) {
+  public void performRender(Graphics2D g) {
     g.setBackground(Constants.TRANSPARENT_COLOR);
     g.clearRect(0, 0, computedBounds.width, computedBounds.height);
 
     // Renders its children within self to enable clipping
-    g.drawImage(
-      child.getAppearance().image,
-      child.computedBounds.x,
-      child.computedBounds.y,
-      null
-    );
+    BufferedImage childCanvasImage = child.render();
+
+    if (childCanvasImage != null) {
+      g.drawImage(
+        childCanvasImage,
+        child.computedBounds.x,
+        child.computedBounds.y,
+        null
+      );
+    }
   }
 
   public Widget getChild() { return child; }

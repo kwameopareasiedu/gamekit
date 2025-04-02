@@ -23,13 +23,11 @@ public abstract class Scene implements UI.WidgetTreeCreator {
 
   private UI ui;
 
-  /** Creates a scene with the given name */
   public Scene(String name) {
     this.name = name;
     props = new HashMap<>();
   }
 
-  /** Returns the currently loaded scene instance */
   public static Scene getCurrent() { return current; }
 
   public String getName() { return name; }
@@ -79,11 +77,10 @@ public abstract class Scene implements UI.WidgetTreeCreator {
     ui.triggerUpdate();
   }
 
-  /**
-   * Called by {@link Application} to initialize the scene.
-   * This calls {@link #onStart()} before calling
-   * {@link Prop#onStart() onStart()} on each child prop
-   */
+  /** Indicates that the widget tree should be re-rendered */
+  public final void redrawUI() { ui.triggerRender(); }
+
+  /** Called <b>once</b> by {@link Application} to initialize the scene */
   final void start() {
     logger.debug("Starting scene");
     ui = new UI(this);
@@ -92,34 +89,21 @@ public abstract class Scene implements UI.WidgetTreeCreator {
     props.forEach((k, v) -> v.onStart());
   }
 
-  /**
-   * Called by {@link Application} to update the scene.
-   * This calls {@link #onUpdate()} before calling
-   * {@link Prop#onUpdate() onUpdate()} on each child prop
-   */
+  /** Called by {@link Application} to update the scene */
   final void update() {
     onUpdate();
     props.forEach((k, v) -> v.onUpdate());
     ui.update();
   }
 
-  /**
-   * Called by {@link Application} to render the scene.
-   * This calls {@link #onRender()} first, then calls
-   * {@link Prop#onRender() onRender()} on each child prop
-   * and finally renders the widget tree, if set
-   */
+  /** Called by {@link Application} to render the scene */
   final void render() {
     onRender();
     props.forEach((k, v) -> v.onRender());
     ui.render();
   }
 
-  /**
-   * Called by {@link Application} to render the scene.
-   * This calls {@link Prop#onDispose() onDispose()}
-   * on each child prop before calling {@link #onDispose()}
-   */
+  /** Called <b>once</b> by {@link Application} to dispose the scene */
   final void dispose() {
     logger.debug("Disposing scene");
     props.forEach((k, v) -> v.onDispose());

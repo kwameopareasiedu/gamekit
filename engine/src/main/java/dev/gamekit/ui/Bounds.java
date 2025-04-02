@@ -14,7 +14,6 @@ public class Bounds {
     this(bounds.x, bounds.y, bounds.width, bounds.height);
   }
 
-  /** Creates a new bounds with explicit values for each side */
   public Bounds(int x, int y, int width, int height) {
     this.x = x;
     this.y = y;
@@ -49,6 +48,8 @@ public class Bounds {
 
   public void setHeight(int height) { this.height = height; }
 
+  public int getArea() { return width * height; }
+
   /** Copies values from another bounds object */
   public void set(Bounds bounds) {
     set(bounds.x, bounds.y, bounds.width, bounds.height);
@@ -73,10 +74,10 @@ public class Bounds {
 
   @Override
   public boolean equals(Object obj) {
-    return obj instanceof Bounds
-      && ((Bounds) obj).x == x
-      && ((Bounds) obj).y == y
-      && ((Bounds) obj).width == width
-      && ((Bounds) obj).height == height;
+    return obj instanceof Bounds boundsObject
+      && x == boundsObject.x
+      && y == boundsObject.y
+      && width == boundsObject.width
+      && height == boundsObject.height;
   }
 }

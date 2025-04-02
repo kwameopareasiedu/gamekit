@@ -5,15 +5,23 @@ import dev.gamekit.animation.AnimationCurve;
 import dev.gamekit.core.Application;
 import dev.gamekit.core.Renderer;
 import dev.gamekit.core.Scene;
+import dev.gamekit.ui.Spacing;
+import dev.gamekit.ui.enums.Alignment;
+import dev.gamekit.ui.widgets.Align;
+import dev.gamekit.ui.widgets.Padding;
+import dev.gamekit.ui.widgets.Text;
+import dev.gamekit.ui.widgets.Widget;
 
 import java.awt.*;
 
 import static dev.gamekit.utils.Math.toInt;
 
 public class AnimationTesting extends Scene {
+  double animationValue = 0;
+
   private final Animation bounceAnimation = new Animation(
     4, Animation.RepeatMode.REVERSE, AnimationCurve.EASE_IN_OUT_BOUNCE
-  );
+  ).setValueListener(value -> updateUI(() -> animationValue = value));
 
   public AnimationTesting() {
     super("Animation Testing");
@@ -42,6 +50,17 @@ public class AnimationTesting extends Scene {
     Renderer.clear();
 
     Renderer.setColor(Color.CYAN);
-    Renderer.fillCircle(0, toInt(-200 * bounceAnimation.getValue()), 50);
+    Renderer.fillCircle(0, toInt(-200 * bounceAnimation.getValue()) + 150, 50);
+  }
+
+  @Override
+  public Widget onCreateUI() {
+    return Align.create(
+      Padding.create(
+        Text.create(String.format("Value: %f", animationValue)),
+        new Spacing(16, 48)
+      ),
+      Alignment.TOP_LEFT
+    );
   }
 }

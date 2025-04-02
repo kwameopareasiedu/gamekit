@@ -14,8 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Static class responsible for resource loading and file output. IO caches resources
- * loaded, prevent multiple disk reads for the same and improving performance.
+ * IO handles resource loading and file access. It also caches resources loaded,
+ * prevent multiple disk reads for the same and improving performance.
  */
 public class IO {
   private static final Logger LOGGER = LogManager.getLogger();
@@ -26,7 +26,8 @@ public class IO {
   /**
    * Loads and caches an image at the specified path
    * @param path Resources path of image to load
-   * @return {@link BufferedImage} The loaded image or {@code null} if an error occurred during loading
+   * @return {@link BufferedImage} The loaded image or {@code null} if an error
+   * occurred during loading
    */
   public static BufferedImage loadImageResource(String path) {
     if (CACHE.containsKey(path)) {
@@ -50,7 +51,8 @@ public class IO {
   /**
    * Loads and caches a font at the specified path
    * @param path Resources path of font file to load
-   * @return {@link BufferedImage} The loaded image or {@code null} if an error occurred during loading
+   * @return {@link BufferedImage} The loaded image or {@code null} if an error
+   * occurred during loading
    */
   public static Font loadFontResource(String path) {
     if (CACHE.containsKey(path)) {
@@ -72,11 +74,13 @@ public class IO {
   }
 
   /**
-   * Opens and returns a {@link BufferedReader} to a resource at the specified path.
+   * Opens and returns a {@link BufferedReader} to a resource at the specified
+   * path.
    * <p>
    * <strong>Important: Remember to close the reader when done</strong>
    * @param path Resources path of resource file to load
-   * @return {@link BufferedImage} The {@link BufferedReader} object to the resource
+   * @return {@link BufferedImage} The {@link BufferedReader} object to the
+   * resource
    */
   public static BufferedReader loadBufferedResource(String path) {
     InputStream fileInputStream = IO.class.getClassLoader().getResourceAsStream(path);

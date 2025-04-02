@@ -7,15 +7,28 @@
 - Added constructor `Application(Config)` which can be used to set the title, resolution and fullscreen mode
 - Added `ImageRes` which is a widget that renders a **resource image**
 - Added `Stack` which is a `MultiChildParent` which stacks its children on top of each other
+- Added `Animation setValueListener(ValueListener)` to `Animation` to be notified of value changes
+- Added `Animation setStateListener(StateListener)` to `Animation` to be notified of state changes
+- Added `static Position screenToWorldPoint(int, int)` to `Camera` which transforms a screen-space position into a world
+  position
+- Added event generation and dispatch system to `UI` class
+- Added abstract `Event` class
+- Added abstract `MouseEvent` which is the `Event` for mouse events
+- Added `MouseMotionEvent` which is a `MouseEvent` dispatched when the mouse moves
+- Added `MouseClickEvent` which is a `MouseEvent` dispatched when a mouse button is released
+- Added `GestureDetector` which is a `Widget` for detecting UI events
 
 ### Changed
 
 - Modified `Image` widget to render a given image instead
+- Changed `Camera` class to a utility class. Instead of `Camera.getInstance().<METHOD>`, use `Camera.<METHOD>`
 
 ### Removed
 
-- Removed `static setResolution(Resolution)` from `Window` class
-- Removed `static setFullscreen(boolean)` from `Window` class
+- Removed `static void setResolution(Resolution)` from `Window` class
+- Removed `static void setFullscreen(boolean)` from `Window` class
+- Removed `static Camera getInstance()` from `Camera` class
+- Removed `Point transformPoint(int, int)` from `Camera` class
 
 ## 0.3.0-SNAPSHOT-2
 
@@ -58,10 +71,6 @@
 - Added `Padding` which is a `SingleChildParent` that adds spacing around its child
 - Added `Spacing` class which represents space around a widget
 - Added `UI` class which manages the user interface for a `Scene`
-
-### Changed
-
-### Deprecated
 
 ### Removed
 

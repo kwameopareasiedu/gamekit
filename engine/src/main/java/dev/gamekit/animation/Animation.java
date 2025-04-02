@@ -9,41 +9,29 @@ import static dev.gamekit.utils.Math.clamp;
  * The value can then be connected to any property for smooth transitions.
  * <p>
  * Animation can be set to run once or repeat (either restart or revers).
- * Additionally, an {@link AnimationCurve} can be attached to change how
- * the animation's value is interpolated.
+ * Additionally, an {@link AnimationCurve} can be attached to change how the
+ * animation's value is interpolated.
  */
 public class Animation {
   private final RepeatMode repeatMode;
   private final AnimationCurve curve;
+  private ValueListener valueListener;
+  private StateListener stateListener;
   private double rate;
   private State state;
   private double value;
 
-  /**
-   * Creates a non-repeating animation with a duration
-   * @param duration The duration of this animation in seconds
-   */
   public Animation(double duration) {
     this(duration, RepeatMode.NONE, null);
   }
 
-  /**
-   * Creates an animation with a duration and repeat mode
-   * @param duration   The duration of this animation in seconds
-   * @param repeatMode The repeat mode of this animation
-   */
   public Animation(double duration, RepeatMode repeatMode) {
     this(duration, repeatMode, null);
   }
 
-  /**
-   * Creates an animation with a duration, repeat mode and animation curve
-   * @param duration   The duration of this animation in seconds
-   * @param repeatMode The repeat mode of this animation
-   * @param curve      The animation curve for transforming the value
-   */
   public Animation(double duration, RepeatMode repeatMode, AnimationCurve curve) {
-    if (duration <= 0) throw new IllegalArgumentException("Animation duration must be positive");
+    if (duration <= 0)
+      throw new IllegalArgumentException("Animation duration must be positive");
 
     this.repeatMode = repeatMode;
     this.curve = curve;
@@ -54,15 +42,26 @@ public class Animation {
 
   public State getState() { return state; }
 
-  public double getValue() {
-    if (curve == null) return value;
-    return curve.transform(value);
+  public double getValue() { return curve != null ? curve.get(value) : value; }
+
+  /** Sets the value listener and returns this animation */
+  public Animation setValueListener(ValueListener listener) {
+    this.valueListener = listener;
+    return this;
+  }
+
+  /** Sets the state listener and returns this animation */
+  public Animation setStateListener(StateListener listener) {
+    this.stateListener = listener;
+    return this;
   }
 
   /** Starts this animation and changes its state to {@link State#RUNNING} */
   public void start() {
     if (state == State.IDLE) {
       state = State.RUNNING;
+      if (stateListener != null)
+        stateListener.onStateChanged(state);
       Application.getInstance().scheduleAnimation(this);
     }
   }
@@ -73,16 +72,23 @@ public class Animation {
    */
   public void stop() {
     state = State.ENDED;
+    if (stateListener != null)
+      stateListener.onStateChanged(state);
   }
 
   /** Called internally by the application game loop to update this animation */
-  public void onUpdate() {
+  public void update() {
     if (state == State.RUNNING) {
       value = clamp(value + 0.001 * rate * Application.FRAME_TIME, 0, 1);
+      if (valueListener != null) valueListener.onValueChanged(value);
 
       if ((value >= 1 && rate > 0) || (value <= 0 && rate < 0)) {
         switch (repeatMode) {
-          case NONE -> state = State.ENDED;
+          case NONE -> {
+            state = State.ENDED;
+            if (stateListener != null)
+              stateListener.onStateChanged(state);
+          }
           case RESTART -> value = 0;
           case REVERSE -> rate *= -1;
         }
@@ -90,11 +96,26 @@ public class Animation {
     }
   }
 
+  /** Constants for the state of an {@link Animation} */
   public enum State {
-    IDLE, RUNNING, ENDED
+    /** Indicates a new animation which hasn't started */
+    IDLE,
+    /** Indicates a started animation */
+    RUNNING,
+    /** Indicates an ended or stopped animation */
+    ENDED
   }
 
+  /** Indicates how an animation behaves when it reaches its end */
   public enum RepeatMode {
-    NONE, RESTART, REVERSE
+    /**
+     * Indicates a running animation not repeat and transition to
+     * {@link State#ENDED} when at its end
+     */
+    NONE,
+    /** Indicates a running animation start over when at its end */
+    RESTART,
+    /** Indicates a running animation changes direction when at its end */
+    REVERSE
   }
 }

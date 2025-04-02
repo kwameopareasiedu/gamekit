@@ -20,26 +20,29 @@ public class Padding extends SingleChildParent {
 
   @Override
   protected void performLayout(Constraints constraints) {
-    child.computeLayout(
+    child.layout(
       new Constraints(
         0, constraints.maxWidth(),
         0, constraints.maxHeight()
       )
     );
 
-    int intrinsicWidth = child.computedBounds.width + padding.getHorizontal();
-    int intrinsicHeight = child.computedBounds.height + padding.getVertical();
-    intrinsicBounds.setSize(intrinsicWidth, intrinsicHeight);
+    intrinsicBounds.setSize(
+      child.computedBounds.width + padding.getHorizontal(),
+      child.computedBounds.height + padding.getVertical()
+    );
 
-    int computedWidth = constraints.constrainWidth(intrinsicWidth);
-    int computedHeight = constraints.constrainHeight(intrinsicHeight);
-    computedBounds.setSize(computedWidth, computedHeight);
+    computedBounds.setSize(
+      constraints.constrainWidth(intrinsicBounds.width),
+      constraints.constrainHeight(intrinsicBounds.height)
+    );
 
-    if (intrinsicWidth > computedWidth || intrinsicHeight > computedHeight) {
-      child.computeLayout(
+    if (intrinsicBounds.width > computedBounds.width ||
+      intrinsicBounds.height > computedBounds.height) {
+      child.layout(
         new Constraints(
-          0, computedWidth - padding.getHorizontal(),
-          0, computedHeight - padding.getVertical()
+          0, computedBounds.width - padding.getHorizontal(),
+          0, computedBounds.height - padding.getVertical()
         )
       );
     }

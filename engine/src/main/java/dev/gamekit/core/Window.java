@@ -1,6 +1,7 @@
 package dev.gamekit.core;
 
 import dev.gamekit.utils.Config;
+import dev.gamekit.utils.Position;
 import dev.gamekit.utils.Resolution;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,16 +10,20 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-/** Singleton class which manages the {@link JFrame} the application is rendered in */
+/**
+ * Window which manages the {@link JFrame} and image buffers the application
+ * is rendered in
+ */
 public final class Window {
   private static final Logger LOGGER = LogManager.getLogger();
 
   private static Window instance;
 
   private final Config config;
-  private final Dimension renderSize;
-  private final Point center;
-  private final double scaleRatio;
+  private final Dimension displaySize;
+  private final Position center;
+  private final double displayScaleRatio;
+  private final double inverseDisplayScaleRatio;
   private final JFrame frame;
   private BufferedImage renderBuffer;
   private Graphics2D renderGraphics;
@@ -28,10 +33,18 @@ public final class Window {
   private Graphics2D uiGraphics;
 
   Window(Config config) {
+    LOGGER.debug("Creating window");
     this.config = config;
 
-    renderSize = new Dimension(config.resolution().width(), config.resolution().height());
-    center = new Point(config.resolution().width() / 2, config.resolution().height() / 2);
+    displaySize = new Dimension(
+      config.resolution().width(),
+      config.resolution().height()
+    );
+
+    center = new Position(
+      config.resolution().width() / 2,
+      config.resolution().height() / 2
+    );
 
     frame = new JFrame(config.title());
     frame.getContentPane().setBackground(Color.BLACK);
@@ -44,7 +57,7 @@ public final class Window {
         .getDefaultScreenDevice()
         .setFullScreenWindow(frame);
 
-      scaleRatio = Math.min(
+      displayScaleRatio = Math.min(
         (double) Resolution.NATIVE.width() / config.resolution().width(),
         (double) Resolution.NATIVE.height() / config.resolution().height()
       );
@@ -57,8 +70,10 @@ public final class Window {
       frame.setMinimumSize(d);
       frame.setPreferredSize(d);
       frame.setResizable(false);
-      scaleRatio = 1;
+      displayScaleRatio = 1;
     }
+
+    inverseDisplayScaleRatio = 1.0 / displayScaleRatio;
 
     frame.setLocationRelativeTo(null);
     frame.setBackground(Color.BLACK);
@@ -67,8 +82,6 @@ public final class Window {
     createRenderBuffers();
 
     Window.instance = this;
-
-    LOGGER.debug("Scale Ratio: {}", scaleRatio);
   }
 
   public static Window getInstance() { return instance; }
@@ -79,20 +92,17 @@ public final class Window {
   /** Returns the height of the {@link JFrame frame} */
   public int getFrameHeight() { return frame.getHeight(); }
 
-  /** Returns the width of the render buffer */
-  public int getRenderWidth() { return renderSize.width; }
+  /** Returns the width of the <b>scene</b> buffer */
+  public int getDisplayWidth() { return displaySize.width; }
 
-  /** Returns the height of the render buffer */
-  public int getRenderHeight() { return renderSize.height; }
+  /** Returns the height of the <b>scene</b> buffer */
+  public int getDisplayHeight() { return displaySize.height; }
 
-  /** Returns the x component of the center point of the render buffer */
-  public int getCenterX() { return center.x; }
+  public Position getCenter() { return center; }
 
-  /** Returns the y component of the center point of the render buffer */
-  public int getCenterY() { return center.y; }
+  public double getDisplayScaleRatio() { return displayScaleRatio; }
 
-  /** Returns the resolution scale ratio */
-  public double getScaleRatio() { return scaleRatio; }
+  public double getInverseDisplayScaleRatio() { return inverseDisplayScaleRatio; }
 
   JFrame getFrame() { return frame; }
 
@@ -102,15 +112,17 @@ public final class Window {
 
   void redraw() {
     if (config.isFullScreen()) {
-      int scaledWidth = (int) (renderSize.width * scaleRatio);
-      int scaledHeight = (int) (renderSize.height * scaleRatio);
+      int scaledWidth = (int) (displaySize.width * displayScaleRatio);
+      int scaledHeight = (int) (displaySize.height * displayScaleRatio);
       int dx1 = (int) (0.5 * (frame.getWidth() - scaledWidth));
       int dy1 = (int) (0.5 * (frame.getHeight() - scaledHeight));
       int dx2 = dx1 + scaledWidth;
       int dy2 = dy1 + scaledHeight;
 
-      renderGraphics.drawImage(sceneBuffer, dx1, dy1, dx2, dy2, 0, 0, renderSize.width, renderSize.height, null);
-      renderGraphics.drawImage(uiBuffer, dx1, dy1, dx2, dy2, 0, 0, renderSize.width, renderSize.height, null);
+      renderGraphics.drawImage(sceneBuffer, dx1, dy1, dx2, dy2,
+        0, 0, displaySize.width, displaySize.height, null);
+      renderGraphics.drawImage(uiBuffer, dx1, dy1, dx2, dy2,
+        0, 0, displaySize.width, displaySize.height, null);
     } else {
       renderGraphics.drawImage(sceneBuffer, null, 0, 0);
       renderGraphics.drawImage(uiBuffer, null, 0, 0);
@@ -121,12 +133,12 @@ public final class Window {
   }
 
   void createRenderBuffers() {
-    sceneBuffer = new BufferedImage(renderSize.width, renderSize.height, BufferedImage.TYPE_INT_ARGB);
+    sceneBuffer = new BufferedImage(displaySize.width, displaySize.height, BufferedImage.TYPE_INT_ARGB);
     sceneGraphics = sceneBuffer.createGraphics();
     sceneGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     sceneGraphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
-    uiBuffer = new BufferedImage(renderSize.width, renderSize.height, BufferedImage.TYPE_INT_ARGB);
+    uiBuffer = new BufferedImage(displaySize.width, displaySize.height, BufferedImage.TYPE_INT_ARGB);
     uiGraphics = uiBuffer.createGraphics();
     uiGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     uiGraphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);

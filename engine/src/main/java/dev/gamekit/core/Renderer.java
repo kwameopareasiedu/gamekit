@@ -12,29 +12,25 @@ public final class Renderer {
 
   private Renderer() { }
 
-  /** Sets the background {@link Color color} to use for the next draw call */
   public static void setBackground(Color color) { CURRENT_STATE.bgColor = color; }
 
-  /** Sets the {@link Stroke stroke} to use for the next draw call */
   public static void setStroke(Stroke stroke) { CURRENT_STATE.stroke = stroke; }
 
-  /** Sets the {@link Paint paint} to use for the next draw call */
   public static void setPaint(Paint paint) { CURRENT_STATE.paint = paint; }
 
-  /** Sets the foreground {@link Color color} to use for the next draw call */
   public static void setColor(Color color) { CURRENT_STATE.color = color; }
 
   /**
-   * By default, the state (I.e. fg/bg color, stroke or paint)
-   * of the renderer resets after each draw call.
+   * By default, the state (I.e. fg/bg color, stroke or paint) of the renderer
+   * resets after each draw method.
    * <p>
-   * Calling {@code beginGroup()} disables this behaviour,
-   * preserving the values until {@link #endGroup()} is called
+   * This disables this default behaviour and preserves the state until
+   * {@link #endGroup()} is called
    */
   public static void beginGroup() { CURRENT_STATE.preserve(); }
 
   /**
-   * Restores the default behaviour of clearing the state after each draw call.
+   * Restores the default behaviour of clearing the state after each draw method.
    * @see #beginGroup()
    */
   public static void endGroup() { CURRENT_STATE.discard(); }
@@ -42,145 +38,80 @@ public final class Renderer {
   /** Clears the {@link Window} scene buffer with current state background color */
   public static void clear() {
     applyGraphicsState();
-    int x = 0, y = 0, w = Window.getInstance().getRenderWidth(), h = Window.getInstance().getRenderHeight();
-    var pt = Camera.getInstance().transformPoint(x, y);
-    g.clearRect(-pt.x, -pt.y, w, h);
+    int x = 0, y = 0, w = Window.getInstance().getDisplayWidth(), h = Window.getInstance().getDisplayHeight();
+    var pt = Camera.screenToWorldPoint(x, y);
+    g.clearRect(pt.x, -pt.y, w, h);
     resetGraphicsState();
   }
 
-  /**
-   * Draws a line from {@code P1:(x1, y1)} to {@code P2:(x2, y2)}
-   * @param x1 The x-coordinate of P1
-   * @param y1 The y-coordinate of P1
-   * @param x2 The x-coordinate of P2
-   * @param y2 The y-coordinate of P2
-   */
+  /** Draws a line from {@code (x1, y1)} to {@code (x2, y2)} */
   public static void drawLine(int x1, int y1, int x2, int y2) {
     applyGraphicsState();
     g.drawLine(x1, -y1, x2, -y2);
     resetGraphicsState();
   }
 
-  /**
-   * Draws a vertical line from {@code P1:(x, y1)} to {@code P2:(x, y2)}
-   * @param x  The x-coordinate of the line
-   * @param y1 The y-coordinate of start point
-   * @param y2 The y-coordinate of the end point
-   */
+  /** Draws a vertical line from {@code (x, y1)} to {@code (x, y2)} */
   public static void drawLineV(int x, int y1, int y2) {
     drawLine(x, y1, x, y2);
   }
 
-  /**
-   * Draws a horizontal line from {@code P1:(x1, y)} to {@code P2:(x2, y)}
-   * @param x1 The x-coordinate of start point
-   * @param x2 The x-coordinate of the end point
-   * @param y  The y-coordinate of the line
-   */
+  /** Draws a horizontal line from {@code (x1, y)} to {@code (x2, y)} */
   public static void drawLineH(int x1, int y, int x2) {
     drawLine(x1, y, x2, y);
   }
 
-  /**
-   * Fills a center-origin rect at (x, y) with width and height
-   * @param x      The x-coordinate of the rect center
-   * @param y      The y-coordinate of the rect center
-   * @param width  The width of the rect
-   * @param height The height of the rect
-   */
+  /** Fills a <b>center-origin</b> rect at (x, y) with width and height */
   public static void fillRect(int x, int y, int width, int height) {
     rect(x, y, width, height, true);
   }
 
-  /**
-   * Draws a center-origin rect at (x, y) with width and height
-   * @param x      The x-coordinate of the rect center
-   * @param y      The y-coordinate of the rect center
-   * @param width  The width of the rect
-   * @param height The height of the rect
-   */
+  /** Draws a <b>center-origin</b> rect at (x, y) with width and height */
   public static void drawRect(int x, int y, int width, int height) {
     rect(x, y, width, height, false);
   }
 
   /**
-   * Fills a center-origin rounded rect at (x, y) with width and height and arc radii
-   * @param x         The x-coordinate of the rect center
-   * @param y         The y-coordinate of the rect center
-   * @param width     The width of the rect
-   * @param height    The height of the rect
-   * @param arcWidth  The width of the corner arc
-   * @param arcHeight The height of the corner arc
+   * Fills a <b>center-origin</b> rounded rect at (x, y) with width and height
+   * and corner width and height
    */
-  public static void fillRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) {
-    roundRect(x, y, width, height, arcWidth, arcHeight, true);
+  public static void fillRoundRect(int x, int y, int width, int height, int cornerWidth, int cornerHeight) {
+    roundRect(x, y, width, height, cornerWidth, cornerHeight, true);
   }
 
   /**
-   * Draws a center-origin rounded rect at (x, y) with width and height and arc radii
-   * @param x         The x-coordinate of the rect center
-   * @param y         The y-coordinate of the rect center
-   * @param width     The width of the rect
-   * @param height    The height of the rect
-   * @param arcWidth  The width of the corner arc
-   * @param arcHeight The height of the corner arc
+   * Draws a <b>center-origin</b> rounded rect at (x, y) with width and height
+   * and corner width and height
    */
-  public static void drawRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) {
-    roundRect(x, y, width, height, arcWidth, arcHeight, false);
+  public static void drawRoundRect(int x, int y, int width, int height, int cornerWidth, int cornerHeight) {
+    roundRect(x, y, width, height, cornerWidth, cornerHeight, false);
   }
 
-  /**
-   * Fills a center-origin oval at (x, y) with width and height
-   * @param x      The x-coordinate of the oval center
-   * @param y      The y-coordinate of the oval center
-   * @param width  The width of the oval
-   * @param height The height of the oval
-   */
+  /** Fills a <b>center-origin</b> oval at (x, y) with width and height */
   public static void fillOval(int x, int y, int width, int height) {
     oval(x, y, width, height, true);
   }
 
-  /**
-   * Draws a center-origin oval at (x, y) with width and height
-   * @param x      The x-coordinate of the oval center
-   * @param y      The y-coordinate of the oval center
-   * @param width  The width of the oval
-   * @param height The height of the oval
-   */
+  /** Draws a <b>center-origin</b> oval at (x, y) with width and height */
   public static void drawOval(int x, int y, int width, int height) {
     oval(x, y, width, height, false);
   }
 
-  /**
-   * Fills a center-origin circle at (x, y) with radius
-   * @param x      The x-coordinate of the circle
-   * @param y      The y-coordinate of the circle
-   * @param radius The radius of the circle
-   */
+  /** Fills a <b>center-origin</b> circle at (x, y) with radius */
   public static void fillCircle(int x, int y, int radius) {
     int diameter = 2 * radius;
     oval(x, y, diameter, diameter, true);
   }
 
-  /**
-   * Draws a center-origin circle at (x, y) with radius
-   * @param x      The x-coordinate of the circle
-   * @param y      The y-coordinate of the circle
-   * @param radius The radius of the circle
-   */
+  /** Draws a <b>center-origin</b> circle at (x, y) with radius */
   public static void drawCircle(int x, int y, int radius) {
     int diameter = 2 * radius;
     oval(x, y, diameter, diameter, false);
   }
 
   /**
-   * Draws a center-origin {@link BufferedImage} at (x, y).
-   * The image is scaled down to fit within the bounds of the origin and dimensions
-   * @param img    The image to draw
-   * @param x      The x-coordinate of the circle
-   * @param y      The y-coordinate of the circle
-   * @param width  The screen width of the image
-   * @param height The screen height of the image
+   * Draws a <b>center-origin</b> {@link BufferedImage} at (x, y) with width
+   * and height. The image is scaled to fit within the provided bounds
    */
   public static void drawImage(BufferedImage img, int x, int y, int width, int height) {
     applyGraphicsState();
@@ -191,17 +122,7 @@ public final class Renderer {
   }
 
   /**
-   * Uses the {@link Window} UI graphics object to
-   * retrieve the {@link FontMetrics} for a given font
-   * @param font The font whose metrics to return
-   * @return The font metrics of the font
-   */
-  public static FontMetrics getFontMetrics(Font font) {
-    return Window.getInstance().getUiGraphics().getFontMetrics(font);
-  }
-
-  /**
-   * Internal method for drawing or filling ovals
+   * Internal method for drawing and filling ovals
    * @see #drawOval(int, int, int, int)
    * @see #fillOval(int, int, int, int)
    * @see #drawCircle(int, int, int)
@@ -216,7 +137,7 @@ public final class Renderer {
   }
 
   /**
-   * Internal method for drawing or filling rects
+   * Internal method for drawing and filling rects
    * @see #drawRect(int, int, int, int)
    * @see #fillRect(int, int, int, int)
    */
@@ -229,7 +150,7 @@ public final class Renderer {
   }
 
   /**
-   * Internal method for drawing or filling rounded rects
+   * Internal method for drawing and filling rounded rects
    * @see #drawRoundRect(int, int, int, int, int, int)
    * @see #fillRoundRect(int, int, int, int, int, int)
    */
@@ -297,9 +218,8 @@ public final class Renderer {
     }
 
     /**
-     * Activates the preserve mode of this state.
-     * In preserve mode, calls to {@link #reset()}
-     * are ignored
+     * Activates the preserve mode of this state. In preserve mode, calls to
+     * {@link #reset()} are ignored
      * @see #discard()
      */
     void preserve() {
@@ -317,9 +237,7 @@ public final class Renderer {
     }
 
     /**
-     * Resets the internal state to null.
-     * <p>
-     * If preserve mode is activated, this does nothing
+     * Resets the internal state to null, if preserve mode is not <b>active</b>
      * @see #preserve()
      * @see #discard()
      */

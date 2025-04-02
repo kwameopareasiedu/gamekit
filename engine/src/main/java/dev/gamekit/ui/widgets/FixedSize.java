@@ -21,16 +21,17 @@ public class FixedSize extends SingleChildParent {
 
   @Override
   protected void performLayout(Constraints constraints) {
-    int computedWidth = constraints.constrainWidth(width);
-    int computedHeight = constraints.constrainHeight(height);
-
-    child.computeLayout(
-      new Constraints(
-        computedWidth, computedWidth, computedHeight, computedHeight
-      )
+    computedBounds.setSize(
+      constraints.constrainWidth(width),
+      constraints.constrainHeight(height)
     );
 
-    computedBounds.setSize(computedWidth, computedHeight);
+    child.layout(
+      new Constraints(
+        computedBounds.width, computedBounds.width,
+        computedBounds.height, computedBounds.height
+      )
+    );
   }
 
   @Override

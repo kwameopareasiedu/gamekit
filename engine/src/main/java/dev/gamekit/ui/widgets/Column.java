@@ -24,7 +24,7 @@ public class Column extends Flex {
     Widget lastChild = children.get(children.size() - 1);
 
     for (var child : children) {
-      child.computeLayout(cc);
+      child.layout(cc);
       child.computedBounds.setPosition(0, currentY);
 
       currentY += child.computedBounds.height;
@@ -39,16 +39,18 @@ public class Column extends Flex {
 
     intrinsicBounds.setSize(maxWidth, currentY);
 
-    int computedWidth = constraints.constrainWidth(intrinsicBounds.width);
-    int computedHeight = constraints.constrainHeight(intrinsicBounds.height);
-    computedBounds.setSize(computedWidth, computedHeight);
+    computedBounds.setSize(
+      constraints.constrainWidth(intrinsicBounds.width),
+      constraints.constrainHeight(intrinsicBounds.height)
+    );
 
-    int spaceBetween = (computedHeight - intrinsicBounds.height) / Math.max(children.size() - 1, 1);
+    int spaceBetween = (computedBounds.height - intrinsicBounds.height)
+      / Math.max(children.size() - 1, 1);
     int newGapSize = gapSize + spaceBetween;
 
     int newY = switch (mainAxisAlignment) {
-      case CENTER -> computedHeight / 2 - intrinsicBounds.height / 2;
-      case END -> computedHeight - intrinsicBounds.height;
+      case CENTER -> computedBounds.height / 2 - intrinsicBounds.height / 2;
+      case END -> computedBounds.height - intrinsicBounds.height;
       default -> 0;
     };
 
@@ -62,18 +64,18 @@ public class Column extends Flex {
     for (var child : children) {
       switch (crossAxisAlignment) {
         case CENTER -> child.computedBounds.setX(
-          computedWidth / 2 - child.computedBounds.width / 2
+          computedBounds.width / 2 - child.computedBounds.width / 2
         );
         case END -> child.computedBounds.setX(
-          computedHeight - child.computedBounds.width
+          computedBounds.height - child.computedBounds.width
         );
         case STRETCH -> {
           Constraints c = new Constraints(
-            computedWidth, computedWidth,
+            computedBounds.width, computedBounds.width,
             child.constraints.minHeight(),
             child.constraints.maxHeight()
           );
-          child.computeLayout(c);
+          child.layout(c);
           child.computedBounds.setX(0);
         }
       }

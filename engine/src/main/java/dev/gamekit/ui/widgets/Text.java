@@ -1,6 +1,6 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.core.Renderer;
+import dev.gamekit.core.UI;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.enums.TextAlignment;
 import dev.gamekit.utils.Constants;
@@ -51,7 +51,7 @@ public class Text extends Widget {
       renderFont = font != null
         ? font.deriveFont(fontStyle, fontSize)
         : new Font(fontFamily, fontStyle, fontSize);
-      fontMetrics = Renderer.getFontMetrics(renderFont);
+      fontMetrics = UI.getFontMetrics(renderFont);
       fontFamily = renderFont.getFamily();
     }
 
@@ -65,9 +65,10 @@ public class Text extends Widget {
 
     intrinsicBounds.setSize(textWidth, textHeight);
 
-    int computedWidth = constraints.constrainWidth(textWidth);
-    int computedHeight = constraints.constrainHeight(textHeight);
-    computedBounds.setSize(computedWidth, computedHeight);
+    computedBounds.setSize(
+      constraints.constrainWidth(textWidth),
+      constraints.constrainHeight(textHeight)
+    );
   }
 
   @Override

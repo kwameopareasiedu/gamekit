@@ -1,14 +1,18 @@
 package dev.gamekit.core;
 
+import dev.gamekit.utils.Position;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.stream.IntStream;
 
+import static dev.gamekit.utils.Math.clamp;
+
 /**
- * Singleton class responsible for capturing keyboard and mouse inputs for use in the application.
+ * Input handles keyboard and mouse input detection for use in the application.
  * <p>
- * Input includes static constants which map to Java's {@link KeyEvent} constants
- * so they can be used interchangeably.
+ * Input includes static constants which map to Java's {@link KeyEvent}
+ * constants so they can be used interchangeably.
  */
 public final class Input implements KeyListener, MouseListener, MouseMotionListener {
   public static final int KEY_ENTER = KeyEvent.VK_ENTER;
@@ -202,8 +206,8 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   public static final int KEY_UNDEFINED = KeyEvent.VK_UNDEFINED;
 
   public static final int BUTTON_LMB = MouseEvent.BUTTON1;
-  public static final int BUTTON_RMB = MouseEvent.BUTTON2;
-  public static final int BUTTON_MMB = MouseEvent.BUTTON3;
+  public static final int BUTTON_RMB = MouseEvent.BUTTON3;
+  public static final int BUTTON_MMB = MouseEvent.BUTTON2;
 
   private static final int KEY_COUNT = 256;
   private static final int BUTTON_COUNT = 3;
@@ -212,16 +216,15 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
   private final ActionState[] keyStates;
   private final ActionState[] buttonStates;
-  private final Point absoluteMousePosition;
-  //  private final Point mousePosition;
+  private final Position absMousePosition;
+  private final Position mousePosition;
   private boolean isFrozen = false;
 
-  /** Creates a new Input instance */
   private Input() {
     keyStates = new ActionState[KEY_COUNT];
     buttonStates = new ActionState[BUTTON_COUNT];
-    absoluteMousePosition = new Point(MouseInfo.getPointerInfo().getLocation());
-    //    mousePosition = new Point(0, 0);
+    absMousePosition = new Position(MouseInfo.getPointerInfo().getLocation());
+    mousePosition = new Position(0, 0);
 
     IntStream.range(0, KEY_COUNT).forEach(
       i -> keyStates[i] = new ActionState()
@@ -232,69 +235,56 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
     );
   }
 
-  /**
-   * Check if a key is being held down in the current frame
-   * @param keyCode The ASCII key code of the key to check
-   */
   public synchronized static boolean isKeyPressed(int keyCode) {
     return INSTANCE.keyStates[keyCode].isPressed;
   }
 
-  /**
-   * Check if a key just pressed in the current frame
-   * @param keyCode The ASCII key code of the key to check
-   */
   public synchronized static boolean isKeyJustPressed(int keyCode) {
     return INSTANCE.keyStates[keyCode].isJustPressed;
   }
 
-  /**
-   * Check if a key just released in the current frame
-   * @param keyCode The ASCII key code of the key to check
-   */
   public synchronized static boolean isKeyJustReleased(int keyCode) {
     return INSTANCE.keyStates[keyCode].isJustReleased;
   }
 
-  /**
-   * Check if a button is being held down in the current frame
-   * @param buttonCode The code of the button to check
-   */
   public synchronized static boolean isButtonPressed(int buttonCode) {
     int buttonIndex = buttonCode - 1;
     return INSTANCE.buttonStates[buttonIndex].isPressed;
   }
 
-  /**
-   * Check if a button just pressed in the current frame
-   * @param buttonCode The code of the button to check
-   */
   public synchronized static boolean isButtonJustPressed(int buttonCode) {
     int buttonIndex = buttonCode - 1;
     return INSTANCE.buttonStates[buttonIndex].isJustPressed;
   }
 
-  /**
-   * Check if a button just released in the current frame
-   * @param buttonCode The code of the button to check
-   */
   public synchronized static boolean isButtonJustReleased(int buttonCode) {
     int buttonIndex = buttonCode - 1;
     return INSTANCE.buttonStates[buttonIndex].isJustReleased;
   }
 
-  //  public synchronized static Point getMousePosition() {
-  //    Window win = Window.getInstance();
-  //    double scaleRatio = win.getScaleRatio();
-  //    double offsetX = 0.5 * (win.getFrameWidth() - win.getRenderWidth() * scaleRatio);
-  //
-  //    INSTANCE.mousePosition.setLocation(
-  //      (int) clamp((INSTANCE.absoluteMousePosition.x / scaleRatio - offsetX), 0, win.getRenderWidth()),
-  //      (int) clamp((INSTANCE.absoluteMousePosition.y / scaleRatio), 0, win.getRenderHeight())
-  //    );
-  //
-  //    return INSTANCE.mousePosition;
-  //  }
+  public synchronized static Position getMousePosition() {
+    Window win = Window.getInstance();
+    double scaleRatio = win.getDisplayScaleRatio();
+    double frameWidth = win.getFrameWidth();
+    double frameHeight = win.getFrameHeight();
+    double renderWidth = win.getDisplayWidth();
+    double renderHeight = win.getDisplayHeight();
+    double inverseScaleRatio = win.getInverseDisplayScaleRatio();
+
+    double scaledRenderWidth = renderWidth * scaleRatio;
+    double scaledRenderHeight = renderHeight * scaleRatio;
+    double left = 0.5 * (frameWidth - scaledRenderWidth);
+    double top = 0.5 * (frameHeight - scaledRenderHeight);
+    double scaledMouseX = inverseScaleRatio * (INSTANCE.absMousePosition.x - left);
+    double scaledMouseY = inverseScaleRatio * (INSTANCE.absMousePosition.y - top);
+
+    INSTANCE.mousePosition.set(
+      (int) clamp(scaledMouseX, 0, renderWidth),
+      (int) clamp(scaledMouseY, 0, renderHeight)
+    );
+
+    return INSTANCE.mousePosition;
+  }
 
   /**
    * Prevents Window input events from affecting the current input state.
@@ -305,8 +295,8 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   }
 
   /**
-   * Resets the current state and allows Window
-   * input events to affect the current input state
+   * Resets the current state and allows Window input events to affect the
+   * current input state
    */
   static void reset() {
     IntStream.range(0, KEY_COUNT).forEach(
@@ -342,7 +332,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   @Override
   public synchronized void mousePressed(MouseEvent e) {
     int buttonCode = e.getButton();
-    if (!isFrozen && buttonCode >= 1 && buttonCode < BUTTON_COUNT) {
+    if (!isFrozen && buttonCode >= 1) {
       buttonStates[buttonCode - 1].update(true);
     }
   }
@@ -350,23 +340,19 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   @Override
   public synchronized void mouseReleased(MouseEvent e) {
     int buttonCode = e.getButton();
-    if (!isFrozen && buttonCode >= 1 && buttonCode < BUTTON_COUNT) {
+    if (!isFrozen && buttonCode >= 1) {
       buttonStates[buttonCode - 1].update(false);
     }
   }
 
   @Override
   public synchronized void mouseDragged(MouseEvent e) {
-    if (!isFrozen) {
-      absoluteMousePosition.move(e.getX(), e.getY());
-    }
+    if (!isFrozen) absMousePosition.set(e.getX(), e.getY());
   }
 
   @Override
   public synchronized void mouseMoved(MouseEvent e) {
-    if (!isFrozen) {
-      absoluteMousePosition.move(e.getX(), e.getY());
-    }
+    if (!isFrozen) absMousePosition.set(e.getX(), e.getY());
   }
 
   @Override
