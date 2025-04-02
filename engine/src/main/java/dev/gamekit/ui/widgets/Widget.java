@@ -54,11 +54,8 @@ public abstract class Widget {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof Widget widget) {
-      return stateEquals(widget);
-    }
-
-    return false;
+    return obj == this ||
+      (obj instanceof Widget widget && stateEquals(widget));
   }
 
   /**

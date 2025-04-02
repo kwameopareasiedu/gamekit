@@ -2,9 +2,7 @@ package dev.gamekit.core;
 
 import dev.gamekit.ui.Bounds;
 import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.events.InputEvent;
-import dev.gamekit.ui.events.MouseClickEvent;
-import dev.gamekit.ui.events.MouseMotionEvent;
+import dev.gamekit.ui.events.*;
 import dev.gamekit.ui.widgets.MultiChildParent;
 import dev.gamekit.ui.widgets.Parent;
 import dev.gamekit.ui.widgets.SingleChildParent;
@@ -16,9 +14,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
-import java.util.*;
+import java.util.Objects;
+import java.util.Stack;
 
 /**
  * UI manages the user interface within for {@link Scene}.
@@ -29,9 +28,11 @@ public final class UI {
 
   private final WidgetTreeCreator treeCreator;
   private final Constraints windowConstraints;
-  private final Queue<Widget> eventHitTestQueue;
-  private final Stack<Widget> eventNotifyStack;
-  private final List<InputEvent> availableInputEvents;
+  private final List<Widget> widgetHitTestQueue;
+  private final List<Widget> widgetHitList;
+  private final List<Widget> prevWidgetHitList;
+  private final Stack<Widget> widgetNotifyStack;
+  private final List<InputEvent> inputEvents;
   private final Position mousePosition;
   private Widget tree;
   private boolean needsUpdate = false;
@@ -48,9 +49,11 @@ public final class UI {
     );
 
     this.treeCreator = treeCreator;
-    this.eventHitTestQueue = new ArrayDeque<>();
-    this.eventNotifyStack = new Stack<>();
-    this.availableInputEvents = new ArrayList<>();
+    this.widgetHitTestQueue = new ArrayList<>();
+    this.widgetHitList = new ArrayList<>();
+    this.prevWidgetHitList = new ArrayList<>();
+    this.widgetNotifyStack = new Stack<>();
+    this.inputEvents = new ArrayList<>();
     this.mousePosition = new Position();
   }
 
@@ -75,6 +78,8 @@ public final class UI {
     needsUpdate = true;
   }
 
+  public void triggerRender() { needsRender = true; }
+
   /**
    * If {@link #needsUpdate} is true, this performs a reconciliation process on
    * the widget tree.
@@ -90,8 +95,7 @@ public final class UI {
     if (tree != null && needsUpdate)
       updateTree();
 
-    if (inputEventsAvailable())
-      dispatchAvailableInputEvents();
+    generateAndDispatchInputEvents();
   }
 
   /** Draws the {@link Widget} tree to the {@link Window} UI target */
@@ -130,19 +134,16 @@ public final class UI {
    * is recomputed and the {@link #needsRender} flag is set
    */
   private void updateTree() {
-    Queue<Widget> currentWidgetQueue = new ArrayDeque<>();
-    Queue<Widget> newWidgetQueue = new ArrayDeque<>();
+    List<Widget> currentWidgetQueue = new ArrayList<>();
+    List<Widget> newWidgetQueue = new ArrayList<>();
     boolean treeUpdated = false;
 
     currentWidgetQueue.add(tree);
     newWidgetQueue.add(treeCreator.onCreateUI());
 
-    while (true) {
-      Widget treeWidget = currentWidgetQueue.poll();
-      Widget newWidget = newWidgetQueue.poll();
-
-      if (treeWidget == null && newWidget == null)
-        break;
+    while (!currentWidgetQueue.isEmpty() && !newWidgetQueue.isEmpty()) {
+      Widget treeWidget = currentWidgetQueue.remove(0);
+      Widget newWidget = newWidgetQueue.remove(0);
 
       if (!Objects.equals(treeWidget, newWidget)) {
         // Widget tree differs at this point, reconcile subtrees at this depth
@@ -182,70 +183,89 @@ public final class UI {
   }
 
   /**
-   * Monitors the {@link Input} class and generates events if an action of
-   * interest has occurred
+   * Monitors the {@link Input} class, generates events if actions of interest
+   * have occurred and dispatches them to the widget tree, if set
    */
-  private boolean inputEventsAvailable() {
-    availableInputEvents.clear();
+  private void generateAndDispatchInputEvents() {
+    if (tree == null)
+      return;
 
-    boolean eventsAvailable = false;
-    Position newMousePos = Input.getMousePosition();
+    inputEvents.clear();
+    widgetHitTestQueue.clear();
+    widgetNotifyStack.clear();
+    widgetHitList.clear();
 
-    if (Input.isButtonJustReleased(Input.BUTTON_LMB)) {
-      availableInputEvents.add(new MouseClickEvent(newMousePos.x, newMousePos.y, Input.BUTTON_LMB));
-      eventsAvailable = true;
-    } else if (Input.isButtonJustReleased(Input.BUTTON_RMB)) {
-      availableInputEvents.add(new MouseClickEvent(newMousePos.x, newMousePos.y, Input.BUTTON_RMB));
-      eventsAvailable = true;
-    } else if (Input.isButtonJustReleased(Input.BUTTON_MMB)) {
-      availableInputEvents.add(new MouseClickEvent(newMousePos.x, newMousePos.y, Input.BUTTON_MMB));
-      eventsAvailable = true;
-    }
+    Position currentMousePos = Input.getMousePosition();
 
-    if (!mousePosition.equals(newMousePos)) {
-      availableInputEvents.add(new MouseMotionEvent(newMousePos.x, newMousePos.y));
-      eventsAvailable = true;
-    }
+    // Generate mouse click input events
+    if (Input.isButtonJustReleased(Input.BUTTON_LMB))
+      inputEvents.add(new MouseClickEvent(currentMousePos.x,
+        currentMousePos.y, Input.BUTTON_LMB));
+    else if (Input.isButtonJustReleased(Input.BUTTON_RMB))
+      inputEvents.add(new MouseClickEvent(currentMousePos.x,
+        currentMousePos.y, Input.BUTTON_RMB));
+    else if (Input.isButtonJustReleased(Input.BUTTON_MMB))
+      inputEvents.add(new MouseClickEvent(currentMousePos.x,
+        currentMousePos.y, Input.BUTTON_MMB));
 
-    mousePosition.set(newMousePos);
-    return eventsAvailable;
-  }
+    // Generate mouse motion input events
+    if (!Objects.equals(mousePosition, currentMousePos))
+      inputEvents.add(new MouseMotionEvent(currentMousePos.x,
+        currentMousePos.y));
 
-  private void dispatchAvailableInputEvents() {
-    eventHitTestQueue.clear();
-    eventNotifyStack.clear();
+    widgetHitTestQueue.add(tree);
 
-    if (tree != null) {
-      Position pos = Input.getMousePosition();
-      eventHitTestQueue.add(tree);
+    // Determine which widgets are under the cursor with a hit test
+    while (!widgetHitTestQueue.isEmpty()) {
+      Widget widget = widgetHitTestQueue.remove(0);
 
-      while (!eventHitTestQueue.isEmpty()) {
-        Widget widget = eventHitTestQueue.poll();
-
-        if (widget.hitTest(pos.x, pos.y))
-          eventNotifyStack.push(widget);
-
-        if (widget instanceof SingleChildParent parent) {
-          eventHitTestQueue.add(parent.getChild());
-        } else if (widget instanceof MultiChildParent parent) {
-          eventHitTestQueue.addAll(parent.getChildren());
-        }
+      if (widget.hitTest(currentMousePos.x, currentMousePos.y)) {
+        widgetNotifyStack.push(widget);
+        widgetHitList.add(widget);
       }
 
-      if (!eventNotifyStack.isEmpty()) {
-        for (InputEvent ev : availableInputEvents)
-          ev.setTarget(eventNotifyStack.peek());
+      if (widget instanceof SingleChildParent parent) {
+        widgetHitTestQueue.add(parent.getChild());
+      } else if (widget instanceof MultiChildParent parent) {
+        widgetHitTestQueue.addAll(parent.getChildren());
+      }
+    }
 
-        while (!eventNotifyStack.isEmpty()) {
-          Widget widget = eventNotifyStack.pop();
+    if (!inputEvents.isEmpty()) {
+      // Dispatch the generated mouse click and mouse motion events to the
+      // widgets which pass the hit test
+      if (!widgetNotifyStack.isEmpty()) {
+        while (!widgetNotifyStack.isEmpty()) {
+          Widget widget = widgetNotifyStack.pop();
 
-          for (InputEvent ev : availableInputEvents) {
+          for (InputEvent ev : inputEvents) {
             if (!ev.isHandled())
               widget.handleEvent(ev);
           }
         }
       }
     }
+
+    // Dispatch mouse enter and mouse exit based on the difference
+    // between the widgetHitList and prevWidgetHitList
+    MouseEnterEvent mouseEnterEvent = new MouseEnterEvent(currentMousePos.x,
+      currentMousePos.y);
+    MouseExitEvent mouseExitEvent = new MouseExitEvent(currentMousePos.x,
+      currentMousePos.y);
+
+    for (Widget widget : widgetHitList) {
+      if (!prevWidgetHitList.contains(widget))
+        widget.handleEvent(mouseEnterEvent);
+    }
+
+    for (Widget widget : prevWidgetHitList) {
+      if (!widgetHitList.contains(widget))
+        widget.handleEvent(mouseExitEvent);
+    }
+
+    prevWidgetHitList.clear();
+    prevWidgetHitList.addAll(widgetHitList);
+    mousePosition.set(currentMousePos);
   }
 
   public interface WidgetTreeCreator {

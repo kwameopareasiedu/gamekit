@@ -1,13 +1,20 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.core.Scene;
 import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.events.InputEvent;
-import dev.gamekit.ui.events.EventListener;
-import dev.gamekit.ui.events.MouseClickEvent;
+import dev.gamekit.ui.events.*;
+
+import java.awt.*;
 
 /** A {@link Widget} which can be clicked to trigger an event */
 public class Button extends SingleChildParent {
-  protected EventListener<MouseClickEvent> clickListener;
+  protected static final Color TINT_COLOR = new Color(0x22ffffff, true);
+
+  protected MouseMotionEvent.Listener mouseMotionListener;
+  protected MouseEnterEvent.Listener mouseEnterListener;
+  protected MouseExitEvent.Listener mouseExitListener;
+  protected MouseClickEvent.Listener mouseClickListener;
+  protected boolean intersectsWithMouse;
 
   protected Button(Widget child) {
     super(child);
@@ -26,7 +33,8 @@ public class Button extends SingleChildParent {
       )
     );
 
-    intrinsicBounds.setSize(child.computedBounds.width, child.computedBounds.height);
+    intrinsicBounds.setSize(child.computedBounds.width,
+      child.computedBounds.height);
 
     int computedWidth = constraints.constrainWidth(intrinsicBounds.width);
     int computedHeight = constraints.constrainHeight(intrinsicBounds.height);
@@ -36,22 +44,62 @@ public class Button extends SingleChildParent {
   }
 
   @Override
+  public void performRender(Graphics2D g) {
+    super.performRender(g);
+
+    if (intersectsWithMouse) {
+      g.setColor(TINT_COLOR);
+      g.fillRect(0, 0, computedBounds.width, computedBounds.height);
+    }
+  }
+
+  @Override
   protected boolean stateEquals(Widget widget) {
-    return true;
+    return widget instanceof Button;
   }
 
   @Override
   public void handleEvent(InputEvent event) {
     super.handleEvent(event);
 
-    if (event instanceof MouseClickEvent clickEvent) {
-      if (clickListener != null)
-        clickListener.onEvent(clickEvent);
+    if (event instanceof MouseMotionEvent mouseMotionEvent) {
+      if (mouseMotionListener != null)
+        mouseMotionListener.onMouseMove(mouseMotionEvent);
+    } else if (event instanceof MouseEnterEvent mouseEnterEvent) {
+      intersectsWithMouse = true;
+      Scene.getCurrent().redrawUI();
+
+      if (mouseEnterListener != null)
+        mouseEnterListener.onMouseEnter(mouseEnterEvent);
+    } else if (event instanceof MouseExitEvent mouseExitEvent) {
+      intersectsWithMouse = false;
+      Scene.getCurrent().redrawUI();
+
+      if (mouseExitListener != null)
+        mouseExitListener.onMouseExit(mouseExitEvent);
+    } else if (event instanceof MouseClickEvent mouseClickEvent) {
+      if (mouseClickListener != null)
+        mouseClickListener.onMouseClick(mouseClickEvent);
     }
   }
 
-  public Button withClickListener(EventListener<MouseClickEvent> listener) {
-    this.clickListener = listener;
+  public Button withMouseMotionListener(MouseMotionEvent.Listener listener) {
+    this.mouseMotionListener = listener;
+    return this;
+  }
+
+  public Button withMouseEnterListener(MouseEnterEvent.Listener listener) {
+    this.mouseEnterListener = listener;
+    return this;
+  }
+
+  public Button withMouseExitListener(MouseExitEvent.Listener listener) {
+    this.mouseExitListener = listener;
+    return this;
+  }
+
+  public Button withMouseClickListener(MouseClickEvent.Listener listener) {
+    this.mouseClickListener = listener;
     return this;
   }
 }

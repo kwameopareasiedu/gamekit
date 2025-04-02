@@ -44,6 +44,6 @@ public class Stack extends MultiChildParent {
 
   @Override
   protected boolean stateEquals(Widget widget) {
-    return true;
+    return widget instanceof Stack;
   }
 }

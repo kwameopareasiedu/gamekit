@@ -1,7 +1,5 @@
 package dev.gamekit.ui.events;
 
-import dev.gamekit.ui.widgets.Widget;
-
 /**
  * Abstract class representing UI events in the engine.
  * <p>
@@ -9,7 +7,6 @@ import dev.gamekit.ui.widgets.Widget;
  * target widget based on the nature of the events.
  */
 public abstract class InputEvent {
-  private Widget target;
   private boolean handled;
 
   public InputEvent() {
@@ -23,15 +20,4 @@ public abstract class InputEvent {
    * Handled events are no longer propagated to ancestor widgets
    */
   public void setHandled() { this.handled = true; }
-
-  public Widget getTarget() { return target; }
-
-  /**
-   * Internally called to set the target of the event.
-   * Attempts to call this externally will raise an {@link IllegalStateException}
-   */
-  public void setTarget(Widget target) {
-    if (this.target != null) throw new IllegalStateException("Attempting to set target of finalized Event");
-    this.target = target;
-  }
 }

@@ -11,4 +11,10 @@ public class MouseClickEvent extends MouseEvent {
     super(x, y);
     this.buttonIndex = buttonIndex;
   }
+
+  /** Callback interface for a {@link MouseClickEvent} handler */
+  public interface Listener {
+    /** Called to handle the {@link MouseClickEvent} event */
+    void onMouseClick(MouseClickEvent event);
+  }
 }
