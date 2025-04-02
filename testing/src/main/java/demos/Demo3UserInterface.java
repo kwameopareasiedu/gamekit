@@ -61,8 +61,14 @@ public class Demo3UserInterface extends Scene {
         Column.create(
             Padding.create(
               Stack.create(
-                Image.create(wideImage).withSize(300, 150),
-                Image.create(squareImage).withSize(400, 200)
+                FixedSize.create(
+                  300, 150,
+                  Image.create(wideImage)
+                ),
+                FixedSize.create(
+                  400, 200,
+                  Image.create(squareImage)
+                )
               ),
               new Spacing(x)
             ),

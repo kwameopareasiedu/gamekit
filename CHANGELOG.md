@@ -4,24 +4,35 @@
 
 ### Added
 
-- Added constructor `Application(Config)` which can be used to set the title, resolution and fullscreen mode
+- Added constructor `Application(Config)` which can be used to set the title,
+  resolution and fullscreen mode
 - Added `ImageRes` which is a widget that renders a **resource image**
-- Added `Stack` which is a `MultiChildParent` which stacks its children on top of each other
-- Added `Animation setValueListener(ValueListener)` to `Animation` to be notified of value changes
-- Added `Animation setStateListener(StateListener)` to `Animation` to be notified of state changes
-- Added `static Position screenToWorldPoint(int, int)` to `Camera` which transforms a screen-space position into a world
-  position
+- Added `Stack` which is a `MultiChildParent` which stacks its children on
+  top of each other
+- Added `Animation setValueListener(ValueListener)` to `Animation` to be
+  notified of value changes
+- Added `Animation setStateListener(StateListener)` to `Animation` to be
+  notified of state changes
+- Added `static Position screenToWorldPoint(int, int)` to `Camera` which
+  transforms a screen-space position into a world position
 - Added event generation and dispatch system to `UI` class
 - Added abstract `Event` class
 - Added abstract `MouseEvent` which is the `Event` for mouse events
-- Added `MouseMotionEvent` which is a `MouseEvent` dispatched when the mouse moves
-- Added `MouseClickEvent` which is a `MouseEvent` dispatched when a mouse button is released
-- Added `GestureDetector` which is a `Widget` for detecting UI events
+- Added `MouseMotionEvent` which is a `MouseEvent` dispatched when the mouse
+  moves
+- Added `MouseClickEvent` which is a `MouseEvent` dispatched when a mouse
+  button is released
+- Added `Button` which is a `SingleChildParent` for detecting UI events
+- Added `MouseEnterEvent` which is a `MouseEvent` dispatched when the mouse
+  enters a widget
+- Added `MouseExitEvent` which is a `MouseEvent` dispatched when the mouse
+  leaves a widget
 
 ### Changed
 
 - Modified `Image` widget to render a given image instead
-- Changed `Camera` class to a utility class. Instead of `Camera.getInstance().<METHOD>`, use `Camera.<METHOD>`
+- Changed `Camera` class to a utility class. Instead of
+  `Camera.getInstance().<METHOD>`, use `Camera.<METHOD>`
 
 ### Removed
 
@@ -29,13 +40,16 @@
 - Removed `static void setFullscreen(boolean)` from `Window` class
 - Removed `static Camera getInstance()` from `Camera` class
 - Removed `Point transformPoint(int, int)` from `Camera` class
+- Removed `Image withSize(int, int)` from `Image` class
 
 ## 0.3.0-SNAPSHOT-2
 
 ### Added
 
-- Added `Flex` which is a `MultiChildParent` which lays its children out along a single axis
-- Added `FixedSize` which is a `SingleChildParent` which enforces a fixed size on its child
+- Added `Flex` which is a `MultiChildParent` which lays its children out along a
+  single axis
+- Added `FixedSize` which is a `SingleChildParent` which enforces a fixed size
+  on its child
 - Added `gapSize` property to `Row` and `Column` widgets
 - Added `mainAxisAlignment` property to `Row` and `Column` widgets
 - Added `crossAxisAlignment` property to `Row` and `Column` widgets
@@ -60,22 +74,26 @@
 - Added `static boolean isButtonJustReleased(int)` to `Input` class
 - Added abstract `Widget` class which is the base class of all UI elements
 - Added abstract `Parent` which is a `Widget` which contain other widgets
-- Added abstract `SingleChildParent` which is a `Parent` that has only one child widget
-- Added abstract `MultiChildParent` which is a `Parent` that container multiple child widgets
+- Added abstract `SingleChildParent` which is a `Parent` that has only one child
+  widget
+- Added abstract `MultiChildParent` which is a `Parent` that container multiple
+  child widgets
 - Added `Row` which is a `MultiChildParent` that lays its children horizontally
 - Added `Column` which is a `MultiChildParent` that lays its children vertically
 - Added `Text` which is a `Widget` that renders text
 - Added `Image` which is a `Widget` that renders a resource image
-- Added `Align` which is a `SingleChildParent` that align its child within itself
+- Added `Align` which is a `SingleChildParent` that align its child within
+  itself
 - Added `Center` which is an `Align` with center alignment
-- Added `Padding` which is a `SingleChildParent` that adds spacing around its child
+- Added `Padding` which is a `SingleChildParent` that adds spacing around its
+  child
 - Added `Spacing` class which represents space around a widget
 - Added `UI` class which manages the user interface for a `Scene`
 
 ### Removed
 
-- Removed `void scheduleFrameEndTask(Task)` from `Application` class. To schedule end of frame task, use
-  `void scheduleTask(Task)` instead
+- Removed `void scheduleFrameEndTask(Task)` from `Application` class. To
+  schedule end of frame task, use `void scheduleTask(Task)` instead
 - Removed deprecated `AnimationCurves` class.
 - Removed `void setSize(int, int)` from `Window` class
 - Removed `void maximize()` from `Window` class
@@ -94,24 +112,29 @@
 
 ### Deprecated
 
-- Deprecated `AnimationCurves` and its static constants for removal in next minor update
+- Deprecated `AnimationCurves` and its static constants for removal in next
+  minor update
 
 ## v0.2.0-SNAPSHOT
 
 ### Added
 
-- Added `static BufferedReader loadBufferedResource(String)` to `IO` class which returns a `BufferedReader` to a
-  resource at the specified path
-- Added `void setSize(int, int)` to `Window` class which resizes the current instance frame to the new width and height.
-- Added `void maximize()` to `Window` class which maximizes the current instance frame.
-- Added `void scheduleTimerTask(long, Task)` to `Application` which schedules a task to be run after the
+- Added `static BufferedReader loadBufferedResource(String)` to `IO` class which
+  returns a `BufferedReader` to a resource at the specified path
+- Added `void setSize(int, int)` to `Window` class which resizes the current
+  instance frame to the new width and height.
+- Added `void maximize()` to `Window` class which maximizes the current instance
+  frame.
+- Added `void scheduleTimerTask(long, Task)` to `Application` which schedules a
+  task to be run after the
   timeout has elapsed
 
 ### Changed
 
-- Renamed `static BufferedImage loadImage(String)` to `static BufferedImage loadImageResource(String)` in `IO`
-  class.
-- Renamed `static Font loadFont(String)` to `static BufferedImage loadFontResource(String)` in `IO` class.
-- Renamed `void runAnimation(Animation)` to `void scheduleAnimation(Animation)` in `Application`
-  class.
+- Renamed `static BufferedImage loadImage(String)` to
+  `static BufferedImage loadImageResource(String)` in `IO` class.
+- Renamed `static Font loadFont(String)` to
+  `static BufferedImage loadFontResource(String)` in `IO` class.
+- Renamed `void runAnimation(Animation)` to `void scheduleAnimation(Animation)`
+  in `Application` class.
 - Modified `Window` to start in windowed mode instead of maximized

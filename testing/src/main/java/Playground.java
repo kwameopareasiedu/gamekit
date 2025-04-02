@@ -70,10 +70,16 @@ public class Playground extends Scene {
             Padding.create(
               Button.create(
                 Stack.create(
-                  Image.create(wideImage).withSize(300, 150),
-                  Image.create(squareImage).withSize(400, 200)
+                  FixedSize.create(
+                    300, 150,
+                    Image.create(wideImage)
+                  ),
+                  FixedSize.create(
+                    400, 200,
+                    Image.create(squareImage)
+                  )
                 )
-              ),
+              ).withTintColor(new Color(0x22000000, true)),
               new Spacing(x)
             ),
             Text.create("Hello World")

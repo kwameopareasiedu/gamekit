@@ -5,19 +5,20 @@ import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.events.*;
 
 import java.awt.*;
+import java.util.Objects;
 
 /** A {@link Widget} which can be clicked to trigger an event */
 public class Button extends SingleChildParent {
-  protected static final Color TINT_COLOR = new Color(0x22ffffff, true);
-
   protected MouseMotionEvent.Listener mouseMotionListener;
   protected MouseEnterEvent.Listener mouseEnterListener;
   protected MouseExitEvent.Listener mouseExitListener;
   protected MouseClickEvent.Listener mouseClickListener;
+  protected Color tintColor;
   protected boolean intersectsWithMouse;
 
   protected Button(Widget child) {
     super(child);
+    tintColor = new Color(0x22ffffff, true);
   }
 
   public static Button create(Widget child) {
@@ -48,14 +49,18 @@ public class Button extends SingleChildParent {
     super.performRender(g);
 
     if (intersectsWithMouse) {
-      g.setColor(TINT_COLOR);
+      g.setColor(tintColor);
       g.fillRect(0, 0, computedBounds.width, computedBounds.height);
     }
   }
 
   @Override
   protected boolean stateEquals(Widget widget) {
-    return widget instanceof Button;
+    if (widget instanceof Button buttonWidget) {
+      return Objects.equals(tintColor, buttonWidget.tintColor);
+    }
+
+    return false;
   }
 
   @Override
@@ -100,6 +105,11 @@ public class Button extends SingleChildParent {
 
   public Button withMouseClickListener(MouseClickEvent.Listener listener) {
     this.mouseClickListener = listener;
+    return this;
+  }
+
+  public Button withTintColor(Color tintColor) {
+    this.tintColor = tintColor;
     return this;
   }
 }

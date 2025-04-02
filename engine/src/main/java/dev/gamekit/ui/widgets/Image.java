@@ -12,8 +12,6 @@ import java.util.Objects;
 public class Image extends Widget {
   protected final BufferedImage image;
   protected ImageFit imageFit;
-  protected int width;
-  protected int height;
 
   /* Draw bounds stored and only redrawn if they change */
   private int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
@@ -24,8 +22,6 @@ public class Image extends Widget {
 
     this.image = image;
     this.imageFit = ImageFit.FIT;
-    this.width = 0;
-    this.height = 0;
   }
 
   public static Image create(BufferedImage image) {
@@ -36,8 +32,8 @@ public class Image extends Widget {
   protected void performLayout(Constraints constraints) {
     intrinsicBounds.setSize(image.getWidth(), image.getHeight());
 
-    int computedWidth = constraints.constrainWidth(width > 0 ? width : intrinsicBounds.width);
-    int computedHeight = constraints.constrainHeight(height > 0 ? height : intrinsicBounds.height);
+    int computedWidth = constraints.constrainWidth(intrinsicBounds.width);
+    int computedHeight = constraints.constrainHeight(intrinsicBounds.height);
     computedBounds.setSize(computedWidth, computedHeight);
   }
 
@@ -83,18 +79,10 @@ public class Image extends Widget {
   protected boolean stateEquals(Widget widget) {
     if (widget instanceof Image imageWidget) {
       return Objects.equals(image, imageWidget.image)
-        && Objects.equals(imageFit, imageWidget.imageFit)
-        && Objects.equals(width, imageWidget.width)
-        && Objects.equals(height, imageWidget.height);
+        && Objects.equals(imageFit, imageWidget.imageFit);
     }
 
     return false;
-  }
-
-  public Image withSize(int width, int height) {
-    this.width = width;
-    this.height = height;
-    return this;
   }
 
   public Image withImageFit(ImageFit imageFit) {
