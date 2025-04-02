@@ -1,7 +1,5 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.utils.Constants;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -22,8 +20,7 @@ public abstract class MultiChildParent extends Parent {
 
   @Override
   public void performRender(Graphics2D g) {
-    g.setBackground(Constants.TRANSPARENT_COLOR);
-    g.clearRect(0, 0, computedBounds.width, computedBounds.height);
+    renderBackground(g);
 
     // Renders its children within self to enable clipping
     children.forEach(child -> {

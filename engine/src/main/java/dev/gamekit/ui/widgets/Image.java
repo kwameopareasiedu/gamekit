@@ -38,7 +38,7 @@ public class Image extends Widget {
   }
 
   @Override
-  public final void performRender(Graphics2D g) {
+  public void performRender(Graphics2D g) {
     int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
 
     switch (imageFit) {

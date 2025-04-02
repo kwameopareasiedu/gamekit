@@ -49,8 +49,12 @@ public class Button extends SingleChildParent {
     super.performRender(g);
 
     if (intersectsWithMouse) {
+      Composite composite = g.getComposite();
+
       g.setColor(tintColor);
+      g.setComposite(AlphaComposite.SrcOver);
       g.fillRect(0, 0, computedBounds.width, computedBounds.height);
+      g.setComposite(composite);
     }
   }
 

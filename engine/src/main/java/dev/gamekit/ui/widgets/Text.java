@@ -72,7 +72,7 @@ public class Text extends Widget {
   }
 
   @Override
-  public final void performRender(Graphics2D g) {
+  public void performRender(Graphics2D g) {
     g.setBackground(backgroundColor);
     g.clearRect(0, 0, computedBounds.width, computedBounds.height);
     g.setFont(renderFont);

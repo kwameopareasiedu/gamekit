@@ -27,6 +27,8 @@
   enters a widget
 - Added `MouseExitEvent` which is a `MouseEvent` dispatched when the mouse
   leaves a widget
+- Added `Decorated` which is a `SingleChildParent` paints a shape, 
+  background color and border decorations
 
 ### Changed
 
