@@ -29,6 +29,8 @@
   leaves a widget
 - Added `Decorated` which is a `SingleChildParent` paints a shape, 
   background color and border decorations
+- Added `NinePatch` which is a `Widget` which uses the 9-patch algorithm to 
+  resize parts of the image to prevent stretching
 
 ### Changed
 

@@ -6,7 +6,7 @@ package dev.gamekit.utils;
  */
 public record Config(String title, Resolution resolution,
                      boolean isFullScreen) {
-  public static final boolean DEBUG_DRAW = true;
+  public static final boolean DEBUG_DRAW = false;
 
   @Override
   public String toString() {

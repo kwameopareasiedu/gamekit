@@ -21,6 +21,7 @@ public class Playground extends Scene {
   String text = "Kwame";
   BufferedImage squareImage = IO.loadImageResource("square-img.jpg");
   BufferedImage wideImage = IO.loadImageResource("wide-img.jpg");
+  BufferedImage ninePatchImage = IO.loadImageResource("9-patch.png");
 
   public Playground() {
     super("Main Scene");
@@ -76,10 +77,8 @@ public class Playground extends Scene {
                         300, 150,
                         Image.create(wideImage)
                       ),
-                      FixedSize.create(
-                        400, 200,
-                        Image.create(squareImage)
-                      )
+                      NinePatch.create(ninePatchImage)
+                        .withSpacing(25, 25, 50, 25)
                     )
                   ),
                   new Spacing(50)
