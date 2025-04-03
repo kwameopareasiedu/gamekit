@@ -69,19 +69,22 @@ public class Playground extends Scene {
         Column.create(
             Padding.create(
               Button.create(
-                Decorated.create(
-                  Stack.create(
-                    FixedSize.create(
-                      300, 150,
-                      Image.create(wideImage)
-                    ),
-                    FixedSize.create(
-                      400, 200,
-                      Image.create(squareImage)
+                Padding.create(
+                  Decorated.create(
+                    Stack.create(
+                      FixedSize.create(
+                        300, 150,
+                        Image.create(wideImage)
+                      ),
+                      FixedSize.create(
+                        400, 200,
+                        Image.create(squareImage)
+                      )
                     )
-                  )
+                  ),
+                  new Spacing(50)
                 )
-              ).withTintColor(new Color(0x99000000, true)),
+              ).withHoverTintColor(new Color(0x55ffffff, true)),
               new Spacing(x)
             ),
             Text.create("Hello World")

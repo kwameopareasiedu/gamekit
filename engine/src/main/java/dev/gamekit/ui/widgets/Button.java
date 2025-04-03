@@ -1,6 +1,7 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.Scene;
+import dev.gamekit.ui.BlendComposite;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.events.*;
 
@@ -13,12 +14,12 @@ public class Button extends SingleChildParent {
   protected MouseEnterEvent.Listener mouseEnterListener;
   protected MouseExitEvent.Listener mouseExitListener;
   protected MouseClickEvent.Listener mouseClickListener;
-  protected Color tintColor;
+  protected Color hoverTintColor;
   protected boolean intersectsWithMouse;
 
   protected Button(Widget child) {
     super(child);
-    tintColor = new Color(0x22ffffff, true);
+    hoverTintColor = new Color(0x22ffffff, true);
   }
 
   public static Button create(Widget child) {
@@ -51,8 +52,8 @@ public class Button extends SingleChildParent {
     if (intersectsWithMouse) {
       Composite composite = g.getComposite();
 
-      g.setColor(tintColor);
-      g.setComposite(AlphaComposite.SrcOver);
+      g.setColor(hoverTintColor);
+      g.setComposite(BlendComposite.MULTIPLY);
       g.fillRect(0, 0, computedBounds.width, computedBounds.height);
       g.setComposite(composite);
     }
@@ -61,7 +62,7 @@ public class Button extends SingleChildParent {
   @Override
   protected boolean stateEquals(Widget widget) {
     if (widget instanceof Button buttonWidget) {
-      return Objects.equals(tintColor, buttonWidget.tintColor);
+      return Objects.equals(hoverTintColor, buttonWidget.hoverTintColor);
     }
 
     return false;
@@ -71,9 +72,9 @@ public class Button extends SingleChildParent {
   public void handleEvent(InputEvent event) {
     super.handleEvent(event);
 
-    if (event instanceof MouseMotionEvent mouseMotionEvent) {
-      if (mouseMotionListener != null)
-        mouseMotionListener.onMouseMove(mouseMotionEvent);
+    if (event instanceof MouseClickEvent mouseClickEvent) {
+      if (mouseClickListener != null)
+        mouseClickListener.onMouseClick(mouseClickEvent);
     } else if (event instanceof MouseEnterEvent mouseEnterEvent) {
       intersectsWithMouse = true;
       Scene.getCurrent().redrawUI();
@@ -86,9 +87,9 @@ public class Button extends SingleChildParent {
 
       if (mouseExitListener != null)
         mouseExitListener.onMouseExit(mouseExitEvent);
-    } else if (event instanceof MouseClickEvent mouseClickEvent) {
-      if (mouseClickListener != null)
-        mouseClickListener.onMouseClick(mouseClickEvent);
+    } else if (event instanceof MouseMotionEvent mouseMotionEvent) {
+      if (mouseMotionListener != null)
+        mouseMotionListener.onMouseMove(mouseMotionEvent);
     }
   }
 
@@ -112,8 +113,8 @@ public class Button extends SingleChildParent {
     return this;
   }
 
-  public Button withTintColor(Color tintColor) {
-    this.tintColor = tintColor;
+  public Button withHoverTintColor(Color hoverTintColor) {
+    this.hoverTintColor = hoverTintColor;
     return this;
   }
 }
