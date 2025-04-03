@@ -1,9 +1,10 @@
-package dev.gamekit.ui;
+package dev.gamekit.utils;
 
 import java.awt.*;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
+import java.lang.Math;
 
 /**
  * An abstract composite which blends source and destination colors in a way
@@ -12,12 +13,12 @@ import java.awt.image.WritableRaster;
  * Subclasses must implement the {@link #blend(int, int)} method to determine
  * how colors are blended together.
  */
-public abstract class BlendComposite implements Composite, CompositeContext {
+public abstract class Blend implements Composite, CompositeContext {
   /**
-   * A {@link BlendComposite} which multiplies the source and destination
+   * A {@link Blend} which multiplies the source and destination
    * colors together. If the destination is transparent, it is unaffected
    */
-  public static final BlendComposite MULTIPLY = new BlendComposite() {
+  public static final Blend MULTIPLY = new Blend() {
     @Override
     protected int blend(int x, int y) {
       int ya = (y >> 24) & 0xFF;
@@ -48,7 +49,7 @@ public abstract class BlendComposite implements Composite, CompositeContext {
 
   @Override
   public void compose(Raster src, Raster dstIn, WritableRaster dstOut) {
-    int width = Math.min(src.getWidth(), dstIn.getWidth());
+    int width = java.lang.Math.min(src.getWidth(), dstIn.getWidth());
     int height = Math.min(src.getHeight(), dstIn.getHeight());
     int x, y;
     int[] srcPixels = new int[width];

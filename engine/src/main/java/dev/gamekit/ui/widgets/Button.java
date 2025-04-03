@@ -1,7 +1,7 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.Scene;
-import dev.gamekit.ui.BlendComposite;
+import dev.gamekit.utils.Blend;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.events.*;
 
@@ -53,7 +53,7 @@ public class Button extends SingleChildParent {
       Composite composite = g.getComposite();
 
       g.setColor(hoverTintColor);
-      g.setComposite(BlendComposite.MULTIPLY);
+      g.setComposite(Blend.MULTIPLY);
       g.fillRect(0, 0, computedBounds.width, computedBounds.height);
       g.setComposite(composite);
     }

@@ -1,11 +1,11 @@
 # GameKit
 
 A 2D Java game engine for creating simple games fast. GameKit is based on
-Java [Swing](https://docs.oracle.com/javase/tutorial/uiswing/index.html) and doesn't use OpenGL hence rendering is CPU
-based and not GPU based.
+Java [Swing](https://docs.oracle.com/javase/tutorial/uiswing/index.html) and
+doesn't use OpenGL hence rendering is CPU based and not GPU based.
 
-GameKit is in no way a AAA engine and has limitations due to it not using OpenGL, but performance is decent enough for
-small to medium-sized games.
+GameKit is in no way a AAA engine and has limitations due to it not using
+OpenGL, but performance is decent enough for small to medium-sized games.
 
 ## Full Documentation
 
@@ -13,8 +13,8 @@ Read the full engine documentation [here](./ENGINE.md).
 
 ## Installation
 
-Gamekit is distributed as a Maven dependency on Github packages. To include in your project add its dependency to your
-`pom.xml`
+Gamekit is distributed as a Maven dependency on Github packages. To include in
+your project add its dependency to your `pom.xml`
 
 ```xml
 
@@ -50,8 +50,9 @@ Then sync your project in your IDE or run `mvn install` in the terminal.
 
 Here's a small snippet of how to use GameKit for a basic game.
 
-This is a simple GameKit scene which renders a red or blue box based on whether the space bar is pressed. The GameKit
-application is created in the `main()` method and loads an instance of our scene.
+This is a simple GameKit scene which renders a red or blue box based on whether
+the space bar is pressed. The GameKit application is created in the `main()`
+method and loads an instance of our scene.
 
 ```java
 import dev.gamekit.core.Application;
