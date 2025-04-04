@@ -1,6 +1,16 @@
 # ChangeLog
 
-## 0.3.0-SNAPSHOT-3 [UNRELEASED]
+## 0.3.0-SNAPSHOT-4 [UNRELEASED]
+
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+## 0.3.0-SNAPSHOT-3
 
 ### Added
 
