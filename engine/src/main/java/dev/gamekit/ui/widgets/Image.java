@@ -32,9 +32,10 @@ public class Image extends Widget {
   protected void performLayout(Constraints constraints) {
     intrinsicBounds.setSize(image.getWidth(), image.getHeight());
 
-    int computedWidth = constraints.constrainWidth(intrinsicBounds.width);
-    int computedHeight = constraints.constrainHeight(intrinsicBounds.height);
-    computedBounds.setSize(computedWidth, computedHeight);
+    computedBounds.setSize(
+      constraints.constrainWidth(intrinsicBounds.width),
+      constraints.constrainHeight(intrinsicBounds.height)
+    );
   }
 
   @Override

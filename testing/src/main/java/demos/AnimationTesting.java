@@ -56,11 +56,11 @@ public class AnimationTesting extends Scene {
   @Override
   public Widget onCreateUI() {
     return Align.create(
+      Alignment.TOP_LEFT,
       Padding.create(
-        Text.create(String.format("Value: %f", animationValue)),
-        new Spacing(16, 48)
-      ),
-      Alignment.TOP_LEFT
+        new Spacing(16, 48),
+        Text.create(String.format("Value: %f", animationValue))
+      )
     );
   }
 }

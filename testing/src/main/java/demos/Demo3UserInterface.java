@@ -56,10 +56,12 @@ public class Demo3UserInterface extends Scene {
   @Override
   public Widget onCreateUI() {
     return Align.create(
+      Alignment.CENTER,
       FixedSize.create(
         600, 480,
         Column.create(
             Padding.create(
+              new Spacing(x),
               Stack.create(
                 FixedSize.create(
                   300, 150,
@@ -69,8 +71,7 @@ public class Demo3UserInterface extends Scene {
                   400, 200,
                   Image.create(squareImage)
                 )
-              ),
-              new Spacing(x)
+              )
             ),
             Text.create("Hello World")
               .withAlignment(TextAlignment.END)
@@ -82,9 +83,9 @@ public class Demo3UserInterface extends Scene {
                 Text.create(text)
                   .withFontSize(24),
                 Padding.create(
+                  new Spacing(x),
                   Text.create("Another Text")
-                    .withColor(Color.CYAN),
-                  new Spacing(x)
+                    .withColor(Color.CYAN)
                 )
               ).withMainAxisAlignment(MainAxisAlignment.SPACE_BETWEEN)
               .withCrossAxisAlignment(CrossAxisAlignment.STRETCH)
@@ -92,8 +93,7 @@ public class Demo3UserInterface extends Scene {
           ).withMainAxisAlignment(MainAxisAlignment.SPACE_BETWEEN)
           .withCrossAxisAlignment(CrossAxisAlignment.CENTER)
           .withGapSize(10)
-      ),
-      Alignment.CENTER
+      )
     );
   }
 }

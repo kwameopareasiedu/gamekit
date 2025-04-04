@@ -27,10 +27,18 @@
   enters a widget
 - Added `MouseExitEvent` which is a `MouseEvent` dispatched when the mouse
   leaves a widget
-- Added `Decorated` which is a `SingleChildParent` paints a shape, 
+- Added `Decorated` which is a `SingleChildParent` paints a shape,
   background color and border decorations
-- Added `NinePatch` which is a `Widget` which uses the 9-patch algorithm to 
+- Added `NinePatch` which is a `Widget` which uses the 9-patch algorithm to
   resize parts of the image to prevent stretching
+- Added `IntrinsicWidth` which is a `SingleChildParent` which limits the
+  computed width of its single child to the child's intrinsic width
+- Added `IntrinsicHeight` which is a `SingleChildParent` which limits the
+  computed height of its single child to the child's intrinsic height
+- Added `IntrinsicSize` which is a `SingleChildParent` which limits the
+  computed size of its single child to the child's intrinsic size
+- Added `Empty` which is a `Widget with zero size which renders 
+  nothing and should be used in places where `null` would have been preferable
 
 ### Changed
 

@@ -25,6 +25,7 @@ public class Playground extends Scene {
 
   public Playground() {
     super("Main Scene");
+    Config.DEBUG_DRAW = true;
   }
 
   public static void main(String[] args) {
@@ -65,26 +66,30 @@ public class Playground extends Scene {
   @Override
   public Widget onCreateUI() {
     return Align.create(
+      Alignment.CENTER,
       FixedSize.create(
         640, 480,
         Column.create(
             Padding.create(
+              new Spacing(x),
               Button.create(
                 Padding.create(
+                  new Spacing(50),
                   Decorated.create(
                     Stack.create(
                       FixedSize.create(
                         300, 150,
                         Image.create(wideImage)
                       ),
-                      NinePatch.create(ninePatchImage)
-                        .withSpacing(25, 25, 50, 25)
+                      FixedSize.create(
+                        300, 120,
+                        NinePatch.create(ninePatchImage, Empty.create())
+                          .withSpacing(25, 50, 50, 50)
+                      )
                     )
-                  ),
-                  new Spacing(50)
+                  )
                 )
-              ).withHoverTintColor(new Color(0x55ffffff, true)),
-              new Spacing(x)
+              ).withHoverTintColor(new Color(0x55ffffff, true))
             ),
             Text.create("Hello World")
               .withAlignment(TextAlignment.END)
@@ -96,9 +101,9 @@ public class Playground extends Scene {
                 Text.create(text)
                   .withFontSize(24),
                 Padding.create(
+                  new Spacing(x),
                   Text.create("Another Text")
-                    .withColor(Color.CYAN),
-                  new Spacing(x)
+                    .withColor(Color.CYAN)
                 )
               ).withMainAxisAlignment(MainAxisAlignment.SPACE_BETWEEN)
               .withCrossAxisAlignment(CrossAxisAlignment.STRETCH)
@@ -106,8 +111,7 @@ public class Playground extends Scene {
           ).withMainAxisAlignment(MainAxisAlignment.SPACE_BETWEEN)
           .withCrossAxisAlignment(CrossAxisAlignment.CENTER)
           .withGapSize(10)
-      ),
-      Alignment.CENTER
+      )
     );
   }
 }

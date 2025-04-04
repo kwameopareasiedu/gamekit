@@ -9,14 +9,16 @@ import java.awt.image.BufferedImage;
 import java.util.Objects;
 
 /**
- * A {@link Widget} which uses the 9-patch algorithm to render a
- * {@link BufferedImage} to the screen
+ * A {@link SingleChildParent} which uses the 9-patch algorithm to render a
+ * {@link BufferedImage} as a background to its descendants
  */
-public class NinePatch extends Widget {
+public class NinePatch extends SingleChildParent {
   protected final Spacing spacing;
   protected final BufferedImage image;
 
-  protected NinePatch(BufferedImage image) {
+  protected NinePatch(BufferedImage image, Widget child) {
+    super(child);
+
     if (image == null)
       throw new NullPointerException("Image cannot be null");
 
@@ -24,21 +26,36 @@ public class NinePatch extends Widget {
     this.spacing = new Spacing(0, 0, 0, 0);
   }
 
-  public static NinePatch create(BufferedImage image) {
-    return new NinePatch(image);
+  public static NinePatch create(BufferedImage image, Widget child) {
+    return new NinePatch(image, child);
   }
 
   @Override
   protected void performLayout(Constraints constraints) {
-    intrinsicBounds.setSize(image.getWidth(), image.getHeight());
+    child.layout(
+      new Constraints(
+        0, constraints.maxWidth(),
+        0, constraints.maxHeight()
+      )
+    );
 
-    int computedWidth = constraints.constrainWidth(intrinsicBounds.width);
-    int computedHeight = constraints.constrainHeight(intrinsicBounds.height);
-    computedBounds.setSize(computedWidth, computedHeight);
+    intrinsicBounds.setSize(
+      Math.max(image.getWidth(), child.computedBounds.width),
+      Math.max(image.getHeight(), child.computedBounds.height)
+    );
+
+    computedBounds.setSize(
+      constraints.constrainWidth(intrinsicBounds.width),
+      constraints.constrainHeight(intrinsicBounds.height)
+    );
+
+    child.computedBounds.setPosition(0, 0);
   }
 
   @Override
-  public void performRender(Graphics2D g) {
+  public void renderBackground(Graphics2D g) {
+    super.renderBackground(g);
+
     int dx2 = computedBounds.width, dy2 = computedBounds.height;
 
     g.setBackground(Constants.TRANSPARENT_COLOR);
@@ -46,19 +63,21 @@ public class NinePatch extends Widget {
 
     int nl = spacing.left;
     int nt = spacing.top;
-    int nr = intrinsicBounds.width - spacing.right;
-    int nb = intrinsicBounds.height - spacing.bottom;
+    int iw = image.getWidth();
+    int ih = image.getHeight();
+    int nr = iw - spacing.right;
+    int nb = ih - spacing.bottom;
 
     int[][] srcBounds = new int[][]{
       new int[]{ 0, 0, nl, nt },
       new int[]{ nl, 0, nr, nt },
-      new int[]{ nr, 0, intrinsicBounds.width, nt },
+      new int[]{ nr, 0, iw, nt },
       new int[]{ 0, nt, nl, nb },
       new int[]{ nl, nt, nr, nb },
-      new int[]{ nr, nt, intrinsicBounds.width, nb },
-      new int[]{ 0, nb, nl, intrinsicBounds.height },
-      new int[]{ nl, nb, nr, intrinsicBounds.height },
-      new int[]{ nr, nb, intrinsicBounds.width, intrinsicBounds.height },
+      new int[]{ nr, nt, iw, nb },
+      new int[]{ 0, nb, nl, ih },
+      new int[]{ nl, nb, nr, ih },
+      new int[]{ nr, nb, iw, ih },
     };
 
     nl = spacing.left;

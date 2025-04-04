@@ -1,9 +1,9 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.Scene;
-import dev.gamekit.utils.Blend;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.events.*;
+import dev.gamekit.utils.Blend;
 
 import java.awt.*;
 import java.util.Objects;
@@ -35,12 +35,15 @@ public class Button extends SingleChildParent {
       )
     );
 
-    intrinsicBounds.setSize(child.computedBounds.width,
-      child.computedBounds.height);
+    intrinsicBounds.setSize(
+      child.computedBounds.width,
+      child.computedBounds.height
+    );
 
-    int computedWidth = constraints.constrainWidth(intrinsicBounds.width);
-    int computedHeight = constraints.constrainHeight(intrinsicBounds.height);
-    computedBounds.setSize(computedWidth, computedHeight);
+    computedBounds.setSize(
+      constraints.constrainWidth(intrinsicBounds.width),
+      constraints.constrainHeight(intrinsicBounds.height)
+    );
 
     child.computedBounds.setPosition(0, 0);
   }

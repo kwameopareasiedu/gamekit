@@ -2,7 +2,7 @@ package dev.gamekit.ui.widgets;
 
 import dev.gamekit.ui.Constraints;
 
-/** A {@link Parent} which arranges its children vertically */
+/** A {@link Flex} which arranges its children vertically */
 public class Column extends Flex {
   protected Column(Widget... children) {
     super(children);

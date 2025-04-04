@@ -5,17 +5,17 @@ import dev.gamekit.ui.Spacing;
 
 import java.util.Objects;
 
-/** A {@link Parent} which adds padding around its single child */
+/** A {@link SingleChildParent} which adds padding around its single child */
 public class Padding extends SingleChildParent {
   protected Spacing padding;
 
-  protected Padding(Widget child, Spacing padding) {
+  protected Padding(Spacing padding, Widget child) {
     super(child);
     this.padding = padding;
   }
 
-  public static Padding create(Widget child, Spacing padding) {
-    return new Padding(child, padding);
+  public static Padding create(Spacing padding, Widget child) {
+    return new Padding(padding, child);
   }
 
   @Override

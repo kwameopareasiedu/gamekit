@@ -5,17 +5,17 @@ import dev.gamekit.ui.enums.Alignment;
 
 import java.util.Objects;
 
-/** A {@link Parent} which aligns its single child within itself */
+/** A {@link SingleChildParent} which aligns its single child within itself */
 public class Align extends SingleChildParent {
   protected Alignment alignment;
 
-  protected Align(Widget child, Alignment alignment) {
+  protected Align(Alignment alignment, Widget child) {
     super(child);
     this.alignment = alignment;
   }
 
-  public static Align create(Widget child, Alignment alignment) {
-    return new Align(child, alignment);
+  public static Align create(Alignment alignment, Widget child) {
+    return new Align(alignment, child);
   }
 
   @Override
@@ -33,8 +33,8 @@ public class Align extends SingleChildParent {
     );
 
     computedBounds.setSize(
-      constraints.constrainWidth(child.computedBounds.width),
-      constraints.constrainHeight(child.computedBounds.height)
+      constraints.maxWidth(),
+      constraints.maxHeight()
     );
 
     int drawX = 0, drawY = 0;
