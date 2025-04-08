@@ -14,6 +14,11 @@
 
 ### Removed
 
+- Removed `IntrinsicWidth` widget. Use `IntrinsicSize` with `Axis.
+  HORIZONTAL` instead
+- Removed `IntrinsicHeight` widget. Use `IntrinsicSize` with `Axis.VERTICAL`
+  instead
+
 ## 0.3.0-SNAPSHOT-3
 
 ### Added
