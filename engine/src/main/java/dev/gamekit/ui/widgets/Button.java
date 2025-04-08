@@ -45,7 +45,10 @@ public class Button extends SingleChildParent {
       constraints.constrainHeight(intrinsicBounds.height)
     );
 
-    child.computedBounds.setPosition(0, 0);
+    child.computedBounds.setPosition(
+      computedBounds.width / 2 - child.computedBounds.width / 2,
+      computedBounds.height / 2 - child.computedBounds.height / 2
+    );
   }
 
   @Override
@@ -96,22 +99,22 @@ public class Button extends SingleChildParent {
     }
   }
 
-  public Button withMouseMotionListener(MouseMotionEvent.Listener listener) {
-    this.mouseMotionListener = listener;
-    return this;
-  }
-
-  public Button withMouseEnterListener(MouseEnterEvent.Listener listener) {
+  public Button onMouseEnter(MouseEnterEvent.Listener listener) {
     this.mouseEnterListener = listener;
     return this;
   }
 
-  public Button withMouseExitListener(MouseExitEvent.Listener listener) {
+  public Button onMouseExit(MouseExitEvent.Listener listener) {
     this.mouseExitListener = listener;
     return this;
   }
 
-  public Button withMouseClickListener(MouseClickEvent.Listener listener) {
+  public Button onHover(MouseMotionEvent.Listener listener) {
+    this.mouseMotionListener = listener;
+    return this;
+  }
+
+  public Button onClick(MouseClickEvent.Listener listener) {
     this.mouseClickListener = listener;
     return this;
   }

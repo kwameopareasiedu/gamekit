@@ -6,6 +6,10 @@
 
 ### Changed
 
+- Modified `Button` widget to center child
+- Modified `Padding` widget to center child
+- Modified `NinePatch` widget to center child
+
 ### Deprecated
 
 ### Removed
