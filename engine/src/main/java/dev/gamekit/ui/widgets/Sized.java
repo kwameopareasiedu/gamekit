@@ -5,18 +5,18 @@ import dev.gamekit.ui.Constraints;
 import java.util.Objects;
 
 /** A {@link SingleChildParent} which enforces a fixed size on its child */
-public class FixedSize extends SingleChildParent {
+public class Sized extends SingleChildParent {
   protected final int width;
   protected final int height;
 
-  public FixedSize(int width, int height, Widget child) {
+  public Sized(int width, int height, Widget child) {
     super(child);
     this.width = width;
     this.height = height;
   }
 
-  public static FixedSize create(int width, int height, Widget child) {
-    return new FixedSize(width, height, child);
+  public static Sized create(int width, int height, Widget child) {
+    return new Sized(width, height, child);
   }
 
   @Override
@@ -36,9 +36,9 @@ public class FixedSize extends SingleChildParent {
 
   @Override
   protected boolean stateEquals(Widget widget) {
-    if (widget instanceof FixedSize fixedSizeWidget) {
-      return Objects.equals(width, fixedSizeWidget.width) &&
-        Objects.equals(height, fixedSizeWidget.height);
+    if (widget instanceof Sized sizedWidget) {
+      return Objects.equals(width, sizedWidget.width) &&
+        Objects.equals(height, sizedWidget.height);
     }
     return false;
   }

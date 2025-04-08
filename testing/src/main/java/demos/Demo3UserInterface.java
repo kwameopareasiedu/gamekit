@@ -57,17 +57,17 @@ public class Demo3UserInterface extends Scene {
   public Widget onCreateUI() {
     return Align.create(
       Alignment.CENTER,
-      FixedSize.create(
+      Sized.create(
         600, 480,
         Column.create(
             Padding.create(
               new Spacing(x),
               Stack.create(
-                FixedSize.create(
+                Sized.create(
                   300, 150,
                   Image.create(wideImage)
                 ),
-                FixedSize.create(
+                Sized.create(
                   400, 200,
                   Image.create(squareImage)
                 )

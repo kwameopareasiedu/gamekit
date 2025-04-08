@@ -67,7 +67,7 @@ public class Playground extends Scene {
   public Widget onCreateUI() {
     return Align.create(
       Alignment.CENTER,
-      FixedSize.create(
+      Sized.create(
         640, 480,
         Column.create(
             Padding.create(
@@ -77,11 +77,11 @@ public class Playground extends Scene {
                   new Spacing(50),
                   Decorated.create(
                     Stack.create(
-                      FixedSize.create(
+                      Sized.create(
                         300, 150,
                         Image.create(wideImage)
                       ),
-                      FixedSize.create(
+                      Sized.create(
                         300, 120,
                         NinePatch.create(ninePatchImage, Empty.create())
                           .withSpacing(25, 50, 50, 50)

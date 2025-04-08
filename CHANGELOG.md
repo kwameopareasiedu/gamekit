@@ -9,6 +9,8 @@
 - Modified `Button` widget to center child
 - Modified `Padding` widget to center child
 - Modified `NinePatch` widget to center child
+- Modified `Decorated` widget to center child
+- Renamed `FixedSize` widget to `Sized`
 
 ### Deprecated
 

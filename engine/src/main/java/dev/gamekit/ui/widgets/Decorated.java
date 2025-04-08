@@ -61,7 +61,10 @@ public class Decorated extends SingleChildParent {
       );
     }
 
-    child.computedBounds.setPosition(0, 0);
+    child.computedBounds.setPosition(
+      computedBounds.width / 2 - child.computedBounds.width / 2,
+      computedBounds.height / 2 - child.computedBounds.height / 2
+    );
   }
 
   @Override
