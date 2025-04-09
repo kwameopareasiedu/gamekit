@@ -1,6 +1,7 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.ui.Constraints;
+import dev.gamekit.ui.enums.MainAxisAlignment;
 
 /** A {@link Flex} which arranges its children vertically */
 public class Column extends Flex {
@@ -19,34 +20,31 @@ public class Column extends Flex {
       0, constraints.maxHeight()
     );
 
-    int currentY = 0;
     int maxWidth = 0;
-    Widget lastChild = children.get(children.size() - 1);
+    int currentHeight = 0;
 
     for (var child : children) {
       child.layout(cc);
-      child.computedBounds.setPosition(0, currentY);
 
-      currentY += child.computedBounds.height;
+      currentHeight += child.computedBounds.height + gapSize;
       maxWidth = Math.max(maxWidth, child.computedBounds.width);
       cc = new Constraints(
         0, cc.maxWidth(),
         0, cc.maxHeight() - child.computedBounds.height
       );
-
-      if (child != lastChild) currentY += gapSize;
     }
 
-    intrinsicBounds.setSize(maxWidth, currentY);
+    currentHeight -= gapSize;
+    intrinsicBounds.setSize(maxWidth, currentHeight);
 
     computedBounds.setSize(
       constraints.constrainWidth(intrinsicBounds.width),
       constraints.constrainHeight(intrinsicBounds.height)
     );
 
-    int spaceBetween = (computedBounds.height - intrinsicBounds.height)
-      / Math.max(children.size() - 1, 1);
-    int newGapSize = gapSize + spaceBetween;
+    int freeSpace =
+      Math.max(0, computedBounds.height - intrinsicBounds.height);
+    int spaceBetween = freeSpace / Math.max(children.size() - 1, 1);
 
     int newY = switch (mainAxisAlignment) {
       case CENTER -> computedBounds.height / 2 - intrinsicBounds.height / 2;
@@ -57,8 +55,8 @@ public class Column extends Flex {
     for (var child : children) {
       child.computedBounds.setY(newY);
       newY += child.computedBounds.height;
-
-      if (child != lastChild) newY += newGapSize;
+      newY += mainAxisAlignment == MainAxisAlignment.SPACE_BETWEEN ?
+        spaceBetween : gapSize;
     }
 
     for (var child : children) {

@@ -1,6 +1,7 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.ui.Constraints;
+import dev.gamekit.ui.enums.MainAxisAlignment;
 
 /** A {@link Flex} which arranges its children horizontally */
 public class Row extends Flex {
@@ -19,34 +20,31 @@ public class Row extends Flex {
       0, constraints.maxHeight()
     );
 
-    int currentX = 0;
+    int currentWidth = 0;
     int maxHeight = 0;
-    Widget lastChild = children.get(children.size() - 1);
 
     for (var child : children) {
       child.layout(cc);
-      child.computedBounds.setPosition(currentX, 0);
+      child.computedBounds.setPosition(currentWidth, 0);
 
-      currentX += child.computedBounds.width;
+      currentWidth += child.computedBounds.width + gapSize;
       maxHeight = Math.max(maxHeight, child.computedBounds.height);
       cc = new Constraints(
         0, cc.maxWidth() - child.computedBounds.width,
         0, cc.maxHeight()
       );
-
-      if (child != lastChild) currentX += gapSize;
     }
 
-    intrinsicBounds.setSize(currentX, maxHeight);
+    currentWidth -= gapSize;
+    intrinsicBounds.setSize(currentWidth, maxHeight);
 
     computedBounds.setSize(
       constraints.constrainWidth(intrinsicBounds.width),
       constraints.constrainHeight(intrinsicBounds.height)
     );
 
-    int spaceBetween = (computedBounds.width - intrinsicBounds.width)
-      / Math.max(children.size() - 1, 1);
-    int newGapSize = gapSize + spaceBetween;
+    int freeSpace = Math.max(0, computedBounds.width - intrinsicBounds.width);
+    int spaceBetween = freeSpace / Math.max(children.size() - 1, 1);
 
     int newX = switch (mainAxisAlignment) {
       case CENTER -> computedBounds.width / 2 - intrinsicBounds.width / 2;
@@ -57,8 +55,8 @@ public class Row extends Flex {
     for (var child : children) {
       child.computedBounds.setX(newX);
       newX += child.computedBounds.width;
-
-      if (child != lastChild) newX += newGapSize;
+      newX += mainAxisAlignment == MainAxisAlignment.SPACE_BETWEEN ?
+        spaceBetween : gapSize;
     }
 
     for (var child : children) {
