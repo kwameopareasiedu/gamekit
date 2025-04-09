@@ -74,9 +74,7 @@ public final class UI {
     }
   }
 
-  public void triggerUpdate() {
-    needsUpdate = true;
-  }
+  public void triggerUpdate() { needsUpdate = true; }
 
   public void triggerRender() { needsRender = true; }
 
@@ -152,12 +150,14 @@ public final class UI {
         if (treeWidgetParent == null) {
           tree = newWidget;
           treeUpdated = true;
+          break;
         } else if (treeWidgetParent instanceof SingleChildParent currentParent) {
           currentParent.updateChild(newWidget);
           treeUpdated = true;
+          break;
         } else if (treeWidgetParent instanceof MultiChildParent currentParent) {
           int index = currentParent.getChildren().indexOf(treeWidget);
-          currentParent.updateChild(newWidget, index);
+          currentParent.updateChild(index, newWidget);
           treeUpdated = true;
         }
       } else if (treeWidget instanceof SingleChildParent currentParent

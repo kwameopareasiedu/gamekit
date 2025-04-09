@@ -7,8 +7,8 @@ import java.lang.Math;
 
 /** Holds constants accessible across the entire engine */
 public final class Constants {
-  public static final String DEFAULT_FONT_NAME = "Dogical Pixel";
-  public static final Font DEFAULT_FONT = IO.loadFontResource("dogicapixel.ttf");
+  public static final String DEFAULT_FONT_NAME = "Dogica Pixel";
+  public static final Font DEFAULT_FONT = IO.getResourceFont("dogicapixel.ttf");
   public static final Color TRANSPARENT_COLOR = new Color(0x0000000, true);
 
   // Animation curve related constants - Start

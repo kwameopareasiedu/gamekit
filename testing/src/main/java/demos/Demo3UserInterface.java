@@ -15,8 +15,8 @@ import java.awt.image.BufferedImage;
 public class Demo3UserInterface extends Scene {
   int x = 0, y = 0;
   String text = "Kwame";
-  BufferedImage squareImage = IO.loadImageResource("square-img.jpg");
-  BufferedImage wideImage = IO.loadImageResource("wide-img.jpg");
+  BufferedImage squareImage = IO.getResourceImage("square-img.jpg");
+  BufferedImage wideImage = IO.getResourceImage("wide-img.jpg");
 
   public Demo3UserInterface() {
     super("Main Scene");

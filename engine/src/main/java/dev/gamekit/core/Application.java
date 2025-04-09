@@ -135,7 +135,7 @@ public abstract class Application {
     }
   }
 
-  /** Sets up Gamekit's internals before starting the game loop */
+  /** Sets up GameKit's internals before starting the game loop */
   private void onSetup() {
     logger.debug("Initializing application");
 
@@ -234,5 +234,7 @@ public abstract class Application {
     if (currentScene != null) {
       currentScene.dispose();
     }
+
+    IO.dispose();
   }
 }

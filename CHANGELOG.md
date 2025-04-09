@@ -4,6 +4,13 @@
 
 ### Added
 
+- Added `static Clip getResourceAudioClip(String path)` to `IO` class
+- Added `Audio` class which handles loading and playback of audio
+- Added `Opacity` which is a `SingleChildParent` which renders its child
+  with transparency
+- Added `Scaled` which is a `SingleChildParent` which scaled the computed
+  size of its child
+
 ### Changed
 
 - Modified `Button` widget to center child
@@ -11,6 +18,12 @@
 - Modified `NinePatch` widget to center child
 - Modified `Decorated` widget to center child
 - Renamed `FixedSize` widget to `Sized`
+- Renamed `static Font loadFontResource(String path)` to `static Font 
+getResourceFong(String path)` in `IO` class
+- Renamed `static Font loadFontResource(String path)` to `static Font 
+getResourceFong(String path)` in `IO` class
+- Renamed `static BufferedImage loadImageResource(String path)` to `static 
+BufferedImage getResourceImage(String path)` in `IO` class
 
 ### Deprecated
 
@@ -20,6 +33,8 @@
   HORIZONTAL` instead
 - Removed `IntrinsicHeight` widget. Use `IntrinsicSize` with `Axis.VERTICAL`
   instead
+- Removed `static BufferedReader loadBufferedResource(String path)` from IO
+  class
 
 ## 0.3.0-SNAPSHOT-3
 

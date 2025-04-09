@@ -6,85 +6,78 @@ import org.apache.logging.log4j.Logger;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
- * IO handles resource loading and file access. It also caches resources loaded,
- * prevent multiple disk reads for the same and improving performance.
+ * IO handles resource access
+ * <p>
+ * {@code IO} caches resources loaded, prevent multiple disk reads for the
+ * same and improving performance.
+ * <p>
+ * It also keeps track of opened {@link InputStream} objects and closes them
+ * when the current application exits
  */
 public class IO {
   private static final Logger LOGGER = LogManager.getLogger();
   private static final Map<String, Object> CACHE = new HashMap<>();
+  private static final List<InputStream> INPUT_STREAMS = new ArrayList<>();
 
   private IO() { }
 
-  /**
-   * Loads and caches an image at the specified path
-   * @param path Resources path of image to load
-   * @return {@link BufferedImage} The loaded image or {@code null} if an error
-   * occurred during loading
-   */
-  public static BufferedImage loadImageResource(String path) {
-    if (CACHE.containsKey(path)) {
-      return (BufferedImage) CACHE.get(path);
-    }
+  /** Opens and returns a stream to a resource file */
+  public static InputStream getResourceStream(String resPath) {
+    InputStream is = IO.class.getClassLoader().getResourceAsStream(resPath);
+    INPUT_STREAMS.add(is);
+    return is;
+  }
 
+  public static BufferedImage getResourceImage(String resPath) {
     try {
-      LOGGER.debug("Loading image resource at {}", path);
-      InputStream assetStream = IO.class.getClassLoader().getResourceAsStream(path);
-      BufferedImage image = ImageIO.read(assetStream);
-      CACHE.put(path, image);
-      assetStream.close();
+      LOGGER.debug("Loading resource image at {}", resPath);
+
+      if (CACHE.containsKey(resPath))
+        return (BufferedImage) CACHE.get(resPath);
+
+      BufferedImage image = ImageIO.read(getResourceStream(resPath));
+      CACHE.put(resPath, image);
       return image;
     } catch (IOException e) {
-      LOGGER.error("Unable to load image resource at {}", path);
+      LOGGER.error("Unable to load resource image at {}", resPath);
       LOGGER.catching(e);
       return null;
     }
   }
 
-  /**
-   * Loads and caches a font at the specified path
-   * @param path Resources path of font file to load
-   * @return {@link BufferedImage} The loaded image or {@code null} if an error
-   * occurred during loading
-   */
-  public static Font loadFontResource(String path) {
-    if (CACHE.containsKey(path)) {
-      return (Font) CACHE.get(path);
-    }
-
+  public static Font getResourceFont(String resPath) {
     try {
-      LOGGER.debug("Loading font resource at {}", path);
-      InputStream assetStream = IO.class.getClassLoader().getResourceAsStream(path);
-      Font font = Font.createFont(Font.TRUETYPE_FONT, assetStream);
-      CACHE.put(path, font);
-      assetStream.close();
+      LOGGER.debug("Loading resource font at {}", resPath);
+
+      if (CACHE.containsKey(resPath))
+        return (Font) CACHE.get(resPath);
+
+      Font font = Font.createFont(Font.TRUETYPE_FONT,
+        getResourceStream(resPath));
+      CACHE.put(resPath, font);
       return font;
     } catch (FontFormatException | IOException e) {
-      LOGGER.error("Unable to load font resource at {}", path);
+      LOGGER.error("Unable to load resource font at {}", resPath);
       LOGGER.catching(e);
       return null;
     }
   }
 
-  /**
-   * Opens and returns a {@link BufferedReader} to a resource at the specified
-   * path.
-   * <p>
-   * <strong>Important: Remember to close the reader when done</strong>
-   * @param path Resources path of resource file to load
-   * @return {@link BufferedImage} The {@link BufferedReader} object to the
-   * resource
-   */
-  public static BufferedReader loadBufferedResource(String path) {
-    InputStream fileInputStream = IO.class.getClassLoader().getResourceAsStream(path);
-    InputStreamReader inputReader = new InputStreamReader(fileInputStream);
-    return new BufferedReader(inputReader);
+  /** Closes open IO resources */
+  static void dispose() {
+    try {
+      for (var is : INPUT_STREAMS)
+        is.close();
+    } catch (IOException e) {
+      LOGGER.error("Unable to close input stream", e);
+    }
   }
 }

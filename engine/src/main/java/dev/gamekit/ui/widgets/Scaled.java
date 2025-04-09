@@ -4,7 +4,7 @@ import dev.gamekit.ui.Constraints;
 
 import java.util.Objects;
 
-/** A {@link SingleChildParent} which scales the intrinsic size of its child */
+/** A {@link SingleChildParent} which scales the computed size of its child */
 public class Scaled extends SingleChildParent {
   protected final double scale;
 

@@ -1,10 +1,8 @@
+import dev.gamekit.core.Window;
 import dev.gamekit.core.*;
-import dev.gamekit.ui.Spacing;
-import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.enums.MainAxisAlignment;
 import dev.gamekit.ui.enums.TextAlignment;
-import dev.gamekit.ui.widgets.Button;
 import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.ui.widgets.*;
 import dev.gamekit.utils.Config;
@@ -15,17 +13,16 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Playground extends Scene {
-  private static final Color CLEAR_COLOR = new Color(0xff1f1f1f);
+  static {
+    Audio.preload("alert", "cybertruck.wav");
+  }
 
-  int x = 0, y = 0;
-  String text = "Kwame";
-  BufferedImage squareImage = IO.loadImageResource("square-img.jpg");
-  BufferedImage wideImage = IO.loadImageResource("wide-img.jpg");
-  BufferedImage ninePatchImage = IO.loadImageResource("9-patch.png");
+  double pan = 0;
+  int halfWindowWidth = 0;
+  private final BufferedImage speakerImg = IO.getResourceImage("speaker.png");
 
   public Playground() {
     super("Main Scene");
-    Config.DEBUG_DRAW = true;
   }
 
   public static void main(String[] args) {
@@ -37,81 +34,78 @@ public class Playground extends Scene {
   }
 
   @Override
-  public void onUpdate() {
-    super.onUpdate();
+  protected void onStart() {
+    super.onStart();
 
-    if (Input.isButtonPressed(Input.BUTTON_LMB)) {
-      Position mousePos = Input.getMousePosition();
-      Position pt = Camera.screenToWorldPoint(mousePos.x, mousePos.y);
-      x = pt.x;
-      y = pt.y;
-    }
+    halfWindowWidth = Window.getInstance().getFrameWidth() / 2;
   }
 
   @Override
-  public void onRender() {
+  protected void onUpdate() {
+    super.onUpdate();
+
+    if (Input.isKeyJustPressed(Input.KEY_SPACE)) {
+      Audio.setGain("alert", -5f);
+      Audio.play("alert");
+    }
+
+    Position mousePos = Input.getMousePosition();
+    updateUI(() ->
+      pan = (double) (mousePos.x - halfWindowWidth) / (halfWindowWidth)
+    );
+    Audio.setPan("alert", (float) pan);
+  }
+
+  @Override
+  protected void onRender() {
     super.onRender();
-    Renderer.setColor(CLEAR_COLOR);
+
+    Renderer.setBackground(Color.DARK_GRAY);
     Renderer.clear();
-    Renderer.setColor(Color.RED);
-    Renderer.fillRoundRect(-50 + x, -50 + y, 100, 100, 10, 10);
-    Renderer.setColor(Color.YELLOW);
-    Renderer.fillRoundRect(50 + x, -50 + y, 100, 100, 10, 10);
-    Renderer.setColor(Color.GREEN);
-    Renderer.fillRoundRect(50 + x, 50 + y, 100, 100, 10, 10);
-    Renderer.setColor(Color.CYAN);
-    Renderer.fillRoundRect(-50 + x, 50 + y, 100, 100, 10, 10);
   }
 
   @Override
   public Widget onCreateUI() {
-    return Align.create(
-      Alignment.CENTER,
-      Sized.create(
-        640, 480,
-        Column.create(
-            Padding.create(
-              new Spacing(x),
-              Button.create(
-                Padding.create(
-                  new Spacing(50),
-                  Decorated.create(
-                    Stack.create(
-                      Sized.create(
-                        300, 150,
-                        Image.create(wideImage)
-                      ),
-                      Sized.create(
-                        300, 120,
-                        NinePatch.create(ninePatchImage, Empty.create())
-                          .withSpacing(25, 50, 50, 50)
-                      )
-                    )
+    return Column.create(
+        Text.create("Press the Space Bar to play/restart the audio")
+          .withAlignment(TextAlignment.CENTER),
+
+        Text.create("Move the mouse from left to right to pan the audio")
+          .withAlignment(TextAlignment.CENTER),
+
+        Row.create(
+            Column.create(
+                Opacity.create(
+                  pan < 0 ? 1 : 1 - pan, Scaled.create(
+                    0.5, Image.create(speakerImg)
                   )
-                )
-              ).withHoverTintColor(new Color(0x55ffffff, true))
-            ),
-            Text.create("Hello World")
-              .withAlignment(TextAlignment.END)
-              .withShadow(true)
-              .withShadowColor(Color.BLACK)
-              .withShadowOffset(10, 4)
-              .withFontStyle(Font.BOLD),
-            Row.create(
-                Text.create(text)
-                  .withFontSize(24),
-                Padding.create(
-                  new Spacing(x),
-                  Text.create("Another Text")
-                    .withColor(Color.CYAN)
-                )
-              ).withMainAxisAlignment(MainAxisAlignment.SPACE_BETWEEN)
-              .withCrossAxisAlignment(CrossAxisAlignment.STRETCH)
-              .withGapSize(10)
-          ).withMainAxisAlignment(MainAxisAlignment.SPACE_BETWEEN)
+                ),
+
+                Text.create("Left Speaker")
+                  .withAlignment(TextAlignment.CENTER)
+                  .withFontSize(12)
+              )
+              .withCrossAxisAlignment(CrossAxisAlignment.CENTER)
+              .withGapSize(16),
+
+            Column.create(
+                Opacity.create(
+                  pan > 0 ? 1 : 1 + pan, Scaled.create(
+                    0.5, Image.create(speakerImg)
+                  )
+                ),
+
+                Text.create("Right Speaker")
+                  .withAlignment(TextAlignment.CENTER)
+                  .withFontSize(12)
+              )
+              .withCrossAxisAlignment(CrossAxisAlignment.CENTER)
+              .withGapSize(16)
+          ).withMainAxisAlignment(MainAxisAlignment.CENTER)
           .withCrossAxisAlignment(CrossAxisAlignment.CENTER)
-          .withGapSize(10)
-      )
-    );
+          .withGapSize(8)
+      ).withMainAxisAlignment(MainAxisAlignment.CENTER)
+      .withCrossAxisAlignment(CrossAxisAlignment.STRETCH)
+      .withGapSize(24);
   }
 }

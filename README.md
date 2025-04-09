@@ -13,7 +13,7 @@ Read the full engine documentation [here](./ENGINE.md).
 
 ## Installation
 
-Gamekit is distributed as a Maven dependency on Github packages. To include in
+GameKit is distributed as a Maven dependency on Github packages. To include in
 your project add its dependency to your `pom.xml`
 
 ```xml
@@ -26,7 +26,7 @@ your project add its dependency to your `pom.xml`
 
     <repository>
       <id>github-maven</id>
-      <name>Gamekit Github Maven</name>
+      <name>GameKit Github Maven</name>
       <url>https://raw.github.com/kwameopareasiedu/gamekit-maven/master</url>
     </repository>
   </repositories>

@@ -10,8 +10,8 @@ import static dev.gamekit.utils.Math.clamp;
 public class CalibrationTest extends Scene {
   private static final int WORLD_WIDTH = 2400;
   private static final int WORLD_HEIGHT = 1400;
-  private static final Font LEXEND_FONT = IO.loadFontResource("lexend-regular.ttf").deriveFont(12f);
-  private static final BufferedImage SPRITE = IO.loadImageResource("zainar.png");
+  private static final Font LEXEND_FONT = IO.getResourceFont("lexend-regular.ttf").deriveFont(12f);
+  private static final BufferedImage SPRITE = IO.getResourceImage("zainar.png");
 
   private double time;
 
