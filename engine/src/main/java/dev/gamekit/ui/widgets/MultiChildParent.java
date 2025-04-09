@@ -39,7 +39,7 @@ public abstract class MultiChildParent extends Parent {
 
   public List<Widget> getChildren() { return children; }
 
-  public final void updateChild(Widget newChild, int index) {
+  public final void updateChild(int index, Widget newChild) {
     if (index >= children.size())
       throw new ArrayIndexOutOfBoundsException(
         String.format(
