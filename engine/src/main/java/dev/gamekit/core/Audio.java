@@ -1,114 +1,94 @@
 package dev.gamekit.core;
 
+import dev.gamekit.audio.AudioClip;
+import dev.gamekit.audio.AudioGroup;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.sound.sampled.*;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
 import java.util.HashMap;
 
 /** Audio handles loading and playback of sounds in GameKit */
 public class Audio {
   private static final Logger LOGGER = LogManager.getLogger();
-  private static final HashMap<Object, Clip> CLIP_CACHE = new HashMap<>();
+  private static final HashMap<Object, AudioClip> CLIP_CACHE = new HashMap<>();
 
   private Audio() { }
 
   /**
-   * Loads the entire audio resource file at {@code resPath} into memory to
-   * be played back later
+   * Loads a non-spatial audio clip
+   * @see #load(Object, String, AudioGroup, double)
    */
-  public static void preload(Object key, String resPath) {
+  public static void load(
+    Object key,
+    String resPath,
+    AudioGroup group,
+    double maxVolume
+  ) {
+    load(key, resPath, group, maxVolume, false);
+  }
+
+  /**
+   * Loads an audio clip resource at {@code resPath} into memory. This creates
+   * and caches a {@link AudioClip} object
+   * @param key       A unique identifier for the loaded clip
+   * @param resPath   The path to the clip in the resource folder
+   * @param group     The group which this clip belongs to
+   * @param maxVolume The max volume of this clip (0.0 - 1.0)
+   * @param spatial   Whether this clip is spatial or non-spatial
+   */
+  public static void load(
+    Object key,
+    String resPath,
+    AudioGroup group,
+    double maxVolume,
+    boolean spatial
+  ) {
     Clip clip = getResourceAudioClip(resPath);
 
-    if (clip == null) {
-      LOGGER.warn("Audio with key {} not found at \"{}\"", key, resPath);
-      return;
-    }
-
-    CLIP_CACHE.put(key, clip);
+    if (clip != null) {
+      AudioClip clipHolder = new AudioClip(clip, group, maxVolume, spatial);
+      CLIP_CACHE.put(key, clipHolder);
+    } else LOGGER.warn("Clip not found at \"{}\"", resPath);
   }
 
-  /** Starts the playback of a clip with the specified key */
   public static void play(Object key) {
     if (!CLIP_CACHE.containsKey(key)) {
-      LOGGER.warn("Audio with key {} not preloaded", key);
-      return;
-    }
-
-    Clip clip = CLIP_CACHE.get(key);
-
-    stop(key);
-    clip.setMicrosecondPosition(0);
-    clip.start();
+      LOGGER.warn("Clip with key {} not loaded", key);
+    } else CLIP_CACHE.get(key).play();
   }
 
-  /** Stops the playback of a clip with the specified key */
+  public static void play(Object key, boolean loop) {
+    if (!CLIP_CACHE.containsKey(key)) {
+      LOGGER.warn("Audio with key {} not loaded", key);
+    } else CLIP_CACHE.get(key).play(loop);
+  }
+
+  public static void resume(Object key) {
+    if (!CLIP_CACHE.containsKey(key)) {
+      LOGGER.warn("Audio with key {} not loaded", key);
+    } else CLIP_CACHE.get(key).resume();
+  }
+
+  public static void pause(Object key) {
+    if (!CLIP_CACHE.containsKey(key)) {
+      LOGGER.warn("Audio with key {} not loaded", key);
+    } else CLIP_CACHE.get(key).pause();
+  }
+
   public static void stop(Object key) {
     if (!CLIP_CACHE.containsKey(key)) {
-      LOGGER.warn("Audio with key {} not preloaded", key);
-      return;
-    }
-
-    Clip clip = CLIP_CACHE.get(key);
-    clip.stop();
-    clip.flush();
+      LOGGER.warn("Clip with key {} not loaded", key);
+    } else CLIP_CACHE.get(key).stop();
   }
 
-  /** Sets the number of times a clip with the specified key should loop */
-  public static void loop(Object key, int loopCount) {
-    if (!CLIP_CACHE.containsKey(key)) {
-      LOGGER.warn("Audio with key {} not preloaded", key);
-      return;
-    }
-
-    Clip clip = CLIP_CACHE.get(key);
-    clip.loop(loopCount);
-  }
-
-  /**
-   * Sets the gain in decibels a clip with the specified key.
-   * <p>
-   * This should be called prior to calling {@link #play(Object)}
-   */
-  public static void setGain(Object key, float gainDb) {
-    setControl(key, FloatControl.Type.MASTER_GAIN, gainDb);
-  }
-
-  /** Sets the volume of a clip with the specified key */
-  public static void setVolume(Object key, float volume) {
-    setControl(key, FloatControl.Type.VOLUME, volume);
-  }
-
-  /**
-   * Sets the left-to-right positioning of a stereo clip with the specified
-   * key.
-   * <p>
-   * A value of {@code -1} plays only the left channel of the clip (i.e.
-   * plays on the left speaker) and a value of {@code 1} plays only the right
-   * channel.
-   */
-  public static void setPan(Object key, float pan) {
-    setControl(key, FloatControl.Type.PAN, pan);
-  }
-
-  private static void setControl(Object key,
-                                 FloatControl.Type controlType, float value) {
-    if (!CLIP_CACHE.containsKey(key)) {
-      LOGGER.warn("Audio with key {} not preloaded", key);
-      return;
-    }
-
-    Clip clip = CLIP_CACHE.get(key);
-
-    if (!clip.isControlSupported(controlType)) {
-      LOGGER.warn("Clip does not support control type: {}", controlType);
-      return;
-    }
-
-    FloatControl control =
-      (FloatControl) clip.getControl(controlType);
-    control.setValue(value);
+  /** Called internally to perform update logic */
+  static void update() {
+    CLIP_CACHE.forEach((key, clip) -> clip.update());
   }
 
   private static Clip getResourceAudioClip(String resPath) {

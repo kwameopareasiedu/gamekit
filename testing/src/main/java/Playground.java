@@ -1,3 +1,4 @@
+import dev.gamekit.audio.AudioGroup;
 import dev.gamekit.core.Window;
 import dev.gamekit.core.*;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
@@ -6,7 +7,6 @@ import dev.gamekit.ui.enums.TextAlignment;
 import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.ui.widgets.*;
 import dev.gamekit.utils.Config;
-import dev.gamekit.utils.Position;
 import dev.gamekit.utils.Resolution;
 
 import java.awt.*;
@@ -14,7 +14,7 @@ import java.awt.image.BufferedImage;
 
 public class Playground extends Scene {
   static {
-    Audio.preload("alert", "cybertruck.wav");
+    Audio.load("alert", "cybertruck.wav", AudioGroup.MUSIC, 0.5);
   }
 
   double pan = 0;
@@ -45,15 +45,14 @@ public class Playground extends Scene {
     super.onUpdate();
 
     if (Input.isKeyJustPressed(Input.KEY_SPACE)) {
-      Audio.setGain("alert", -5f);
       Audio.play("alert");
     }
 
-    Position mousePos = Input.getMousePosition();
-    updateUI(() ->
-      pan = (double) (mousePos.x - halfWindowWidth) / (halfWindowWidth)
-    );
-    Audio.setPan("alert", (float) pan);
+//    Position mousePos = Input.getMousePosition();
+//    updateUI(() ->
+//      pan = (double) (mousePos.x - halfWindowWidth) / (halfWindowWidth)
+//    );
+//    Audio.setPan("alert", (float) pan);
   }
 
   @Override

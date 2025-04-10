@@ -1,6 +1,9 @@
 package dev.gamekit.ui.enums;
 
-/** Determines how the image should be resized/fitted in its bounds */
+/**
+ * Constants determining how the image should be resized/fitted in its
+ * bounds
+ */
 public enum ImageFit {
   /** Resize the image to fit within the bounds */
   FIT,

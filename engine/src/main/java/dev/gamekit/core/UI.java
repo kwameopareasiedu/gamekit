@@ -89,7 +89,7 @@ public final class UI {
    * At the end of this, the updated widget tree's layout is recomputed and
    * {@link #needsRender} is set to trigger a re-render.
    */
-  public void update() {
+  void update() {
     if (tree != null && needsUpdate)
       updateTree();
 

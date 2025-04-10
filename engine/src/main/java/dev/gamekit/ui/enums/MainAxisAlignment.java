@@ -1,9 +1,8 @@
 package dev.gamekit.ui.enums;
 
-import dev.gamekit.ui.widgets.Flex;
-
 /**
- * Determines how children of a {@link Flex Flex} parent are aligned along the
+ * Constants determining how children of a
+ * {@link dev.gamekit.ui.widgets.Flex Flex} parent are aligned along the
  * main axis
  */
 public enum MainAxisAlignment {

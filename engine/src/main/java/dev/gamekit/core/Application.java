@@ -173,6 +173,8 @@ public abstract class Application {
     if (currentScene != null) {
       currentScene.update();
     }
+
+    Audio.update();
   }
 
   /**
