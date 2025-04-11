@@ -1,6 +1,7 @@
 package dev.gamekit.core;
 
 import dev.gamekit.audio.AudioClip;
+import dev.gamekit.audio.AudioClip2D;
 import dev.gamekit.audio.AudioGroup;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,41 +21,46 @@ public class Audio {
   private Audio() { }
 
   /**
-   * Loads a non-spatial audio clip
-   * @see #load(Object, String, AudioGroup, double)
+   * Loads an audio clip at {@code resPath} as an {@link AudioClip2D} object
+   * //   * @see #load3D(Object, String, AudioGroup, double)
    */
-  public static void load(
+  public static void load2D(
     Object key,
     String resPath,
     AudioGroup group,
     double maxVolume
   ) {
-    load(key, resPath, group, maxVolume, false);
-  }
-
-  /**
-   * Loads an audio clip resource at {@code resPath} into memory. This creates
-   * and caches a {@link AudioClip} object
-   * @param key       A unique identifier for the loaded clip
-   * @param resPath   The path to the clip in the resource folder
-   * @param group     The group which this clip belongs to
-   * @param maxVolume The max volume of this clip (0.0 - 1.0)
-   * @param spatial   Whether this clip is spatial or non-spatial
-   */
-  public static void load(
-    Object key,
-    String resPath,
-    AudioGroup group,
-    double maxVolume,
-    boolean spatial
-  ) {
     Clip clip = getResourceAudioClip(resPath);
 
     if (clip != null) {
-      AudioClip clipHolder = new AudioClip(clip, group, maxVolume, spatial);
+      AudioClip clipHolder = new AudioClip2D(clip, group, maxVolume);
       CLIP_CACHE.put(key, clipHolder);
     } else LOGGER.warn("Clip not found at \"{}\"", resPath);
   }
+
+//  /**
+//   * Loads an audio clip resource at {@code resPath} into memory. This creates
+//   * and caches a {@link AudioClip} object
+//   * @param key       A unique identifier for the loaded clip
+//   * @param resPath   The path to the clip in the resource folder
+//   * @param group     The group which this clip belongs to
+//   * @param maxVolume The max volume of this clip (0.0 - 1.0)
+//   * @param spatial   Whether this clip is spatial or non-spatial
+//   */
+//  public static void load(
+//    Object key,
+//    String resPath,
+//    AudioGroup group,
+//    double maxVolume,
+//    boolean spatial
+//  ) {
+//    Clip clip = getResourceAudioClip(resPath);
+//
+//    if (clip != null) {
+//      AudioClip clipHolder = new AudioClip(clip, group, maxVolume, spatial);
+//      CLIP_CACHE.put(key, clipHolder);
+//    } else LOGGER.warn("Clip not found at \"{}\"", resPath);
+//  }
 
   public static void play(Object key) {
     if (!CLIP_CACHE.containsKey(key)) {

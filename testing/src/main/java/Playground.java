@@ -14,7 +14,7 @@ import java.awt.image.BufferedImage;
 
 public class Playground extends Scene {
   static {
-    Audio.load("alert", "cybertruck.wav", AudioGroup.MUSIC, 0.5);
+    Audio.load2D("alert", "cybertruck.wav", AudioGroup.MUSIC, 0.5);
   }
 
   double pan = 0;
