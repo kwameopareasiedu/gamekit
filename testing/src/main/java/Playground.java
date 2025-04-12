@@ -1,3 +1,4 @@
+import dev.gamekit.audio.AudioClip2D;
 import dev.gamekit.audio.AudioGroup;
 import dev.gamekit.core.Window;
 import dev.gamekit.core.*;
@@ -14,7 +15,8 @@ import java.awt.image.BufferedImage;
 
 public class Playground extends Scene {
   static {
-    Audio.load2D("alert", "cybertruck.wav", AudioGroup.MUSIC, 0.5);
+    Audio.preload("alert",
+      new AudioClip2D("cybertruck.wav", AudioGroup.MUSIC, 0.5));
   }
 
   double pan = 0;
@@ -45,14 +47,14 @@ public class Playground extends Scene {
     super.onUpdate();
 
     if (Input.isKeyJustPressed(Input.KEY_SPACE)) {
-      Audio.play("alert");
+      Audio.get("alert").play();
     }
 
-//    Position mousePos = Input.getMousePosition();
-//    updateUI(() ->
-//      pan = (double) (mousePos.x - halfWindowWidth) / (halfWindowWidth)
-//    );
-//    Audio.setPan("alert", (float) pan);
+    //    Position mousePos = Input.getMousePosition();
+    //    updateUI(() ->
+    //      pan = (double) (mousePos.x - halfWindowWidth) / (halfWindowWidth)
+    //    );
+    //    Audio.setPan("alert", (float) pan);
   }
 
   @Override

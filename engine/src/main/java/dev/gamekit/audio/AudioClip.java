@@ -1,8 +1,12 @@
 package dev.gamekit.audio;
 
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.Control;
-import javax.sound.sampled.FloatControl;
+import dev.gamekit.core.IO;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.sound.sampled.*;
+
+import java.io.IOException;
 
 import static dev.gamekit.utils.Math.clamp;
 
@@ -14,19 +18,18 @@ import static dev.gamekit.utils.Math.clamp;
  * properties.
  */
 public abstract class AudioClip {
+  protected final Logger logger = LogManager.getLogger(getClass());
   protected final Clip clip;
   protected final AudioGroup group;
   protected final double maxVolume;
   protected final FloatControl gainControl;
-  protected final FloatControl panControl;
 
-  public AudioClip(Clip clip, AudioGroup group, double maxVolume) {
-    this.clip = clip;
+  public AudioClip(String resPath, AudioGroup group, double maxVolume) {
+    this.clip = loadClip(resPath);
     this.group = group;
     this.maxVolume = clamp(maxVolume, 0, 1);
 
     gainControl = getControl(FloatControl.Type.MASTER_GAIN);
-    panControl = getControl(FloatControl.Type.PAN);
   }
 
   public void play() { play(false); }
@@ -57,5 +60,24 @@ public abstract class AudioClip {
     if (clip != null && clip.isControlSupported(controlType))
       return (T) clip.getControl(controlType);
     return null;
+  }
+
+  private Clip loadClip(String resPath) {
+    try {
+      logger.debug("Loading audio clip at {}", resPath);
+
+      Clip clip = AudioSystem.getClip();
+      clip.open(AudioSystem.getAudioInputStream(IO.getResourceStream(resPath)));
+      return clip;
+    } catch (LineUnavailableException e) {
+      logger.error("Could not get audio clip resource from system mixer", e);
+      throw new RuntimeException(e);
+    } catch (UnsupportedAudioFileException e) {
+      logger.error("Unsupported audio file format", e);
+      throw new RuntimeException(e);
+    } catch (IOException e) {
+      logger.error("Unable to load resource audio clip at {}", resPath);
+      throw new RuntimeException(e);
+    }
   }
 }

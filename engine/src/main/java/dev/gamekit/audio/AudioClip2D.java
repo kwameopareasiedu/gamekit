@@ -1,7 +1,5 @@
 package dev.gamekit.audio;
 
-import javax.sound.sampled.Clip;
-
 import static dev.gamekit.utils.Math.clamp;
 
 /**
@@ -15,8 +13,8 @@ public class AudioClip2D extends AudioClip {
   // be performing every frame
   private double effectiveVolume = -1;
 
-  public AudioClip2D(Clip clip, AudioGroup group, double maxVolume) {
-    super(clip, group, maxVolume);
+  public AudioClip2D(String resPath, AudioGroup group, double maxVolume) {
+    super(resPath, group, maxVolume);
   }
 
   /** Called internally to update the clip's parameters */
@@ -31,8 +29,5 @@ public class AudioClip2D extends AudioClip {
       gainControl.setValue((float) gain);
       this.effectiveVolume = effectiveVolume;
     }
-
-    if (panControl != null && panControl.getValue() != 0f)
-      panControl.setValue(0);
   }
 }
