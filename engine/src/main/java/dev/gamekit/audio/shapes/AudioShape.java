@@ -40,6 +40,8 @@ public abstract class AudioShape {
    * Abstract method which computes the distance from the source and listener
    * based on the subclass shape type, clamped between the min and max
    * attenuation distances
+   * @param sourcePos   Position of the {@link AudioClip3D}
+   * @param listenerPos Position of the {@link AudioListener}
    */
   public abstract double getDistance(Vector sourcePos, Vector listenerPos);
 }

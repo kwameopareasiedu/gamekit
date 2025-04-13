@@ -1,15 +1,28 @@
 # ChangeLog
 
-## 0.3.0-SNAPSHOT-4 [UNRELEASED]
+## 0.4.0-SNAPSHOT-1 [UNRELEASED]
 
 ### Added
 
-- Added `static Clip getResourceAudioClip(String path)` to `IO` class
-- Added `Audio` class which handles loading and playback of audio
 - Added `Opacity` which is a `SingleChildParent` which renders its child
   with transparency
 - Added `Scaled` which is a `SingleChildParent` which scaled the computed
   size of its child
+- Added `Audio` class which manages loaded audio clips
+- Added abstract `AudioClip` which loads and manages the clip from a resource
+- Added `AudioClip2D` which loads and plays non-spatial audio clips
+- Added `AudioClip3D` which loads and plays spatial clips and whose volume
+  and pan depend on its position and the position of the `AudioListener`
+- Added `AudioListener` which is a reference for `AudioClip3D` to compute
+  its volume and pan
+- Added `AudioGroup` which manages the volume and mute status of
+  `AudioClip`s added to it
+- Added `AudioAttenuation` interface which defines a distance attenuation
+  function for `AudioClip3D`
+- Added abstract `AudioShape` which defines the shape, minimum and maximum
+  attenuation distances of the field of `AudioClip3D`
+- Added `AudioShapeCircle` which defines a circular audio field for  
+  `AudioClip3D`
 
 ### Changed
 

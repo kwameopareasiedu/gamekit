@@ -8,7 +8,8 @@ import dev.gamekit.utils.Vector;
  * <p>
  * A practical use of {@link AudioListener} would be to set its position to
  * that of say, the player character. This way,{@link AudioClip3D} sources
- * would sound differently relative its position and direction from the player
+ * would sound differently relative to their position and direction from the
+ * player
  */
 public class AudioListener {
   private static final Vector POSITION = new Vector();
