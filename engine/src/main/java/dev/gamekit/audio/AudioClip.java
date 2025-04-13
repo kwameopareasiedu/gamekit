@@ -5,7 +5,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.sound.sampled.*;
-
 import java.io.IOException;
 
 import static dev.gamekit.utils.Math.clamp;
@@ -53,7 +52,16 @@ public abstract class AudioClip {
   }
 
   /** Called internally to update the clip's parameters */
-  public abstract void update();
+  public final void update() {
+    if (clip.isRunning())
+      performUpdate();
+  }
+
+  /**
+   * Delegate method which performs the actual update and must be overridden
+   * in subclasses
+   */
+  public abstract void performUpdate();
 
   @SuppressWarnings("unchecked")
   protected <T extends Control> T getControl(T.Type controlType) {

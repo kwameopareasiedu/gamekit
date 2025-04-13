@@ -9,24 +9,25 @@ import static dev.gamekit.utils.Math.clamp;
  * {@link AudioClip2D} sound the same as if you played it through a media player
  */
 public class AudioClip2D extends AudioClip {
-  // Caches the effective volume since log10() is an expensive operation to
-  // be performing every frame
+  // Cached effective volume since log10() is expensive to compute every frame
   private double effectiveVolume = -1;
 
   public AudioClip2D(String resPath, AudioGroup group, double maxVolume) {
     super(resPath, group, maxVolume);
   }
 
-  /** Called internally to update the clip's parameters */
   @Override
-  public void update() {
+  public void performUpdate() {
     double effectiveVolume = !group.isMuted() ?
-      maxVolume * group.getMaxVolume() : 0;
+      group.getMaxVolume() * maxVolume : 0;
 
-    if (gainControl != null && this.effectiveVolume != effectiveVolume) {
-      double gain = 20 * Math.log10(effectiveVolume);
-      gain = clamp(gain, gainControl.getMinimum(), gainControl.getMaximum());
-      gainControl.setValue((float) gain);
+    if (this.effectiveVolume != effectiveVolume) {
+      if (gainControl != null) {
+        double gain = 20 * Math.log10(effectiveVolume);
+        gain = clamp(gain, gainControl.getMinimum(), gainControl.getMaximum());
+        gainControl.setValue((float) gain);
+      }
+
       this.effectiveVolume = effectiveVolume;
     }
   }
