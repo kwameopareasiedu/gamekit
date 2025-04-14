@@ -22,6 +22,7 @@ public class Text extends Widget {
   protected Color backgroundColor;
   protected Font font;
   protected TextAlignment alignment;
+  protected TextAlignment verticalAlignment;
   protected boolean shadowEnabled;
   protected int shadowOffsetX;
   protected int shadowOffsetY;
@@ -38,6 +39,7 @@ public class Text extends Widget {
     fontSize = 16;
     color = Color.WHITE;
     alignment = TextAlignment.START;
+    verticalAlignment = TextAlignment.START;
     backgroundColor = Constants.TRANSPARENT_COLOR;
     font = Constants.DEFAULT_FONT;
     shadowOffsetX = 0;
@@ -60,7 +62,8 @@ public class Text extends Widget {
     }
 
     int textWidth = fontMetrics.stringWidth(text);
-    int textHeight = (int) (1.5 * fontMetrics.getHeight());
+    int textHeight =
+      1 + fontMetrics.getAscent() + Math.abs(fontMetrics.getDescent());
 
     if (shadowEnabled) {
       textWidth += Math.abs(shadowOffsetX);
@@ -129,9 +132,15 @@ public class Text extends Widget {
     g.clearRect(0, 0, computedBounds.width, computedBounds.height);
     g.setFont(renderFont);
 
-    int textOffset = switch (alignment) {
+    int hOffset = switch (alignment) {
       case CENTER -> computedBounds.width / 2 - intrinsicBounds.width / 2;
       case END -> computedBounds.width - intrinsicBounds.width;
+      default -> 0;
+    };
+
+    int vOffset = switch (verticalAlignment) {
+      case CENTER -> computedBounds.height / 2 - intrinsicBounds.height / 2;
+      case END -> computedBounds.height - intrinsicBounds.height;
       default -> 0;
     };
 
@@ -143,14 +152,14 @@ public class Text extends Widget {
           String word = multilineText[i];
 
           g.drawString(
-            word, textOffset + shadowOffsetX,
-            (i + 1) * fontSize + shadowOffsetY
+            word, hOffset + shadowOffsetX,
+            (i + 1) * fontSize + vOffset + shadowOffsetY
           );
         }
       } else {
         g.drawString(
-          text, textOffset + shadowOffsetX,
-          fontSize + shadowOffsetY
+          text, hOffset + shadowOffsetX,
+          fontSize + vOffset + shadowOffsetY
         );
       }
     }
@@ -160,9 +169,9 @@ public class Text extends Widget {
     if (multilineText != null) {
       for (int i = 0; i < multilineText.length; i++) {
         String word = multilineText[i];
-        g.drawString(word, textOffset, (i + 1) * fontSize);
+        g.drawString(word, hOffset, (i + 1) * fontSize + vOffset);
       }
-    } else g.drawString(text, textOffset, fontSize);
+    } else g.drawString(text, hOffset, fontSize + vOffset);
   }
 
   @Override
@@ -221,6 +230,11 @@ public class Text extends Widget {
 
   public Text withAlignment(TextAlignment alignment) {
     this.alignment = alignment;
+    return this;
+  }
+
+  public Text withVerticalAlignment(TextAlignment verticalAlignment) {
+    this.verticalAlignment = verticalAlignment;
     return this;
   }
 

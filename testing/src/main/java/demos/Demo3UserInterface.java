@@ -91,6 +91,7 @@ public class Demo3UserInterface extends Scene {
               128, 80,
               Text.create("Hello World")
                 .withAlignment(TextAlignment.CENTER)
+                .withVerticalAlignment(TextAlignment.END)
                 .withShadow(true)
                 .withShadowColor(Color.GRAY)
                 .withShadowOffset(10, 4)

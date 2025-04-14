@@ -37,48 +37,48 @@ public class Align extends SingleChildParent {
       constraints.maxHeight()
     );
 
-    int drawX = 0, drawY = 0;
+    int hOffset = 0, vOffset = 0;
 
     switch (alignment) {
       case TOP_LEFT -> {
-        drawX = 0;
-        drawY = 0;
+        hOffset = 0;
+        vOffset = 0;
       }
       case TOP_CENTER -> {
-        drawX = computedBounds.width / 2 - intrinsicBounds.width / 2;
-        drawY = 0;
+        hOffset = computedBounds.width / 2 - intrinsicBounds.width / 2;
+        vOffset = 0;
       }
       case TOP_RIGHT -> {
-        drawX = computedBounds.width - intrinsicBounds.width;
-        drawY = 0;
+        hOffset = computedBounds.width - intrinsicBounds.width;
+        vOffset = 0;
       }
       case LEFT -> {
-        drawX = 0;
-        drawY = computedBounds.height / 2 - intrinsicBounds.height / 2;
+        hOffset = 0;
+        vOffset = computedBounds.height / 2 - intrinsicBounds.height / 2;
       }
       case CENTER -> {
-        drawX = computedBounds.width / 2 - intrinsicBounds.width / 2;
-        drawY = computedBounds.height / 2 - intrinsicBounds.height / 2;
+        hOffset = computedBounds.width / 2 - intrinsicBounds.width / 2;
+        vOffset = computedBounds.height / 2 - intrinsicBounds.height / 2;
       }
       case RIGHT -> {
-        drawX = computedBounds.width - intrinsicBounds.width;
-        drawY = computedBounds.height / 2 - intrinsicBounds.height / 2;
+        hOffset = computedBounds.width - intrinsicBounds.width;
+        vOffset = computedBounds.height / 2 - intrinsicBounds.height / 2;
       }
       case BOTTOM_LEFT -> {
-        drawX = 0;
-        drawY = computedBounds.height - intrinsicBounds.height;
+        hOffset = 0;
+        vOffset = computedBounds.height - intrinsicBounds.height;
       }
       case BOTTOM_CENTER -> {
-        drawX = computedBounds.width / 2 - intrinsicBounds.width / 2;
-        drawY = computedBounds.height - intrinsicBounds.height;
+        hOffset = computedBounds.width / 2 - intrinsicBounds.width / 2;
+        vOffset = computedBounds.height - intrinsicBounds.height;
       }
       case BOTTOM_RIGHT -> {
-        drawX = computedBounds.width - intrinsicBounds.width;
-        drawY = computedBounds.height - intrinsicBounds.height;
+        hOffset = computedBounds.width - intrinsicBounds.width;
+        vOffset = computedBounds.height - intrinsicBounds.height;
       }
     }
 
-    child.computedBounds.setPosition(drawX, drawY);
+    child.computedBounds.setPosition(hOffset, vOffset);
   }
 
   @Override
