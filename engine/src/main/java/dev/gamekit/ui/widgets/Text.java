@@ -6,6 +6,9 @@ import dev.gamekit.ui.enums.TextAlignment;
 import dev.gamekit.utils.Constants;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 /** A {@link Widget} which renders text to the screen */
@@ -26,6 +29,7 @@ public class Text extends Widget {
 
   private Font renderFont;
   private FontMetrics fontMetrics;
+  private String[] multilineText;
 
   protected Text(String text) {
     this.text = text;
@@ -49,8 +53,8 @@ public class Text extends Widget {
     if (shouldUpdateRenderFont()) {
       logger.debug("Creating new render font");
       renderFont = font != null
-        ? font.deriveFont(fontStyle, fontSize)
-        : new Font(fontFamily, fontStyle, fontSize);
+                     ? font.deriveFont(fontStyle, fontSize)
+                     : new Font(fontFamily, fontStyle, fontSize);
       fontMetrics = UI.getFontMetrics(renderFont);
       fontFamily = renderFont.getFamily();
     }
@@ -66,9 +70,57 @@ public class Text extends Widget {
     intrinsicBounds.setSize(textWidth, textHeight);
 
     computedBounds.setSize(
-      constraints.constrainWidth(textWidth),
-      constraints.constrainHeight(textHeight)
+      constraints.constrainWidth(intrinsicBounds.width),
+      constraints.constrainHeight(intrinsicBounds.height)
     );
+
+    if (textWidth > computedBounds.width) {
+      String[] words = text.split(" ");
+      String separator = " ";
+
+      boolean singleWordExceedingComputedWidth = Arrays.stream(words).anyMatch(
+        word -> fontMetrics.stringWidth(word) > computedBounds.width
+      );
+
+      if (singleWordExceedingComputedWidth) {
+        separator = "";
+        words = text.split("");
+      }
+
+      List<String> lines = new ArrayList<>();
+      StringBuilder line = new StringBuilder();
+      int maxLineWidth = 0;
+      int lineWidth = 0;
+
+      for (String word : words) {
+        int wordWidth = fontMetrics.stringWidth(word + separator);
+
+        if (lineWidth + wordWidth > computedBounds.width) {
+          lines.add(line.toString());
+          line.setLength(0);
+          lineWidth = 0;
+        }
+
+        line.append(word).append(separator);
+        lineWidth += wordWidth;
+
+        if (lineWidth > maxLineWidth)
+          maxLineWidth = lineWidth;
+      }
+
+      if (!line.isEmpty())
+        lines.add(line.toString());
+
+      multilineText = new String[lines.size()];
+      multilineText = lines.toArray(multilineText);
+
+      intrinsicBounds.setSize(maxLineWidth, textHeight * lines.size());
+
+      computedBounds.setSize(
+        constraints.constrainWidth(intrinsicBounds.width),
+        constraints.constrainHeight(intrinsicBounds.height)
+      );
+    }
   }
 
   @Override
@@ -85,27 +137,48 @@ public class Text extends Widget {
 
     if (shadowEnabled) {
       g.setColor(shadowColor);
-      g.drawString(text, textOffset + shadowOffsetX, fontSize + shadowOffsetY);
+
+      if (multilineText != null) {
+        for (int i = 0; i < multilineText.length; i++) {
+          String word = multilineText[i];
+
+          g.drawString(
+            word, textOffset + shadowOffsetX,
+            (i + 1) * fontSize + shadowOffsetY
+          );
+        }
+      } else {
+        g.drawString(
+          text, textOffset + shadowOffsetX,
+          fontSize + shadowOffsetY
+        );
+      }
     }
 
     g.setColor(color);
-    g.drawString(text, textOffset, fontSize);
+
+    if (multilineText != null) {
+      for (int i = 0; i < multilineText.length; i++) {
+        String word = multilineText[i];
+        g.drawString(word, textOffset, (i + 1) * fontSize);
+      }
+    } else g.drawString(text, textOffset, fontSize);
   }
 
   @Override
   protected boolean stateEquals(Widget widget) {
     if (widget instanceof Text textWidget) {
       return Objects.equals(text, textWidget.text) &&
-        Objects.equals(fontFamily, textWidget.fontFamily) &&
-        Objects.equals(fontStyle, textWidget.fontStyle) &&
-        Objects.equals(fontSize, textWidget.fontSize) &&
-        Objects.equals(color, textWidget.color) &&
-        Objects.equals(backgroundColor, textWidget.backgroundColor) &&
-        Objects.equals(font, textWidget.font) &&
-        Objects.equals(shadowEnabled, textWidget.shadowEnabled) &&
-        Objects.equals(shadowOffsetX, textWidget.shadowOffsetX) &&
-        Objects.equals(shadowOffsetY, textWidget.shadowOffsetY) &&
-        Objects.equals(shadowColor, textWidget.shadowColor);
+               Objects.equals(fontFamily, textWidget.fontFamily) &&
+               Objects.equals(fontStyle, textWidget.fontStyle) &&
+               Objects.equals(fontSize, textWidget.fontSize) &&
+               Objects.equals(color, textWidget.color) &&
+               Objects.equals(backgroundColor, textWidget.backgroundColor) &&
+               Objects.equals(font, textWidget.font) &&
+               Objects.equals(shadowEnabled, textWidget.shadowEnabled) &&
+               Objects.equals(shadowOffsetX, textWidget.shadowOffsetX) &&
+               Objects.equals(shadowOffsetY, textWidget.shadowOffsetY) &&
+               Objects.equals(shadowColor, textWidget.shadowColor);
     }
 
     return false;
@@ -174,8 +247,8 @@ public class Text extends Widget {
    */
   private boolean shouldUpdateRenderFont() {
     return renderFont == null ||
-      !renderFont.getFamily().equals(fontFamily) ||
-      renderFont.getSize() != fontSize ||
-      renderFont.getStyle() != fontStyle;
+             !renderFont.getFamily().equals(fontFamily) ||
+             renderFont.getSize() != fontSize ||
+             renderFont.getStyle() != fontStyle;
   }
 }

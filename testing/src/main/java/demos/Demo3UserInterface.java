@@ -77,22 +77,25 @@ public class Demo3UserInterface extends Scene {
                 Sized.create(
                   150, 60,
                   Button.create(
-                    Text.create("Click Me")
-                  )
-                  .withDefaultBackground(btnBgImage)
-                  .withHoverBackground(btnHoverImage)
-                  .withPressedBackground(btnBgImage)
-                  .withNinePatchSpacing(10, 8, 25, 8)
-                  .withMouseListener((e) -> System.out.println(e.type))
+                      Text.create("Click Me")
+                    )
+                    .withDefaultBackground(btnBgImage)
+                    .withHoverBackground(btnHoverImage)
+                    .withPressedBackground(btnBgImage)
+                    .withNinePatchSpacing(10, 8, 25, 8)
+                    .withMouseListener((e) -> System.out.println(e.type))
                 )
               )
             ),
-            Text.create("Hello World")
-              .withAlignment(TextAlignment.END)
-              .withShadow(true)
-              .withShadowColor(Color.BLACK)
-              .withShadowOffset(10, 4)
-              .withFontStyle(Font.BOLD),
+            Sized.create(
+              128, 80,
+              Text.create("Hello World")
+                .withAlignment(TextAlignment.CENTER)
+                .withShadow(true)
+                .withShadowColor(Color.GRAY)
+                .withShadowOffset(10, 4)
+                .withFontStyle(Font.BOLD)
+            ),
             Row.create(
                 Text.create(text)
                   .withFontSize(24),

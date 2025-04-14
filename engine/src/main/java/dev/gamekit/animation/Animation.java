@@ -118,4 +118,19 @@ public class Animation {
     /** Indicates a running animation changes direction when at its end */
     REVERSE
   }
+
+  /** Callback interface for {@link Animation} value changes */
+  public interface ValueListener {
+    /**
+     * Called with the new base value of the animation without the
+     * {@link AnimationCurve} transformation
+     */
+    void onValueChanged(double value);
+  }
+
+  /** Callback interface for {@link Animation} state changes */
+  public interface StateListener {
+    /** Called with the new {@link State} of the animation */
+    void onStateChanged(State state);
+  }
 }
