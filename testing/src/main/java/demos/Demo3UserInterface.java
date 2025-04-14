@@ -6,9 +6,9 @@ import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.enums.MainAxisAlignment;
 import dev.gamekit.ui.enums.TextAlignment;
-import dev.gamekit.ui.widgets.*;
 import dev.gamekit.ui.widgets.Button;
 import dev.gamekit.ui.widgets.Image;
+import dev.gamekit.ui.widgets.*;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -76,7 +76,9 @@ public class Demo3UserInterface extends Scene {
                   150, 60,
                   Button.create(
                     Image.create(squareImage)
-                  ).onClick((e) -> System.out.println("Clicked"))
+                  ).withMouseListener((e) -> {
+                    System.out.println(e.type);
+                  })
                 )
               )
             ),

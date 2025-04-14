@@ -17,6 +17,7 @@ public abstract class InputEvent {
 
   /**
    * Sets whether the event has been handled.
+   * <p>
    * Handled events are no longer propagated to ancestor widgets
    */
   public void setHandled() { this.handled = true; }

@@ -4,6 +4,7 @@ import dev.gamekit.core.UI;
 import dev.gamekit.ui.Bounds;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.events.InputEvent;
+import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.utils.Config;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,6 +36,9 @@ public abstract class Widget {
   protected Constraints constraints;
   protected Widget parent;
   protected boolean needsRepaint;
+
+  protected MouseEvent.Listener mouseListener;
+  protected boolean mouseEntered;
 
   private BufferedImage canvasImage;
   private Graphics2D canvasGraphics;
@@ -90,7 +94,8 @@ public abstract class Widget {
   protected abstract void performLayout(Constraints constraints);
 
   /**
-   * Renders the widget unto its {@link BufferedImage canvasImage} and returns it
+   * Renders the widget unto its {@link BufferedImage canvasImage} and returns
+   * it
    * <p>
    * This method is {@code final} and delegates the actual drawing to
    * {@link #performRender(Graphics2D)}.
@@ -127,12 +132,25 @@ public abstract class Widget {
    */
   protected abstract void performRender(Graphics2D g);
 
-  /**
-   * Called by the {@link UI} manager to handle an event generated for this
-   * widget. This should be overridden by subclasses to handle different event
-   * types
-   */
-  public void handleEvent(InputEvent event) { /* No-op */ }
+  /** Called by {@link UI} manager to handle an {@link InputEvent} */
+  public final void handleEvent(InputEvent event) {
+    if (event instanceof MouseEvent mouseEvent && mouseListener != null) {
+      switch (mouseEvent.type) {
+        case PRESS, RELEASE, HOLD, CLICK, MOTION ->
+          mouseListener.handleEvent(mouseEvent);
+        case ENTER -> {
+          mouseEntered = true;
+          UI.getInstance().triggerRender();
+          mouseListener.handleEvent(mouseEvent);
+        }
+        case EXIT -> {
+          mouseEntered = false;
+          UI.getInstance().triggerRender();
+          mouseListener.handleEvent(mouseEvent);
+        }
+      }
+    }
+  }
 
   /** Determines if point (x, y) falls within the absolute bounds of this widget */
   public boolean hitTest(int x, int y) {
@@ -149,4 +167,15 @@ public abstract class Widget {
     return absoluteX <= x && x <= absoluteX + computedBounds.width &&
       absoluteY <= y && y <= absoluteY + computedBounds.height;
   }
+
+  public Widget withMouseListener(MouseEvent.Listener listener) {
+    this.mouseListener = listener;
+    return this;
+  }
+
+  /**
+   * {@link Widget Widgets} which implement this interface will be notified
+   * of input events via their {@link Widget#hitTest(int, int)} method
+   */
+  public interface InputHandler { }
 }

@@ -23,6 +23,10 @@
   attenuation distances of the field of `AudioClip3D`
 - Added `AudioShapeCircle` which defines a circular audio field for  
   `AudioClip3D`
+- Added `static boolean isButtonClicked(int buttonCode)` to Input class
+- Added event handling code to `Widget` class
+- Added `Widget.InputHandler` interface to be implemented by `Widgets` which
+  would like to received input events
 
 ### Changed
 
@@ -48,6 +52,10 @@ BufferedImage getResourceImage(String path)` in `IO` class
   instead
 - Removed `static BufferedReader loadBufferedResource(String path)` from IO
   class
+- Removed `MouseMotionEvent` class and merged function into `MouseEvent` class
+- Removed `MouseClickEvent` class and merged function into `MouseEvent` class
+- Removed `MouseEnterEvent` class and merged function into `MouseEvent` class
+- Removed `MouseExitEvent` class and merged function into `MouseEvent` class
 
 ## 0.3.0-SNAPSHOT-3
 

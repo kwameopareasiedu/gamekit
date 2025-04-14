@@ -205,6 +205,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   public static final int KEY_BEGIN = KeyEvent.VK_BEGIN;
   public static final int KEY_UNDEFINED = KeyEvent.VK_UNDEFINED;
 
+  public static final int BUTTON_NONE = MouseEvent.NOBUTTON;
   public static final int BUTTON_LMB = MouseEvent.BUTTON1;
   public static final int BUTTON_RMB = MouseEvent.BUTTON3;
   public static final int BUTTON_MMB = MouseEvent.BUTTON2;

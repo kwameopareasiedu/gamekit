@@ -1,21 +1,14 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.core.Scene;
 import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.events.*;
 import dev.gamekit.utils.Blend;
 
 import java.awt.*;
 import java.util.Objects;
 
 /** A {@link Widget} which can be clicked to trigger an event */
-public class Button extends SingleChildParent {
-  protected MouseMotionEvent.Listener mouseMotionListener;
-  protected MouseEnterEvent.Listener mouseEnterListener;
-  protected MouseExitEvent.Listener mouseExitListener;
-  protected MouseClickEvent.Listener mouseClickListener;
+public class Button extends SingleChildParent implements Widget.InputHandler {
   protected Color hoverTintColor;
-  protected boolean intersectsWithMouse;
 
   protected Button(Widget child) {
     super(child);
@@ -55,7 +48,7 @@ public class Button extends SingleChildParent {
   public void performRender(Graphics2D g) {
     super.performRender(g);
 
-    if (intersectsWithMouse) {
+    if (mouseEntered) {
       Composite composite = g.getComposite();
 
       g.setColor(hoverTintColor);
@@ -72,51 +65,6 @@ public class Button extends SingleChildParent {
     }
 
     return false;
-  }
-
-  @Override
-  public void handleEvent(InputEvent event) {
-    super.handleEvent(event);
-
-    if (event instanceof MouseClickEvent mouseClickEvent) {
-      if (mouseClickListener != null)
-        mouseClickListener.onMouseClick(mouseClickEvent);
-    } else if (event instanceof MouseEnterEvent mouseEnterEvent) {
-      intersectsWithMouse = true;
-      Scene.getCurrent().redrawUI();
-
-      if (mouseEnterListener != null)
-        mouseEnterListener.onMouseEnter(mouseEnterEvent);
-    } else if (event instanceof MouseExitEvent mouseExitEvent) {
-      intersectsWithMouse = false;
-      Scene.getCurrent().redrawUI();
-
-      if (mouseExitListener != null)
-        mouseExitListener.onMouseExit(mouseExitEvent);
-    } else if (event instanceof MouseMotionEvent mouseMotionEvent) {
-      if (mouseMotionListener != null)
-        mouseMotionListener.onMouseMove(mouseMotionEvent);
-    }
-  }
-
-  public Button onMouseEnter(MouseEnterEvent.Listener listener) {
-    this.mouseEnterListener = listener;
-    return this;
-  }
-
-  public Button onMouseExit(MouseExitEvent.Listener listener) {
-    this.mouseExitListener = listener;
-    return this;
-  }
-
-  public Button onHover(MouseMotionEvent.Listener listener) {
-    this.mouseMotionListener = listener;
-    return this;
-  }
-
-  public Button onClick(MouseClickEvent.Listener listener) {
-    this.mouseClickListener = listener;
-    return this;
   }
 
   public Button withHoverTintColor(Color hoverTintColor) {

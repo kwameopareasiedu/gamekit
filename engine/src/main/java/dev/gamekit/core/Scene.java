@@ -77,9 +77,6 @@ public abstract class Scene implements UI.WidgetTreeCreator {
     ui.triggerUpdate();
   }
 
-  /** Indicates that the widget tree should be re-rendered */
-  public final void redrawUI() { ui.triggerRender(); }
-
   /** Called <b>once</b> by {@link Application} to initialize the scene */
   final void start() {
     logger.debug("Starting scene");
