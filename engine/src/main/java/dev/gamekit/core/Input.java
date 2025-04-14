@@ -214,24 +214,24 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
   static final Input INSTANCE = new Input();
 
-  private final ActionState[] keyStates;
-  private final ActionState[] buttonStates;
+  private final KeyState[] keyStates;
+  private final ButtonState[] buttonStates;
   private final Position absMousePosition;
   private final Position mousePosition;
   private boolean isFrozen = false;
 
   private Input() {
-    keyStates = new ActionState[KEY_COUNT];
-    buttonStates = new ActionState[BUTTON_COUNT];
+    keyStates = new KeyState[KEY_COUNT];
+    buttonStates = new ButtonState[BUTTON_COUNT];
     absMousePosition = new Position(MouseInfo.getPointerInfo().getLocation());
     mousePosition = new Position(0, 0);
 
     IntStream.range(0, KEY_COUNT).forEach(
-      i -> keyStates[i] = new ActionState()
+      i -> keyStates[i] = new KeyState()
     );
 
     IntStream.range(0, BUTTON_COUNT).forEach(
-      i -> buttonStates[i] = new ActionState()
+      i -> buttonStates[i] = new ButtonState()
     );
   }
 
@@ -262,25 +262,32 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
     return INSTANCE.buttonStates[buttonIndex].isJustReleased;
   }
 
+  public synchronized static boolean isButtonClicked(int buttonCode) {
+    int buttonIndex = buttonCode - 1;
+    return INSTANCE.buttonStates[buttonIndex].isClicked;
+  }
+
   public synchronized static Position getMousePosition() {
     Window win = Window.getInstance();
     double scaleRatio = win.getDisplayScaleRatio();
-    double frameWidth = win.getFrameWidth();
-    double frameHeight = win.getFrameHeight();
-    double renderWidth = win.getDisplayWidth();
-    double renderHeight = win.getDisplayHeight();
+    double windowWidth = win.getFrameWidth();
+    double windowHeight = win.getFrameHeight();
+    double displayWidth = win.getDisplayWidth();
+    double displayHeight = win.getDisplayHeight();
     double inverseScaleRatio = win.getInverseDisplayScaleRatio();
 
-    double scaledRenderWidth = renderWidth * scaleRatio;
-    double scaledRenderHeight = renderHeight * scaleRatio;
-    double left = 0.5 * (frameWidth - scaledRenderWidth);
-    double top = 0.5 * (frameHeight - scaledRenderHeight);
-    double scaledMouseX = inverseScaleRatio * (INSTANCE.absMousePosition.x - left);
-    double scaledMouseY = inverseScaleRatio * (INSTANCE.absMousePosition.y - top);
+    double scaledDisplayWidth = displayWidth * scaleRatio;
+    double scaledDisplayHeight = displayHeight * scaleRatio;
+    double leftMargin = 0.5 * (windowWidth - scaledDisplayWidth);
+    double topMargin = 0.5 * (windowHeight - scaledDisplayHeight);
+    double scaledMouseX =
+      inverseScaleRatio * (INSTANCE.absMousePosition.x - leftMargin);
+    double scaledMouseY =
+      inverseScaleRatio * (INSTANCE.absMousePosition.y - topMargin);
 
     INSTANCE.mousePosition.set(
-      (int) clamp(scaledMouseX, 0, renderWidth),
-      (int) clamp(scaledMouseY, 0, renderHeight)
+      (int) clamp(scaledMouseX, 0, displayWidth),
+      (int) clamp(scaledMouseY, 0, displayHeight)
     );
 
     return INSTANCE.mousePosition;
@@ -333,7 +340,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   public synchronized void mousePressed(MouseEvent e) {
     int buttonCode = e.getButton();
     if (!isFrozen && buttonCode >= 1) {
-      buttonStates[buttonCode - 1].update(true);
+      buttonStates[buttonCode - 1].update(true, mousePosition);
     }
   }
 
@@ -341,7 +348,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   public synchronized void mouseReleased(MouseEvent e) {
     int buttonCode = e.getButton();
     if (!isFrozen && buttonCode >= 1) {
-      buttonStates[buttonCode - 1].update(false);
+      buttonStates[buttonCode - 1].update(false, mousePosition);
     }
   }
 
@@ -364,26 +371,57 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   @Override
   public synchronized void mouseExited(MouseEvent e) { /* No-op */ }
 
-  /** Represents a keyboard key or mouse button state */
-  private static class ActionState {
+  /** Represents an input state */
+  private static abstract class ActionState {
     boolean isPressed = false;
     boolean isJustPressed = false;
     boolean isJustReleased = false;
 
     /**
-     * Updates the action state
+     * Updates the key state
      * @param isPressed Whether the action has been pressed
      */
-    private void update(boolean isPressed) {
+    protected void update(boolean isPressed) {
       isJustPressed = !this.isPressed && isPressed;
       isJustReleased = this.isPressed && !isPressed;
       this.isPressed = isPressed;
     }
 
     /** Resets this action state */
-    private void reset() {
+    protected void reset() {
       isJustPressed = false;
       isJustReleased = false;
+    }
+  }
+
+  /** Represents a keyboard button input state */
+  private static class KeyState extends ActionState { }
+
+  /**
+   * Represents a mouse button input state whose
+   * {@link #update(boolean, Position)} takes the mouse position to determine
+   * whether a release event also results in a click event
+   */
+  private static class ButtonState extends ActionState {
+    boolean isClicked = false;
+    private Position mousePosition;
+
+    private void update(boolean isPressed, Position mousePosition) {
+      super.update(isPressed);
+
+      if (isJustPressed)
+        this.mousePosition = new Position(mousePosition);
+
+      if (isJustReleased && this.mousePosition.equals(mousePosition)) {
+        this.mousePosition = null;
+        isClicked = true;
+      }
+    }
+
+    @Override
+    protected void reset() {
+      super.reset();
+      isClicked = false;
     }
   }
 }

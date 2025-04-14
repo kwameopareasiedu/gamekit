@@ -93,7 +93,7 @@ public final class UI {
     if (tree != null && needsUpdate)
       updateTree();
 
-    generateAndDispatchInputEvents();
+    dispatchInputEvents();
   }
 
   /** Draws the {@link Widget} tree to the {@link Window} UI target */
@@ -186,7 +186,7 @@ public final class UI {
    * Monitors the {@link Input} class, generates events if actions of interest
    * have occurred and dispatches them to the widget tree, if set
    */
-  private void generateAndDispatchInputEvents() {
+  private void dispatchInputEvents() {
     if (tree == null)
       return;
 
@@ -198,13 +198,13 @@ public final class UI {
     Position currentMousePos = Input.getMousePosition();
 
     // Generate mouse click input events
-    if (Input.isButtonJustReleased(Input.BUTTON_LMB))
+    if (Input.isButtonClicked(Input.BUTTON_LMB))
       inputEvents.add(new MouseClickEvent(currentMousePos.x,
         currentMousePos.y, Input.BUTTON_LMB));
-    else if (Input.isButtonJustReleased(Input.BUTTON_RMB))
+    else if (Input.isButtonClicked(Input.BUTTON_RMB))
       inputEvents.add(new MouseClickEvent(currentMousePos.x,
         currentMousePos.y, Input.BUTTON_RMB));
-    else if (Input.isButtonJustReleased(Input.BUTTON_MMB))
+    else if (Input.isButtonClicked(Input.BUTTON_MMB))
       inputEvents.add(new MouseClickEvent(currentMousePos.x,
         currentMousePos.y, Input.BUTTON_MMB));
 
