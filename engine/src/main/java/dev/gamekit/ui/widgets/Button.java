@@ -1,18 +1,26 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.core.UI;
 import dev.gamekit.ui.Constraints;
-import dev.gamekit.utils.Blend;
+import dev.gamekit.ui.Spacing;
+import dev.gamekit.ui.events.InputEvent;
+import dev.gamekit.ui.events.MouseEvent;
+import dev.gamekit.utils.Constants;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.Objects;
 
 /** A {@link Widget} which can be clicked to trigger an event */
 public class Button extends SingleChildParent implements Widget.InputHandler {
-  protected Color hoverTintColor;
+  protected Spacing spacing;
+  protected BufferedImage defaultBackground;
+  protected BufferedImage hoverBackground;
+  protected BufferedImage pressedBackground;
+  protected boolean mousePressed;
 
   protected Button(Widget child) {
     super(child);
-    hoverTintColor = new Color(0x22ffffff, true);
   }
 
   public static Button create(Widget child) {
@@ -45,30 +53,118 @@ public class Button extends SingleChildParent implements Widget.InputHandler {
   }
 
   @Override
-  public void performRender(Graphics2D g) {
-    super.performRender(g);
+  protected void renderBackground(Graphics2D g) {
+    super.renderBackground(g);
 
-    if (mouseEntered) {
-      Composite composite = g.getComposite();
+    BufferedImage bgImage = defaultBackground;
 
-      g.setColor(hoverTintColor);
-      g.setComposite(Blend.MULTIPLY);
-      g.fillRect(0, 0, computedBounds.width, computedBounds.height);
-      g.setComposite(composite);
+    if (mousePressed)
+      bgImage = pressedBackground;
+    else if (mouseEntered)
+      bgImage = hoverBackground;
+
+    if (bgImage != null && spacing != null) {
+      super.renderBackground(g);
+
+      int dx2 = computedBounds.width, dy2 = computedBounds.height;
+
+      g.setBackground(Constants.TRANSPARENT_COLOR);
+      g.clearRect(0, 0, computedBounds.width, computedBounds.height);
+
+      int nl = spacing.left;
+      int nt = spacing.top;
+      int iw = bgImage.getWidth();
+      int ih = bgImage.getHeight();
+      int nr = iw - spacing.right;
+      int nb = ih - spacing.bottom;
+
+      int[][] srcBounds = new int[][]{
+        new int[]{ 0, 0, nl, nt },
+        new int[]{ nl, 0, nr, nt },
+        new int[]{ nr, 0, iw, nt },
+        new int[]{ 0, nt, nl, nb },
+        new int[]{ nl, nt, nr, nb },
+        new int[]{ nr, nt, iw, nb },
+        new int[]{ 0, nb, nl, ih },
+        new int[]{ nl, nb, nr, ih },
+        new int[]{ nr, nb, iw, ih },
+      };
+
+      nl = spacing.left;
+      nt = spacing.top;
+      nr = dx2 - spacing.right;
+      nb = dy2 - spacing.bottom;
+
+      int[][] destBounds = new int[][]{
+        new int[]{ 0, 0, nl, nt },
+        new int[]{ nl, 0, nr, nt },
+        new int[]{ nr, 0, dx2, nt },
+        new int[]{ 0, nt, nl, nb },
+        new int[]{ nl, nt, nr, nb },
+        new int[]{ nr, nt, dx2, nb },
+        new int[]{ 0, nb, nl, dy2 },
+        new int[]{ nl, nb, nr, dy2 },
+        new int[]{ nr, nb, dx2, dy2 },
+      };
+
+      for (int i = 0; i < srcBounds.length; i++) {
+        int[] src = srcBounds[i];
+        int[] dest = destBounds[i];
+
+        g.drawImage(
+          bgImage, dest[0], dest[1], dest[2], dest[3],
+          src[0], src[1], src[2], src[3], null
+        );
+      }
     }
   }
 
   @Override
   protected boolean stateEquals(Widget widget) {
     if (widget instanceof Button buttonWidget) {
-      return Objects.equals(hoverTintColor, buttonWidget.hoverTintColor);
+      return Objects.equals(defaultBackground, buttonWidget.defaultBackground) &&
+        Objects.equals(hoverBackground, buttonWidget.hoverBackground) &&
+        Objects.equals(pressedBackground, buttonWidget.pressedBackground);
     }
 
     return false;
   }
 
-  public Button withHoverTintColor(Color hoverTintColor) {
-    this.hoverTintColor = hoverTintColor;
+  @Override
+  public void handleEvent(InputEvent event) {
+    super.handleEvent(event);
+
+    if (event instanceof MouseEvent mouseEvent) {
+      if (mouseEvent.type == MouseEvent.Type.PRESS) {
+        mousePressed = true;
+        UI.getInstance().triggerRender();
+      } else if (mouseEvent.type == MouseEvent.Type.EXIT ||
+        mouseEvent.type == MouseEvent.Type.RELEASE) {
+        mousePressed = false;
+        UI.getInstance().triggerRender();
+      }
+    }
+  }
+
+  public Button withNinePatchSpacing(
+    int top, int right, int bottom, int left
+  ) {
+    this.spacing = new Spacing(top, right, bottom, left);
+    return this;
+  }
+
+  public Button withDefaultBackground(BufferedImage defaultBackground) {
+    this.defaultBackground = defaultBackground;
+    return this;
+  }
+
+  public Button withHoverBackground(BufferedImage hoverBackground) {
+    this.hoverBackground = hoverBackground;
+    return this;
+  }
+
+  public Button withPressedBackground(BufferedImage pressedBackground) {
+    this.pressedBackground = pressedBackground;
     return this;
   }
 }

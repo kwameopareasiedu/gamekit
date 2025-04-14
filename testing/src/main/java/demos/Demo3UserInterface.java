@@ -18,6 +18,8 @@ public class Demo3UserInterface extends Scene {
   String text = "Kwame";
   BufferedImage squareImage = IO.getResourceImage("square-img.jpg");
   BufferedImage wideImage = IO.getResourceImage("wide-img.jpg");
+  BufferedImage btnBgImage = IO.getResourceImage("btn-bg.png");
+  BufferedImage btnHoverImage = IO.getResourceImage("btn-hover.png");
 
   public Demo3UserInterface() {
     super("Main Scene");
@@ -75,10 +77,13 @@ public class Demo3UserInterface extends Scene {
                 Sized.create(
                   150, 60,
                   Button.create(
-                    Image.create(squareImage)
-                  ).withMouseListener((e) -> {
-                    System.out.println(e.type);
-                  })
+                    Text.create("Click Me")
+                  )
+                  .withDefaultBackground(btnBgImage)
+                  .withHoverBackground(btnHoverImage)
+                  .withPressedBackground(btnBgImage)
+                  .withNinePatchSpacing(10, 8, 25, 8)
+                  .withMouseListener((e) -> System.out.println(e.type))
                 )
               )
             ),

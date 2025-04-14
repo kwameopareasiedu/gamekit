@@ -133,7 +133,7 @@ public abstract class Widget {
   protected abstract void performRender(Graphics2D g);
 
   /** Called by {@link UI} manager to handle an {@link InputEvent} */
-  public final void handleEvent(InputEvent event) {
+  public void handleEvent(InputEvent event) {
     if (event instanceof MouseEvent mouseEvent && mouseListener != null) {
       switch (mouseEvent.type) {
         case PRESS, RELEASE, HOLD, CLICK, MOTION ->

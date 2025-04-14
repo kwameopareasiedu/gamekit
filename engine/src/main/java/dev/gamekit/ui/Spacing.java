@@ -9,6 +9,8 @@ public class Spacing {
   public int bottom;
   public int left;
 
+  public Spacing() { this(0); }
+
   /** Creates a new spacing, setting all sides to {@code size} */
   public Spacing(int size) { this(size, size); }
 
