@@ -33,7 +33,6 @@
 - Modified `Button` widget to center child
 - Modified `Padding` widget to center child
 - Modified `NinePatch` widget to center child
-- Modified `Decorated` widget to center child
 - Renamed `FixedSize` widget to `Sized`
 - Renamed `static Font loadFontResource(String path)` to `static Font 
 getResourceFong(String path)` in `IO` class
@@ -41,6 +40,7 @@ getResourceFong(String path)` in `IO` class
 getResourceFong(String path)` in `IO` class
 - Renamed `static BufferedImage loadImageResource(String path)` to `static 
 BufferedImage getResourceImage(String path)` in `IO` class
+- Renamed `NinePatch` widget to `Panel`
 
 ### Deprecated
 
@@ -57,6 +57,9 @@ BufferedImage getResourceImage(String path)` in `IO` class
 - Removed `MouseEnterEvent` class and merged function into `MouseEvent` class
 - Removed `MouseExitEvent` class and merged function into `MouseEvent` class
 - Removed `TextAlignment` enum in favour or `Alignment` enum
+- Removed `Decorated` widget
+- Removed `Intrinsic Size` widget
+- Removed `Axis` widget
 
 ## 0.3.0-SNAPSHOT-3
 
