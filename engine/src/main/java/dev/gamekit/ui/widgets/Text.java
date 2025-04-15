@@ -3,6 +3,7 @@ package dev.gamekit.ui.widgets;
 import dev.gamekit.core.UI;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.enums.TextAlignment;
+import dev.gamekit.ui.Param;
 import dev.gamekit.utils.Constants;
 
 import java.awt.*;
@@ -14,53 +15,80 @@ import java.util.Objects;
 /** A {@link Widget} which renders text to the screen */
 @SuppressWarnings("MagicConstant")
 public class Text extends Widget {
-  protected String text;
-  protected String fontFamily;
-  protected int fontStyle;
-  protected int fontSize;
-  protected Color color;
-  protected Color backgroundColor;
-  protected Font font;
-  protected TextAlignment alignment;
-  protected TextAlignment verticalAlignment;
-  protected boolean shadowEnabled;
-  protected int shadowOffsetX;
-  protected int shadowOffsetY;
-  protected Color shadowColor;
+  protected final String text;
+  protected final String fontFamily;
+  protected final int fontStyle;
+  protected final int fontSize;
+  protected final Color color;
+  protected final Color backgroundColor;
+  protected final Font font;
+  protected final TextAlignment alignment;
+  protected final TextAlignment verticalAlignment;
+  protected final boolean shadowEnabled;
+  protected final int shadowOffsetX;
+  protected final int shadowOffsetY;
+  protected final Color shadowColor;
 
-  private Font renderFont;
-  private FontMetrics fontMetrics;
+  private final Font renderFont;
+  private final FontMetrics fontMetrics;
   private String[] multilineText;
 
-  protected Text(String text) {
+  public Text(
+    String text,
+    String fontFamily,
+    int fontStyle,
+    int fontSize,
+    Color color,
+    Color backgroundColor,
+    Font font,
+    TextAlignment alignment,
+    TextAlignment verticalAlignment,
+    boolean shadowEnabled,
+    int shadowOffsetX,
+    int shadowOffsetY,
+    Color shadowColor
+  ) {
     this.text = text;
-    fontFamily = Constants.DEFAULT_FONT_NAME;
-    fontStyle = Font.PLAIN;
-    fontSize = 16;
-    color = Color.WHITE;
-    alignment = TextAlignment.START;
-    verticalAlignment = TextAlignment.START;
-    backgroundColor = Constants.TRANSPARENT_COLOR;
-    font = Constants.DEFAULT_FONT;
-    shadowOffsetX = 0;
-    shadowOffsetY = 0;
+    this.fontFamily = font != null ? font.getFamily() : fontFamily;
+    this.fontStyle = fontStyle;
+    this.fontSize = fontSize;
+    this.color = color;
+    this.backgroundColor = backgroundColor;
+    this.font = font;
+    this.alignment = alignment;
+    this.verticalAlignment = verticalAlignment;
+    this.shadowEnabled = shadowEnabled;
+    this.shadowOffsetX = shadowOffsetX;
+    this.shadowOffsetY = shadowOffsetY;
+    this.shadowColor = shadowColor;
+
+    renderFont = font != null
+      ? font.deriveFont(fontStyle, fontSize)
+      : new Font(fontFamily, fontStyle, fontSize);
+    fontMetrics = UI.getFontMetrics(renderFont);
   }
 
-  public static Text create(String text) {
-    return new Text(text);
+  @SafeVarargs
+  public static Text create(Param<? super TextParam>... params) {
+    return new Text(
+      Param.getValue(params, "text", "Text"),
+      Param.getValue(params, "fontFamily", Constants.DEFAULT_FONT_NAME),
+      Param.getValue(params, "fontStyle", Font.PLAIN),
+      Param.getValue(params, "fontSize", 16),
+      Param.getValue(params, "color", Color.WHITE),
+      Param.getValue(params, "backgroundColor", Constants.TRANSPARENT_COLOR),
+      Param.getValue(params, "font", Constants.DEFAULT_FONT),
+      Param.getValue(params, "alignment", TextAlignment.START),
+      Param.getValue(params, "verticalAlignment", TextAlignment.START),
+      Param.getValue(params, "shadowEnabled", false),
+      Param.getValue(params, "shadowOffsetX", 0),
+      Param.getValue(params, "shadowOffsetY", 0),
+      Param.getValue(params, "shadowColor", Color.WHITE)
+    );
   }
 
   @Override
   protected void performLayout(Constraints constraints) {
-    if (shouldUpdateRenderFont()) {
-      logger.debug("Creating new render font");
-      renderFont = font != null
-                     ? font.deriveFont(fontStyle, fontSize)
-                     : new Font(fontFamily, fontStyle, fontSize);
-      fontMetrics = UI.getFontMetrics(renderFont);
-      fontFamily = renderFont.getFamily();
-    }
-
     int textWidth = fontMetrics.stringWidth(text);
     int textHeight =
       1 + fontMetrics.getAscent() + Math.abs(fontMetrics.getDescent());
@@ -178,91 +206,18 @@ public class Text extends Widget {
   protected boolean stateEquals(Widget widget) {
     if (widget instanceof Text textWidget) {
       return Objects.equals(text, textWidget.text) &&
-               Objects.equals(fontFamily, textWidget.fontFamily) &&
-               Objects.equals(fontStyle, textWidget.fontStyle) &&
-               Objects.equals(fontSize, textWidget.fontSize) &&
-               Objects.equals(color, textWidget.color) &&
-               Objects.equals(backgroundColor, textWidget.backgroundColor) &&
-               Objects.equals(font, textWidget.font) &&
-               Objects.equals(shadowEnabled, textWidget.shadowEnabled) &&
-               Objects.equals(shadowOffsetX, textWidget.shadowOffsetX) &&
-               Objects.equals(shadowOffsetY, textWidget.shadowOffsetY) &&
-               Objects.equals(shadowColor, textWidget.shadowColor);
+        Objects.equals(fontFamily, textWidget.fontFamily) &&
+        Objects.equals(fontStyle, textWidget.fontStyle) &&
+        Objects.equals(fontSize, textWidget.fontSize) &&
+        Objects.equals(color, textWidget.color) &&
+        Objects.equals(backgroundColor, textWidget.backgroundColor) &&
+        Objects.equals(font, textWidget.font) &&
+        Objects.equals(shadowEnabled, textWidget.shadowEnabled) &&
+        Objects.equals(shadowOffsetX, textWidget.shadowOffsetX) &&
+        Objects.equals(shadowOffsetY, textWidget.shadowOffsetY) &&
+        Objects.equals(shadowColor, textWidget.shadowColor);
     }
 
     return false;
-  }
-
-  /**
-   * Sets the font family of this text. The name of the
-   * font should match an installed font on the system
-   */
-  public Text withFontFamily(String fontFamily) {
-    this.fontFamily = fontFamily;
-    return this;
-  }
-
-  public Text withFontStyle(int fontStyle) {
-    this.fontStyle = fontStyle;
-    return this;
-  }
-
-  public Text withFontSize(int fontSize) {
-    this.fontSize = fontSize;
-    return this;
-  }
-
-  public Text withBackgroundColor(Color backgroundColor) {
-    this.backgroundColor = backgroundColor;
-    return this;
-  }
-
-  public Text withColor(Color color) {
-    this.color = color;
-    return this;
-  }
-
-  /** Sets the font of this text. If set, this overrides {@link #fontFamily} value */
-  public Text withFont(Font font) {
-    this.font = font;
-    return this;
-  }
-
-  public Text withAlignment(TextAlignment alignment) {
-    this.alignment = alignment;
-    return this;
-  }
-
-  public Text withVerticalAlignment(TextAlignment verticalAlignment) {
-    this.verticalAlignment = verticalAlignment;
-    return this;
-  }
-
-  public Text withShadow(boolean shadowEnabled) {
-    this.shadowEnabled = shadowEnabled;
-    return this;
-  }
-
-  public Text withShadowOffset(int x, int y) {
-    this.shadowOffsetX = x;
-    this.shadowOffsetY = y;
-    return this;
-  }
-
-  public Text withShadowColor(Color color) {
-    this.shadowColor = color;
-    return this;
-  }
-
-  /**
-   * Determines if the font should be updated.
-   * This is done by checking if the {@link #fontFamily},
-   * {@link #fontSize} or {@link #fontStyle} have changed
-   */
-  private boolean shouldUpdateRenderFont() {
-    return renderFont == null ||
-             !renderFont.getFamily().equals(fontFamily) ||
-             renderFont.getSize() != fontSize ||
-             renderFont.getStyle() != fontStyle;
   }
 }

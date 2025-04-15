@@ -13,6 +13,10 @@ import dev.gamekit.ui.widgets.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+import static dev.gamekit.ui.widgets.ButtonParam.*;
+import static dev.gamekit.ui.widgets.TextParam.*;
+import static dev.gamekit.ui.widgets.WidgetParam.mouseListener;
+
 public class Demo3UserInterface extends Scene {
   int x = 0, y = 0;
   String text = "Kwame";
@@ -77,33 +81,44 @@ public class Demo3UserInterface extends Scene {
                 Sized.create(
                   150, 60,
                   Button.create(
-                      Text.create("Click Me")
+                    defaultBackground(btnBgImage),
+                    hoverBackground(btnHoverImage),
+                    pressedBackground(btnBgImage),
+                    spacing(new Spacing(10, 8, 25, 8)),
+                    mouseListener((e) -> System.out.println(e.type)),
+                    child(
+                      Text.create(
+                        text("Click Me")
+                      )
                     )
-                    .withDefaultBackground(btnBgImage)
-                    .withHoverBackground(btnHoverImage)
-                    .withPressedBackground(btnBgImage)
-                    .withNinePatchSpacing(10, 8, 25, 8)
-                    .withMouseListener((e) -> System.out.println(e.type))
+                  )
                 )
               )
             ),
             Sized.create(
               128, 80,
-              Text.create("Hello World")
-                .withAlignment(TextAlignment.CENTER)
-                .withVerticalAlignment(TextAlignment.END)
-                .withShadow(true)
-                .withShadowColor(Color.GRAY)
-                .withShadowOffset(10, 4)
-                .withFontStyle(Font.BOLD)
+              Text.create(
+                text("Hello World"),
+                alignment(TextAlignment.CENTER),
+                verticalAlignment(TextAlignment.END),
+                shadowEnabled(true),
+                shadowColor(Color.GRAY),
+                shadowOffsetX(10),
+                shadowOffsetY(10),
+                fontStyle(Font.BOLD)
+              )
             ),
             Row.create(
-                Text.create(text)
-                  .withFontSize(24),
+                Text.create(
+                  text(text),
+                  fontSize(24)
+                ),
                 Padding.create(
                   new Spacing(x),
-                  Text.create("Another Text")
-                    .withColor(Color.CYAN)
+                  Text.create(
+                    text("Another Text"),
+                    color(Color.CYAN)
+                  )
                 )
               ).withMainAxisAlignment(MainAxisAlignment.SPACE_BETWEEN)
               .withCrossAxisAlignment(CrossAxisAlignment.STRETCH)

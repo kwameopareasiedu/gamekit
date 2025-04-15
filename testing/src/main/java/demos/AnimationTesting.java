@@ -14,6 +14,7 @@ import dev.gamekit.ui.widgets.Widget;
 
 import java.awt.*;
 
+import static dev.gamekit.ui.widgets.TextParam.text;
 import static dev.gamekit.utils.Math.toInt;
 
 public class AnimationTesting extends Scene {
@@ -59,7 +60,9 @@ public class AnimationTesting extends Scene {
       Alignment.TOP_LEFT,
       Padding.create(
         new Spacing(16, 48),
-        Text.create(String.format("Value: %f", animationValue))
+        Text.create(
+          text(String.format("Value: %f", animationValue))
+        )
       )
     );
   }

@@ -43,7 +43,7 @@ public abstract class Widget {
   private BufferedImage canvasImage;
   private Graphics2D canvasGraphics;
 
-  public Widget() {
+  protected Widget() {
     computedBounds = new Bounds(0, 0, 0, 0);
     previousBounds = new Bounds(0, 0, 0, 0);
     intrinsicBounds = new Bounds(0, 0, 0, 0);

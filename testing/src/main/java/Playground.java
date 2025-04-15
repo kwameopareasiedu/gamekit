@@ -17,6 +17,8 @@ import org.apache.logging.log4j.Logger;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+import static dev.gamekit.ui.widgets.TextParam.*;
+
 public class Playground extends Scene {
   private static final Logger LOGGER = LogManager.getLogger();
   final Vector listenerPos;
@@ -91,12 +93,14 @@ public class Playground extends Scene {
   @Override
   public Widget onCreateUI() {
     return Column.create(
-        Text.create("Press the Space Bar to play/restart the audio")
-          .withAlignment(TextAlignment.CENTER),
-
-        Text.create("Move the mouse from left to right to pan the audio")
-          .withAlignment(TextAlignment.CENTER),
-
+        Text.create(
+          text("Press the Space Bar to play/restart the audio"),
+          alignment(TextAlignment.CENTER)
+        ),
+        Text.create(
+          text("Move the mouse from left to right to pan the audio"),
+          alignment(TextAlignment.CENTER)
+        ),
         Row.create(
             Column.create(
                 Opacity.create(
@@ -104,10 +108,11 @@ public class Playground extends Scene {
                     0.5, Image.create(speakerImg)
                   )
                 ),
-
-                Text.create("Left Speaker")
-                  .withAlignment(TextAlignment.CENTER)
-                  .withFontSize(12)
+                Text.create(
+                  text("Left Speaker"),
+                  alignment(TextAlignment.CENTER),
+                  fontSize(12)
+                )
               )
               .withCrossAxisAlignment(CrossAxisAlignment.CENTER)
               .withGapSize(16),
@@ -118,10 +123,11 @@ public class Playground extends Scene {
                     0.5, Image.create(speakerImg)
                   )
                 ),
-
-                Text.create("Right Speaker")
-                  .withAlignment(TextAlignment.CENTER)
-                  .withFontSize(12)
+                Text.create(
+                  text("Right Speaker"),
+                  alignment(TextAlignment.CENTER),
+                  fontSize(12)
+                )
               )
               .withCrossAxisAlignment(CrossAxisAlignment.CENTER)
               .withGapSize(16)

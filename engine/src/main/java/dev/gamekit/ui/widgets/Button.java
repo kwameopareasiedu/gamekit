@@ -5,6 +5,7 @@ import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.events.InputEvent;
 import dev.gamekit.ui.events.MouseEvent;
+import dev.gamekit.ui.Param;
 import dev.gamekit.utils.Constants;
 
 import java.awt.*;
@@ -13,18 +14,35 @@ import java.util.Objects;
 
 /** A {@link Widget} which can be clicked to trigger an event */
 public class Button extends SingleChildParent implements Widget.InputHandler {
-  protected Spacing spacing;
-  protected BufferedImage defaultBackground;
-  protected BufferedImage hoverBackground;
-  protected BufferedImage pressedBackground;
+  protected final Spacing spacing;
+  protected final BufferedImage defaultBackground;
+  protected final BufferedImage hoverBackground;
+  protected final BufferedImage pressedBackground;
   protected boolean mousePressed;
 
-  protected Button(Widget child) {
+  public Button(
+    Widget child,
+    Spacing spacing,
+    BufferedImage defaultBackground,
+    BufferedImage hoverBackground,
+    BufferedImage pressedBackground
+  ) {
     super(child);
+    this.spacing = spacing;
+    this.defaultBackground = defaultBackground;
+    this.hoverBackground = hoverBackground;
+    this.pressedBackground = pressedBackground;
   }
 
-  public static Button create(Widget child) {
-    return new Button(child);
+  @SafeVarargs
+  public static Button create(Param<? super ButtonParam>... params) {
+    return new Button(
+      Param.getValue(params, "child", Empty.create()),
+      Param.getValue(params, "spacing", null),
+      Param.getValue(params, "defaultBackground", Constants.DEFAULT_BUTTON_BG),
+      Param.getValue(params, "hoverBackground", Constants.HOVER_BUTTON_BG),
+      Param.getValue(params, "pressedBackground", Constants.PRESSED_BUTTON_BG)
+    );
   }
 
   @Override
@@ -144,27 +162,5 @@ public class Button extends SingleChildParent implements Widget.InputHandler {
         UI.getInstance().triggerRender();
       }
     }
-  }
-
-  public Button withNinePatchSpacing(
-    int top, int right, int bottom, int left
-  ) {
-    this.spacing = new Spacing(top, right, bottom, left);
-    return this;
-  }
-
-  public Button withDefaultBackground(BufferedImage defaultBackground) {
-    this.defaultBackground = defaultBackground;
-    return this;
-  }
-
-  public Button withHoverBackground(BufferedImage hoverBackground) {
-    this.hoverBackground = hoverBackground;
-    return this;
-  }
-
-  public Button withPressedBackground(BufferedImage pressedBackground) {
-    this.pressedBackground = pressedBackground;
-    return this;
   }
 }
