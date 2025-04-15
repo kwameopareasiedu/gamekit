@@ -20,7 +20,7 @@ public class Button extends SingleChildParent implements Widget.InputHandler {
   protected final BufferedImage pressedBackground;
   protected boolean mousePressed;
 
-  public Button(
+  protected Button(
     Widget child,
     Spacing spacing,
     BufferedImage defaultBackground,

@@ -14,6 +14,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 import static dev.gamekit.ui.widgets.ButtonParam.*;
+import static dev.gamekit.ui.widgets.FlexParam.*;
 import static dev.gamekit.ui.widgets.TextParam.*;
 import static dev.gamekit.ui.widgets.WidgetParam.mouseListener;
 
@@ -67,6 +68,10 @@ public class Demo3UserInterface extends Scene {
       Sized.create(
         600, 480,
         Column.create(
+          mainAxisAlignment(MainAxisAlignment.SPACE_BETWEEN),
+          crossAxisAlignment(CrossAxisAlignment.CENTER),
+          gapSize(10),
+          children(
             Padding.create(
               new Spacing(x),
               Stack.create(
@@ -109,6 +114,10 @@ public class Demo3UserInterface extends Scene {
               )
             ),
             Row.create(
+              mainAxisAlignment(MainAxisAlignment.SPACE_BETWEEN),
+              crossAxisAlignment(CrossAxisAlignment.STRETCH),
+              gapSize(10),
+              children(
                 Text.create(
                   text(text),
                   fontSize(24)
@@ -120,12 +129,10 @@ public class Demo3UserInterface extends Scene {
                     color(Color.CYAN)
                   )
                 )
-              ).withMainAxisAlignment(MainAxisAlignment.SPACE_BETWEEN)
-              .withCrossAxisAlignment(CrossAxisAlignment.STRETCH)
-              .withGapSize(10)
-          ).withMainAxisAlignment(MainAxisAlignment.SPACE_BETWEEN)
-          .withCrossAxisAlignment(CrossAxisAlignment.CENTER)
-          .withGapSize(10)
+              )
+            )
+          )
+        )
       )
     );
   }

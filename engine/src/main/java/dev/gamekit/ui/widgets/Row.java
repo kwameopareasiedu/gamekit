@@ -1,16 +1,29 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.ui.Constraints;
+import dev.gamekit.ui.Param;
+import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.enums.MainAxisAlignment;
 
 /** A {@link Flex} which arranges its children horizontally */
 public class Row extends Flex {
-  protected Row(Widget... children) {
-    super(children);
+  public Row(
+    int gapSize,
+    MainAxisAlignment mainAxisAlignment,
+    CrossAxisAlignment crossAxisAlignment,
+    Widget... children
+  ) {
+    super(gapSize, mainAxisAlignment, crossAxisAlignment, children);
   }
 
-  public static Row create(Widget... children) {
-    return new Row(children);
+  @SafeVarargs
+  public static Row create(Param<? super RowParam>... params) {
+    return new Row(
+      Param.getValue(params, "gapSize", 0),
+      Param.getValue(params, "mainAxisAlignment", MainAxisAlignment.START),
+      Param.getValue(params, "crossAxisAlignment", CrossAxisAlignment.START),
+      Param.getValue(params, "children", null)
+    );
   }
 
   @Override

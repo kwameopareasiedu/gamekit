@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+import static dev.gamekit.ui.widgets.FlexParam.*;
 import static dev.gamekit.ui.widgets.TextParam.*;
 
 public class Playground extends Scene {
@@ -93,6 +94,10 @@ public class Playground extends Scene {
   @Override
   public Widget onCreateUI() {
     return Column.create(
+      mainAxisAlignment(MainAxisAlignment.CENTER),
+      crossAxisAlignment(CrossAxisAlignment.STRETCH),
+      gapSize(24),
+      children(
         Text.create(
           text("Press the Space Bar to play/restart the audio"),
           alignment(TextAlignment.CENTER)
@@ -102,7 +107,14 @@ public class Playground extends Scene {
           alignment(TextAlignment.CENTER)
         ),
         Row.create(
+          mainAxisAlignment(MainAxisAlignment.CENTER),
+          crossAxisAlignment(CrossAxisAlignment.CENTER),
+          gapSize(8),
+          children(
             Column.create(
+              crossAxisAlignment(CrossAxisAlignment.CENTER),
+              gapSize(16),
+              children(
                 Opacity.create(
                   pan < 0 ? 1 : 1 - pan, Scaled.create(
                     0.5, Image.create(speakerImg)
@@ -114,10 +126,11 @@ public class Playground extends Scene {
                   fontSize(12)
                 )
               )
-              .withCrossAxisAlignment(CrossAxisAlignment.CENTER)
-              .withGapSize(16),
-
+            ),
             Column.create(
+              crossAxisAlignment(CrossAxisAlignment.CENTER),
+              gapSize(16),
+              children(
                 Opacity.create(
                   pan > 0 ? 1 : 1 + pan, Scaled.create(
                     0.5, Image.create(speakerImg)
@@ -129,13 +142,10 @@ public class Playground extends Scene {
                   fontSize(12)
                 )
               )
-              .withCrossAxisAlignment(CrossAxisAlignment.CENTER)
-              .withGapSize(16)
-          ).withMainAxisAlignment(MainAxisAlignment.CENTER)
-          .withCrossAxisAlignment(CrossAxisAlignment.CENTER)
-          .withGapSize(8)
-      ).withMainAxisAlignment(MainAxisAlignment.CENTER)
-      .withCrossAxisAlignment(CrossAxisAlignment.STRETCH)
-      .withGapSize(24);
+            )
+          )
+        )
+      )
+    );
   }
 }

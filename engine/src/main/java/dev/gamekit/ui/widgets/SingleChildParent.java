@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 public abstract class SingleChildParent extends Parent {
   protected Widget child;
 
-  protected SingleChildParent(Widget child) {
+  public SingleChildParent(Widget child) {
     if (child == null)
       throw new IllegalArgumentException("Child of SingleChildParent cannot be null");
     this.child = child;

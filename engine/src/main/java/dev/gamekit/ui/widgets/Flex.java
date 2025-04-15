@@ -7,15 +7,20 @@ import java.util.Objects;
 
 /** A {@link MultiChildParent} which arranges its children linearly along one axis */
 public abstract class Flex extends MultiChildParent {
-  protected int gapSize;
-  protected MainAxisAlignment mainAxisAlignment;
-  protected CrossAxisAlignment crossAxisAlignment;
+  protected final int gapSize;
+  protected final MainAxisAlignment mainAxisAlignment;
+  protected final CrossAxisAlignment crossAxisAlignment;
 
-  public Flex(Widget... children) {
+  public Flex(
+    int gapSize,
+    MainAxisAlignment mainAxisAlignment,
+    CrossAxisAlignment crossAxisAlignment,
+    Widget... children
+  ) {
     super(children);
-    gapSize = 0;
-    mainAxisAlignment = MainAxisAlignment.START;
-    crossAxisAlignment = CrossAxisAlignment.START;
+    this.gapSize = gapSize;
+    this.mainAxisAlignment = mainAxisAlignment;
+    this.crossAxisAlignment = crossAxisAlignment;
   }
 
   @Override
@@ -27,20 +32,5 @@ public abstract class Flex extends MultiChildParent {
     }
 
     return false;
-  }
-
-  public Flex withGapSize(int gapSize) {
-    this.gapSize = gapSize;
-    return this;
-  }
-
-  public Flex withMainAxisAlignment(MainAxisAlignment axisAlignment) {
-    this.mainAxisAlignment = axisAlignment;
-    return this;
-  }
-
-  public Flex withCrossAxisAlignment(CrossAxisAlignment axisAlignment) {
-    this.crossAxisAlignment = axisAlignment;
-    return this;
   }
 }
