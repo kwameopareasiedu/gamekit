@@ -2,10 +2,10 @@ package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.UI;
 import dev.gamekit.ui.Constraints;
+import dev.gamekit.ui.Param;
 import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.events.InputEvent;
 import dev.gamekit.ui.events.MouseEvent;
-import dev.gamekit.ui.Param;
 import dev.gamekit.utils.Constants;
 
 import java.awt.*;
@@ -20,12 +20,12 @@ public class Button extends SingleChildParent implements Widget.InputHandler {
   protected final BufferedImage pressedBackground;
   protected boolean mousePressed;
 
-  protected Button(
-    Widget child,
+  public Button(
     Spacing spacing,
     BufferedImage defaultBackground,
     BufferedImage hoverBackground,
-    BufferedImage pressedBackground
+    BufferedImage pressedBackground,
+    Widget child
   ) {
     super(child);
     this.spacing = spacing;
@@ -37,11 +37,11 @@ public class Button extends SingleChildParent implements Widget.InputHandler {
   @SafeVarargs
   public static Button create(Param<? super ButtonParam>... params) {
     return new Button(
-      Param.getValue(params, "child", Empty.create()),
       Param.getValue(params, "spacing", null),
       Param.getValue(params, "defaultBackground", Constants.DEFAULT_BUTTON_BG),
       Param.getValue(params, "hoverBackground", Constants.HOVER_BUTTON_BG),
-      Param.getValue(params, "pressedBackground", Constants.PRESSED_BUTTON_BG)
+      Param.getValue(params, "pressedBackground", Constants.PRESSED_BUTTON_BG),
+      Param.getValue(params, "child", Empty.create())
     );
   }
 

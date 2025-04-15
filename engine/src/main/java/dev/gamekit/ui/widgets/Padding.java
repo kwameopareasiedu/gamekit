@@ -1,21 +1,26 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.ui.Constraints;
+import dev.gamekit.ui.Param;
 import dev.gamekit.ui.Spacing;
 
 import java.util.Objects;
 
 /** A {@link SingleChildParent} which adds padding around its single child */
 public class Padding extends SingleChildParent {
-  protected Spacing padding;
+  protected final Spacing padding;
 
-  protected Padding(Spacing padding, Widget child) {
+  public Padding(Spacing padding, Widget child) {
     super(child);
     this.padding = padding;
   }
 
-  public static Padding create(Spacing padding, Widget child) {
-    return new Padding(padding, child);
+  @SafeVarargs
+  public static Padding create(Param<? super PaddingParam>... params) {
+    return new Padding(
+      Param.getValue(params, "padding", new Spacing()),
+      Param.getValue(params, "child", null)
+    );
   }
 
   @Override

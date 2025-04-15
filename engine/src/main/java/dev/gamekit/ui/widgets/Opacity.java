@@ -1,6 +1,7 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.ui.Constraints;
+import dev.gamekit.ui.Param;
 
 import java.awt.*;
 import java.util.Objects;
@@ -9,19 +10,24 @@ import static dev.gamekit.utils.Math.clamp;
 
 /** A {@link SingleChildParent} which renders its child with transparency */
 public class Opacity extends SingleChildParent {
-  protected double opacity;
+  protected final double opacity;
 
   private final AlphaComposite composite;
 
-  protected Opacity(double opacity, Widget child) {
+  public Opacity(double opacity, Widget child) {
     super(child);
     this.opacity = clamp(opacity, 0, 1);
-    composite =
-      AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) this.opacity);
+    this.composite = AlphaComposite.getInstance(
+      AlphaComposite.SRC_OVER, (float) this.opacity
+    );
   }
 
-  public static Opacity create(double opacity, Widget child) {
-    return new Opacity(opacity, child);
+  @SafeVarargs
+  public static Opacity create(Param<? super OpacityParam>... params) {
+    return new Opacity(
+      Param.getValue(params, "opacity", 1.0),
+      Param.getValue(params, "child", null)
+    );
   }
 
   @Override

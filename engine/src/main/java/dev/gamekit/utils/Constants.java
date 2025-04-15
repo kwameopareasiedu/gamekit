@@ -17,6 +17,8 @@ public final class Constants {
     IO.getResourceImage("btn-hover.png");
   public static final BufferedImage PRESSED_BUTTON_BG =
     IO.getResourceImage("btn-press.png");
+  public static final BufferedImage DEFAULT_PANEL_BG =
+    IO.getResourceImage("panel-default.png");
 
   // Animation curve related constants - Start
   public static final double C1 = 1.70158;

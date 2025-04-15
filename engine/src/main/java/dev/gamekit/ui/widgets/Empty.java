@@ -1,6 +1,7 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.ui.Constraints;
+import dev.gamekit.ui.Param;
 
 import java.awt.*;
 
@@ -9,13 +10,17 @@ import java.awt.*;
  * in places where {@code null} would have been preferable
  */
 public class Empty extends Widget {
-  public static Empty create() {
+  @SafeVarargs
+  public static Empty create(Param<? super EmptyParam>... params) {
     return new Empty();
   }
 
   @Override
   protected void performLayout(Constraints constraints) {
-    computedBounds.setSize(0, 0);
+    computedBounds.setSize(
+      constraints.constrainWidth(0),
+      constraints.constrainHeight(0)
+    );
   }
 
   @Override

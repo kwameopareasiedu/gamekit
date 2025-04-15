@@ -17,8 +17,11 @@ import org.apache.logging.log4j.Logger;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-import static dev.gamekit.ui.widgets.AlignParam.horizontalAlignment;
 import static dev.gamekit.ui.widgets.FlexParam.*;
+import static dev.gamekit.ui.widgets.ImageParam.image;
+import static dev.gamekit.ui.widgets.OpacityParam.opacity;
+import static dev.gamekit.ui.widgets.ScaledParam.scale;
+import static dev.gamekit.ui.widgets.SingleChildParentParam.child;
 import static dev.gamekit.ui.widgets.TextParam.*;
 
 public class Playground extends Scene {
@@ -117,8 +120,16 @@ public class Playground extends Scene {
               gapSize(16),
               children(
                 Opacity.create(
-                  pan < 0 ? 1 : 1 - pan, Scaled.create(
-                    0.5, Image.create(speakerImg)
+                  opacity(pan < 0 ? 1 : 1 - pan),
+                  child(
+                    Scaled.create(
+                      scale(0.5),
+                      child(
+                        Image.create(
+                          image(speakerImg)
+                        )
+                      )
+                    )
                   )
                 ),
                 Text.create(
@@ -133,8 +144,16 @@ public class Playground extends Scene {
               gapSize(16),
               children(
                 Opacity.create(
-                  pan > 0 ? 1 : 1 + pan, Scaled.create(
-                    0.5, Image.create(speakerImg)
+                  opacity(pan > 0 ? 1 : 1 + pan),
+                  child(
+                    Scaled.create(
+                      scale(0.5),
+                      child(
+                        Image.create(
+                          image(speakerImg)
+                        )
+                      )
+                    )
                   )
                 ),
                 Text.create(

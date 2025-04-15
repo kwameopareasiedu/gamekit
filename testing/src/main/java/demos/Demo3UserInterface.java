@@ -17,6 +17,8 @@ import static dev.gamekit.ui.widgets.AlignParam.verticalAlignment;
 import static dev.gamekit.ui.widgets.ButtonParam.mouseListener;
 import static dev.gamekit.ui.widgets.ButtonParam.*;
 import static dev.gamekit.ui.widgets.FlexParam.*;
+import static dev.gamekit.ui.widgets.ImageParam.image;
+import static dev.gamekit.ui.widgets.PaddingParam.padding;
 import static dev.gamekit.ui.widgets.SingleChildParentParam.child;
 import static dev.gamekit.ui.widgets.SizedParam.height;
 import static dev.gamekit.ui.widgets.SizedParam.width;
@@ -81,35 +83,43 @@ public class Demo3UserInterface extends Scene {
               gapSize(10),
               children(
                 Padding.create(
-                  new Spacing(x),
-                  Stack.create(
-                    Sized.create(
-                      width(300),
-                      height(150),
-                      child(
-                        Image.create(wideImage)
-                      )
-                    ),
-                    Sized.create(
-                      width(400),
-                      height(200),
-                      child(
-                        Image.create(squareImage)
-                      )
-                    ),
-                    Sized.create(
-                      width(150),
-                      height(60),
-                      child(
-                        Button.create(
-                          defaultBackground(btnBgImage),
-                          hoverBackground(btnHoverImage),
-                          pressedBackground(btnBgImage),
-                          spacing(new Spacing(10, 8, 25, 8)),
-                          mouseListener((e) -> System.out.println(e.type)),
+                  padding(new Spacing(x)),
+                  child(
+                    Stack.create(
+                      children(
+                        Sized.create(
+                          width(300),
+                          height(150),
                           child(
-                            Text.create(
-                              text("Click Me")
+                            Image.create(
+                              image(wideImage)
+                            )
+                          )
+                        ),
+                        Sized.create(
+                          width(400),
+                          height(200),
+                          child(
+                            Image.create(
+                              image(squareImage)
+                            )
+                          )
+                        ),
+                        Sized.create(
+                          width(150),
+                          height(60),
+                          child(
+                            Button.create(
+                              defaultBackground(btnBgImage),
+                              hoverBackground(btnHoverImage),
+                              pressedBackground(btnBgImage),
+                              spacing(new Spacing(10, 8, 25, 8)),
+                              mouseListener((e) -> System.out.println(e.type)),
+                              child(
+                                Text.create(
+                                  text("Click Me")
+                                )
+                              )
                             )
                           )
                         )
@@ -124,7 +134,7 @@ public class Demo3UserInterface extends Scene {
                     Text.create(
                       text("Hello World"),
                       alignment(Alignment.CENTER),
-                      TextParam.verticalAlignment(Alignment.END),
+                      vAlignment(Alignment.END),
                       shadowEnabled(true),
                       shadowColor(Color.GRAY),
                       shadowOffsetX(10),
@@ -143,10 +153,12 @@ public class Demo3UserInterface extends Scene {
                       fontSize(24)
                     ),
                     Padding.create(
-                      new Spacing(x),
-                      Text.create(
-                        text("Another Text"),
-                        color(Color.CYAN)
+                      padding(new Spacing(x)),
+                      child(
+                        Text.create(
+                          text("Another Text"),
+                          color(Color.CYAN)
+                        )
                       )
                     )
                   )

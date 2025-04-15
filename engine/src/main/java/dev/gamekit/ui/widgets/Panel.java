@@ -1,6 +1,7 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.ui.Constraints;
+import dev.gamekit.ui.Param;
 import dev.gamekit.ui.Spacing;
 import dev.gamekit.utils.Constants;
 
@@ -12,22 +13,27 @@ import java.util.Objects;
  * A {@link SingleChildParent} which uses the 9-patch algorithm to render a
  * {@link BufferedImage} as a background to its descendants
  */
-public class NinePatch extends SingleChildParent {
+public class Panel extends SingleChildParent {
+  protected final BufferedImage background;
   protected final Spacing spacing;
-  protected final BufferedImage image;
 
-  protected NinePatch(BufferedImage image, Widget child) {
+  public Panel(BufferedImage background, Spacing spacing, Widget child) {
     super(child);
 
-    if (image == null)
+    if (background == null)
       throw new NullPointerException("Image cannot be null");
 
-    this.image = image;
-    this.spacing = new Spacing(0, 0, 0, 0);
+    this.background = background;
+    this.spacing = spacing;
   }
 
-  public static NinePatch create(BufferedImage image, Widget child) {
-    return new NinePatch(image, child);
+  @SafeVarargs
+  public static Panel create(Param<? super PanelParam>... params) {
+    return new Panel(
+      Param.getValue(params, "background", Constants.DEFAULT_PANEL_BG),
+      Param.getValue(params, "spacing", new Spacing(12)),
+      Param.getValue(params, "child", null)
+    );
   }
 
   @Override
@@ -40,8 +46,8 @@ public class NinePatch extends SingleChildParent {
     );
 
     intrinsicBounds.setSize(
-      Math.max(image.getWidth(), child.computedBounds.width),
-      Math.max(image.getHeight(), child.computedBounds.height)
+      Math.max(background.getWidth(), child.computedBounds.width),
+      Math.max(background.getHeight(), child.computedBounds.height)
     );
 
     computedBounds.setSize(
@@ -66,8 +72,8 @@ public class NinePatch extends SingleChildParent {
 
     int nl = spacing.left;
     int nt = spacing.top;
-    int iw = image.getWidth();
-    int ih = image.getHeight();
+    int iw = background.getWidth();
+    int ih = background.getHeight();
     int nr = iw - spacing.right;
     int nb = ih - spacing.bottom;
 
@@ -105,7 +111,7 @@ public class NinePatch extends SingleChildParent {
       int[] dest = destBounds[i];
 
       g.drawImage(
-        image, dest[0], dest[1], dest[2], dest[3],
+        background, dest[0], dest[1], dest[2], dest[3],
         src[0], src[1], src[2], src[3], null
       );
     }
@@ -113,16 +119,11 @@ public class NinePatch extends SingleChildParent {
 
   @Override
   protected boolean stateEquals(Widget widget) {
-    if (widget instanceof NinePatch ninePatchWidget) {
-      return Objects.equals(image, ninePatchWidget.image)
-        && Objects.equals(spacing, ninePatchWidget.spacing);
+    if (widget instanceof Panel panelWidget) {
+      return Objects.equals(background, panelWidget.background)
+        && Objects.equals(spacing, panelWidget.spacing);
     }
 
     return false;
-  }
-
-  public NinePatch withSpacing(int top, int right, int bottom, int left) {
-    this.spacing.set(top, right, bottom, left);
-    return this;
   }
 }

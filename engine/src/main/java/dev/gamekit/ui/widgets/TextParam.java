@@ -38,7 +38,7 @@ public class TextParam extends WidgetParam {
     return new Param<>("alignment", value);
   }
 
-  public static Param<TextParam> verticalAlignment(Alignment value) {
+  public static Param<TextParam> vAlignment(Alignment value) {
     return new Param<>("verticalAlignment", value);
   }
 
