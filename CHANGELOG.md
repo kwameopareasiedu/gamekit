@@ -56,6 +56,7 @@ BufferedImage getResourceImage(String path)` in `IO` class
 - Removed `MouseClickEvent` class and merged function into `MouseEvent` class
 - Removed `MouseEnterEvent` class and merged function into `MouseEvent` class
 - Removed `MouseExitEvent` class and merged function into `MouseEvent` class
+- Removed `TextAlignment` enum in favour or `Alignment` enum
 
 ## 0.3.0-SNAPSHOT-3
 

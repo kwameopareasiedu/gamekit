@@ -2,9 +2,9 @@ import dev.gamekit.audio.*;
 import dev.gamekit.audio.shapes.AudioShapeCircle;
 import dev.gamekit.core.Window;
 import dev.gamekit.core.*;
+import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.enums.MainAxisAlignment;
-import dev.gamekit.ui.enums.TextAlignment;
 import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.ui.widgets.*;
 import dev.gamekit.utils.Config;
@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+import static dev.gamekit.ui.widgets.AlignParam.horizontalAlignment;
 import static dev.gamekit.ui.widgets.FlexParam.*;
 import static dev.gamekit.ui.widgets.TextParam.*;
 
@@ -100,11 +101,11 @@ public class Playground extends Scene {
       children(
         Text.create(
           text("Press the Space Bar to play/restart the audio"),
-          alignment(TextAlignment.CENTER)
+          alignment(Alignment.CENTER)
         ),
         Text.create(
           text("Move the mouse from left to right to pan the audio"),
-          alignment(TextAlignment.CENTER)
+          alignment(Alignment.CENTER)
         ),
         Row.create(
           mainAxisAlignment(MainAxisAlignment.CENTER),
@@ -122,7 +123,7 @@ public class Playground extends Scene {
                 ),
                 Text.create(
                   text("Left Speaker"),
-                  alignment(TextAlignment.CENTER),
+                  alignment(Alignment.CENTER),
                   fontSize(12)
                 )
               )
@@ -138,7 +139,7 @@ public class Playground extends Scene {
                 ),
                 Text.create(
                   text("Right Speaker"),
-                  alignment(TextAlignment.CENTER),
+                  alignment(Alignment.CENTER),
                   fontSize(12)
                 )
               )

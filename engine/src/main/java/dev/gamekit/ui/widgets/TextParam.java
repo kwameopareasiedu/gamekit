@@ -1,7 +1,7 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.ui.Param;
-import dev.gamekit.ui.enums.TextAlignment;
+import dev.gamekit.ui.enums.Alignment;
 
 import java.awt.*;
 
@@ -34,11 +34,11 @@ public class TextParam extends WidgetParam {
     return new Param<>("font", value);
   }
 
-  public static Param<TextParam> alignment(TextAlignment value) {
+  public static Param<TextParam> alignment(Alignment value) {
     return new Param<>("alignment", value);
   }
 
-  public static Param<TextParam> verticalAlignment(TextAlignment value) {
+  public static Param<TextParam> verticalAlignment(Alignment value) {
     return new Param<>("verticalAlignment", value);
   }
 

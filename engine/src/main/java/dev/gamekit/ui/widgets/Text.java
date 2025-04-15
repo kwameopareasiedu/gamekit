@@ -2,8 +2,8 @@ package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.UI;
 import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.enums.TextAlignment;
 import dev.gamekit.ui.Param;
+import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.utils.Constants;
 
 import java.awt.*;
@@ -22,8 +22,8 @@ public class Text extends Widget {
   protected final Color color;
   protected final Color backgroundColor;
   protected final Font font;
-  protected final TextAlignment alignment;
-  protected final TextAlignment verticalAlignment;
+  protected final Alignment alignment;
+  protected final Alignment verticalAlignment;
   protected final boolean shadowEnabled;
   protected final int shadowOffsetX;
   protected final int shadowOffsetY;
@@ -41,8 +41,8 @@ public class Text extends Widget {
     Color color,
     Color backgroundColor,
     Font font,
-    TextAlignment alignment,
-    TextAlignment verticalAlignment,
+    Alignment alignment,
+    Alignment verticalAlignment,
     boolean shadowEnabled,
     int shadowOffsetX,
     int shadowOffsetY,
@@ -78,8 +78,8 @@ public class Text extends Widget {
       Param.getValue(params, "color", Color.WHITE),
       Param.getValue(params, "backgroundColor", Constants.TRANSPARENT_COLOR),
       Param.getValue(params, "font", Constants.DEFAULT_FONT),
-      Param.getValue(params, "alignment", TextAlignment.START),
-      Param.getValue(params, "verticalAlignment", TextAlignment.START),
+      Param.getValue(params, "alignment", Alignment.START),
+      Param.getValue(params, "verticalAlignment", Alignment.START),
       Param.getValue(params, "shadowEnabled", false),
       Param.getValue(params, "shadowOffsetX", 0),
       Param.getValue(params, "shadowOffsetY", 0),
