@@ -22,20 +22,23 @@ import static dev.gamekit.ui.widgets.ImageParam.image;
 import static dev.gamekit.ui.widgets.OpacityParam.opacity;
 import static dev.gamekit.ui.widgets.ScaledParam.scale;
 import static dev.gamekit.ui.widgets.SingleChildParentParam.child;
-import static dev.gamekit.ui.widgets.TextParam.*;
+import static dev.gamekit.ui.widgets.TextParam.alignment;
+import static dev.gamekit.ui.widgets.TextParam.text;
 
 public class Playground extends Scene {
   private static final Logger LOGGER = LogManager.getLogger();
   final Vector listenerPos;
+  final Position prevMousePos;
 
   double pan = 0;
   int halfWindowWidth = 0;
-  private final BufferedImage speakerImg = IO.getResourceImage("speaker.png");
+  BufferedImage speakerImg = IO.getResourceImage("speaker.png");
 
   public Playground() {
     super("Main Scene");
 
     listenerPos = new Vector(0, 0);
+    prevMousePos = new Position(0, 0);
 
     Audio.preload("alert",
       new AudioClip2D("cybertruck.wav", AudioGroup.MUSIC, 0.5)
@@ -62,14 +65,14 @@ public class Playground extends Scene {
 
     halfWindowWidth = Window.getInstance().getFrameWidth() / 2;
     Audio.<AudioClip3D>get("waterflow").setPosition(0, 0);
-    Audio.get("waterflow").play(true);
+    //    Audio.get("waterflow").play(true);
   }
 
   @Override
   protected void onUpdate() {
     super.onUpdate();
 
-    if (Input.isKeyJustPressed(Input.KEY_SPACE)) {
+    if (Input.isKeyDown(Input.KEY_SPACE)) {
       Audio.get("alert").play();
     }
 
@@ -81,10 +84,15 @@ public class Playground extends Scene {
     );
 
     AudioListener.setPosition(listenerPos);
-    //    updateUI(() ->
-    //      pan = (double) (mousePos.x - halfWindowWidth) / (halfWindowWidth)
-    //    );
+
+    if (!prevMousePos.equals(mousePos)) {
+      updateUI(() ->
+        pan = (double) (mousePos.x - halfWindowWidth) / (halfWindowWidth)
+      );
+    }
     //    Audio.setPan("alert", (float) pan);
+
+    prevMousePos.set(mousePos);
   }
 
   @Override
@@ -115,51 +123,29 @@ public class Playground extends Scene {
           crossAxisAlignment(CrossAxisAlignment.CENTER),
           gapSize(8),
           children(
-            Column.create(
-              crossAxisAlignment(CrossAxisAlignment.CENTER),
-              gapSize(16),
-              children(
-                Opacity.create(
-                  opacity(pan < 0 ? 1 : 1 - pan),
+            Opacity.create(
+              opacity(pan < 0 ? 1 : 1 - pan),
+              child(
+                Scaled.create(
+                  scale(0.5),
                   child(
-                    Scaled.create(
-                      scale(0.5),
-                      child(
-                        Image.create(
-                          image(speakerImg)
-                        )
-                      )
+                    Image.create(
+                      image(speakerImg)
                     )
                   )
-                ),
-                Text.create(
-                  text("Left Speaker"),
-                  alignment(Alignment.CENTER),
-                  fontSize(12)
                 )
               )
             ),
-            Column.create(
-              crossAxisAlignment(CrossAxisAlignment.CENTER),
-              gapSize(16),
-              children(
-                Opacity.create(
-                  opacity(pan > 0 ? 1 : 1 + pan),
+            Opacity.create(
+              opacity(pan > 0 ? 1 : 1 + pan),
+              child(
+                Scaled.create(
+                  scale(0.5),
                   child(
-                    Scaled.create(
-                      scale(0.5),
-                      child(
-                        Image.create(
-                          image(speakerImg)
-                        )
-                      )
+                    Image.create(
+                      image(speakerImg)
                     )
                   )
-                ),
-                Text.create(
-                  text("Right Speaker"),
-                  alignment(Alignment.CENTER),
-                  fontSize(12)
                 )
               )
             )

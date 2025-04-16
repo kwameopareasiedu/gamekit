@@ -25,8 +25,10 @@
   `AudioClip3D`
 - Added `static boolean isButtonClicked(int buttonCode)` to Input class
 - Added event handling code to `Widget` class
-- Added `Widget.InputHandler` interface to be implemented by `Widgets` which
-  would like to received input events
+- Added `InputEventHandler` interface to be implemented by `Widgets` which
+  would like to receive input events
+- Added `Compose` which is a `SingleChildParent` which delegates layout and 
+  rendering to the provided widget tree
 
 ### Changed
 
@@ -41,6 +43,10 @@ getResourceFong(String path)` in `IO` class
 - Renamed `static BufferedImage loadImageResource(String path)` to `static 
 BufferedImage getResourceImage(String path)` in `IO` class
 - Renamed `NinePatch` widget to `Panel`
+- Renamed `static Input.isButtonJustPressed(int buttonCode)` to `static 
+  Input.isButtonDown(int buttonId)`
+- Renamed `static Input.isButtonJustReleased(int buttonCode)` to `static 
+  Input.isButtonReleased(int buttonId)`
 
 ### Deprecated
 
