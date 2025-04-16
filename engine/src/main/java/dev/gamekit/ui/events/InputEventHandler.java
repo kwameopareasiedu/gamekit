@@ -10,6 +10,8 @@ import dev.gamekit.ui.widgets.Widget;
 public interface InputHandler {
   MouseEvent.Listener getMouseListener();
 
+  boolean isMouseEntered();
+
   void setMouseEntered(boolean mouseEntered);
 
   void setMousePressed(boolean mouseEntered);
@@ -24,16 +26,16 @@ public interface InputHandler {
           setMouseEntered(true);
           UI.getInstance().triggerRender();
         }
-        case EXIT -> {
-          setMouseEntered(false);
-          setMousePressed(false);
-          UI.getInstance().triggerRender();
-        }
-        case PRESS -> {
+        case DOWN -> {
           setMousePressed(true);
           UI.getInstance().triggerRender();
         }
         case RELEASE -> {
+          setMousePressed(false);
+          UI.getInstance().triggerRender();
+        }
+        case EXIT -> {
+          setMouseEntered(false);
           setMousePressed(false);
           UI.getInstance().triggerRender();
         }
