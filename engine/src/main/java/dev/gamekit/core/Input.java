@@ -236,31 +236,31 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
     );
   }
 
+  public synchronized static boolean isKeyDown(int keyCode) {
+    return INSTANCE.keyStates[keyCode].isDown;
+  }
+
   public synchronized static boolean isKeyPressed(int keyCode) {
     return INSTANCE.keyStates[keyCode].isPressed;
   }
 
-  public synchronized static boolean isKeyJustPressed(int keyCode) {
-    return INSTANCE.keyStates[keyCode].isJustPressed;
+  public synchronized static boolean isKeyReleased(int keyCode) {
+    return INSTANCE.keyStates[keyCode].isReleased;
   }
 
-  public synchronized static boolean isKeyJustReleased(int keyCode) {
-    return INSTANCE.keyStates[keyCode].isJustReleased;
+  public synchronized static boolean isButtonDown(int buttonId) {
+    int buttonIndex = buttonId - 1;
+    return INSTANCE.buttonStates[buttonIndex].isDown;
   }
 
-  public synchronized static boolean isButtonPressed(int buttonCode) {
-    int buttonIndex = buttonCode - 1;
+  public synchronized static boolean isButtonPressed(int buttonId) {
+    int buttonIndex = buttonId - 1;
     return INSTANCE.buttonStates[buttonIndex].isPressed;
   }
 
-  public synchronized static boolean isButtonJustPressed(int buttonCode) {
-    int buttonIndex = buttonCode - 1;
-    return INSTANCE.buttonStates[buttonIndex].isJustPressed;
-  }
-
-  public synchronized static boolean isButtonJustReleased(int buttonCode) {
-    int buttonIndex = buttonCode - 1;
-    return INSTANCE.buttonStates[buttonIndex].isJustReleased;
+  public synchronized static boolean isButtonReleased(int buttonId) {
+    int buttonIndex = buttonId - 1;
+    return INSTANCE.buttonStates[buttonIndex].isReleased;
   }
 
   public synchronized static boolean isButtonClicked(int buttonCode) {
@@ -375,23 +375,23 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   /** Represents an input state */
   private static abstract class ActionState {
     boolean isPressed = false;
-    boolean isJustPressed = false;
-    boolean isJustReleased = false;
+    boolean isDown = false;
+    boolean isReleased = false;
 
     /**
      * Updates the key state
      * @param isPressed Whether the action has been pressed
      */
     protected void update(boolean isPressed) {
-      isJustPressed = !this.isPressed && isPressed;
-      isJustReleased = this.isPressed && !isPressed;
+      isDown = !this.isPressed && isPressed;
+      isReleased = this.isPressed && !isPressed;
       this.isPressed = isPressed;
     }
 
     /** Resets this action state */
     protected void reset() {
-      isJustPressed = false;
-      isJustReleased = false;
+      isDown = false;
+      isReleased = false;
     }
   }
 
@@ -410,10 +410,10 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
     private void update(boolean isPressed, Position mousePosition) {
       super.update(isPressed);
 
-      if (isJustPressed)
+      if (isDown)
         this.mousePosition = new Position(mousePosition);
 
-      if (isJustReleased && this.mousePosition.equals(mousePosition)) {
+      if (isReleased && this.mousePosition.equals(mousePosition)) {
         this.mousePosition = null;
         isClicked = true;
       }

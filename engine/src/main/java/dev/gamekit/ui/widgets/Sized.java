@@ -1,6 +1,7 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.ui.Constraints;
+import dev.gamekit.ui.Param;
 
 import java.util.Objects;
 
@@ -15,8 +16,13 @@ public class Sized extends SingleChildParent {
     this.height = height;
   }
 
-  public static Sized create(int width, int height, Widget child) {
-    return new Sized(width, height, child);
+  @SafeVarargs
+  public static Sized create(Param<? super SizedParam>... params) {
+    return new Sized(
+      Param.getValue(params, "width", 64),
+      Param.getValue(params, "height", 64),
+      Param.getValue(params, "child", null)
+    );
   }
 
   @Override
@@ -35,7 +41,7 @@ public class Sized extends SingleChildParent {
   }
 
   @Override
-  protected boolean stateEquals(Widget widget) {
+  public boolean stateEquals(Widget widget) {
     if (widget instanceof Sized sizedWidget) {
       return Objects.equals(width, sizedWidget.width) &&
         Objects.equals(height, sizedWidget.height);

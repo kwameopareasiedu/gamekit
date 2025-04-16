@@ -1,6 +1,7 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.ui.Constraints;
+import dev.gamekit.ui.Param;
 
 import java.util.Objects;
 
@@ -8,13 +9,17 @@ import java.util.Objects;
 public class Scaled extends SingleChildParent {
   protected final double scale;
 
-  protected Scaled(double scale, Widget child) {
+  public Scaled(double scale, Widget child) {
     super(child);
     this.scale = Math.max(0, scale);
   }
 
-  public static Scaled create(double scale, Widget child) {
-    return new Scaled(scale, child);
+  @SafeVarargs
+  public static Scaled create(Param<? super ScaledParam>... params) {
+    return new Scaled(
+      Param.getValue(params, "scale", 1.0),
+      Param.getValue(params, "child", null)
+    );
   }
 
   @Override
@@ -45,7 +50,7 @@ public class Scaled extends SingleChildParent {
   }
 
   @Override
-  protected boolean stateEquals(Widget widget) {
+  public boolean stateEquals(Widget widget) {
     if (widget instanceof Scaled scaledWidget) {
       return Objects.equals(scale, scaledWidget.scale);
     }

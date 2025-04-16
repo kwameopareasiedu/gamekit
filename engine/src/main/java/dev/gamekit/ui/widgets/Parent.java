@@ -15,12 +15,6 @@ import java.awt.*;
  * is performed due to the box-constraint model used.
  */
 public abstract class Parent extends Widget {
-  protected Color clearColor;
-
-  public Parent() {
-    clearColor = Constants.TRANSPARENT_COLOR;
-  }
-
   /**
    * Renders the background of this parent before descendants are rendered
    * onto itself

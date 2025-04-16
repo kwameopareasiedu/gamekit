@@ -1,6 +1,7 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.ui.Constraints;
+import dev.gamekit.ui.Param;
 import dev.gamekit.ui.enums.ImageFit;
 import dev.gamekit.utils.Constants;
 
@@ -11,21 +12,25 @@ import java.util.Objects;
 /** A {@link Widget} which renders a {@link BufferedImage} to the screen */
 public class Image extends Widget {
   protected final BufferedImage image;
-  protected ImageFit imageFit;
+  protected final ImageFit imageFit;
 
   /* Draw bounds stored and only redrawn if they change */
   private int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
 
-  protected Image(BufferedImage image) {
+  public Image(BufferedImage image, ImageFit imageFit) {
     if (image == null)
       throw new NullPointerException("Image cannot be null");
 
     this.image = image;
-    this.imageFit = ImageFit.FIT;
+    this.imageFit = imageFit;
   }
 
-  public static Image create(BufferedImage image) {
-    return new Image(image);
+  @SafeVarargs
+  public static Image create(Param<? super ImageParam>... params) {
+    return new Image(
+      Param.getValue(params, "image", null),
+      Param.getValue(params, "imageFit", ImageFit.FIT)
+    );
   }
 
   @Override
@@ -77,17 +82,12 @@ public class Image extends Widget {
   }
 
   @Override
-  protected boolean stateEquals(Widget widget) {
+  public boolean stateEquals(Widget widget) {
     if (widget instanceof Image imageWidget) {
       return Objects.equals(image, imageWidget.image)
         && Objects.equals(imageFit, imageWidget.imageFit);
     }
 
     return false;
-  }
-
-  public Image withImageFit(ImageFit imageFit) {
-    this.imageFit = imageFit;
-    return this;
   }
 }

@@ -25,15 +25,16 @@
   `AudioClip3D`
 - Added `static boolean isButtonClicked(int buttonCode)` to Input class
 - Added event handling code to `Widget` class
-- Added `Widget.InputHandler` interface to be implemented by `Widgets` which
-  would like to received input events
+- Added `InputEventHandler` interface to be implemented by `Widgets` which
+  would like to receive input events
+- Added `Compose` which is a `SingleChildParent` which delegates layout and 
+  rendering to the provided widget tree
 
 ### Changed
 
 - Modified `Button` widget to center child
 - Modified `Padding` widget to center child
 - Modified `NinePatch` widget to center child
-- Modified `Decorated` widget to center child
 - Renamed `FixedSize` widget to `Sized`
 - Renamed `static Font loadFontResource(String path)` to `static Font 
 getResourceFong(String path)` in `IO` class
@@ -41,6 +42,11 @@ getResourceFong(String path)` in `IO` class
 getResourceFong(String path)` in `IO` class
 - Renamed `static BufferedImage loadImageResource(String path)` to `static 
 BufferedImage getResourceImage(String path)` in `IO` class
+- Renamed `NinePatch` widget to `Panel`
+- Renamed `static Input.isButtonJustPressed(int buttonCode)` to `static 
+  Input.isButtonDown(int buttonId)`
+- Renamed `static Input.isButtonJustReleased(int buttonCode)` to `static 
+  Input.isButtonReleased(int buttonId)`
 
 ### Deprecated
 
@@ -56,6 +62,10 @@ BufferedImage getResourceImage(String path)` in `IO` class
 - Removed `MouseClickEvent` class and merged function into `MouseEvent` class
 - Removed `MouseEnterEvent` class and merged function into `MouseEvent` class
 - Removed `MouseExitEvent` class and merged function into `MouseEvent` class
+- Removed `TextAlignment` enum in favour or `Alignment` enum
+- Removed `Decorated` widget
+- Removed `Intrinsic Size` widget
+- Removed `Axis` widget
 
 ## 0.3.0-SNAPSHOT-3
 

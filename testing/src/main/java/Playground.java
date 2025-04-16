@@ -2,9 +2,9 @@ import dev.gamekit.audio.*;
 import dev.gamekit.audio.shapes.AudioShapeCircle;
 import dev.gamekit.core.Window;
 import dev.gamekit.core.*;
+import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.enums.MainAxisAlignment;
-import dev.gamekit.ui.enums.TextAlignment;
 import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.ui.widgets.*;
 import dev.gamekit.utils.Config;
@@ -17,18 +17,28 @@ import org.apache.logging.log4j.Logger;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+import static dev.gamekit.ui.widgets.FlexParam.*;
+import static dev.gamekit.ui.widgets.ImageParam.image;
+import static dev.gamekit.ui.widgets.OpacityParam.opacity;
+import static dev.gamekit.ui.widgets.ScaledParam.scale;
+import static dev.gamekit.ui.widgets.SingleChildParentParam.child;
+import static dev.gamekit.ui.widgets.TextParam.alignment;
+import static dev.gamekit.ui.widgets.TextParam.text;
+
 public class Playground extends Scene {
   private static final Logger LOGGER = LogManager.getLogger();
   final Vector listenerPos;
+  final Position prevMousePos;
 
   double pan = 0;
   int halfWindowWidth = 0;
-  private final BufferedImage speakerImg = IO.getResourceImage("speaker.png");
+  BufferedImage speakerImg = IO.getResourceImage("speaker.png");
 
   public Playground() {
     super("Main Scene");
 
     listenerPos = new Vector(0, 0);
+    prevMousePos = new Position(0, 0);
 
     Audio.preload("alert",
       new AudioClip2D("cybertruck.wav", AudioGroup.MUSIC, 0.5)
@@ -55,14 +65,14 @@ public class Playground extends Scene {
 
     halfWindowWidth = Window.getInstance().getFrameWidth() / 2;
     Audio.<AudioClip3D>get("waterflow").setPosition(0, 0);
-    Audio.get("waterflow").play(true);
+    //    Audio.get("waterflow").play(true);
   }
 
   @Override
   protected void onUpdate() {
     super.onUpdate();
 
-    if (Input.isKeyJustPressed(Input.KEY_SPACE)) {
+    if (Input.isKeyDown(Input.KEY_SPACE)) {
       Audio.get("alert").play();
     }
 
@@ -74,10 +84,15 @@ public class Playground extends Scene {
     );
 
     AudioListener.setPosition(listenerPos);
-    //    updateUI(() ->
-    //      pan = (double) (mousePos.x - halfWindowWidth) / (halfWindowWidth)
-    //    );
+
+    if (!prevMousePos.equals(mousePos)) {
+      updateUI(() ->
+        pan = (double) (mousePos.x - halfWindowWidth) / (halfWindowWidth)
+      );
+    }
     //    Audio.setPan("alert", (float) pan);
+
+    prevMousePos.set(mousePos);
   }
 
   @Override
@@ -91,45 +106,52 @@ public class Playground extends Scene {
   @Override
   public Widget onCreateUI() {
     return Column.create(
-        Text.create("Press the Space Bar to play/restart the audio")
-          .withAlignment(TextAlignment.CENTER),
-
-        Text.create("Move the mouse from left to right to pan the audio")
-          .withAlignment(TextAlignment.CENTER),
-
+      mainAxisAlignment(MainAxisAlignment.CENTER),
+      crossAxisAlignment(CrossAxisAlignment.STRETCH),
+      gapSize(24),
+      children(
+        Text.create(
+          text("Press the Space Bar to play/restart the audio"),
+          alignment(Alignment.CENTER)
+        ),
+        Text.create(
+          text("Move the mouse from left to right to pan the audio"),
+          alignment(Alignment.CENTER)
+        ),
         Row.create(
-            Column.create(
-                Opacity.create(
-                  pan < 0 ? 1 : 1 - pan, Scaled.create(
-                    0.5, Image.create(speakerImg)
+          mainAxisAlignment(MainAxisAlignment.CENTER),
+          crossAxisAlignment(CrossAxisAlignment.CENTER),
+          gapSize(8),
+          children(
+            Opacity.create(
+              opacity(pan < 0 ? 1 : 1 - pan),
+              child(
+                Scaled.create(
+                  scale(0.5),
+                  child(
+                    Image.create(
+                      image(speakerImg)
+                    )
                   )
-                ),
-
-                Text.create("Left Speaker")
-                  .withAlignment(TextAlignment.CENTER)
-                  .withFontSize(12)
+                )
               )
-              .withCrossAxisAlignment(CrossAxisAlignment.CENTER)
-              .withGapSize(16),
-
-            Column.create(
-                Opacity.create(
-                  pan > 0 ? 1 : 1 + pan, Scaled.create(
-                    0.5, Image.create(speakerImg)
+            ),
+            Opacity.create(
+              opacity(pan > 0 ? 1 : 1 + pan),
+              child(
+                Scaled.create(
+                  scale(0.5),
+                  child(
+                    Image.create(
+                      image(speakerImg)
+                    )
                   )
-                ),
-
-                Text.create("Right Speaker")
-                  .withAlignment(TextAlignment.CENTER)
-                  .withFontSize(12)
+                )
               )
-              .withCrossAxisAlignment(CrossAxisAlignment.CENTER)
-              .withGapSize(16)
-          ).withMainAxisAlignment(MainAxisAlignment.CENTER)
-          .withCrossAxisAlignment(CrossAxisAlignment.CENTER)
-          .withGapSize(8)
-      ).withMainAxisAlignment(MainAxisAlignment.CENTER)
-      .withCrossAxisAlignment(CrossAxisAlignment.STRETCH)
-      .withGapSize(24);
+            )
+          )
+        )
+      )
+    );
   }
 }

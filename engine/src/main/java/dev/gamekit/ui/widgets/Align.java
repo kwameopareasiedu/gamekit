@@ -1,21 +1,33 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.ui.Constraints;
+import dev.gamekit.ui.Param;
 import dev.gamekit.ui.enums.Alignment;
 
 import java.util.Objects;
 
 /** A {@link SingleChildParent} which aligns its single child within itself */
 public class Align extends SingleChildParent {
-  protected Alignment alignment;
+  protected final Alignment horizontalAlignment;
+  protected final Alignment verticalAlignment;
 
-  protected Align(Alignment alignment, Widget child) {
+  public Align(
+    Alignment horizontalAlignment,
+    Alignment verticalAlignment,
+    Widget child
+  ) {
     super(child);
-    this.alignment = alignment;
+    this.horizontalAlignment = horizontalAlignment;
+    this.verticalAlignment = verticalAlignment;
   }
 
-  public static Align create(Alignment alignment, Widget child) {
-    return new Align(alignment, child);
+  @SafeVarargs
+  public static Align create(Param<? super AlignParam>... params) {
+    return new Align(
+      Param.getValue(params, "horizontalAlignment", Alignment.START),
+      Param.getValue(params, "verticalAlignment", Alignment.START),
+      Param.getValue(params, "child", null)
+    );
   }
 
   @Override
@@ -37,55 +49,26 @@ public class Align extends SingleChildParent {
       constraints.maxHeight()
     );
 
-    int hOffset = 0, vOffset = 0;
+    int hOffset = switch (horizontalAlignment) {
+      case CENTER -> computedBounds.width / 2 - intrinsicBounds.width / 2;
+      case END -> computedBounds.width - intrinsicBounds.width;
+      default -> 0;
+    };
 
-    switch (alignment) {
-      case TOP_LEFT -> {
-        hOffset = 0;
-        vOffset = 0;
-      }
-      case TOP_CENTER -> {
-        hOffset = computedBounds.width / 2 - intrinsicBounds.width / 2;
-        vOffset = 0;
-      }
-      case TOP_RIGHT -> {
-        hOffset = computedBounds.width - intrinsicBounds.width;
-        vOffset = 0;
-      }
-      case LEFT -> {
-        hOffset = 0;
-        vOffset = computedBounds.height / 2 - intrinsicBounds.height / 2;
-      }
-      case CENTER -> {
-        hOffset = computedBounds.width / 2 - intrinsicBounds.width / 2;
-        vOffset = computedBounds.height / 2 - intrinsicBounds.height / 2;
-      }
-      case RIGHT -> {
-        hOffset = computedBounds.width - intrinsicBounds.width;
-        vOffset = computedBounds.height / 2 - intrinsicBounds.height / 2;
-      }
-      case BOTTOM_LEFT -> {
-        hOffset = 0;
-        vOffset = computedBounds.height - intrinsicBounds.height;
-      }
-      case BOTTOM_CENTER -> {
-        hOffset = computedBounds.width / 2 - intrinsicBounds.width / 2;
-        vOffset = computedBounds.height - intrinsicBounds.height;
-      }
-      case BOTTOM_RIGHT -> {
-        hOffset = computedBounds.width - intrinsicBounds.width;
-        vOffset = computedBounds.height - intrinsicBounds.height;
-      }
-    }
+    int vOffset = switch (verticalAlignment) {
+      case CENTER -> computedBounds.height / 2 - intrinsicBounds.height / 2;
+      case END -> computedBounds.height - intrinsicBounds.height;
+      default -> 0;
+    };
 
     child.computedBounds.setPosition(hOffset, vOffset);
   }
 
   @Override
-  protected boolean stateEquals(Widget widget) {
+  public boolean stateEquals(Widget widget) {
     if (widget instanceof Align alignWidget) {
-      return Objects.equals(child, alignWidget.child)
-        && Objects.equals(alignment, alignWidget.alignment);
+      return Objects.equals(horizontalAlignment, alignWidget.horizontalAlignment)
+        && Objects.equals(verticalAlignment, alignWidget.verticalAlignment);
     }
 
     return false;

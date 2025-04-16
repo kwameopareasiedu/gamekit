@@ -19,12 +19,12 @@ public class MouseEvent extends InputEvent {
 
   /** Represents the type of {@link MouseEvent} */
   public enum Type {
+    ENTER,
+    MOTION,
+    DOWN,
     PRESS,
     RELEASE,
-    HOLD,
     CLICK,
-    MOTION,
-    ENTER,
     EXIT
   }
 
