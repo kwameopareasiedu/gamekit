@@ -27,7 +27,7 @@ public class Empty extends Widget {
   protected void performRender(Graphics2D g) { /* No-op */ }
 
   @Override
-  protected boolean stateEquals(Widget widget) {
+  public boolean stateEquals(Widget widget) {
     return widget instanceof Empty;
   }
 }

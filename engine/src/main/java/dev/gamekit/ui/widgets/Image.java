@@ -82,7 +82,7 @@ public class Image extends Widget {
   }
 
   @Override
-  protected boolean stateEquals(Widget widget) {
+  public boolean stateEquals(Widget widget) {
     if (widget instanceof Image imageWidget) {
       return Objects.equals(image, imageWidget.image)
         && Objects.equals(imageFit, imageWidget.imageFit);

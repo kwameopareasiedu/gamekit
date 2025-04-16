@@ -36,6 +36,6 @@ public abstract class SingleChildParent extends Parent {
   public final void updateChild(Widget newChild) {
     child.setParent(null);
     child = newChild;
-    child.setParent(this);
+    newChild.setParent(this);
   }
 }

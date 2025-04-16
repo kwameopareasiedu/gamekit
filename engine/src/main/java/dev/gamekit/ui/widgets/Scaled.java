@@ -50,7 +50,7 @@ public class Scaled extends SingleChildParent {
   }
 
   @Override
-  protected boolean stateEquals(Widget widget) {
+  public boolean stateEquals(Widget widget) {
     if (widget instanceof Scaled scaledWidget) {
       return Objects.equals(scale, scaledWidget.scale);
     }

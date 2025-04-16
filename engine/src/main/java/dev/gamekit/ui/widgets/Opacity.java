@@ -64,7 +64,7 @@ public class Opacity extends SingleChildParent {
   }
 
   @Override
-  protected boolean stateEquals(Widget widget) {
+  public boolean stateEquals(Widget widget) {
     if (widget instanceof Opacity opacityWidget) {
       return Objects.equals(opacity, opacityWidget.opacity);
     }

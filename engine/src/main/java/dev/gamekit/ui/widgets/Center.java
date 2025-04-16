@@ -41,7 +41,7 @@ public class Center extends SingleChildParent {
   }
 
   @Override
-  protected boolean stateEquals(Widget widget) {
+  public boolean stateEquals(Widget widget) {
     return widget instanceof Align;
   }
 }

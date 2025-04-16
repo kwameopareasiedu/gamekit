@@ -41,7 +41,7 @@ public class Sized extends SingleChildParent {
   }
 
   @Override
-  protected boolean stateEquals(Widget widget) {
+  public boolean stateEquals(Widget widget) {
     if (widget instanceof Sized sizedWidget) {
       return Objects.equals(width, sizedWidget.width) &&
         Objects.equals(height, sizedWidget.height);

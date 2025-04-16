@@ -203,7 +203,7 @@ public class Text extends Widget {
   }
 
   @Override
-  protected boolean stateEquals(Widget widget) {
+  public boolean stateEquals(Widget widget) {
     if (widget instanceof Text textWidget) {
       return Objects.equals(text, textWidget.text) &&
         Objects.equals(fontFamily, textWidget.fontFamily) &&

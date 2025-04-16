@@ -92,4 +92,9 @@ public class Column extends Flex {
       }
     }
   }
+
+  @Override
+  public boolean stateEquals(Widget widget) {
+    return widget instanceof Column;
+  }
 }

@@ -142,7 +142,7 @@ public class Button extends SingleChildParent implements InputHandler {
   }
 
   @Override
-  protected boolean stateEquals(Widget widget) {
+  public boolean stateEquals(Widget widget) {
     if (widget instanceof Button buttonWidget) {
       return Objects.equals(defaultBackground, buttonWidget.defaultBackground) &&
         Objects.equals(hoverBackground, buttonWidget.hoverBackground) &&

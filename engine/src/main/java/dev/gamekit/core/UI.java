@@ -149,7 +149,7 @@ public final class UI {
       Widget treeWidget = currentWidgetQueue.remove(0);
       Widget newWidget = newWidgetQueue.remove(0);
 
-      if (!Objects.equals(treeWidget, newWidget)) {
+      if (!treeWidget.stateEquals(newWidget)) {
         // Widget tree differs at this point, reconcile subtrees at this depth
         Parent treeWidgetParent = (Parent) treeWidget.getParent();
 

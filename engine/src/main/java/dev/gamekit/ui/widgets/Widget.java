@@ -50,17 +50,11 @@ public abstract class Widget {
 
   public void setParent(Widget parent) { this.parent = parent; }
 
-  @Override
-  public boolean equals(Object obj) {
-    return obj == this ||
-      (obj instanceof Widget widget && stateEquals(widget));
-  }
-
   /**
    * Delegate method which returns {@code true} if this widget has the same
    * state as {@code widget}
    */
-  protected abstract boolean stateEquals(Widget widget);
+  public abstract boolean stateEquals(Widget widget);
 
   /**
    * Computes the layout for the widget

@@ -118,7 +118,7 @@ public class Panel extends SingleChildParent {
   }
 
   @Override
-  protected boolean stateEquals(Widget widget) {
+  public boolean stateEquals(Widget widget) {
     if (widget instanceof Panel panelWidget) {
       return Objects.equals(background, panelWidget.background)
         && Objects.equals(spacing, panelWidget.spacing);
