@@ -20,7 +20,6 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Stack;
 
 /**
  * UI manages the user interface within for {@link Scene}.
@@ -37,10 +36,10 @@ public final class UI {
 
   private final InputEventStore eventStore;
   private final Position mousePosition;
-  private final int[] mouseButtonIds;
   private Widget tree;
   private Widget focusWidget;
   private Widget activeWidget;
+  private Widget lastActiveWidget;
   private boolean needsUpdate = false;
   private boolean needsRender = true;
 
@@ -59,9 +58,6 @@ public final class UI {
     this.previousHitTestList = new ArrayList<>();
     this.eventStore = new InputEventStore();
     this.mousePosition = new Position();
-    this.mouseButtonIds = new int[]{
-      Input.BUTTON_LMB, Input.BUTTON_RMB, Input.BUTTON_MMB
-    };
 
     UI.instance = this;
   }
@@ -238,56 +234,45 @@ public final class UI {
         );
     }
 
-    // Generate mouse down events if a mouse button has just been pressed
-    for (int mouseButtonId : mouseButtonIds) {
-      if (Input.isButtonDown(mouseButtonId)) {
-        eventStore.mouseDownEvents.add(
-          new MouseEvent(
-            MouseEvent.Type.DOWN,
-            mousePosition.x, mousePosition.y,
-            mouseButtonId
-          )
-        );
-      }
+    // Generate mouse down event if button LMB has just been pressed
+    if (Input.isButtonDown(Input.BUTTON_LMB)) {
+      eventStore.mouseDownEvent = new MouseEvent(
+        MouseEvent.Type.DOWN,
+        mousePosition.x, mousePosition.y,
+        Input.BUTTON_LMB
+      );
+
+      if (activeWidget == null)
+        activeWidget = focusWidget;
     }
 
-    // Generate mouse press events if a mouse button is being pressed
-    for (int mouseButtonId : mouseButtonIds) {
-      if (Input.isButtonPressed(mouseButtonId)) {
-        eventStore.mousePressEvents.add(
-          new MouseEvent(
-            MouseEvent.Type.PRESS,
-            mousePosition.x, mousePosition.y,
-            mouseButtonId
-          )
-        );
-      }
+    // Generate mouse press events if button LMB is being pressed
+    if (Input.isButtonPressed(Input.BUTTON_LMB)) {
+      eventStore.mousePressEvent = new MouseEvent(
+        MouseEvent.Type.PRESS,
+        mousePosition.x, mousePosition.y,
+        Input.BUTTON_LMB
+      );
     }
 
-    // Generate mouse release events if a mouse button has just been released
-    for (int mouseButtonId : mouseButtonIds) {
-      if (Input.isButtonReleased(mouseButtonId)) {
-        eventStore.mouseReleaseEvents.add(
-          new MouseEvent(
-            MouseEvent.Type.RELEASE,
-            mousePosition.x, mousePosition.y,
-            mouseButtonId
-          )
+    // Generate mouse release and click events if button LMB has been released
+    if (Input.isButtonReleased(Input.BUTTON_LMB)) {
+      if (activeWidget == focusWidget) {
+        eventStore.mouseReleaseEvent = new MouseEvent(
+          MouseEvent.Type.RELEASE,
+          mousePosition.x, mousePosition.y,
+          Input.BUTTON_LMB
         );
-      }
-    }
 
-    // Generate mouse click events if a mouse button has just been clicked
-    for (int mouseButtonId : mouseButtonIds) {
-      if (Input.isButtonClicked(mouseButtonId)) {
-        eventStore.mouseClickEvents.add(
-          new MouseEvent(
-            MouseEvent.Type.CLICK,
-            mousePosition.x, mousePosition.y,
-            mouseButtonId
-          )
+        eventStore.mouseClickEvent = new MouseEvent(
+          MouseEvent.Type.CLICK,
+          mousePosition.x, mousePosition.y,
+          Input.BUTTON_LMB
         );
       }
+
+      lastActiveWidget = activeWidget;
+      activeWidget = null;
     }
 
     // Generate a mouse exit event if widgets exist in previousHitTestCheckList
@@ -303,26 +288,11 @@ public final class UI {
         );
     }
 
-    // If mouse down events have occurred, activeWidget is the widget currently
-    // under the mouse cursor, which is also focusWidget
-    if (!eventStore.mouseDownEvents.isEmpty())
-      activeWidget = focusWidget;
-
     this.mousePosition.set(mousePosition);
   }
 
   /** Dispatches generated {@link InputEvent} to widgets */
   private void dispatchInputEvents() {
-    // Dispatch mouse enter events
-    if (eventStore.mouseEnterEvent != null) {
-      for (Widget widget : currentHitTestList) {
-        if (!previousHitTestList.contains(widget) &&
-          widget instanceof InputEventHandler eventHandler &&
-          !eventStore.mouseEnterEvent.isHandled())
-          eventHandler.handleEvent(eventStore.mouseEnterEvent);
-      }
-    }
-
     // Dispatch mouse motion events
     if (focusWidget != null && eventStore.mouseMotionEvent != null) {
       traverseTree(focusWidget, TraverseDirection.UP, widget -> {
@@ -332,165 +302,63 @@ public final class UI {
       });
     }
 
-    // Dispatch mouse exit events
-    if (eventStore.mouseExitEvent != null) {
-      for (Widget widget : previousHitTestList) {
-        if (!currentHitTestList.contains(widget) &&
-          widget instanceof InputEventHandler eventHandler &&
-          !eventStore.mouseExitEvent.isHandled())
-          eventHandler.handleEvent(eventStore.mouseExitEvent);
+    // Dispatch mouse enter events
+    if (eventStore.mouseEnterEvent != null) {
+      for (Widget widget : currentHitTestList) {
+        if (activeWidget == null || widget == activeWidget) {
+          if (!previousHitTestList.contains(widget) &&
+            widget instanceof InputEventHandler eventHandler &&
+            !eventStore.mouseEnterEvent.isHandled())
+            eventHandler.handleEvent(eventStore.mouseEnterEvent);
+        }
       }
     }
 
-    //    inputEvents.clear();
-    //    widgetHitTestQueue.clear();
-    //    widgetDispatchStack.clear();
-    //    widgetHitList.clear();
-    //
-    //    Position mousePosition = Input.getMousePosition();
+    // Dispatch mouse down and press events to the active widget
+    if (activeWidget != null) {
+      traverseTree(activeWidget, TraverseDirection.UP, widget -> {
+        if (widget instanceof InputEventHandler eventHandler) {
+          if (eventStore.mouseDownEvent != null &&
+            !eventStore.mouseDownEvent.isHandled())
+            eventHandler.handleEvent(eventStore.mouseDownEvent);
 
-    //    // Determine which widgets to dispatch events to with a hit test
-    //    widgetHitTestQueue.add(tree);
-    //
-    //    while (!widgetHitTestQueue.isEmpty()) {
-    //      Widget widget = widgetHitTestQueue.remove(0);
-    //
-    //      if (widget instanceof InputEventHandler eventHandler &&
-    //        widget.hitTest(mousePosition.x, mousePosition.y)) {
-    //        widgetDispatchStack.push(eventHandler);
-    //        widgetHitList.add(eventHandler);
-    //      }
-    //
-    //      if (widget instanceof SingleChildParent parent) {
-    //        widgetHitTestQueue.add(parent.getChild());
-    //      } else if (widget instanceof MultiChildParent parent) {
-    //        widgetHitTestQueue.addAll(parent.getChildren());
-    //      }
-    //    }
-    //
-    //    // Dispatch mouse enter event based on the difference between the
-    //    // widgetHitList and prevWidgetHitList
-    //    MouseEvent mouseEnterEvent = new MouseEvent(
-    //      MouseEvent.Type.ENTER,
-    //      mousePosition.x, mousePosition.y,
-    //      Input.BUTTON_NONE
-    //    );
-    //
-    //    for (InputEventHandler eventHandler : widgetHitList) {
-    //      if (!prevWidgetHitList.contains(eventHandler))
-    //        eventHandler.handleEvent(mouseEnterEvent);
-    //    }
-    //
-    //    // Generate mouse motion input events
-    //    generateMouseMotionEvents(
-    //      inputEvents,
-    //      this.mousePosition,
-    //      mousePosition
-    //    );
-    //
-    //    // Generate mouse down events
-    //    generateMouseActionEvents(
-    //      inputEvents,
-    //      Input::isButtonDown,
-    //      MouseEvent.Type.DOWN
-    //    );
-    //
-    //    // Generate mouse hold events
-    //    generateMouseActionEvents(
-    //      inputEvents,
-    //      Input::isButtonPressed,
-    //      MouseEvent.Type.PRESS
-    //    );
-    //
-    //    // Generate mouse release events
-    //    generateMouseActionEvents(
-    //      inputEvents,
-    //      Input::isButtonReleased,
-    //      MouseEvent.Type.RELEASE
-    //    );
-    //
-    //    // Generate mouse click events
-    //    generateMouseActionEvents(
-    //      inputEvents,
-    //      Input::isButtonClicked,
-    //      MouseEvent.Type.CLICK
-    //    );
-    //
-    //    // Dispatch mouse press, hold, release, click and motion events to widgets
-    //    // which pass the hit test
-    //    if (!inputEvents.isEmpty()) {
-    //      if (!widgetDispatchStack.isEmpty()) {
-    //        while (!widgetDispatchStack.isEmpty()) {
-    //          InputEventHandler widget = widgetDispatchStack.pop();
-    //
-    //          for (InputEvent ev : inputEvents) {
-    //            if (!ev.isHandled())
-    //              widget.handleEvent(ev);
-    //          }
-    //        }
-    //      }
-    //    }
-    //
-    //    // Dispatch mouse exit event based on the difference between the
-    //    // widgetHitList and prevWidgetHitList
-    //    MouseEvent mouseExitEvent = new MouseEvent(
-    //      MouseEvent.Type.EXIT,
-    //      mousePosition.x, mousePosition.y,
-    //      Input.BUTTON_NONE
-    //    );
-    //
-    //    for (InputEventHandler widget : prevWidgetHitList) {
-    //      if (!widgetHitList.contains(widget))
-    //        widget.handleEvent(mouseExitEvent);
-    //    }
-    //
-    //    prevWidgetHitList.clear();
-    //    prevWidgetHitList.addAll(widgetHitList);
+          if (eventStore.mousePressEvent != null &&
+            !eventStore.mousePressEvent.isHandled())
+            eventHandler.handleEvent(eventStore.mousePressEvent);
+        }
+      });
+    }
+
+    // Dispatch mouse release and click events to the active widget
+    if (lastActiveWidget != null) {
+      traverseTree(lastActiveWidget, TraverseDirection.UP, widget -> {
+        if (widget instanceof InputEventHandler eventHandler) {
+          if (eventStore.mouseReleaseEvent != null &&
+            !eventStore.mouseReleaseEvent.isHandled())
+            eventHandler.handleEvent(eventStore.mouseReleaseEvent);
+
+          if (eventStore.mouseClickEvent != null &&
+            !eventStore.mouseClickEvent.isHandled())
+            eventHandler.handleEvent(eventStore.mouseClickEvent);
+        }
+      });
+    }
+
+    // Dispatch mouse exit events
+    if (eventStore.mouseExitEvent != null) {
+      for (Widget widget : previousHitTestList) {
+        if (activeWidget == null || widget == activeWidget) {
+          if (!currentHitTestList.contains(widget) &&
+            widget instanceof InputEventHandler eventHandler &&
+            !eventStore.mouseExitEvent.isHandled())
+            eventHandler.handleEvent(eventStore.mouseExitEvent);
+        }
+      }
+    }
 
     previousHitTestList.clear();
     previousHitTestList.addAll(currentHitTestList);
-  }
-
-  private void generateMouseActionEvents(
-    List<InputEvent> inputEvents,
-    ButtonConditionChecker checker,
-    MouseEvent.Type eventType
-  ) {
-    int buttonAction = -1;
-
-    if (checker.check(Input.BUTTON_LMB))
-      buttonAction = Input.BUTTON_LMB;
-    else if (checker.check(Input.BUTTON_RMB))
-      buttonAction = Input.BUTTON_RMB;
-    else if (checker.check(Input.BUTTON_MMB))
-      buttonAction = Input.BUTTON_RMB;
-
-    if (buttonAction != -1) {
-      inputEvents.add(
-        new MouseEvent(
-          eventType,
-          mousePosition.x,
-          mousePosition.y,
-          buttonAction
-        )
-      );
-    }
-  }
-
-  private void generateMouseMotionEvents(
-    List<InputEvent> inputEvents,
-    Position previousMousePosition,
-    Position currentMousePosition
-  ) {
-    if (!Objects.equals(previousMousePosition, currentMousePosition)) {
-      inputEvents.add(
-        new MouseEvent(
-          MouseEvent.Type.MOTION,
-          mousePosition.x, mousePosition.y,
-          Input.BUTTON_NONE
-        )
-      );
-    }
+    lastActiveWidget = null;
   }
 
   private void traverseTree(
@@ -537,9 +405,5 @@ public final class UI {
 
   private interface WidgetTreeVisitor {
     void visit(Widget widget);
-  }
-
-  private interface ButtonConditionChecker {
-    boolean check(int button);
   }
 }
