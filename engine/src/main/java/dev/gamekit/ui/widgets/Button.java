@@ -1,10 +1,9 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.core.UI;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Param;
 import dev.gamekit.ui.Spacing;
-import dev.gamekit.ui.events.InputEvent;
+import dev.gamekit.ui.events.InputHandler;
 import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.utils.Constants;
 
@@ -13,11 +12,13 @@ import java.awt.image.BufferedImage;
 import java.util.Objects;
 
 /** A {@link Widget} which can be clicked to trigger an event */
-public class Button extends SingleChildParent implements Widget.InputHandler {
+public class Button extends SingleChildParent implements InputHandler {
   protected final Spacing spacing;
   protected final BufferedImage defaultBackground;
   protected final BufferedImage hoverBackground;
   protected final BufferedImage pressedBackground;
+  protected final MouseEvent.Listener mouseListener;
+  protected boolean mouseEntered;
   protected boolean mousePressed;
 
   public Button(
@@ -25,6 +26,7 @@ public class Button extends SingleChildParent implements Widget.InputHandler {
     BufferedImage defaultBackground,
     BufferedImage hoverBackground,
     BufferedImage pressedBackground,
+    MouseEvent.Listener mouseListener,
     Widget child
   ) {
     super(child);
@@ -32,15 +34,17 @@ public class Button extends SingleChildParent implements Widget.InputHandler {
     this.defaultBackground = defaultBackground;
     this.hoverBackground = hoverBackground;
     this.pressedBackground = pressedBackground;
+    this.mouseListener = mouseListener;
   }
 
   @SafeVarargs
   public static Button create(Param<? super ButtonParam>... params) {
     return new Button(
-      Param.getValue(params, "spacing", null),
+      Param.getValue(params, "spacing", new Spacing(24)),
       Param.getValue(params, "defaultBackground", Constants.DEFAULT_BUTTON_BG),
       Param.getValue(params, "hoverBackground", Constants.HOVER_BUTTON_BG),
       Param.getValue(params, "pressedBackground", Constants.PRESSED_BUTTON_BG),
+      Param.getValue(params, "mouseListener", e -> {}),
       Param.getValue(params, "child", Empty.create())
     );
   }
@@ -149,18 +153,17 @@ public class Button extends SingleChildParent implements Widget.InputHandler {
   }
 
   @Override
-  public void handleEvent(InputEvent event) {
-    super.handleEvent(event);
+  public MouseEvent.Listener getMouseListener() {
+    return mouseListener;
+  }
 
-    if (event instanceof MouseEvent mouseEvent) {
-      if (mouseEvent.type == MouseEvent.Type.PRESS) {
-        mousePressed = true;
-        UI.getInstance().triggerRender();
-      } else if (mouseEvent.type == MouseEvent.Type.EXIT ||
-        mouseEvent.type == MouseEvent.Type.RELEASE) {
-        mousePressed = false;
-        UI.getInstance().triggerRender();
-      }
-    }
+  @Override
+  public void setMouseEntered(boolean mouseEntered) {
+    this.mouseEntered = mouseEntered;
+  }
+
+  @Override
+  public void setMousePressed(boolean mousePressed) {
+    this.mousePressed = mousePressed;
   }
 }

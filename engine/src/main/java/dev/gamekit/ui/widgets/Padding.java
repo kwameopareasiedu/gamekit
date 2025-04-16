@@ -52,10 +52,7 @@ public class Padding extends SingleChildParent {
       );
     }
 
-    child.computedBounds.setPosition(
-      computedBounds.width / 2 - child.computedBounds.width / 2,
-      computedBounds.height / 2 - child.computedBounds.height / 2
-    );
+    child.computedBounds.setPosition(padding.left, padding.top);
   }
 
   @Override

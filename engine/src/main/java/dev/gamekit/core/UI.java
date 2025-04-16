@@ -3,6 +3,7 @@ package dev.gamekit.core;
 import dev.gamekit.ui.Bounds;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.events.InputEvent;
+import dev.gamekit.ui.events.InputHandler;
 import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.widgets.MultiChildParent;
 import dev.gamekit.ui.widgets.Parent;
@@ -31,9 +32,9 @@ public final class UI {
   private final WidgetTreeCreator treeCreator;
   private final Constraints windowConstraints;
   private final List<Widget> widgetHitTestQueue;
-  private final List<Widget> widgetHitList;
-  private final List<Widget> prevWidgetHitList;
-  private final Stack<Widget> widgetDispatchStack;
+  private final List<InputHandler> widgetHitList;
+  private final List<InputHandler> prevWidgetHitList;
+  private final Stack<InputHandler> widgetDispatchStack;
   private final List<InputEvent> inputEvents;
   private final Position mousePosition;
   private Widget tree;
@@ -243,10 +244,10 @@ public final class UI {
     while (!widgetHitTestQueue.isEmpty()) {
       Widget widget = widgetHitTestQueue.remove(0);
 
-      if (widget instanceof Widget.InputHandler &&
+      if (widget instanceof InputHandler inputHandler &&
         widget.hitTest(mousePosition.x, mousePosition.y)) {
-        widgetDispatchStack.push(widget);
-        widgetHitList.add(widget);
+        widgetDispatchStack.push(inputHandler);
+        widgetHitList.add(inputHandler);
       }
 
       if (widget instanceof SingleChildParent parent) {
@@ -261,7 +262,7 @@ public final class UI {
     if (!inputEvents.isEmpty()) {
       if (!widgetDispatchStack.isEmpty()) {
         while (!widgetDispatchStack.isEmpty()) {
-          Widget widget = widgetDispatchStack.pop();
+          InputHandler widget = widgetDispatchStack.pop();
 
           for (InputEvent ev : inputEvents) {
             if (!ev.isHandled())
@@ -285,12 +286,12 @@ public final class UI {
       Input.BUTTON_NONE
     );
 
-    for (Widget widget : widgetHitList) {
-      if (!prevWidgetHitList.contains(widget))
-        widget.handleEvent(mouseEnterEvent);
+    for (InputHandler inputHandler : widgetHitList) {
+      if (!prevWidgetHitList.contains(inputHandler))
+        inputHandler.handleEvent(mouseEnterEvent);
     }
 
-    for (Widget widget : prevWidgetHitList) {
+    for (InputHandler widget : prevWidgetHitList) {
       if (!widgetHitList.contains(widget))
         widget.handleEvent(mouseExitEvent);
     }
