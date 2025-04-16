@@ -3,7 +3,7 @@ package dev.gamekit.ui.widgets;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Param;
 import dev.gamekit.ui.Spacing;
-import dev.gamekit.ui.events.InputHandler;
+import dev.gamekit.ui.events.InputEventHandler;
 import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.utils.Constants;
 
@@ -12,7 +12,7 @@ import java.awt.image.BufferedImage;
 import java.util.Objects;
 
 /** A {@link Widget} which can be clicked to trigger an event */
-public class Button extends SingleChildParent implements InputHandler {
+public class Button extends SingleChildParent implements InputEventHandler {
   protected final Spacing spacing;
   protected final BufferedImage defaultBackground;
   protected final BufferedImage hoverBackground;
@@ -44,7 +44,7 @@ public class Button extends SingleChildParent implements InputHandler {
       Param.getValue(params, "defaultBackground", Constants.DEFAULT_BUTTON_BG),
       Param.getValue(params, "hoverBackground", Constants.HOVER_BUTTON_BG),
       Param.getValue(params, "pressedBackground", Constants.PRESSED_BUTTON_BG),
-      Param.getValue(params, "mouseListener", e -> {}),
+      Param.getValue(params, "mouseListener", e -> { }),
       Param.getValue(params, "child", Empty.create())
     );
   }

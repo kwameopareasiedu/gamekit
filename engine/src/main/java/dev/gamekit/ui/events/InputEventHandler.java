@@ -7,10 +7,8 @@ import dev.gamekit.ui.widgets.Widget;
  * Interface for {@link Widget Widgets} which can process
  * {@link InputEvent InputEvents}
  */
-public interface InputHandler {
+public interface InputEventHandler {
   MouseEvent.Listener getMouseListener();
-
-  boolean isMouseEntered();
 
   void setMouseEntered(boolean mouseEntered);
 
