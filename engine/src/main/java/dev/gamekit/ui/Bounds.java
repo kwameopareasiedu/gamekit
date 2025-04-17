@@ -48,8 +48,6 @@ public class Bounds {
 
   public void setHeight(int height) { this.height = height; }
 
-  public int getArea() { return width * height; }
-
   /** Copies values from another bounds object */
   public void set(Bounds bounds) {
     set(bounds.x, bounds.y, bounds.width, bounds.height);

@@ -104,7 +104,7 @@ public abstract class Application {
   /** Begins the game loop of this application */
   public void run() {
     try {
-      onSetup();
+      setup();
 
       long lastFrameTime = System.currentTimeMillis();
       long frameTimeAccumulator = 0;
@@ -118,16 +118,16 @@ public abstract class Application {
         while (frameTimeAccumulator >= FRAME_TIME) {
           Input.freeze();
           frameTimeAccumulator -= FRAME_TIME;
-          onUpdate();
+          update();
           Input.reset();
         }
 
-        onRender();
-        onFrameEnd();
+        render();
+        endFrame();
         Thread.sleep(Math.max(frameTimeAccumulator, 5));
       }
 
-      onDispose();
+      dispose();
       System.exit(0);
     } catch (Exception e) {
       logger.error("Application loop raised an exception", e);
@@ -136,7 +136,7 @@ public abstract class Application {
   }
 
   /** Sets up GameKit's internals before starting the game loop */
-  private void onSetup() {
+  private void setup() {
     logger.debug("Initializing application");
 
     window.getFrame().addKeyListener(Input.INSTANCE);
@@ -159,7 +159,7 @@ public abstract class Application {
    * Called in each frame to update the current scene all running animations and
    * timeouts have been updated
    */
-  private void onUpdate() {
+  private void update() {
     if (!animations.isEmpty()) {
       for (var anim : animations)
         anim.update();
@@ -181,7 +181,7 @@ public abstract class Application {
    * Applies the camera's transformation on the {@link Window} scene buffer and
    * renders the current scene
    */
-  private void onRender() {
+  private void render() {
     if (currentScene != null) {
       Camera.update();
       currentScene.render();
@@ -198,7 +198,7 @@ public abstract class Application {
    *   <li>Loading a scheduled scene</li>
    * </ul>
    */
-  private void onFrameEnd() {
+  private void endFrame() {
     if (!animations.isEmpty()) {
       animations.removeIf(animation ->
         animation.getState() == Animation.State.ENDED
@@ -230,7 +230,7 @@ public abstract class Application {
   }
 
   /** Runs cleanup code before exiting the application */
-  protected void onDispose() {
+  protected void dispose() {
     logger.debug("Disposing application");
 
     if (currentScene != null) {

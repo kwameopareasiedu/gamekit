@@ -23,23 +23,19 @@ import java.awt.image.BufferedImage;
  */
 public abstract class Widget {
   private static final BasicStroke DEBUG_OUTLINE_STROKE = new BasicStroke(
-    2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND
+    1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND
   );
 
   protected final Logger logger = LogManager.getLogger(getClass());
+  protected final Bounds absoluteBounds;
   protected final Bounds computedBounds;
-  protected final Bounds previousBounds;
   protected final Bounds intrinsicBounds;
   protected Constraints constraints;
   protected Widget parent;
-  protected boolean needsRepaint;
-
-  private BufferedImage canvasImage;
-  private Graphics2D canvasGraphics;
 
   public Widget() {
+    absoluteBounds = new Bounds(0, 0, 0, 0);
     computedBounds = new Bounds(0, 0, 0, 0);
-    previousBounds = new Bounds(0, 0, 0, 0);
     intrinsicBounds = new Bounds(0, 0, 0, 0);
     parent = null;
   }
@@ -72,7 +68,6 @@ public abstract class Widget {
   public final void layout(Constraints constraints) {
     this.constraints = constraints;
     performLayout(constraints);
-    needsRepaint = !computedBounds.equals(previousBounds);
   }
 
   /**
@@ -82,36 +77,54 @@ public abstract class Widget {
   protected abstract void performLayout(Constraints constraints);
 
   /**
-   * Renders the widget unto its {@link BufferedImage canvasImage} and returns
-   * it
+   * Performs post-layout logic
+   * <p>
+   * This exists because {@link #layout(Constraints)} uses a depth-first
+   * approach in traversing this widget tree.
+   * <p>
+   * With this approach, certain data (e.g. computed bounds position, parent
+   * computed bounds) may not be available until after the scene's UI widget
+   * tree has been completely laid out
+   * <p>
+   * Since this method is marked as {@code final}, subclasses should override
+   * the {@link #performPostLayout} method instead to perform any post layout
+   * logic
+   */
+  public final void postLayout() {
+    computeAbsoluteBounds();
+    performPostLayout();
+  }
+
+  protected void performPostLayout() { /* No-op */ }
+
+  /**
+   * Renders the widget unto the provided {@link BufferedImage}
    * <p>
    * This method is {@code final} and delegates the actual drawing to
    * {@link #performRender(Graphics2D)}.
    */
-  public final BufferedImage render() {
-    if ((canvasImage == null || needsRepaint) && computedBounds.getArea() > 0) {
-      canvasImage = new BufferedImage(
-        computedBounds.width,
-        computedBounds.height,
-        BufferedImage.TYPE_INT_ARGB
+  public final void render(Graphics2D canvasGraphics) {
+    canvasGraphics.setClip(
+      absoluteBounds.x,
+      absoluteBounds.y,
+      absoluteBounds.width,
+      absoluteBounds.height
+    );
+
+    performRender(canvasGraphics);
+
+    canvasGraphics.setClip(null);
+
+    if (Config.DEBUG_DRAW) {
+      canvasGraphics.setColor(Color.CYAN);
+      canvasGraphics.setStroke(DEBUG_OUTLINE_STROKE);
+      canvasGraphics.drawRect(
+        absoluteBounds.x,
+        absoluteBounds.y,
+        absoluteBounds.width,
+        absoluteBounds.height
       );
-
-      canvasGraphics = canvasImage.createGraphics();
     }
-
-    if (canvasImage != null) {
-      performRender(canvasGraphics);
-
-      if (Config.DEBUG_DRAW) {
-        canvasGraphics.setColor(Color.CYAN);
-        canvasGraphics.setStroke(DEBUG_OUTLINE_STROKE);
-        canvasGraphics.drawRect(0, 0, computedBounds.width, computedBounds.height);
-      }
-    }
-
-    previousBounds.set(computedBounds);
-    needsRepaint = false;
-    return canvasImage;
   }
 
   /**
@@ -120,8 +133,7 @@ public abstract class Widget {
    */
   protected abstract void performRender(Graphics2D g);
 
-  /** Determines if point (x, y) falls within the absolute bounds of this widget */
-  public boolean hitTest(int x, int y) {
+  protected void computeAbsoluteBounds() {
     int absoluteX = computedBounds.x;
     int absoluteY = computedBounds.y;
     Widget parent = this.parent;
@@ -132,7 +144,18 @@ public abstract class Widget {
       parent = parent.parent;
     }
 
-    return absoluteX <= x && x <= absoluteX + computedBounds.width &&
-      absoluteY <= y && y <= absoluteY + computedBounds.height;
+    absoluteBounds.set(
+      absoluteX, absoluteY,
+      computedBounds.width,
+      computedBounds.height
+    );
+  }
+
+  /** Determines if point (x, y) falls within the absolute bounds of this widget */
+  public boolean hitTest(int x, int y) {
+    int absoluteRight = absoluteBounds.x + absoluteBounds.width;
+    int absoluteBottom = absoluteBounds.y + absoluteBounds.height;
+    return absoluteBounds.x <= x && x <= absoluteRight &&
+      absoluteBounds.y <= y && y <= absoluteBottom;
   }
 }

@@ -58,9 +58,11 @@ public class Opacity extends SingleChildParent {
   }
 
   @Override
-  public void performRender(Graphics2D g) {
+  protected void performRender(Graphics2D g) {
+    Composite c = g.getComposite();
     g.setComposite(composite);
     super.performRender(g);
+    g.setComposite(c);
   }
 
   @Override

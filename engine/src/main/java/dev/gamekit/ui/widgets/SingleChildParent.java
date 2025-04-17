@@ -1,7 +1,6 @@
 package dev.gamekit.ui.widgets;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 /** A parent which contains only one child {@link Widget} */
 public abstract class SingleChildParent extends Parent {
@@ -15,20 +14,14 @@ public abstract class SingleChildParent extends Parent {
   }
 
   @Override
-  public void performRender(Graphics2D g) {
-    renderBackground(g);
+  protected void performPostLayout() {
+    child.postLayout();
+  }
 
-    // Renders its children within self to enable clipping
-    BufferedImage childCanvasImage = child.render();
-
-    if (childCanvasImage != null) {
-      g.drawImage(
-        childCanvasImage,
-        child.computedBounds.x,
-        child.computedBounds.y,
-        null
-      );
-    }
+  @Override
+  protected void performRender(Graphics2D g) {
+    renderAppearance(g);
+    child.render(g);
   }
 
   public Widget getChild() { return child; }

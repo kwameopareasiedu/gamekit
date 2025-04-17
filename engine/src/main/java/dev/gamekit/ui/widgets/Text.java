@@ -12,9 +12,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-/** A {@link Widget} which renders text to the screen */
+/** A {@link Leaf} which renders text to the screen */
 @SuppressWarnings("MagicConstant")
-public class Text extends Widget {
+public class Text extends Leaf {
   protected final String text;
   protected final String fontFamily;
   protected final int fontStyle;
@@ -155,20 +155,18 @@ public class Text extends Widget {
   }
 
   @Override
-  public void performRender(Graphics2D g) {
-    g.setBackground(backgroundColor);
-    g.clearRect(0, 0, computedBounds.width, computedBounds.height);
+  protected void performRender(Graphics2D g) {
     g.setFont(renderFont);
 
-    int hOffset = switch (alignment) {
-      case CENTER -> computedBounds.width / 2 - intrinsicBounds.width / 2;
-      case END -> computedBounds.width - intrinsicBounds.width;
+    int hOffset = absoluteBounds.x + switch (alignment) {
+      case CENTER -> absoluteBounds.width / 2 - intrinsicBounds.width / 2;
+      case END -> absoluteBounds.width - intrinsicBounds.width;
       default -> 0;
     };
 
-    int vOffset = switch (verticalAlignment) {
-      case CENTER -> computedBounds.height / 2 - intrinsicBounds.height / 2;
-      case END -> computedBounds.height - intrinsicBounds.height;
+    int vOffset = absoluteBounds.y + switch (verticalAlignment) {
+      case CENTER -> absoluteBounds.height / 2 - intrinsicBounds.height / 2;
+      case END -> absoluteBounds.height - intrinsicBounds.height;
       default -> 0;
     };
 

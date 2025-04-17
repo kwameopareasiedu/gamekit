@@ -6,10 +6,10 @@ import dev.gamekit.ui.Param;
 import java.awt.*;
 
 /**
- * A {@link Widget} with zero size which renders nothing. Empty should be used
+ * A {@link Leaf} with zero size which renders nothing. Empty should be used
  * in places where {@code null} would have been preferable
  */
-public class Empty extends Widget {
+public class Empty extends Leaf {
   @SafeVarargs
   public static Empty create(Param<? super EmptyParam>... params) {
     return new Empty();

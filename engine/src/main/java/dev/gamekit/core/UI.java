@@ -1,6 +1,5 @@
 package dev.gamekit.core;
 
-import dev.gamekit.ui.Bounds;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.events.InputEvent;
 import dev.gamekit.ui.events.InputEventHandler;
@@ -33,24 +32,25 @@ public final class UI {
   private final Constraints windowConstraints;
   private final List<Widget> currentHitTestList;
   private final List<Widget> previousHitTestList;
-
   private final InputEventStore eventStore;
   private final Position mousePosition;
+  private final BufferedImage canvasImage;
+  private final Graphics2D canvasGraphics;
   private Widget tree;
   private Widget focusWidget;
   private Widget activeWidget;
   private Widget lastActiveWidget;
-  private boolean needsUpdate = false;
+  private boolean needsLayout = false;
   private boolean needsRender = true;
 
   public UI(WidgetTreeCreator treeCreator) {
-    Window window = Window.getInstance();
+    Window win = Window.getInstance();
+    int displayWidth = win.getDisplayWidth();
+    int displayHeight = win.getDisplayHeight();
 
     this.windowConstraints = new Constraints(
-      window.getDisplayWidth(),
-      window.getDisplayWidth(),
-      window.getDisplayHeight(),
-      window.getDisplayHeight()
+      displayWidth, displayWidth,
+      displayHeight, displayHeight
     );
 
     this.treeCreator = treeCreator;
@@ -58,6 +58,11 @@ public final class UI {
     this.previousHitTestList = new ArrayList<>();
     this.eventStore = new InputEventStore();
     this.mousePosition = new Position();
+    this.canvasImage = new BufferedImage(
+      displayWidth, displayHeight,
+      BufferedImage.TYPE_INT_ARGB
+    );
+    this.canvasGraphics = canvasImage.createGraphics();
 
     UI.instance = this;
   }
@@ -78,66 +83,55 @@ public final class UI {
 
     if (this.tree != null) {
       this.tree.layout(windowConstraints);
+      this.tree.postLayout();
     }
   }
 
-  public void triggerUpdate() { needsUpdate = true; }
+  public void triggerUpdate() { needsLayout = true; }
 
   public void triggerRender() { needsRender = true; }
 
-  /**
-   * If {@link #needsUpdate} is true, this performs a reconciliation process on
-   * the widget tree.
-   * <p>
-   * During reconciliation, a new widget tree is generated and compared to the
-   * current one. Widgets in the current tree whose states differ from those in
-   * the new tree are substituted with those of the new tree.
-   * <p>
-   * At the end of this, the updated widget tree's layout is recomputed and
-   * {@link #needsRender} is set to trigger a re-render.
-   */
+  /** Updates the widget tree, generates and dispatches input events */
   void update() {
-    if (tree != null && needsUpdate)
+    if (tree != null && needsLayout) {
+      LOGGER.debug("Laying out UI");
       updateTree();
+    }
 
     generateInputEvents();
     dispatchInputEvents();
   }
 
   /** Draws the {@link Widget} tree to the {@link Window} UI target */
-  public void render() {
+  void render() {
     if (tree == null || !needsRender)
-      return;
-
-    BufferedImage canvasImage = tree.render();
-
-    if (canvasImage == null)
       return;
 
     LOGGER.debug("Rendering UI");
 
     Window win = Window.getInstance();
-    Graphics2D g = win.getUiGraphics();
-    Bounds widgetBounds = tree.getComputedBounds();
+    Graphics2D uiGraphics = win.getUiGraphics();
+    int displayWidth = win.getDisplayWidth();
+    int displayHeight = win.getDisplayHeight();
 
-    g.setBackground(Constants.TRANSPARENT_COLOR);
-    g.clearRect(0, 0, win.getDisplayWidth(), win.getDisplayHeight());
-    g.drawImage(
-      canvasImage,
-      widgetBounds.x,
-      widgetBounds.y,
-      widgetBounds.width,
-      widgetBounds.height,
-      null
-    );
+    canvasGraphics.setBackground(Constants.TRANSPARENT_COLOR);
+    canvasGraphics.clearRect(0, 0, displayWidth, displayHeight);
+
+    tree.render(canvasGraphics);
+
+    uiGraphics.setBackground(Constants.TRANSPARENT_COLOR);
+    uiGraphics.clearRect(0, 0, displayWidth, displayHeight);
+    uiGraphics.drawImage(canvasImage, 0, 0, displayWidth, displayHeight, null);
 
     needsRender = false;
   }
 
   /**
-   * When called, this method generates a new widget tree and compares it to the
-   * current one. If any widget has changed, the subtree is replaced, the layout
-   * is recomputed and the {@link #needsRender} flag is set
+   * Updates the widget tree using a "diffing" algorithm
+   * <p>
+   * This "diffing" algorithm involves generating a new widget tree with any
+   * new state, comparing it to the current widget tree and updates widgets
+   * whose states have changed.
    */
   private void updateTree() {
     List<Widget> currentWidgetQueue = new ArrayList<>();
@@ -181,13 +175,15 @@ public final class UI {
       }
     }
 
-    if (treeUpdated)
+    if (treeUpdated) {
       tree.layout(windowConstraints);
+      tree.postLayout();
+    }
 
     needsRender = treeUpdated;
     currentWidgetQueue.clear();
     newWidgetQueue.clear();
-    needsUpdate = false;
+    needsLayout = false;
   }
 
   /** Monitors {@link Input} and generates events for input actions */

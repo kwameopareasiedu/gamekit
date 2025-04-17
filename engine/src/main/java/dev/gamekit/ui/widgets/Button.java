@@ -12,7 +12,8 @@ import java.awt.image.BufferedImage;
 import java.util.Objects;
 
 /** A {@link Widget} which can be clicked to trigger an event */
-public class Button extends SingleChildParent implements InputEventHandler {
+public class Button extends SingleChildParent implements NinePatch,
+  InputEventHandler {
   protected final Spacing spacing;
   protected final BufferedImage defaultBackground;
   protected final BufferedImage hoverBackground;
@@ -75,69 +76,20 @@ public class Button extends SingleChildParent implements InputEventHandler {
   }
 
   @Override
-  protected void renderBackground(Graphics2D g) {
-    super.renderBackground(g);
+  protected void renderAppearance(Graphics2D g) {
+    super.renderAppearance(g);
 
     BufferedImage bgImage = defaultBackground;
 
-    if (mousePressed)
+    if (mousePressed) {
       bgImage = pressedBackground;
-    else if (mouseEntered)
+    } else if (mouseEntered) {
       bgImage = hoverBackground;
+    }
 
     if (bgImage != null && spacing != null) {
-      super.renderBackground(g);
-
-      int dx2 = computedBounds.width, dy2 = computedBounds.height;
-
-      g.setBackground(Constants.TRANSPARENT_COLOR);
-      g.clearRect(0, 0, computedBounds.width, computedBounds.height);
-
-      int nl = spacing.left;
-      int nt = spacing.top;
-      int iw = bgImage.getWidth();
-      int ih = bgImage.getHeight();
-      int nr = iw - spacing.right;
-      int nb = ih - spacing.bottom;
-
-      int[][] srcBounds = new int[][]{
-        new int[]{ 0, 0, nl, nt },
-        new int[]{ nl, 0, nr, nt },
-        new int[]{ nr, 0, iw, nt },
-        new int[]{ 0, nt, nl, nb },
-        new int[]{ nl, nt, nr, nb },
-        new int[]{ nr, nt, iw, nb },
-        new int[]{ 0, nb, nl, ih },
-        new int[]{ nl, nb, nr, ih },
-        new int[]{ nr, nb, iw, ih },
-      };
-
-      nl = spacing.left;
-      nt = spacing.top;
-      nr = dx2 - spacing.right;
-      nb = dy2 - spacing.bottom;
-
-      int[][] destBounds = new int[][]{
-        new int[]{ 0, 0, nl, nt },
-        new int[]{ nl, 0, nr, nt },
-        new int[]{ nr, 0, dx2, nt },
-        new int[]{ 0, nt, nl, nb },
-        new int[]{ nl, nt, nr, nb },
-        new int[]{ nr, nt, dx2, nb },
-        new int[]{ 0, nb, nl, dy2 },
-        new int[]{ nl, nb, nr, dy2 },
-        new int[]{ nr, nb, dx2, dy2 },
-      };
-
-      for (int i = 0; i < srcBounds.length; i++) {
-        int[] src = srcBounds[i];
-        int[] dest = destBounds[i];
-
-        g.drawImage(
-          bgImage, dest[0], dest[1], dest[2], dest[3],
-          src[0], src[1], src[2], src[3], null
-        );
-      }
+      super.renderAppearance(g);
+      renderNinePatch(bgImage, absoluteBounds, spacing, g);
     }
   }
 

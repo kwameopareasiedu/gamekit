@@ -1,7 +1,6 @@
 package dev.gamekit.ui.widgets;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,22 +18,14 @@ public abstract class MultiChildParent extends Parent {
   }
 
   @Override
-  public void performRender(Graphics2D g) {
-    renderBackground(g);
+  protected void performPostLayout() {
+    children.forEach(Widget::postLayout);
+  }
 
-    // Renders its children within self to enable clipping
-    children.forEach(child -> {
-      BufferedImage childCanvasImage = child.render();
-
-      if (childCanvasImage != null) {
-        g.drawImage(
-          childCanvasImage,
-          child.computedBounds.x,
-          child.computedBounds.y,
-          null
-        );
-      }
-    });
+  @Override
+  protected void performRender(Graphics2D g) {
+    renderAppearance(g);
+    children.forEach(child -> child.render(g));
   }
 
   public List<Widget> getChildren() { return children; }
