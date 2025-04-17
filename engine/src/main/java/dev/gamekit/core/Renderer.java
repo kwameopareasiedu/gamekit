@@ -1,5 +1,7 @@
 package dev.gamekit.core;
 
+import dev.gamekit.utils.Position;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -38,9 +40,10 @@ public final class Renderer {
   /** Clears the {@link Window} scene buffer with current state background color */
   public static void clear() {
     applyGraphicsState();
-    int x = 0, y = 0, w = Window.getInstance().getDisplayWidth(), h = Window.getInstance().getDisplayHeight();
-    var pt = Camera.screenToWorldPoint(x, y);
-    g.clearRect(pt.x, -pt.y, w, h);
+    Window win = Window.getInstance();
+    int x = 0, y = 0, w = win.getDisplayWidth(), h = win.getDisplayHeight();
+    Position pos = Camera.pointToWorldPosition(x, y);
+    g.clearRect(-pos.x, -pos.y, w, h);
     resetGraphicsState();
   }
 

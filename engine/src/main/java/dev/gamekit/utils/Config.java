@@ -4,8 +4,11 @@ package dev.gamekit.utils;
  * Configuration object for the application containing the title,
  * {@link Resolution resolution} and fullscreen flag
  */
-public record Config(String title, Resolution resolution,
-                     boolean isFullScreen) {
+public record Config(
+  String title,
+  Resolution resolution,
+  boolean isFullScreen
+) {
   public static boolean DEBUG_DRAW = false;
 
   @Override

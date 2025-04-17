@@ -1,6 +1,9 @@
 package demos;
 
 import dev.gamekit.core.*;
+import dev.gamekit.utils.Config;
+import dev.gamekit.utils.Position;
+import dev.gamekit.utils.Resolution;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -14,15 +17,27 @@ public class CalibrationTest extends Scene {
   private static final BufferedImage SPRITE = IO.getResourceImage("zainar.png");
 
   private double time;
+  private int x, y;
 
   public CalibrationTest() {
     super("Calibration Test");
   }
 
   public static void main(String[] args) {
-    Application game = new Application("Calibration Test") { };
+    Application game = new Application(
+      new Config("Calibration Test", Resolution.SVGA, false)
+    ) { };
     game.loadScene(new CalibrationTest());
     game.run();
+  }
+
+  @Override
+  protected void onStart() {
+    super.onStart();
+
+    Position pos = Camera.pointToWorldPosition(0, 0);
+    x = pos.x;
+    y = pos.y;
   }
 
   @Override
@@ -30,18 +45,29 @@ public class CalibrationTest extends Scene {
     super.onUpdate();
 
     time += 0.025;
+
+    if (Input.isButtonPressed(Input.BUTTON_LMB)) {
+      Position mousePos = Input.getMousePosition();
+      Position pos = Camera.screenToWorldPosition(
+        mousePos.x,
+        mousePos.y
+      );
+      x = pos.x;
+      y = pos.y;
+    }
+
     double x = 50 * Math.sin(time);
     double y = 50 * Math.cos(time);
     Camera.lookAt(x, y);
     Camera.setZoom(clamp(1 + Math.sin(time), 1, 2));
     //    Camera.lookAt(-200, -100);
-    Camera.setZoom(1);
+    //    Camera.setZoom(1);
   }
 
   @Override
   public void onRender() {
     super.onRender();
-    Renderer.setColor(Color.BLACK);
+    Renderer.setColor(Color.DARK_GRAY);
     Renderer.clear();
 
     Renderer.beginGroup();
@@ -95,6 +121,6 @@ public class CalibrationTest extends Scene {
 
     Renderer.setColor(Color.MAGENTA);
     Renderer.drawRect(0, 0, 10, 10);
-    Renderer.drawImage(SPRITE, -100, -100, 10, 10);
+    Renderer.drawImage(SPRITE, x, y, 10, 10);
   }
 }

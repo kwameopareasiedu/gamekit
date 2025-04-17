@@ -57,16 +57,16 @@ public abstract class Scene implements UI.WidgetTreeCreator {
   }
 
   /** Called by {@link #start()} to set up the scene */
-  protected void onStart() { }
+  protected void onStart() { /* No-op */ }
 
   /** Called by {@link #update()} to update the scene */
-  protected void onUpdate() { }
+  protected void onUpdate() { /* No-op */ }
 
   /** Called by {@link #render()} to render the scene */
-  protected void onRender() { }
+  protected void onRender() { /* No-op */ }
 
   /** Called by {@link #dispose()} to dispose the scene */
-  protected void onDispose() { }
+  protected void onDispose() { /* No-op */ }
 
   @Override
   public Widget onCreateUI() { return null; }

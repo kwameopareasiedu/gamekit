@@ -27,7 +27,7 @@
 - Added event handling code to `Widget` class
 - Added `InputEventHandler` interface to be implemented by `Widgets` which
   would like to receive input events
-- Added `Compose` which is a `SingleChildParent` which delegates layout and 
+- Added `Compose` which is a `SingleChildParent` which delegates layout and
   rendering to the provided widget tree
 
 ### Changed
@@ -47,6 +47,8 @@ BufferedImage getResourceImage(String path)` in `IO` class
   Input.isButtonDown(int buttonId)`
 - Renamed `static Input.isButtonJustReleased(int buttonCode)` to `static 
   Input.isButtonReleased(int buttonId)`
+- Renamed `static Camera.screenToWorldPoint(int x, int y)` to `static 
+  Camera.screenPointToWorld(int x, int y)`
 
 ### Deprecated
 

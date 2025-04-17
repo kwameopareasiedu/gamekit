@@ -17,11 +17,21 @@ public final class Camera {
   private static double x = 0;
   private static double y = 0;
   private static double zoom = 1;
+  private static double invZoom = 1.0 / zoom;
 
-  /** Transforms a screen-space point (x,y) to the world-space */
-  public static Position screenToWorldPoint(int x, int y) {
+  /** Transforms a screen-space point (x,y) into world-space */
+  public static Position screenToWorldPosition(int x, int y) {
     Window window = Window.getInstance();
-    POINT_CACHE.setLocation(x - window.getDisplayWidth(), -y);
+    Position center = window.getCenter();
+    int tx = (int) (invZoom * (center.x - x - Camera.x));
+    int ty = (int) (invZoom * (center.y - y - Camera.y));
+    POSITION_CACHE.set(-tx, ty);
+    return POSITION_CACHE;
+  }
+
+  /** Transforms a point (x,y) relative to top-left origin into world-space */
+  public static Position pointToWorldPosition(int x, int y) {
+    POINT_CACHE.setLocation(x, y);
     transform.transform(POINT_CACHE, POINT_CACHE);
     POSITION_CACHE.set(POINT_CACHE);
     return POSITION_CACHE;
@@ -34,7 +44,10 @@ public final class Camera {
   }
 
   /** Sets the zoom level of the camera, clamped to a min of 1 */
-  public static void setZoom(double zoom) { Camera.zoom = Math.max(zoom, 1); }
+  public static void setZoom(double zoom) {
+    Camera.zoom = Math.max(zoom, 1);
+    Camera.invZoom = 1.0 / Camera.zoom;
+  }
 
   public static double getX() { return x; }
 
