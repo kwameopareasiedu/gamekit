@@ -29,6 +29,8 @@
   would like to receive input events
 - Added `Compose` which is a `SingleChildParent` which delegates layout and
   rendering to the provided widget tree
+- Added `static void drawString(String content, int x, int y, int width, int 
+height)` method to Renderer class
 
 ### Changed
 

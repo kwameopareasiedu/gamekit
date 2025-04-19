@@ -60,7 +60,7 @@ public final class Renderer {
   }
 
   /** Draws a horizontal line from {@code (x1, y)} to {@code (x2, y)} */
-  public static void drawLineH(int x1, int y, int x2) {
+  public static void drawLineH(int x1, int x2, int y) {
     drawLine(x1, y, x2, y);
   }
 
@@ -121,6 +121,16 @@ public final class Renderer {
     int x0 = x - width / 2, y0 = y + height / 2;
     int x1 = x0 + width, y1 = y0 - height;
     g.drawImage(img, x0, -y0, x1, -y1, 0, 0, img.getWidth(), img.getHeight(), null);
+    resetGraphicsState();
+  }
+
+  /** Draws a string at (x, y) d*/
+  public static void drawString(String content, int x, int y) {
+    applyGraphicsState();
+//    int x0 = x - width / 2, y0 = y + height / 2;
+//    int x1 = x0 + width, y1 = y0 - height;
+//    g.drawImage(img, x0, -y0, x1, -y1, 0, 0, img.getWidth(), img.getHeight(), null);
+    g.drawString(content, x, y);
     resetGraphicsState();
   }
 

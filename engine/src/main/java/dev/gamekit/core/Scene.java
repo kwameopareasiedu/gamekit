@@ -32,7 +32,7 @@ public abstract class Scene implements UI.WidgetTreeCreator {
 
   public String getName() { return name; }
 
-  protected void addProp(Prop prop) {
+  protected void add(Prop prop) {
     logger.debug("Adding child: [{} - {}]", prop.internalId, prop.name);
 
     if (!props.containsKey(prop.internalId)) {
@@ -44,7 +44,7 @@ public abstract class Scene implements UI.WidgetTreeCreator {
     }
   }
 
-  protected void removeProp(Prop prop) {
+  protected void remove(Prop prop) {
     logger.debug("Removing child: [{} - {}]", prop.internalId, prop.name);
 
     if (props.containsKey(prop.internalId)) {
