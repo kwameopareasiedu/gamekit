@@ -9,11 +9,10 @@ public class Timeout {
   Task task;
 
   public Timeout(long duration, Task task) {
-    if (duration < 0)
-      throw new RuntimeException("Timeout duration cannot be negative");
+    if (duration < 0) throw new RuntimeException("Timeout duration cannot be negative");
     if (task == null) throw new RuntimeException("Timeout task cannot be null");
-    this.completed = duration == 0;
     this.duration = duration;
+    this.completed = false;
     this.task = task;
   }
 
@@ -25,14 +24,13 @@ public class Timeout {
    * task's {@link Task#run() run()} method is executed.
    */
   public void onUpdate() {
-    if (!completed)
-      duration = java.lang.Math.max(
-        0, duration - Application.FRAME_TIME
-      );
+    if (!completed) {
+      duration = java.lang.Math.max(0, duration - Application.FRAME_TIME);
 
-    if (duration == 0) {
-      completed = true;
-      task.run();
+      if (duration == 0) {
+        completed = true;
+        task.run();
+      }
     }
   }
 }

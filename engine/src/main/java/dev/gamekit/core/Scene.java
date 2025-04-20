@@ -37,9 +37,9 @@ public abstract class Scene implements UI.WidgetTreeCreator {
 
     if (!props.containsKey(prop.internalId)) {
       Application.getInstance().scheduleTask(() -> {
-        logger.debug("Added child: {} ({})", prop.name, prop.internalId);
+        logger.debug("Added child: [{} - {}]", prop.internalId, prop.name);
         props.put(prop.internalId, prop);
-        if (!prop.ready) prop.onStart();
+        if (!prop.ready) prop.startInternal(Scene.this);
       });
     }
   }
@@ -49,9 +49,9 @@ public abstract class Scene implements UI.WidgetTreeCreator {
 
     if (props.containsKey(prop.internalId)) {
       Application.getInstance().scheduleTask(() -> {
-        logger.debug("Removed child: {} ({})", prop.name, prop.internalId);
+        logger.debug("Removed child: [{} - {}]", prop.internalId, prop.name);
         props.remove(prop.internalId, prop);
-        if (prop.ready) prop.onDispose();
+        if (prop.ready) prop.disposeInternal();
       });
     }
   }
@@ -83,27 +83,27 @@ public abstract class Scene implements UI.WidgetTreeCreator {
     ui = new UI(this);
     ui.setWidgetTree(onCreateUI());
     start();
-    props.forEach((k, v) -> v.onStart());
+    props.forEach((k, v) -> v.start());
   }
 
   /** Called by {@link Application} to update the scene */
   final void updateInternal() {
     update();
-    props.forEach((k, v) -> v.onUpdate());
+    props.forEach((k, v) -> v.update());
     ui.update();
   }
 
   /** Called by {@link Application} to render the scene */
   final void renderInternal() {
     render();
-    props.forEach((k, v) -> v.onRender());
+    props.forEach((k, v) -> v.render());
     ui.render();
   }
 
   /** Called <b>once</b> by {@link Application} to dispose the scene */
   final void disposeInternal() {
     logger.debug("Disposing scene");
-    props.forEach((k, v) -> v.onDispose());
+    props.forEach((k, v) -> v.dispose());
     dispose();
   }
 }

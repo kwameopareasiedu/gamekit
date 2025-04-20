@@ -23,14 +23,14 @@
   attenuation distances of the field of `AudioClip3D`
 - Added `AudioShapeCircle` which defines a circular audio field for  
   `AudioClip3D`
-- Added `static boolean isButtonClicked(int buttonCode)` to Input class
+- Added `static boolean isButtonClicked(int buttonCode)` to `Input` class
 - Added event handling code to `Widget` class
 - Added `InputEventHandler` interface to be implemented by `Widgets` which
   would like to receive input events
 - Added `Compose` which is a `SingleChildParent` which delegates layout and
   rendering to the provided widget tree
 - Added `static void drawString(String content, int x, int y, int width, int 
-height)` method to Renderer class
+height)` method to `Renderer` class
 
 ### Changed
 
@@ -51,10 +51,10 @@ BufferedImage getResourceImage(String path)` in `IO` class
   Input.isButtonReleased(int buttonId)`
 - Renamed `static Camera.screenToWorldPoint(int x, int y)` to `static 
   Camera.screenPointToWorld(int x, int y)`
-- Renamed `void onStart()` to `void start()` in Scene class
-- Renamed `void onUpdate()` to `void update()` in Scene class
-- Renamed `void onRender()` to `void render()` in Scene class
-- Renamed `void onDispose()` to `void dispose()` in Scene class
+- Renamed `void onStart()` to `void start()` in `Scene` and `Prop` class
+- Renamed `void onUpdate()` to `void update()` in `Scene` and `Prop` class
+- Renamed `void onRender()` to `void render()` in `Scene` and `Prop` class
+- Renamed `void onDispose()` to `void dispose()` in `Scene` and `Prop` class
 
 ### Deprecated
 

@@ -15,17 +15,38 @@ public abstract class Prop {
   final String name;
   boolean ready;
 
+  private Scene scene;
+
   public Prop(String name) {
     internalId = Prop.idCounter++;
     this.name = name;
     this.ready = false;
   }
 
-  protected void onStart() { }
+  public void addChild(Prop prop) {
+    scene.add(prop);
+  }
 
-  protected void onUpdate() { }
+  public void removeChild(Prop prop) {
+    scene.remove(prop);
+  }
 
-  protected void onRender() { }
+  protected void start() { }
 
-  protected void onDispose() { }
+  protected void update() { }
+
+  protected void render() { }
+
+  protected void dispose() { }
+
+  void startInternal(Scene scene) {
+    this.scene = scene;
+    ready = true;
+    start();
+  }
+
+  void disposeInternal() {
+    dispose();
+    scene = null;
+  }
 }
