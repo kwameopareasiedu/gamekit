@@ -5,6 +5,8 @@ import dev.gamekit.utils.Position;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+import static dev.gamekit.utils.Math.degToRad;
+
 /** Static class which provides draw methods to draw on the window scene. */
 public final class Renderer {
   private static final GraphicsState INITIAL_STATE = new GraphicsState();
@@ -21,21 +23,6 @@ public final class Renderer {
   public static void setPaint(Paint paint) { CURRENT_STATE.paint = paint; }
 
   public static void setColor(Color color) { CURRENT_STATE.color = color; }
-
-  /**
-   * By default, the state (I.e. fg/bg color, stroke or paint) of the renderer
-   * resets after each draw method.
-   * <p>
-   * This disables this default behaviour and preserves the state until
-   * {@link #endGroup()} is called
-   */
-  public static void beginGroup() { CURRENT_STATE.preserve(); }
-
-  /**
-   * Restores the default behaviour of clearing the state after each draw method.
-   * @see #beginGroup()
-   */
-  public static void endGroup() { CURRENT_STATE.discard(); }
 
   /** Clears the {@link Window} scene buffer with current state background color */
   public static void clear() {
@@ -78,7 +65,8 @@ public final class Renderer {
    * Fills a <b>center-origin</b> rounded rect at (x, y) with width and height
    * and corner width and height
    */
-  public static void fillRoundRect(int x, int y, int width, int height, int cornerWidth, int cornerHeight) {
+  public static void fillRoundRect(
+    int x, int y, int width, int height, int cornerWidth, int cornerHeight) {
     roundRect(x, y, width, height, cornerWidth, cornerHeight, true);
   }
 
@@ -86,7 +74,8 @@ public final class Renderer {
    * Draws a <b>center-origin</b> rounded rect at (x, y) with width and height
    * and corner width and height
    */
-  public static void drawRoundRect(int x, int y, int width, int height, int cornerWidth, int cornerHeight) {
+  public static void drawRoundRect(
+    int x, int y, int width, int height, int cornerWidth, int cornerHeight) {
     roundRect(x, y, width, height, cornerWidth, cornerHeight, false);
   }
 
@@ -116,7 +105,9 @@ public final class Renderer {
    * Draws a <b>center-origin</b> {@link BufferedImage} at (x, y) with width
    * and height. The image is scaled to fit within the provided bounds
    */
-  public static void drawImage(BufferedImage img, int x, int y, int width, int height) {
+  public static void drawImage(
+    BufferedImage img, int x, int y, int width, int height
+  ) {
     applyGraphicsState();
     int x0 = x - width / 2, y0 = y + height / 2;
     int x1 = x0 + width, y1 = y0 - height;
@@ -124,14 +115,48 @@ public final class Renderer {
     resetGraphicsState();
   }
 
-  /** Draws a string at (x, y) d*/
+  /** Draws a string at (x, y) */
   public static void drawString(String content, int x, int y) {
     applyGraphicsState();
-//    int x0 = x - width / 2, y0 = y + height / 2;
-//    int x1 = x0 + width, y1 = y0 - height;
-//    g.drawImage(img, x0, -y0, x1, -y1, 0, 0, img.getWidth(), img.getHeight(), null);
+    //    int x0 = x - width / 2, y0 = y + height / 2;
+    //    int x1 = x0 + width, y1 = y0 - height;
+    //    g.drawImage(img, x0, -y0, x1, -y1, 0, 0, img.getWidth(), img.getHeight(), null);
     g.drawString(content, x, y);
     resetGraphicsState();
+  }
+
+  /**
+   * Rotation is performed using the steps below:
+   * <ul>
+   * <li>Translate to the target point</li>
+   * <li>Rotate the {@link Graphics2D} object by a value</li>
+   * <li>Perform the render</li>
+   * <li>Translate to the target point again</li>
+   * <li>Rotate the {@link Graphics2D} object by the negated rotation</li>
+   * </ul>
+   * <p>
+   * {@code withRotation} rotates the {@link Graphics2D} object by {@code deg}
+   * about point {@code (x, y)}, performs the render operations defined by
+   * {@code action} and restores the rotation of the {@link Graphics2D} object
+   * afterward
+   */
+  public static void withRotation(
+    int x, int y, double deg,
+    RenderActions renderGroup
+  ) {
+    double rad = degToRad(deg);
+    Window win = Window.getInstance();
+    g = win.getSceneGraphics();
+
+    g.translate(x, -y);
+    g.rotate(rad);
+    g.translate(-x, y);
+
+    renderGroup.run();
+
+    g.translate(x, -y);
+    g.rotate(-rad);
+    g.translate(-x, y);
   }
 
   /**
@@ -167,7 +192,10 @@ public final class Renderer {
    * @see #drawRoundRect(int, int, int, int, int, int)
    * @see #fillRoundRect(int, int, int, int, int, int)
    */
-  private static void roundRect(int x, int y, int width, int height, int arcWidth, int arcHeight, boolean fill) {
+  private static void roundRect(
+    int x, int y, int width, int height,
+    int arcWidth, int arcHeight, boolean fill
+  ) {
     applyGraphicsState();
     int x0 = x - width / 2, y0 = y + height / 2;
     if (fill) g.fillRoundRect(x0, -y0, width, height, arcWidth, arcHeight);
@@ -181,7 +209,8 @@ public final class Renderer {
     int x = 0, y = 0, w = win.getDisplayWidth(), h = win.getDisplayHeight();
     Position pos = Camera.pointToWorldPosition(x, y);
 
-    g = Window.getInstance().getSceneGraphics();
+    // Clip rendering to avoid drawing outside viewport area
+    g = win.getSceneGraphics();
     g.setClip(-pos.x, -pos.y, w, h);
 
     INITIAL_STATE.save(g);
@@ -194,6 +223,12 @@ public final class Renderer {
     INITIAL_STATE.apply(g);
     CURRENT_STATE.reset();
     INITIAL_STATE.reset();
+  }
+
+  /** {@link RenderActions} defines a group of rendering operations */
+  public interface RenderActions {
+    /** Called run rendering operations */
+    void run();
   }
 
   /**
@@ -217,7 +252,6 @@ public final class Renderer {
     Paint paint;
     Color color;
     Font font;
-    private boolean preserve;
 
     /** Copies the state of a {@link Graphics2D} object */
     void save(Graphics2D g) {
@@ -237,33 +271,7 @@ public final class Renderer {
       g.setFont(font);
     }
 
-    /**
-     * Activates the preserve mode of this state. In preserve mode, calls to
-     * {@link #reset()} are ignored
-     * @see #discard()
-     */
-    void preserve() {
-      reset();
-      preserve = true;
-    }
-
-    /**
-     * Deactivates the preserve mode of this state.
-     * @see #preserve()
-     */
-    void discard() {
-      preserve = false;
-      reset();
-    }
-
-    /**
-     * Resets the internal state to null, if preserve mode is not <b>active</b>
-     * @see #preserve()
-     * @see #discard()
-     */
     void reset() {
-      if (preserve) return;
-
       bgColor = null;
       stroke = null;
       paint = null;

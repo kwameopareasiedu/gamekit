@@ -31,6 +31,8 @@
   rendering to the provided widget tree
 - Added `static void drawString(String content, int x, int y, int width, int 
 height)` method to `Renderer` class
+- Added `static void withRotation(int x, int y, double deg, RenderActions 
+renderGroup)` method to `Renderer` class
 
 ### Changed
 
@@ -64,7 +66,7 @@ BufferedImage getResourceImage(String path)` in `IO` class
   HORIZONTAL` instead
 - Removed `IntrinsicHeight` widget. Use `IntrinsicSize` with `Axis.VERTICAL`
   instead
-- Removed `static BufferedReader loadBufferedResource(String path)` from IO
+- Removed `static BufferedReader loadBufferedResource(String path)` from `IO`
   class
 - Removed `MouseMotionEvent` class and merged function into `MouseEvent` class
 - Removed `MouseClickEvent` class and merged function into `MouseEvent` class
@@ -74,6 +76,8 @@ BufferedImage getResourceImage(String path)` in `IO` class
 - Removed `Decorated` widget
 - Removed `Intrinsic Size` widget
 - Removed `Axis` widget
+- Removed `static void beginGroup()` from `Renderer` class
+- Removed `static void endGroup()` from `Renderer` class
 
 ## 0.3.0-SNAPSHOT-3
 

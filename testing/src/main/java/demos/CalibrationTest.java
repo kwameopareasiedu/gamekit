@@ -70,57 +70,45 @@ public class CalibrationTest extends Scene {
     Renderer.setColor(Color.DARK_GRAY);
     Renderer.clear();
 
-    Renderer.beginGroup();
     Renderer.setColor(Color.BLUE);
     Renderer.drawLineH(-WORLD_WIDTH / 2, WORLD_WIDTH / 2, 0);
+    Renderer.setColor(Color.BLUE);
     Renderer.drawLineV(0, -WORLD_HEIGHT / 2, WORLD_HEIGHT / 2);
-    Renderer.endGroup();
 
     // Top right quadrant
-    Renderer.beginGroup();
     Renderer.setColor(Color.RED);
     Renderer.fillRect(100, 100, 20, 20);
+    Renderer.setColor(Color.RED);
     Renderer.drawRect(100, 100, 30, 30);
-    Renderer.endGroup();
 
     // Top left quadrant
-    Renderer.beginGroup();
     Renderer.setColor(Color.YELLOW);
     Renderer.fillOval(-100, 100, 20, 30);
+    Renderer.setColor(Color.YELLOW);
     Renderer.drawOval(-100, 100, 30, 40);
-    Renderer.endGroup();
 
     // Bottom left quadrant
-    Renderer.beginGroup();
     Renderer.setColor(Color.GREEN);
     Renderer.fillRoundRect(-100, -100, 50, 50, 10, 10);
+    Renderer.setColor(Color.GREEN);
     Renderer.drawRoundRect(-100, -100, 60, 60, 10, 10);
-    Renderer.endGroup();
 
     // Bottom right quadrant
-    Renderer.beginGroup();
     Renderer.setColor(Color.BLUE);
     Renderer.fillCircle(100, -100, 20);
+    Renderer.setColor(Color.BLUE);
     Renderer.drawCircle(100, -100, 25);
-    Renderer.endGroup();
 
     for (int i = 0; i <= WORLD_WIDTH / 2; i += 50) {
-      Renderer.beginGroup();
       Renderer.setColor(Color.CYAN);
       Renderer.drawLineH(0, 10, i);
+      Renderer.setColor(Color.CYAN);
       Renderer.drawLineV(i, 0, -10);
-      Renderer.endGroup();
-
-      //      Renderer.beginGroup();
-      //      Renderer.useTextLayer();
-      //      Renderer.setFont(LEXEND_FONT);
-      //      Renderer.text(i, i, 0);
-      //      Renderer.text(i, 0, i);
-      //      Renderer.endGroup();
     }
 
     Renderer.setColor(Color.MAGENTA);
     Renderer.drawRect(0, 0, 10, 10);
+
     Renderer.drawImage(SPRITE, x, y, 10, 10);
   }
 }
