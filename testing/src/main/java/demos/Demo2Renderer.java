@@ -2,9 +2,7 @@ package demos;
 
 import dev.gamekit.core.Application;
 import dev.gamekit.core.Renderer;
-import dev.gamekit.core.Window;
 import dev.gamekit.core.Scene;
-import dev.gamekit.utils.Resolution;
 
 import java.awt.*;
 
@@ -14,7 +12,7 @@ import java.awt.*;
  * This demo performs the following actions:
  * <ul>
  *   <li>Create an {@link Application application}</li>
- *   <li>Override the {@link Scene#onRender()} method to draw</li>
+ *   <li>Override the {@link Scene#render()} method to draw</li>
  *   <li>Use the {@link Renderer} to clear the screen to dark gray</li>
  *   <li>Use the {@link Renderer} to draw a red box</li>
  * </ul>
@@ -31,8 +29,8 @@ public class Demo2Renderer extends Scene {
   }
 
   @Override
-  public void onRender() {
-    super.onRender();
+  public void render() {
+    super.render();
     // Clear the screen with dark gray
     Renderer.setColor(Color.DARK_GRAY);
     Renderer.clear();

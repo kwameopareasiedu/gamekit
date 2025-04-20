@@ -60,8 +60,8 @@ public class Playground extends Scene {
   }
 
   @Override
-  protected void onStart() {
-    super.onStart();
+  protected void start() {
+    super.start();
 
     halfWindowWidth = Window.getInstance().getFrameWidth() / 2;
     Audio.<AudioClip3D>get("waterflow").setPosition(0, 0);
@@ -69,8 +69,8 @@ public class Playground extends Scene {
   }
 
   @Override
-  protected void onUpdate() {
-    super.onUpdate();
+  protected void update() {
+    super.update();
 
     if (Input.isKeyDown(Input.KEY_SPACE)) {
       Audio.get("alert").play();
@@ -96,8 +96,8 @@ public class Playground extends Scene {
   }
 
   @Override
-  protected void onRender() {
-    super.onRender();
+  protected void render() {
+    super.render();
 
     Renderer.setBackground(Color.DARK_GRAY);
     Renderer.clear();

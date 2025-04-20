@@ -56,17 +56,17 @@ public abstract class Scene implements UI.WidgetTreeCreator {
     }
   }
 
-  /** Called by {@link #start()} to set up the scene */
-  protected void onStart() { /* No-op */ }
+  /** Called by {@link #startInternal()} to set up the scene */
+  protected void start() { /* No-op */ }
 
-  /** Called by {@link #update()} to update the scene */
-  protected void onUpdate() { /* No-op */ }
+  /** Called by {@link #updateInternal()} to update the scene */
+  protected void update() { /* No-op */ }
 
-  /** Called by {@link #render()} to render the scene */
-  protected void onRender() { /* No-op */ }
+  /** Called by {@link #renderInternal()} to render the scene */
+  protected void render() { /* No-op */ }
 
-  /** Called by {@link #dispose()} to dispose the scene */
-  protected void onDispose() { /* No-op */ }
+  /** Called by {@link #disposeInternal()} to dispose the scene */
+  protected void dispose() { /* No-op */ }
 
   @Override
   public Widget onCreateUI() { return null; }
@@ -78,32 +78,32 @@ public abstract class Scene implements UI.WidgetTreeCreator {
   }
 
   /** Called <b>once</b> by {@link Application} to initialize the scene */
-  final void start() {
+  final void startInternal() {
     logger.debug("Starting scene");
     ui = new UI(this);
     ui.setWidgetTree(onCreateUI());
-    onStart();
+    start();
     props.forEach((k, v) -> v.onStart());
   }
 
   /** Called by {@link Application} to update the scene */
-  final void update() {
-    onUpdate();
+  final void updateInternal() {
+    update();
     props.forEach((k, v) -> v.onUpdate());
     ui.update();
   }
 
   /** Called by {@link Application} to render the scene */
-  final void render() {
-    onRender();
+  final void renderInternal() {
+    render();
     props.forEach((k, v) -> v.onRender());
     ui.render();
   }
 
   /** Called <b>once</b> by {@link Application} to dispose the scene */
-  final void dispose() {
+  final void disposeInternal() {
     logger.debug("Disposing scene");
     props.forEach((k, v) -> v.onDispose());
-    onDispose();
+    dispose();
   }
 }

@@ -177,13 +177,20 @@ public final class Renderer {
 
   /** Applies the current graphics state to the current graphics object */
   private static void applyGraphicsState() {
+    Window win = Window.getInstance();
+    int x = 0, y = 0, w = win.getDisplayWidth(), h = win.getDisplayHeight();
+    Position pos = Camera.pointToWorldPosition(x, y);
+
     g = Window.getInstance().getSceneGraphics();
+    g.setClip(-pos.x, -pos.y, w, h);
+
     INITIAL_STATE.save(g);
     CURRENT_STATE.apply(g);
   }
 
   /** Restores the initial graphics state to the current graphics object */
   private static void resetGraphicsState() {
+    g.setClip(null);
     INITIAL_STATE.apply(g);
     CURRENT_STATE.reset();
     INITIAL_STATE.reset();

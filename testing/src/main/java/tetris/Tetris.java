@@ -77,8 +77,8 @@ public class Tetris extends Scene {
   }
 
   @Override
-  public void onUpdate() {
-    super.onUpdate();
+  public void update() {
+    super.update();
 
     if (gameState == PLAYING) {
       stepTime += Application.FRAME_TIME;
@@ -200,8 +200,8 @@ public class Tetris extends Scene {
   }
 
   @Override
-  public void onRender() {
-    super.onRender();
+  public void render() {
+    super.render();
 
     Graphics2D g = null;
     g.setColor(CLEAR_COLOR);

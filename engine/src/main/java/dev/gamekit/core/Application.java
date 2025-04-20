@@ -171,7 +171,7 @@ public abstract class Application {
     }
 
     if (currentScene != null) {
-      currentScene.update();
+      currentScene.updateInternal();
     }
 
     Audio.update();
@@ -184,7 +184,7 @@ public abstract class Application {
   private void render() {
     if (currentScene != null) {
       Camera.update();
-      currentScene.render();
+      currentScene.renderInternal();
     }
 
     window.redraw();
@@ -214,14 +214,14 @@ public abstract class Application {
       timeouts.clear();
 
       if (currentScene != null) {
-        currentScene.dispose();
+        currentScene.disposeInternal();
         logger.debug("Switching scene: {} -> {}", currentScene.getName(), nextScene.getName());
       } else {
         logger.debug("Loading scene: {}", nextScene.getName());
       }
 
       currentScene = nextScene;
-      currentScene.start();
+      currentScene.startInternal();
       nextScene = null;
 
       window.createRenderBuffers();
@@ -234,7 +234,7 @@ public abstract class Application {
     logger.debug("Disposing application");
 
     if (currentScene != null) {
-      currentScene.dispose();
+      currentScene.disposeInternal();
     }
 
     IO.dispose();

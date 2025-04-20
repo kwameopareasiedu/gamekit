@@ -40,14 +40,14 @@ public class AnimationTesting extends Scene {
   }
 
   @Override
-  public void onStart() {
-    super.onStart();
+  public void start() {
+    super.start();
     bounceAnimation.start();
   }
 
   @Override
-  public void onRender() {
-    super.onRender();
+  public void render() {
+    super.render();
     // Clear the screen with black
     Renderer.setColor(Color.BLACK);
     Renderer.clear();

@@ -51,6 +51,10 @@ BufferedImage getResourceImage(String path)` in `IO` class
   Input.isButtonReleased(int buttonId)`
 - Renamed `static Camera.screenToWorldPoint(int x, int y)` to `static 
   Camera.screenPointToWorld(int x, int y)`
+- Renamed `void onStart()` to `void start()` in Scene class
+- Renamed `void onUpdate()` to `void update()` in Scene class
+- Renamed `void onRender()` to `void render()` in Scene class
+- Renamed `void onDispose()` to `void dispose()` in Scene class
 
 ### Deprecated
 

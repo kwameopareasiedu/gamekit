@@ -32,8 +32,8 @@ public class CalibrationTest extends Scene {
   }
 
   @Override
-  protected void onStart() {
-    super.onStart();
+  protected void start() {
+    super.start();
 
     Position pos = Camera.pointToWorldPosition(0, 0);
     x = pos.x;
@@ -41,8 +41,8 @@ public class CalibrationTest extends Scene {
   }
 
   @Override
-  public void onUpdate() {
-    super.onUpdate();
+  public void update() {
+    super.update();
 
     time += 0.025;
 
@@ -65,14 +65,14 @@ public class CalibrationTest extends Scene {
   }
 
   @Override
-  public void onRender() {
-    super.onRender();
+  public void render() {
+    super.render();
     Renderer.setColor(Color.DARK_GRAY);
     Renderer.clear();
 
     Renderer.beginGroup();
     Renderer.setColor(Color.BLUE);
-    Renderer.drawLineH(-WORLD_WIDTH / 2, 0, WORLD_WIDTH / 2);
+    Renderer.drawLineH(-WORLD_WIDTH / 2, WORLD_WIDTH / 2, 0);
     Renderer.drawLineV(0, -WORLD_HEIGHT / 2, WORLD_HEIGHT / 2);
     Renderer.endGroup();
 
@@ -107,7 +107,7 @@ public class CalibrationTest extends Scene {
     for (int i = 0; i <= WORLD_WIDTH / 2; i += 50) {
       Renderer.beginGroup();
       Renderer.setColor(Color.CYAN);
-      Renderer.drawLineH(0, i, 10);
+      Renderer.drawLineH(0, 10, i);
       Renderer.drawLineV(i, 0, -10);
       Renderer.endGroup();
 
