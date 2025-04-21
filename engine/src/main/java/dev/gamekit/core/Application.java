@@ -26,6 +26,7 @@ public abstract class Application {
   protected final Logger logger = LogManager.getLogger(getClass());
 
   private final List<Timeout> timeouts;
+  private final List<Timeout> newTimeouts;
   private final List<Animation> animations;
   private final Window window;
   private boolean isRunning;
@@ -42,6 +43,7 @@ public abstract class Application {
 
     this.window = new Window(config);
     this.timeouts = new ArrayList<>();
+    this.newTimeouts = new ArrayList<>();
     this.animations = new ArrayList<>();
     this.isRunning = true;
 
@@ -76,7 +78,7 @@ public abstract class Application {
   public void scheduleTask(Task task, long timeout) {
     if (timeout < 0)
       throw new RuntimeException("timeout cannot be negative");
-    timeouts.add(new Timeout(timeout, task));
+    newTimeouts.add(new Timeout(timeout, task));
   }
 
   /**
@@ -167,7 +169,7 @@ public abstract class Application {
 
     if (!timeouts.isEmpty()) {
       for (var timeout : timeouts)
-        timeout.onUpdate();
+        timeout.update();
     }
 
     if (currentScene != null) {
@@ -207,6 +209,11 @@ public abstract class Application {
 
     if (!timeouts.isEmpty()) {
       timeouts.removeIf(Timeout::isCompleted);
+    }
+
+    if (!newTimeouts.isEmpty()) {
+      timeouts.addAll(newTimeouts);
+      newTimeouts.clear();
     }
 
     if (nextScene != null) {
