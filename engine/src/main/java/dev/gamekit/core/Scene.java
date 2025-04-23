@@ -39,7 +39,7 @@ public abstract class Scene implements UI.WidgetTreeCreator {
       Application.getInstance().scheduleTask(() -> {
         logger.debug("Added child: [{} - {}]", prop.internalId, prop.name);
         props.put(prop.internalId, prop);
-        if (!prop.ready) prop.startInternal(Scene.this);
+        if (!prop.ready) prop._start(Scene.this);
       });
     }
   }
@@ -51,25 +51,25 @@ public abstract class Scene implements UI.WidgetTreeCreator {
       Application.getInstance().scheduleTask(() -> {
         logger.debug("Removed child: [{} - {}]", prop.internalId, prop.name);
         props.remove(prop.internalId, prop);
-        if (prop.ready) prop.disposeInternal();
+        if (prop.ready) prop._dispose();
       });
     }
   }
 
-  /** Called by {@link #startInternal()} to set up the scene */
+  /** Called by {@link #_start()} to set up the scene */
   protected void start() { /* No-op */ }
 
-  /** Called by {@link #updateInternal()} to update the scene */
+  /** Called by {@link #_update()} to update the scene */
   protected void update() { /* No-op */ }
 
-  /** Called by {@link #renderInternal()} to render the scene */
+  /** Called by {@link #_render()} to render the scene */
   protected void render() { /* No-op */ }
 
-  /** Called by {@link #disposeInternal()} to dispose the scene */
+  /** Called by {@link #_dispose()} to dispose the scene */
   protected void dispose() { /* No-op */ }
 
   @Override
-  public Widget onCreateUI() { return null; }
+  public Widget createUI() { return null; }
 
   /** Indicates that the widget tree should be updated based on a state change */
   protected final void updateUI(UI.WidgetTreeUpdater updater) {
@@ -78,32 +78,32 @@ public abstract class Scene implements UI.WidgetTreeCreator {
   }
 
   /** Called <b>once</b> by {@link Application} to initialize the scene */
-  final void startInternal() {
+  final void _start() {
     logger.debug("Starting scene");
     ui = new UI(this);
-    ui.setWidgetTree(onCreateUI());
+    ui.setWidgetTree(createUI());
     start();
     props.forEach((k, v) -> v.start());
   }
 
   /** Called by {@link Application} to update the scene */
-  final void updateInternal() {
+  final void _update() {
     update();
     props.forEach((k, v) -> v.update());
     ui.update();
   }
 
   /** Called by {@link Application} to render the scene */
-  final void renderInternal() {
+  final void _render() {
     render();
-    props.forEach((k, v) -> v.render());
+    props.forEach((k, p) -> p.render());
     ui.render();
   }
 
   /** Called <b>once</b> by {@link Application} to dispose the scene */
-  final void disposeInternal() {
+  final void _dispose() {
     logger.debug("Disposing scene");
-    props.forEach((k, v) -> v.dispose());
+    props.forEach((k, p) -> p._dispose());
     dispose();
   }
 }

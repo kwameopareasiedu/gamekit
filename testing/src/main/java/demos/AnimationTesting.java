@@ -57,7 +57,7 @@ public class AnimationTesting extends Scene {
   }
 
   @Override
-  public Widget onCreateUI() {
+  public Widget createUI() {
     return Align.create(
       horizontalAlignment(Alignment.START),
       child(

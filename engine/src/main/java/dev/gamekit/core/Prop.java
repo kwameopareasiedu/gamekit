@@ -39,13 +39,13 @@ public abstract class Prop {
 
   protected void dispose() { }
 
-  void startInternal(Scene scene) {
+  void _start(Scene scene) {
     this.scene = scene;
     ready = true;
     start();
   }
 
-  void disposeInternal() {
+  void _dispose() {
     dispose();
     scene = null;
   }

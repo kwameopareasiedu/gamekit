@@ -104,7 +104,7 @@ public class Playground extends Scene {
   }
 
   @Override
-  public Widget onCreateUI() {
+  public Widget createUI() {
     return Column.create(
       mainAxisAlignment(MainAxisAlignment.CENTER),
       crossAxisAlignment(CrossAxisAlignment.STRETCH),

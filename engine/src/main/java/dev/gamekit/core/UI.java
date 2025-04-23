@@ -139,7 +139,7 @@ public final class UI {
     boolean treeUpdated = false;
 
     currentWidgetQueue.add(tree);
-    newWidgetQueue.add(treeCreator.onCreateUI());
+    newWidgetQueue.add(treeCreator.createUI());
 
     while (!currentWidgetQueue.isEmpty() && !newWidgetQueue.isEmpty()) {
       Widget treeWidget = currentWidgetQueue.remove(0);
@@ -392,7 +392,7 @@ public final class UI {
 
   public interface WidgetTreeCreator {
     /** Called to create a widget tree */
-    Widget onCreateUI();
+    Widget createUI();
   }
 
   public interface WidgetTreeUpdater {

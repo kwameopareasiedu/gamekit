@@ -49,7 +49,7 @@ public class Demo3UserInterface extends Scene {
   }
 
   @Override
-  public Widget onCreateUI() {
+  public Widget createUI() {
     return Stack.create(
       children(
         Image.create(
