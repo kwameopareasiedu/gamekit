@@ -8,11 +8,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A scene is a collection of {@link Prop props} interacting with each other
- * to form a logic part of your application. This can be a main menu, or a
- * level within your game.
+ * {@link Scene} represents a logical part of your game. This can be a main menu, or a level
+ * within your game.
  * <p>
- * A scene can also display a user interface
+ * For simple games, the scene's {@link #start()}, {@link #update()} and {@link #render()}
+ * methods are enough to set up, update and render the state of the level.
+ * <p>
+ * For more complex use cases, a {@link Scene} can contain multiple game objects called
+ * {@link Prop} which interact with each other. Each {@link Prop} has its own lifecycle methods
+ * which can be used to model complex relationships
+ * <p>
+ * A scene also supports user interface rendering using {@link Widget} components
  */
 public abstract class Scene implements UI.WidgetTreeCreator {
   static Scene current;
@@ -71,7 +77,7 @@ public abstract class Scene implements UI.WidgetTreeCreator {
   @Override
   public Widget createUI() { return null; }
 
-  /** Indicates that the widget tree should be updated based on a state change */
+  /** Trigger a widget tree update. You would use this when some UI variables have changed */
   protected final void updateUI(UI.WidgetTreeUpdater updater) {
     updater.onUpdate();
     ui.triggerUpdate();

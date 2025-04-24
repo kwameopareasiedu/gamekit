@@ -14,9 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Application is the heart of a GameKit program.
+ * {@link Application} is the heart of a GameKit program. A game or application must extend this
+ * class to do anything with the engine.
  * <p>
- * A game or application must extend this class to do anything with the engine.
+ * It runs a fixed-step game update loop which protects against lag spikes. It also loads scenes,
+ * schedule animations and timeouts and quit the running instance. Use
+ * {@link Application#getInstance()} to get the current instance from anywhere in your project
+ * to access its methods.
+ * <p>
  */
 @SuppressWarnings("BusyWait")
 public abstract class Application {
@@ -63,17 +68,13 @@ public abstract class Application {
     this.nextScene = scene;
   }
 
-  /**
-   * Schedule a task to be executed immediately after the end of the current
-   * frame.
-   */
+  /** Schedule a task to be executed immediately after the end of the current frame. */
   public void scheduleTask(Task task) { scheduleTask(task, 0); }
 
   /**
    * Schedule a task to be executed after some timeout in <b>milliseconds</b>.
    * <p>
-   * If {@code timeout} is zero, {@code task} is executed immediately after the
-   * current frame
+   * If {@code timeout} is zero, {@code task} is executed immediately after the current frame
    */
   public void scheduleTask(Task task, long timeout) {
     if (timeout < 0)
@@ -82,9 +83,8 @@ public abstract class Application {
   }
 
   /**
-   * Schedule an {@link Animation} to run. Animations are updated before the
-   * scene's {@code onUpdate()} to ensure current values are available to the
-   * scene.
+   * Schedule an {@link Animation} to run. Animations are updated before the scene's
+   * {@code onUpdate()} to ensure current values are available to the scene's next update cycle
    */
   public void scheduleAnimation(Animation animation) {
     if (!animations.contains(animation)) {
@@ -93,9 +93,8 @@ public abstract class Application {
   }
 
   /**
-   * Quit the current {@link Application} by dispatching a
-   * {@link WindowEvent#WINDOW_CLOSING} event to the {@link Window}
-   * {@link javax.swing.JFrame frame}
+   * Quit the current {@link Application} by dispatching a {@link WindowEvent#WINDOW_CLOSING}
+   * event to the {@link Window} {@link javax.swing.JFrame frame}
    */
   public void quit() {
     window.getFrame().dispatchEvent(
@@ -158,8 +157,8 @@ public abstract class Application {
   }
 
   /**
-   * Called in each frame to update the current scene all running animations and
-   * timeouts have been updated
+   * Called in each frame to update the current scene all running animations and timeouts have
+   * been updated
    */
   private void update() {
     if (!animations.isEmpty()) {
@@ -179,8 +178,8 @@ public abstract class Application {
   }
 
   /**
-   * Applies the camera's transformation on the {@link Window} scene buffer and
-   * renders the current scene
+   * Applies the camera's transformation on the {@link Window} scene buffer and renders the
+   * current scene
    */
   private void render() {
     if (currentScene != null) {

@@ -20,10 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * UI manages the user interface within for {@link Scene}.
- * A {@link Scene} will contain a single instance of UI
- */
+/** {@link UI} manages the user interface within a {@link Scene} */
 public final class UI {
   private static final Logger LOGGER = LogManager.getLogger();
   private static UI instance;
@@ -69,15 +66,12 @@ public final class UI {
 
   public static UI getInstance() { return instance; }
 
-  /**
-   * Uses the {@link Window} UI graphics object to retrieve the
-   * {@link FontMetrics} for a given font
-   */
+  /** Return the {@link FontMetrics} for a given font */
   public static FontMetrics getFontMetrics(Font font) {
     return Window.getInstance().getUiGraphics().getFontMetrics(font);
   }
 
-  /** Sets the widget tree and triggers the layout computation */
+  /** Set the initial widget tree */
   public void setWidgetTree(Widget tree) {
     this.tree = tree;
 
@@ -91,7 +85,11 @@ public final class UI {
 
   public void triggerRender() { needsRender = true; }
 
-  /** Updates the widget tree, generates and dispatches input events */
+  /**
+   * Called to update updates the UI state.
+   * <p>
+   * This involves recomputing layout (if necessary), generating and dispatching input events
+   */
   void update() {
     if (tree != null && needsLayout) {
       LOGGER.debug("Laying out UI");
@@ -102,7 +100,7 @@ public final class UI {
     dispatchInputEvents();
   }
 
-  /** Draws the {@link Widget} tree to the {@link Window} UI target */
+  /** Called to render the {@link Widget} tree to the {@link Window} UI layer */
   void render() {
     if (tree == null || !needsRender)
       return;
@@ -129,9 +127,8 @@ public final class UI {
   /**
    * Updates the widget tree using a "diffing" algorithm
    * <p>
-   * This "diffing" algorithm involves generating a new widget tree with any
-   * new state, comparing it to the current widget tree and updates widgets
-   * whose states have changed.
+   * This "diffing" algorithm involves generating a new widget tree with the new state,
+   * comparing it to the current widget tree and updating widgets whose states have changed.
    */
   private void updateTree() {
     List<Widget> currentWidgetQueue = new ArrayList<>();
@@ -218,9 +215,9 @@ public final class UI {
     }
 
     // Generate a mouse enter event if widgets exist in currentHitTestCheckList
-    // but don't exist in previousHitTestCheckList. In essence, this means
-    // there are new widgets under the mouse cursor in the current frame that
-    // were not in the previous frame
+    // but don't exist in previousHitTestCheckList.
+    // In essence, this means there are new widgets under the mouse cursor in the current frame
+    // that were not in the previous frame
     for (Widget widget : currentHitTestList) {
       if (!previousHitTestList.contains(widget))
         eventStore.mouseEnterEvent = new MouseEvent(
@@ -230,7 +227,7 @@ public final class UI {
         );
     }
 
-    // Generate mouse down event if button LMB has just been pressed
+    // Generate mouse down event if LMB has just been pressed
     if (Input.isButtonDown(Input.BUTTON_LMB)) {
       eventStore.mouseDownEvent = new MouseEvent(
         MouseEvent.Type.DOWN,
@@ -242,7 +239,7 @@ public final class UI {
         activeWidget = focusWidget;
     }
 
-    // Generate mouse press events if button LMB is being pressed
+    // Generate mouse press events if LMB is being pressed
     if (Input.isButtonPressed(Input.BUTTON_LMB)) {
       eventStore.mousePressEvent = new MouseEvent(
         MouseEvent.Type.PRESS,
@@ -251,15 +248,16 @@ public final class UI {
       );
     }
 
-    // Generate mouse release and click events if button LMB has been released
+    // Generate a mouse release event if LMB has been released
     if (Input.isButtonReleased(Input.BUTTON_LMB)) {
-      if (activeWidget == focusWidget) {
-        eventStore.mouseReleaseEvent = new MouseEvent(
-          MouseEvent.Type.RELEASE,
-          mousePosition.x, mousePosition.y,
-          Input.BUTTON_LMB
-        );
+      eventStore.mouseReleaseEvent = new MouseEvent(
+        MouseEvent.Type.RELEASE,
+        mousePosition.x, mousePosition.y,
+        Input.BUTTON_LMB
+      );
 
+      // Generate a mouse click event if LMB was released on the active widget
+      if (activeWidget == focusWidget) {
         eventStore.mouseClickEvent = new MouseEvent(
           MouseEvent.Type.CLICK,
           mousePosition.x, mousePosition.y,
@@ -272,9 +270,9 @@ public final class UI {
     }
 
     // Generate a mouse exit event if widgets exist in previousHitTestCheckList
-    // but don't exist in currentHitTestCheckList. In essence, this means
-    // there are widgets not under the mouse cursor in the current frame that
-    // were in the previous frame
+    // but don't exist in currentHitTestCheckList.
+    // In essence, this means there are widgets not under the mouse cursor in the current frame
+    // that were in the previous frame
     for (Widget widget : previousHitTestList) {
       if (!currentHitTestList.contains(widget))
         eventStore.mouseExitEvent = new MouseEvent(

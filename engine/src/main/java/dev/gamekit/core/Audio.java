@@ -4,17 +4,14 @@ import dev.gamekit.audio.AudioClip;
 
 import java.util.HashMap;
 
-/** Audio handles loading and playback of sounds in GameKit */
+/** {@link Audio} handles loading and playback of sounds in GameKit */
 public class Audio {
   private static final HashMap<Object, AudioClip> CLIP_CACHE = new HashMap<>();
 
   private Audio() { }
 
-  /** Loads an {@link AudioClip} with its unique key */
-  public static void preload(
-    Object key,
-    AudioClip audioClip
-  ) {
+  /** Loads an {@link AudioClip} into memory with a unique key */
+  public static void preload(Object key, AudioClip audioClip) {
     if (audioClip == null)
       throw new NullPointerException("Audio clip cannot be null");
 
@@ -26,6 +23,7 @@ public class Audio {
     CLIP_CACHE.put(key, audioClip);
   }
 
+  /** Gets a reference to an {@link AudioClip} with a matching key */
   @SuppressWarnings("unchecked")
   public static <T extends AudioClip> T get(Object key) {
     if (!CLIP_CACHE.containsKey(key))

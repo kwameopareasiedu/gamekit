@@ -1,5 +1,6 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.core.Scene;
 import dev.gamekit.ui.Bounds;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.utils.Config;
@@ -10,16 +11,15 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
- * A widget is an abstract representation of a portion of a
- * {@link dev.gamekit.core.Scene Scene's} user interface.
+ * A widget is an abstract representation of a portion of a {@link Scene Scene's} user interface.
  * <p>
- * Subclasses must implement the {@link #performLayout} and
- * {@link #performRender(Graphics2D)} to compute their position and size
+ * Subclasses must implement the {@link #performLayout} and {@link #performRender(Graphics2D)} to
+ * compute their position and size
  * <p>
  * Widget layout is based on the
  * <a href="https://docs.flutter.dev/ui/layout/constraints">box-constraint</a>
- * model which is used in Flutter, where constraints go down the tree, size go
- * up and parents set positions
+ * model which is used in Flutter, where constraints go down the tree, size go up and parents set
+ * positions
  */
 public abstract class Widget {
   private static final BasicStroke DEBUG_OUTLINE_STROKE = new BasicStroke(
@@ -44,26 +44,27 @@ public abstract class Widget {
 
   public Widget getParent() { return parent; }
 
-  public void setParent(Widget parent) { this.parent = parent; }
+  public void setParent(Widget parent) {
+    this.parent = parent;
+  }
 
   /**
-   * Delegate method which returns {@code true} if this widget has the same
-   * state as {@code widget}
+   * Delegate method which returns {@code true} if this widget has the same state as {@code widget}
    */
   public abstract boolean stateEquals(Widget widget);
 
   /**
    * Computes the layout for the widget
    * <p>
-   * This is called by either the parent widget or window and receives the
-   * {@link Constraints} from its parent or the window, and the resulting
-   * computed size must always respect this constraint
+   * This is called by either the parent widget or window and receives the {@link Constraints}
+   * from its parent or the window, and the resulting computed size must always respect this
+   * constraint
    * <p>
-   * The goal of this method is to set the {@link #computedBounds} which
-   * controls where on the screen the widget is rendered.
+   * The goal of this method is to set the {@link #computedBounds} which controls where on the
+   * screen the widget is rendered.
    * <p>
-   * Since this method is marked as {@code final}, subclasses should override
-   * the {@link #performLayout} method instead to perform their layout
+   * Since this method is marked as {@code final}, subclasses should override the
+   * {@link #performLayout} method instead to perform their layout
    */
   public final void layout(Constraints constraints) {
     this.constraints = constraints;
@@ -71,24 +72,22 @@ public abstract class Widget {
   }
 
   /**
-   * Delegate method which performs the actual layout and is passed
-   * the constraints from {@link #layout(Constraints)}.
+   * Delegate method which performs the actual layout and is passed the constraints from
+   * {@link #layout(Constraints)}.
    */
   protected abstract void performLayout(Constraints constraints);
 
   /**
    * Performs post-layout logic
    * <p>
-   * This exists because {@link #layout(Constraints)} uses a depth-first
-   * approach in traversing this widget tree.
+   * This exists because {@link #layout(Constraints)} uses a depth-first approach in traversing
+   * this widget tree.
    * <p>
-   * With this approach, certain data (e.g. computed bounds position, parent
-   * computed bounds) may not be available until after the scene's UI widget
-   * tree has been completely laid out
+   * With this approach, certain data (e.g. computed bounds position and parent computed bounds)
+   * may not be available until after the scene's UI widget tree has been completely laid out
    * <p>
-   * Since this method is marked as {@code final}, subclasses should override
-   * the {@link #performPostLayout} method instead to perform any post layout
-   * logic
+   * Since this method is marked as {@code final}, subclasses should override the
+   * {@link #performPostLayout} method instead to perform any post layout logic
    */
   public final void postLayout() {
     computeAbsoluteBounds();
@@ -105,7 +104,7 @@ public abstract class Widget {
    */
   public final void render(Graphics2D canvasGraphics) {
     if (parent != null) {
-      Bounds clipBounds = absoluteBounds.intersection(parent.absoluteBounds);
+      Bounds clipBounds = Bounds.intersect(absoluteBounds, parent.absoluteBounds);
 
       canvasGraphics.setClip(
         clipBounds.x,
@@ -139,8 +138,8 @@ public abstract class Widget {
   }
 
   /**
-   * Delegate method which performs the actual rendering and is passed a
-   * {@link Graphics2D} object of the widget's {@code canvasImage}.
+   * Delegate method which performs the actual rendering and is passed a {@link Graphics2D}
+   * object of the widget's {@code canvasImage}.
    */
   protected abstract void performRender(Graphics2D g);
 

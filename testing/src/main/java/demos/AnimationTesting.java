@@ -20,7 +20,7 @@ public class AnimationTesting extends Scene {
   double animationValue = 0;
 
   private final Animation bounceAnimation = new Animation(
-    4, Animation.RepeatMode.REVERSE, AnimationCurve.EASE_IN_OUT_BOUNCE
+    4, Animation.RepeatMode.ALTERNATE, AnimationCurve.EASE_IN_OUT_BOUNCE
   ).setValueListener(value -> updateUI(() -> animationValue = value));
 
   public AnimationTesting() {

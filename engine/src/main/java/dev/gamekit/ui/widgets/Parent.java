@@ -5,8 +5,8 @@ import java.awt.*;
 /**
  * A parent is a {@link Widget} which can contain one or more children.
  * <p>
- * Parents can be children of other parent widgets with no change to how layout
- * is performed due to the box-constraint model used.
+ * Parents can be children of other parent widgets with no change to how layout is performed due
+ * to the box-constraint model used.
  */
 public abstract class Parent extends Widget {
   /**

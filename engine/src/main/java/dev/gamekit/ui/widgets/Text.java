@@ -31,7 +31,7 @@ public class Text extends Leaf {
 
   private final Font renderFont;
   private final FontMetrics fontMetrics;
-  private String[] multilineText;
+  private String[] textLines;
 
   public Text(TextOptions options, String text) {
     this.text = text;
@@ -51,6 +51,7 @@ public class Text extends Leaf {
       ? font.deriveFont(fontStyle, fontSize)
       : DEFAULT_FONT.deriveFont(fontStyle, fontSize);
     fontMetrics = UI.getFontMetrics(renderFont);
+    textLines = new String[0];
   }
 
   public static Text create(TextOptions params, String text) {
@@ -120,8 +121,8 @@ public class Text extends Leaf {
       if (!line.isEmpty())
         lines.add(line.toString());
 
-      multilineText = new String[lines.size()];
-      multilineText = lines.toArray(multilineText);
+      textLines = new String[lines.size()];
+      textLines = lines.toArray(textLines);
 
       intrinsicBounds.setSize(maxLineWidth, textHeight * lines.size());
 
@@ -129,6 +130,8 @@ public class Text extends Leaf {
         constraints.constrainWidth(intrinsicBounds.width),
         constraints.constrainHeight(intrinsicBounds.height)
       );
+    } else {
+      textLines = new String[]{ text };
     }
   }
 
@@ -151,31 +154,22 @@ public class Text extends Leaf {
     if (shadowEnabled) {
       g.setColor(shadowColor);
 
-      if (multilineText != null) {
-        for (int i = 0; i < multilineText.length; i++) {
-          String word = multilineText[i];
+      for (int i = 0; i < textLines.length; i++) {
+        String word = textLines[i];
 
-          g.drawString(
-            word, hOffset + shadowOffsetX,
-            (i + 1) * fontSize + vOffset + shadowOffsetY
-          );
-        }
-      } else {
         g.drawString(
-          text, hOffset + shadowOffsetX,
-          fontSize + vOffset + shadowOffsetY
+          word, hOffset + shadowOffsetX,
+          (i + 1) * fontSize + vOffset + shadowOffsetY
         );
       }
     }
 
     g.setColor(color);
 
-    if (multilineText != null) {
-      for (int i = 0; i < multilineText.length; i++) {
-        String word = multilineText[i];
-        g.drawString(word, hOffset, (i + 1) * fontSize + vOffset);
-      }
-    } else g.drawString(text, hOffset, fontSize + vOffset);
+    for (int i = 0; i < textLines.length; i++) {
+      String word = textLines[i];
+      g.drawString(word, hOffset, (i + 1) * fontSize + vOffset);
+    }
   }
 
   @Override

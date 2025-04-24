@@ -10,11 +10,10 @@ import java.io.IOException;
 import static dev.gamekit.utils.Math.clamp;
 
 /**
- * Abstract class which stores and handles playback for audio content.
+ * {@link AudioClip} is abstract class which stores and handles playback for audio in GameKit.
  * <p>
- * All {@link AudioClip} must belong to an {@link AudioGroup}. This makes it
- * possible to control multiple {@link AudioClip} by adjusting the group's
- * properties.
+ * All {@link AudioClip} must belong to an {@link AudioGroup}. This makes it possible to control
+ * the properties of all audio clips in specific groups by adjusting the group's properties.
  */
 public abstract class AudioClip {
   protected final Logger logger = LogManager.getLogger(getClass());
@@ -57,10 +56,7 @@ public abstract class AudioClip {
       performUpdate();
   }
 
-  /**
-   * Delegate method which performs the actual update and must be overridden
-   * in subclasses
-   */
+  /** Delegate method which performs the actual update and must be overridden in subclasses */
   public abstract void performUpdate();
 
   @SuppressWarnings("unchecked")

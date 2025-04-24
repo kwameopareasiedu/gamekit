@@ -1,12 +1,10 @@
 package dev.gamekit.core;
 
 /**
- * Represents game objects within Scenes. Because these are part of the "game world",
- * they have lifecycle methods which are called by the engine to set up, update, render
- * and dispose.
+ * {@link Prop} represent game objects in a {@link Scene}.
  * <p>
- * <p>
- * Props im
+ * Like {@link Scene}, {@link Prop} has lifecycle methods which are called by the engine to
+ * set up, update, render and dispose.
  */
 public abstract class Prop {
   private static int idCounter = 0;

@@ -1,8 +1,8 @@
 package dev.gamekit.utils;
 
 /**
- * Configuration object for the application containing the title,
- * {@link Resolution resolution} and fullscreen flag
+ * Configuration object for the application containing the title, {@link Resolution resolution}
+ * and fullscreen flag
  */
 public record Config(
   String title,

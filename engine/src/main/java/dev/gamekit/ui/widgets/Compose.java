@@ -5,10 +5,9 @@ import dev.gamekit.ui.Constraints;
 import java.awt.*;
 
 /**
- * A {@link Widget} made from composing other widgets.
+ * A {@link Widget} which is an abstract base for creating custom widgets.
  * <p>
- * {@link Compose} delegates its layout and rendering to the supplied widget
- * tree
+ * {@link Compose} delegates its layout and rendering to the supplied widget tree
  */
 public abstract class Compose extends SingleChildParent {
   protected Compose(Widget child) {

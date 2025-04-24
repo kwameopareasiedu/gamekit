@@ -69,6 +69,7 @@ public class Opacity extends SingleChildParent {
     if (widget instanceof Opacity opacityWidget) {
       return Objects.equals(opacity, opacityWidget.opacity);
     }
+
     return false;
   }
 

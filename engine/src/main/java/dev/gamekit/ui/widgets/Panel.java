@@ -2,14 +2,15 @@ package dev.gamekit.ui.widgets;
 
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Spacing;
+import dev.gamekit.utils.Constants;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
 /**
- * A {@link SingleChildParent} which uses the 9-patch algorithm to render a
- * {@link BufferedImage} as a background to its descendants
+ * A {@link SingleChildParent} which uses the 9-patch algorithm to render a {@link BufferedImage}
+ * as a background to its descendants
  */
 public class Panel extends SingleChildParent implements NinePatch {
   protected final BufferedImage background;
@@ -77,7 +78,7 @@ public class Panel extends SingleChildParent implements NinePatch {
   }
 
   public static class PanelOptions {
-    public BufferedImage background;
+    public BufferedImage background = Constants.DEFAULT_PANEL_BG;
     public Spacing padding;
 
     public PanelOptions background(BufferedImage background) {

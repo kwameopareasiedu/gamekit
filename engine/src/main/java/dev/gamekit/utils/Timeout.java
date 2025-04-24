@@ -21,9 +21,9 @@ public class Timeout {
   public boolean isCompleted() { return completed; }
 
   /**
-   * Called internally by the application to update the timeout by decrementing
-   * its duration till it reaches 0. When the duration reaches zero, then the
-   * task's {@link Task#run()} method is executed.
+   * Called internally by the application to update the timeout by decrementing its duration till
+   * it reaches 0. When the duration reaches zero, then the task's {@link Task#run()} method is
+   * executed.
    */
   public void update() {
     if (!completed) {

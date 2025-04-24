@@ -6,7 +6,7 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 
 /**
- * Camera controls which part of the game world is visible in the {@link Window}.
+ * {@link Camera} controls which part of the game world is visible in the {@link Window}.
  * It does this by manipulating the window's {@link AffineTransform} object
  */
 public final class Camera {
@@ -53,10 +53,7 @@ public final class Camera {
 
   public static double getY() { return y; }
 
-  /**
-   * Applies the camera's position and zoom to the current window's transform
-   * matrix
-   */
+  /** Applies the camera's position and zoom to the current window's transform matrix */
   static void update() {
     Window window = Window.getInstance();
     Position center = window.getCenter();

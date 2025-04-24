@@ -9,10 +9,10 @@ import java.util.stream.IntStream;
 import static dev.gamekit.utils.Math.clamp;
 
 /**
- * Input handles keyboard and mouse input detection for use in the application.
+ * {@link Input} handles keyboard and mouse input detection for use in the application.
  * <p>
- * Input includes static constants which map to Java's {@link KeyEvent}
- * constants so they can be used interchangeably.
+ * Input includes static constants which map to Java's {@link KeyEvent} constants so they can be
+ * used interchangeably.
  */
 public final class Input implements KeyListener, MouseListener, MouseMotionListener {
   public static final int KEY_ENTER = KeyEvent.VK_ENTER;
@@ -263,11 +263,6 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
     return INSTANCE.buttonStates[buttonIndex].isReleased;
   }
 
-  public synchronized static boolean isButtonClicked(int buttonCode) {
-    int buttonIndex = buttonCode - 1;
-    return INSTANCE.buttonStates[buttonIndex].isClicked;
-  }
-
   public synchronized static Position getMousePosition() {
     Window win = Window.getInstance();
     double scaleRatio = win.getDisplayScaleRatio();
@@ -302,10 +297,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
     INSTANCE.isFrozen = true;
   }
 
-  /**
-   * Resets the current state and allows Window input events to affect the
-   * current input state
-   */
+  /** Resets the current state and allows Window input events to affect the current input state */
   static void reset() {
     IntStream.range(0, KEY_COUNT).forEach(
       i -> INSTANCE.keyStates[i].reset()
@@ -341,7 +333,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   public synchronized void mousePressed(MouseEvent e) {
     int buttonCode = e.getButton();
     if (!isFrozen && buttonCode >= 1) {
-      buttonStates[buttonCode - 1].update(true, mousePosition);
+      buttonStates[buttonCode - 1].update(true);
     }
   }
 
@@ -349,7 +341,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   public synchronized void mouseReleased(MouseEvent e) {
     int buttonCode = e.getButton();
     if (!isFrozen && buttonCode >= 1) {
-      buttonStates[buttonCode - 1].update(false, mousePosition);
+      buttonStates[buttonCode - 1].update(false);
     }
   }
 
@@ -398,31 +390,6 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   /** Represents a keyboard button input state */
   private static class KeyState extends ActionState { }
 
-  /**
-   * Represents a mouse button input state whose
-   * {@link #update(boolean, Position)} takes the mouse position to determine
-   * whether a release event also results in a click event
-   */
-  private static class ButtonState extends ActionState {
-    boolean isClicked = false;
-    private Position mousePosition;
-
-    private void update(boolean isPressed, Position mousePosition) {
-      super.update(isPressed);
-
-      if (isDown)
-        this.mousePosition = new Position(mousePosition);
-
-      if (isReleased && this.mousePosition.equals(mousePosition)) {
-        this.mousePosition = null;
-        isClicked = true;
-      }
-    }
-
-    @Override
-    protected void reset() {
-      super.reset();
-      isClicked = false;
-    }
-  }
+  /** Represents a mouse button input state */
+  private static class ButtonState extends ActionState { }
 }

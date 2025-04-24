@@ -8,8 +8,8 @@ import javax.sound.sampled.FloatControl;
 import static dev.gamekit.utils.Math.clamp;
 
 /**
- * {@code AudioClip2D} is a {@link AudioClip} which uses spatialization to
- * updates its audio parameters in relation to the {@link AudioListener}.
+ * {@link AudioClip3D} is a {@link AudioClip} which uses spatialization to update its parameters
+ * in relation to the {@link AudioListener}.
  * <p>
  * {@link AudioClip3D} is best for positional sounds within a game
  */
@@ -43,7 +43,9 @@ public class AudioClip3D extends AudioClip {
 
   public Vector getPosition() { return position; }
 
-  public void setPosition(double x, double y) { position.set(x, y); }
+  public void setPosition(double x, double y) {
+    position.set(x, y);
+  }
 
   @Override
   public void performUpdate() {
@@ -55,12 +57,11 @@ public class AudioClip3D extends AudioClip {
     );
 
     double distanceToListener = shape.getDistance(position, listenerPos);
-    double attenuation = this.attenuation.attenuate(distanceToListener,
-      shape.minDistance, shape.maxDistance);
+    double attenuation = this.attenuation.attenuate(
+      distanceToListener, shape.minDistance, shape.maxDistance
+    );
 
-    double effectiveVolume = !group.isMuted() ?
-      group.getMaxVolume() * maxVolume * attenuation : 0;
-
+    double effectiveVolume = !group.isMuted() ? group.getMaxVolume() * maxVolume * attenuation : 0;
     double effectivePan = Math.abs(Vector.dot(listenerVector, UP)) - 1;
 
     if (this.effectiveVolume != effectiveVolume) {

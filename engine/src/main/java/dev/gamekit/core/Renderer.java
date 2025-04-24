@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 
 import static dev.gamekit.utils.Math.degToRad;
 
-/** Static class which provides draw methods to draw on the window scene. */
+/** {@link Renderer} provides draw methods to draw on the current {@link Window} */
 public final class Renderer {
   private static final GraphicsState INITIAL_STATE = new GraphicsState();
   private static final GraphicsState CURRENT_STATE = new GraphicsState();
@@ -62,20 +62,22 @@ public final class Renderer {
   }
 
   /**
-   * Fills a <b>center-origin</b> rounded rect at (x, y) with width and height
-   * and corner width and height
+   * Fills a <b>center-origin</b> rounded rect at (x, y) with width and height and corner width
+   * and height
    */
   public static void fillRoundRect(
-    int x, int y, int width, int height, int cornerWidth, int cornerHeight) {
+    int x, int y, int width, int height, int cornerWidth, int cornerHeight
+  ) {
     roundRect(x, y, width, height, cornerWidth, cornerHeight, true);
   }
 
   /**
-   * Draws a <b>center-origin</b> rounded rect at (x, y) with width and height
-   * and corner width and height
+   * Draws a <b>center-origin</b> rounded rect at (x, y) with width and height and corner width
+   * and height
    */
   public static void drawRoundRect(
-    int x, int y, int width, int height, int cornerWidth, int cornerHeight) {
+    int x, int y, int width, int height, int cornerWidth, int cornerHeight
+  ) {
     roundRect(x, y, width, height, cornerWidth, cornerHeight, false);
   }
 
@@ -102,8 +104,8 @@ public final class Renderer {
   }
 
   /**
-   * Draws a <b>center-origin</b> {@link BufferedImage} at (x, y) with width
-   * and height. The image is scaled to fit within the provided bounds
+   * Draws a <b>center-origin</b> {@link BufferedImage} at (x, y) with width and height.
+   * The image is scaled to fit within the provided bounds
    */
   public static void drawImage(
     BufferedImage img, int x, int y, int width, int height
@@ -126,6 +128,10 @@ public final class Renderer {
   }
 
   /**
+   * {@code withRotation} rotates the {@link Graphics2D} object by {@code deg} about point
+   * {@code (x, y)}, performs the render operations defined by {@code action} and restores the
+   * rotation of the {@link Graphics2D} object afterward
+   * <p>
    * Rotation is performed using the steps below:
    * <ul>
    * <li>Translate to the target point</li>
@@ -134,11 +140,6 @@ public final class Renderer {
    * <li>Translate to the target point again</li>
    * <li>Rotate the {@link Graphics2D} object by the negated rotation</li>
    * </ul>
-   * <p>
-   * {@code withRotation} rotates the {@link Graphics2D} object by {@code deg}
-   * about point {@code (x, y)}, performs the render operations defined by
-   * {@code action} and restores the rotation of the {@link Graphics2D} object
-   * afterward
    */
   public static void withRotation(
     int x, int y, double deg,
@@ -231,17 +232,7 @@ public final class Renderer {
     void run();
   }
 
-  /**
-   * G2DState maintains the state of a {@link Graphics2D} object.
-   * <p>
-   * This state includes the following:
-   * <ul>
-   *   <li>Foreground {@link Color color}</li>
-   *   <li>Background {@link Color color}</li>
-   *   <li>{@link Stroke Stroke}</li>
-   *   <li>{@link Paint Paint}</li>
-   * </ul>
-   */
+  /** G2DState maintains the state of a {@link Graphics2D} object */
   private static class GraphicsState {
     public static final Stroke DEFAULT_STROKE = new BasicStroke(
       1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND
@@ -252,6 +243,7 @@ public final class Renderer {
     Paint paint;
     Color color;
     Font font;
+    Shape clip;
 
     /** Copies the state of a {@link Graphics2D} object */
     void save(Graphics2D g) {
@@ -260,6 +252,7 @@ public final class Renderer {
       paint = g.getPaint();
       color = g.getColor();
       font = g.getFont();
+      clip = g.getClip();
     }
 
     /** Applies the internal state to a {@link Graphics2D} object */
@@ -269,6 +262,7 @@ public final class Renderer {
       g.setPaint(paint);
       g.setColor(color);
       g.setFont(font);
+      g.setClip(clip);
     }
 
     void reset() {
@@ -277,6 +271,7 @@ public final class Renderer {
       paint = null;
       color = null;
       font = null;
+      clip = null;
     }
   }
 }

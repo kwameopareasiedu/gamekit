@@ -1,8 +1,6 @@
 package dev.gamekit.ui;
 
-import dev.gamekit.ui.widgets.Widget;
-
-/** Represents a render bound on the screen in which a {@link Widget} is rendered */
+/** {@link Bounds} represents a region in 2D space */
 public class Bounds {
   public int x;
   public int y;
@@ -19,6 +17,16 @@ public class Bounds {
     this.y = y;
     this.width = width;
     this.height = height;
+  }
+
+  /** Returns a new bounds which is an intersection of two bounds */
+  public static Bounds intersect(Bounds bounds1, Bounds bounds2) {
+    int x1 = Math.max(bounds1.x, bounds2.x);
+    int y1 = Math.max(bounds1.y, bounds2.y);
+    int x2 = Math.min(bounds1.x + bounds1.width, bounds2.x + bounds2.width);
+    int y2 = Math.min(bounds1.y + bounds1.height, bounds2.y + bounds2.height);
+
+    return new Bounds(x1, y1, x2 - x1, y2 - y1);
   }
 
   public void set(int x, int y, int width, int height) {
@@ -62,15 +70,6 @@ public class Bounds {
     set(x1, y1, w, h);
   }
 
-  public Bounds intersection(Bounds bounds) {
-    int x1 = Math.max(x, bounds.x);
-    int y1 = Math.max(y, bounds.y);
-    int x2 = Math.min(x + width, bounds.x + bounds.width);
-    int y2 = Math.min(y + height, bounds.y + bounds.height);
-
-    return new Bounds(x1, y1, x2 - x1, y2 - y1);
-  }
-
   @Override
   public String toString() {
     return String.format(
@@ -81,10 +80,10 @@ public class Bounds {
 
   @Override
   public boolean equals(Object obj) {
-    return obj instanceof Bounds boundsObject
-      && x == boundsObject.x
-      && y == boundsObject.y
-      && width == boundsObject.width
-      && height == boundsObject.height;
+    return obj instanceof Bounds bounds
+      && x == bounds.x
+      && y == bounds.y
+      && width == bounds.width
+      && height == bounds.height;
   }
 }

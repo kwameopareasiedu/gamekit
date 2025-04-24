@@ -3,10 +3,10 @@ package dev.gamekit.audio;
 import static dev.gamekit.utils.Math.clamp;
 
 /**
- * {@code AudioClip2D} is a {@link AudioClip} which updates its audio
- * parameters without spatialization.
+ * {@link AudioClip2D} is a {@link AudioClip} which updates its audio parameters without
+ * spatialization.
  * <p>
- * {@link AudioClip2D} sound the same as if you played it through a media player
+ * An {@link AudioClip2D} sounds the same as if you played it through a media player
  */
 public class AudioClip2D extends AudioClip {
   // Cached effective volume since log10() is expensive to compute every frame

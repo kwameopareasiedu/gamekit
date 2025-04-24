@@ -12,18 +12,12 @@ public record Constraints(int minWidth, int maxWidth, int minHeight,
     maxHeight = Math.max(maxHeight, 0);
   }
 
-  /**
-   * Constraints the given width to respect {@link #minWidth} and
-   * {@link #maxWidth}
-   */
+  /** Constraints the given width to respect {@link #minWidth} and {@link #maxWidth} */
   public int constrainWidth(int width) {
     return clamp(width, minWidth, maxWidth);
   }
 
-  /**
-   * Constraints the given height to respect {@link #minHeight} and
-   * {@link #maxHeight}
-   */
+  /** Constraints the given height to respect {@link #minHeight} and {@link #maxHeight} */
   public int constrainHeight(int height) {
     return clamp(height, minHeight, maxHeight);
   }

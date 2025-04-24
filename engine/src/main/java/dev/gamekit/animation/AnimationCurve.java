@@ -3,8 +3,8 @@ package dev.gamekit.animation;
 import static dev.gamekit.utils.Constants.*;
 
 /**
- * Animation curves transforms an {@link Animation} value from a (0 - 1) range
- * to a point on a curve equation defined in {@link #get(double)} method.
+ * {@link AnimationCurve} transforms an {@link Animation} value from a (0 - 1) range to a point on
+ * a curve equation defined in {@link #get(double)} method.
  */
 public abstract class AnimationCurve {
   public static final AnimationCurve LINEAR = new AnimationCurve() {

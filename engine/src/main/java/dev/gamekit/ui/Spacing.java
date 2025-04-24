@@ -69,10 +69,10 @@ public class Spacing {
 
   @Override
   public boolean equals(Object obj) {
-    return obj instanceof Spacing
-      && ((Spacing) obj).top == top
-      && ((Spacing) obj).right == right
-      && ((Spacing) obj).bottom == bottom
-      && ((Spacing) obj).left == left;
+    return obj instanceof Spacing spacing
+      && spacing.top == top
+      && spacing.right == right
+      && spacing.bottom == bottom
+      && spacing.left == left;
   }
 }

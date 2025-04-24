@@ -11,10 +11,7 @@ public abstract class Flex extends MultiChildParent {
   protected final MainAxisAlignment mainAxisAlignment;
   protected final CrossAxisAlignment crossAxisAlignment;
 
-  public Flex(
-    FlexOptions<? extends FlexOptions<?>> options,
-    Widget... children
-  ) {
+  public Flex(FlexOptions<? extends FlexOptions<?>> options, Widget... children) {
     super(children);
     this.gapSize = options.gapSize;
     this.mainAxisAlignment = options.mainAxisAlignment;

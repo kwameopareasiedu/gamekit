@@ -5,10 +5,7 @@ import dev.gamekit.ui.enums.MainAxisAlignment;
 
 /** A {@link Flex} which arranges its children vertically */
 public class Column extends Flex {
-  public Column(
-    ColumnOptions<? extends ColumnOptions<?>> options,
-    Widget... children
-  ) {
+  public Column(ColumnOptions<? extends ColumnOptions<?>> options, Widget... children) {
     super(options, children);
   }
 

@@ -119,7 +119,7 @@ public class UiTest {
 
     bounds.set(0, 0, 1920, 1080);
     bounds2.set(50, 50, 100, 100);
-    Bounds intersection = bounds.intersection(bounds2);
+    Bounds intersection = Bounds.intersect(bounds, bounds2);
 
     assertEquals(50, intersection.x);
     assertEquals(50, intersection.y);

@@ -14,13 +14,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * IO handles resource access
+ * {@link IO} handles resource access
  * <p>
- * {@code IO} caches resources loaded, prevent multiple disk reads for the
- * same and improving performance.
+ * {@code IO} caches resources loaded, prevent multiple disk reads for the same and improving
+ * performance.
  * <p>
- * It also keeps track of opened {@link InputStream} objects and closes them
- * when the current application exits
+ * It also keeps track of opened {@link InputStream} objects and closes them when the current
+ * application exits
  */
 public class IO {
   private static final Logger LOGGER = LogManager.getLogger();
@@ -29,13 +29,14 @@ public class IO {
 
   private IO() { }
 
-  /** Opens and returns a stream to a resource file */
+  /** Open and return a stream to a <b>resource file</b> */
   public static InputStream getResourceStream(String resPath) {
     InputStream is = IO.class.getClassLoader().getResourceAsStream(resPath);
     INPUT_STREAMS.add(is);
     return is;
   }
 
+  /** Read and cache an image <b>resource file</b> */
   public static BufferedImage getResourceImage(String resPath) {
     try {
       LOGGER.debug("Loading resource image at {}", resPath);
@@ -53,6 +54,7 @@ public class IO {
     }
   }
 
+  /** Read and cache a font <b>resource file</b> */
   public static Font getResourceFont(String resPath) {
     try {
       LOGGER.debug("Loading resource font at {}", resPath);
@@ -71,7 +73,7 @@ public class IO {
     }
   }
 
-  /** Closes open IO resources */
+  /** Close any open IO resources */
   static void dispose() {
     try {
       for (var is : INPUT_STREAMS)

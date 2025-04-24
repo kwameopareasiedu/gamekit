@@ -5,12 +5,11 @@ import dev.gamekit.core.Application;
 import static dev.gamekit.utils.Math.clamp;
 
 /**
- * Animation holds a value which increments from 0 to 1 over some duration.
- * The value can then be connected to any property for smooth transitions.
+ * {@link Animation} holds a value which increments from 0 to 1 over some duration. The value can
+ * then be connected to any property for smooth transitions.
  * <p>
- * Animation can be set to run once or repeat (either restart or revers).
- * Additionally, an {@link AnimationCurve} can be attached to change how the
- * animation's value is interpolated.
+ * Animation can be set to run once or repeat (either restart or alternate). Additionally, an
+ * {@link AnimationCurve} can be attached to change how the animation's value is interpolated.
  */
 public class Animation {
   private final RepeatMode repeatMode;
@@ -42,7 +41,9 @@ public class Animation {
 
   public State getState() { return state; }
 
-  public double getValue() { return curve != null ? curve.get(value) : value; }
+  public double getValue() {
+    return curve != null ? curve.get(value) : value;
+  }
 
   /** Sets the value listener and returns this animation */
   public Animation setValueListener(ValueListener listener) {
@@ -84,13 +85,9 @@ public class Animation {
 
       if ((value >= 1 && rate > 0) || (value <= 0 && rate < 0)) {
         switch (repeatMode) {
-          case NONE -> {
-            state = State.ENDED;
-            if (stateListener != null)
-              stateListener.onStateChanged(state);
-          }
+          case NONE -> stop();
           case RESTART -> value = 0;
-          case REVERSE -> rate *= -1;
+          case ALTERNATE -> rate *= -1;
         }
       }
     }
@@ -109,14 +106,14 @@ public class Animation {
   /** Indicates how an animation behaves when it reaches its end */
   public enum RepeatMode {
     /**
-     * Indicates a running animation not repeat and transition to
-     * {@link State#ENDED} when at its end
+     * Indicates a running animation not repeat and transition to {@link State#ENDED} when at its
+     * end
      */
     NONE,
     /** Indicates a running animation start over when at its end */
     RESTART,
     /** Indicates a running animation changes direction when at its end */
-    REVERSE
+    ALTERNATE
   }
 
   /** Callback interface for {@link Animation} value changes */

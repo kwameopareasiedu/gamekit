@@ -69,10 +69,8 @@ public class Demo3UserInterface extends Scene {
               .crossAxisAlignment(CrossAxisAlignment.STRETCH)
               .gapSize(24),
 
-            MainMenuButton.create("Tutorial",
-              e -> System.out.println("0: " + e.type)),
-            MainMenuButton.create("New Planet",
-              e -> System.out.println("1: " + e.type)),
+            MainMenuButton.create("Tutorial", e -> System.out.println("0: " + e.type)),
+            MainMenuButton.create("New Planet", e -> System.out.println("1: " + e.type)),
             MainMenuButton.create("New Campaign", null),
             MainMenuButton.create("Load Game", null),
             MainMenuButton.create("Online Multiplayer", null),

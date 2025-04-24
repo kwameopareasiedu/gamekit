@@ -5,13 +5,13 @@ import dev.gamekit.audio.AudioListener;
 import dev.gamekit.utils.Vector;
 
 /**
- * Audio shapes define the min and max attenuation distances of
- * {@link AudioClip3D}
+ * {@link AudioShape} models the area around an {@link AudioClip3D} in which attenuation occurs.
+ * It does this by defining the min and max attenuation distances w.r.t some abstract shape (E.g.
+ * circle, box, capsule, etc.)
  * <p>
- * Subclasses must implement the abstract {@link #getDistance(Vector, Vector)}
- * which calculates the distance of the {@link AudioClip3D} to the
- * {@link AudioListener} w.r.t the subclass shape and clamped to the minimum
- * and maximum attenuation distances.
+ * Subclasses must implement the abstract {@link #getDistance(Vector, Vector)} which calculates
+ * the distance of the {@link AudioClip3D} to the {@link AudioListener} w.r.t the subclass shape
+ * and clamped to the minimum and maximum attenuation distances.
  */
 public abstract class AudioShape {
   public final double minDistance;
