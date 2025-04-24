@@ -17,14 +17,6 @@ import org.apache.logging.log4j.Logger;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-import static dev.gamekit.ui.widgets.FlexParam.*;
-import static dev.gamekit.ui.widgets.ImageParam.image;
-import static dev.gamekit.ui.widgets.OpacityParam.opacity;
-import static dev.gamekit.ui.widgets.ScaledParam.scale;
-import static dev.gamekit.ui.widgets.SingleChildParentParam.child;
-import static dev.gamekit.ui.widgets.TextParam.alignment;
-import static dev.gamekit.ui.widgets.TextParam.text;
-
 public class Playground extends Scene {
   private static final Logger LOGGER = LogManager.getLogger();
   final Vector listenerPos;
@@ -106,49 +98,41 @@ public class Playground extends Scene {
   @Override
   public Widget createUI() {
     return Column.create(
-      mainAxisAlignment(MainAxisAlignment.CENTER),
-      crossAxisAlignment(CrossAxisAlignment.STRETCH),
-      gapSize(24),
-      children(
-        Text.create(
-          text("Press the Space Bar to play/restart the audio"),
-          alignment(Alignment.CENTER)
+      Column.options()
+        .mainAxisAlignment(MainAxisAlignment.CENTER)
+        .crossAxisAlignment(CrossAxisAlignment.STRETCH)
+        .gapSize(24),
+      Text.create(
+        Text.options()
+          .text("Press the Space Bar to play/restart the audio")
+          .alignment(Alignment.CENTER)
+      ),
+      Text.create(
+        Text.options()
+          .text("Move the mouse from left to right to pan the audio")
+          .alignment(Alignment.CENTER)
+      ),
+      Row.create(
+        Row.options()
+          .mainAxisAlignment(MainAxisAlignment.CENTER)
+          .crossAxisAlignment(CrossAxisAlignment.CENTER)
+          .gapSize(8),
+        Opacity.create(
+          Opacity.options()
+            .opacity(pan < 0 ? 1 : 1 - pan),
+          Scaled.create(
+            Scaled.options()
+              .scale(0.5),
+            Image.create(speakerImg)
+          )
         ),
-        Text.create(
-          text("Move the mouse from left to right to pan the audio"),
-          alignment(Alignment.CENTER)
-        ),
-        Row.create(
-          mainAxisAlignment(MainAxisAlignment.CENTER),
-          crossAxisAlignment(CrossAxisAlignment.CENTER),
-          gapSize(8),
-          children(
-            Opacity.create(
-              opacity(pan < 0 ? 1 : 1 - pan),
-              child(
-                Scaled.create(
-                  scale(0.5),
-                  child(
-                    Image.create(
-                      image(speakerImg)
-                    )
-                  )
-                )
-              )
-            ),
-            Opacity.create(
-              opacity(pan > 0 ? 1 : 1 + pan),
-              child(
-                Scaled.create(
-                  scale(0.5),
-                  child(
-                    Image.create(
-                      image(speakerImg)
-                    )
-                  )
-                )
-              )
-            )
+        Opacity.create(
+          Opacity.options()
+            .opacity(pan > 0 ? 1 : 1 + pan),
+          Scaled.create(
+            Scaled.options()
+              .scale(0.5),
+            Image.create(speakerImg)
           )
         )
       )

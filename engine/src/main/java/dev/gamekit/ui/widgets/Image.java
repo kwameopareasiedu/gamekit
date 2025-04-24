@@ -1,7 +1,6 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.Param;
 import dev.gamekit.ui.enums.ImageFit;
 
 import java.awt.*;
@@ -11,22 +10,26 @@ import java.util.Objects;
 /** A {@link Leaf} which renders a {@link BufferedImage} to the screen */
 public class Image extends Leaf {
   protected final BufferedImage image;
-  protected final ImageFit imageFit;
+  protected final ImageFit fit;
 
-  public Image(BufferedImage image, ImageFit imageFit) {
-    if (image == null)
+  public Image(ImageOptions options) {
+    if (options.image == null)
       throw new NullPointerException("Image cannot be null");
 
-    this.image = image;
-    this.imageFit = imageFit;
+    this.image = options.image;
+    this.fit = options.fit;
   }
 
-  @SafeVarargs
-  public static Image create(Param<? super ImageParam>... params) {
-    return new Image(
-      Param.getValue(params, "image", null),
-      Param.getValue(params, "imageFit", ImageFit.FIT)
-    );
+  public static Image create(BufferedImage image) {
+    return new Image(new ImageOptions().image(image));
+  }
+
+  public static Image create(ImageOptions options) {
+    return new Image(options);
+  }
+
+  public static ImageOptions options() {
+    return new ImageOptions();
   }
 
   @Override
@@ -43,12 +46,12 @@ public class Image extends Leaf {
   protected void performRender(Graphics2D g) {
     int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
 
-    switch (imageFit) {
+    switch (fit) {
       case FIT, CROP -> {
         double widthRatio = (double) absoluteBounds.width / intrinsicBounds.width;
         double heightRatio = (double) absoluteBounds.height / intrinsicBounds.height;
 
-        double scaleRatio = imageFit == ImageFit.FIT ?
+        double scaleRatio = fit == ImageFit.FIT ?
           intrinsicBounds.width > intrinsicBounds.height ? widthRatio : heightRatio :
           intrinsicBounds.width <= intrinsicBounds.height ? widthRatio : heightRatio;
 
@@ -72,9 +75,24 @@ public class Image extends Leaf {
   public boolean stateEquals(Widget widget) {
     if (widget instanceof Image imageWidget) {
       return Objects.equals(image, imageWidget.image)
-        && Objects.equals(imageFit, imageWidget.imageFit);
+        && Objects.equals(fit, imageWidget.fit);
     }
 
     return false;
+  }
+
+  public static class ImageOptions {
+    public BufferedImage image;
+    public ImageFit fit = ImageFit.FIT;
+
+    public ImageOptions image(BufferedImage image) {
+      this.image = image;
+      return this;
+    }
+
+    public ImageOptions fit(ImageFit fit) {
+      this.fit = fit;
+      return this;
+    }
   }
 }

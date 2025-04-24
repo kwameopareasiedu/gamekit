@@ -12,15 +12,13 @@ public abstract class Flex extends MultiChildParent {
   protected final CrossAxisAlignment crossAxisAlignment;
 
   public Flex(
-    int gapSize,
-    MainAxisAlignment mainAxisAlignment,
-    CrossAxisAlignment crossAxisAlignment,
+    FlexOptions<? extends FlexOptions<?>> options,
     Widget... children
   ) {
     super(children);
-    this.gapSize = gapSize;
-    this.mainAxisAlignment = mainAxisAlignment;
-    this.crossAxisAlignment = crossAxisAlignment;
+    this.gapSize = options.gapSize;
+    this.mainAxisAlignment = options.mainAxisAlignment;
+    this.crossAxisAlignment = options.crossAxisAlignment;
   }
 
   @Override
@@ -32,5 +30,27 @@ public abstract class Flex extends MultiChildParent {
     }
 
     return false;
+  }
+
+  @SuppressWarnings("unchecked")
+  public static class FlexOptions<T extends FlexOptions<T>> {
+    int gapSize = 12;
+    MainAxisAlignment mainAxisAlignment = MainAxisAlignment.START;
+    CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.START;
+
+    public T gapSize(int gapSize) {
+      this.gapSize = gapSize;
+      return (T) this;
+    }
+
+    public T mainAxisAlignment(MainAxisAlignment mainAxisAlignment) {
+      this.mainAxisAlignment = mainAxisAlignment;
+      return (T) this;
+    }
+
+    public T crossAxisAlignment(CrossAxisAlignment crossAxisAlignment) {
+      this.crossAxisAlignment = crossAxisAlignment;
+      return (T) this;
+    }
   }
 }

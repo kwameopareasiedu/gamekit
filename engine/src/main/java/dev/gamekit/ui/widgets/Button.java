@@ -1,7 +1,6 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.Param;
 import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.events.InputEventHandler;
 import dev.gamekit.ui.events.MouseEvent;
@@ -14,7 +13,7 @@ import java.util.Objects;
 /** A {@link Widget} which can be clicked to trigger an event */
 public class Button extends SingleChildParent implements NinePatch,
   InputEventHandler {
-  protected final Spacing spacing;
+  protected final Spacing padding;
   protected final BufferedImage defaultBackground;
   protected final BufferedImage hoverBackground;
   protected final BufferedImage pressedBackground;
@@ -22,40 +21,29 @@ public class Button extends SingleChildParent implements NinePatch,
   protected boolean mouseEntered;
   protected boolean mousePressed;
 
-  public Button(
-    Spacing spacing,
-    BufferedImage defaultBackground,
-    BufferedImage hoverBackground,
-    BufferedImage pressedBackground,
-    MouseEvent.Listener mouseListener,
-    Widget child
-  ) {
+  public Button(ButtonOptions options, Widget child) {
     super(child);
-    this.spacing = spacing;
-    this.defaultBackground = defaultBackground;
-    this.hoverBackground = hoverBackground;
-    this.pressedBackground = pressedBackground;
-    this.mouseListener = mouseListener;
+    this.padding = options.padding;
+    this.defaultBackground = options.defaultBackground;
+    this.hoverBackground = options.hoverBackground;
+    this.pressedBackground = options.pressedBackground;
+    this.mouseListener = options.mouseListener;
   }
 
-  @SafeVarargs
-  public static Button create(Param<? super ButtonParam>... params) {
-    return new Button(
-      Param.getValue(params, "spacing", new Spacing(24)),
-      Param.getValue(params, "defaultBackground", Constants.DEFAULT_BUTTON_BG),
-      Param.getValue(params, "hoverBackground", Constants.HOVER_BUTTON_BG),
-      Param.getValue(params, "pressedBackground", Constants.PRESSED_BUTTON_BG),
-      Param.getValue(params, "mouseListener", e -> { }),
-      Param.getValue(params, "child", Empty.create())
-    );
+  public static Button create(ButtonOptions options, Widget child) {
+    return new Button(options, child);
+  }
+
+  public static ButtonOptions options() {
+    return new ButtonOptions();
   }
 
   @Override
   protected void performLayout(Constraints constraints) {
     child.layout(
       new Constraints(
-        0, constraints.maxWidth(),
-        0, constraints.maxHeight()
+        0, constraints.maxWidth() - padding.getHorizontal(),
+        0, constraints.maxHeight() - padding.getVertical()
       )
     );
 
@@ -70,8 +58,8 @@ public class Button extends SingleChildParent implements NinePatch,
     );
 
     child.computedBounds.setPosition(
-      computedBounds.width / 2 - child.computedBounds.width / 2,
-      computedBounds.height / 2 - child.computedBounds.height / 2
+      padding.left + computedBounds.width / 2 - child.computedBounds.width / 2,
+      padding.top + computedBounds.height / 2 - child.computedBounds.height / 2
     );
   }
 
@@ -87,9 +75,9 @@ public class Button extends SingleChildParent implements NinePatch,
       bgImage = hoverBackground;
     }
 
-    if (bgImage != null && spacing != null) {
+    if (bgImage != null && padding != null) {
       super.renderAppearance(g);
-      renderNinePatch(bgImage, absoluteBounds, spacing, g);
+      renderNinePatch(bgImage, absoluteBounds, padding, g);
     }
   }
 
@@ -117,5 +105,38 @@ public class Button extends SingleChildParent implements NinePatch,
   @Override
   public void setMousePressed(boolean mousePressed) {
     this.mousePressed = mousePressed;
+  }
+
+  public static class ButtonOptions {
+    Spacing padding = new Spacing(24);
+    BufferedImage defaultBackground = Constants.DEFAULT_BUTTON_BG;
+    BufferedImage hoverBackground = Constants.HOVER_BUTTON_BG;
+    BufferedImage pressedBackground = Constants.PRESSED_BUTTON_BG;
+    MouseEvent.Listener mouseListener = e -> { };
+
+    public ButtonOptions spacing(Spacing padding) {
+      this.padding = padding;
+      return this;
+    }
+
+    public ButtonOptions defaultBackground(BufferedImage defaultBackground) {
+      this.defaultBackground = defaultBackground;
+      return this;
+    }
+
+    public ButtonOptions hoverBackground(BufferedImage hoverBackground) {
+      this.hoverBackground = hoverBackground;
+      return this;
+    }
+
+    public ButtonOptions pressedBackground(BufferedImage pressedBackground) {
+      this.pressedBackground = pressedBackground;
+      return this;
+    }
+
+    public ButtonOptions mouseListener(MouseEvent.Listener mouseListener) {
+      this.mouseListener = mouseListener;
+      return this;
+    }
   }
 }

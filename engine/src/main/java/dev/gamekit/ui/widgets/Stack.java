@@ -1,7 +1,6 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.Param;
 
 /** A {@link MultiChildParent} which stacks its children on top of each other */
 public class Stack extends MultiChildParent {
@@ -9,11 +8,8 @@ public class Stack extends MultiChildParent {
     super(children);
   }
 
-  @SafeVarargs
-  public static Stack create(Param<? super StackParam>... params) {
-    return new Stack(
-      Param.getValue(params, "children", null)
-    );
+  public static Stack create(Widget... children) {
+    return new Stack(children);
   }
 
   @Override

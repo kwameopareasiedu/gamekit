@@ -1,7 +1,6 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.Param;
 
 import java.awt.*;
 import java.util.Objects;
@@ -14,20 +13,20 @@ public class Opacity extends SingleChildParent {
 
   private final AlphaComposite composite;
 
-  public Opacity(double opacity, Widget child) {
+  public Opacity(OpacityOptions options, Widget child) {
     super(child);
-    this.opacity = clamp(opacity, 0, 1);
+    this.opacity = clamp(options.opacity, 0, 1);
     this.composite = AlphaComposite.getInstance(
       AlphaComposite.SRC_OVER, (float) this.opacity
     );
   }
 
-  @SafeVarargs
-  public static Opacity create(Param<? super OpacityParam>... params) {
-    return new Opacity(
-      Param.getValue(params, "opacity", 1.0),
-      Param.getValue(params, "child", null)
-    );
+  public static Opacity create(OpacityOptions options, Widget child) {
+    return new Opacity(options, child);
+  }
+
+  public static OpacityOptions options() {
+    return new OpacityOptions();
   }
 
   @Override
@@ -71,5 +70,14 @@ public class Opacity extends SingleChildParent {
       return Objects.equals(opacity, opacityWidget.opacity);
     }
     return false;
+  }
+
+  public static class OpacityOptions {
+    double opacity = 1.0;
+
+    public OpacityOptions opacity(double opacity) {
+      this.opacity = opacity;
+      return this;
+    }
   }
 }

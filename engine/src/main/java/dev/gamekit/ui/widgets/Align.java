@@ -1,7 +1,6 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.Param;
 import dev.gamekit.ui.enums.Alignment;
 
 import java.util.Objects;
@@ -11,23 +10,18 @@ public class Align extends SingleChildParent {
   protected final Alignment horizontalAlignment;
   protected final Alignment verticalAlignment;
 
-  public Align(
-    Alignment horizontalAlignment,
-    Alignment verticalAlignment,
-    Widget child
-  ) {
+  public Align(AlignOptions options, Widget child) {
     super(child);
-    this.horizontalAlignment = horizontalAlignment;
-    this.verticalAlignment = verticalAlignment;
+    this.horizontalAlignment = options.horizontalAlignment;
+    this.verticalAlignment = options.verticalAlignment;
   }
 
-  @SafeVarargs
-  public static Align create(Param<? super AlignParam>... params) {
-    return new Align(
-      Param.getValue(params, "horizontalAlignment", Alignment.START),
-      Param.getValue(params, "verticalAlignment", Alignment.START),
-      Param.getValue(params, "child", null)
-    );
+  public static Align create(AlignOptions options, Widget child) {
+    return new Align(options, child);
+  }
+
+  public static AlignOptions options() {
+    return new AlignOptions();
   }
 
   @Override
@@ -72,5 +66,20 @@ public class Align extends SingleChildParent {
     }
 
     return false;
+  }
+
+  public static class AlignOptions {
+    Alignment horizontalAlignment = Alignment.START;
+    Alignment verticalAlignment = Alignment.START;
+
+    public AlignOptions horizontalAlignment(Alignment horizontalAlignment) {
+      this.horizontalAlignment = horizontalAlignment;
+      return this;
+    }
+
+    public AlignOptions verticalAlignment(Alignment verticalAlignment) {
+      this.verticalAlignment = verticalAlignment;
+      return this;
+    }
   }
 }

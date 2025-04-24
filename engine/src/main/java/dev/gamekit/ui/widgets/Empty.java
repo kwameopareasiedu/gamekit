@@ -1,7 +1,6 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.Param;
 
 import java.awt.*;
 
@@ -10,8 +9,7 @@ import java.awt.*;
  * in places where {@code null} would have been preferable
  */
 public class Empty extends Leaf {
-  @SafeVarargs
-  public static Empty create(Param<? super EmptyParam>... params) {
+  public static Empty create() {
     return new Empty();
   }
 

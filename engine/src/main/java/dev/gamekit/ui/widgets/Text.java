@@ -2,7 +2,6 @@ package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.UI;
 import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.Param;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.utils.Constants;
 
@@ -12,16 +11,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import static dev.gamekit.utils.Constants.DEFAULT_FONT;
+
 /** A {@link Leaf} which renders text to the screen */
 @SuppressWarnings("MagicConstant")
 public class Text extends Leaf {
   protected final String text;
-  protected final String fontFamily;
+  protected final Font font;
   protected final int fontStyle;
   protected final int fontSize;
   protected final Color color;
   protected final Color backgroundColor;
-  protected final Font font;
   protected final Alignment alignment;
   protected final Alignment verticalAlignment;
   protected final boolean shadowEnabled;
@@ -33,58 +33,36 @@ public class Text extends Leaf {
   private final FontMetrics fontMetrics;
   private String[] multilineText;
 
-  public Text(
-    String text,
-    String fontFamily,
-    int fontStyle,
-    int fontSize,
-    Color color,
-    Color backgroundColor,
-    Font font,
-    Alignment alignment,
-    Alignment verticalAlignment,
-    boolean shadowEnabled,
-    int shadowOffsetX,
-    int shadowOffsetY,
-    Color shadowColor
-  ) {
-    this.text = text;
-    this.fontFamily = font != null ? font.getFamily() : fontFamily;
-    this.fontStyle = fontStyle;
-    this.fontSize = fontSize;
-    this.color = color;
-    this.backgroundColor = backgroundColor;
-    this.font = font;
-    this.alignment = alignment;
-    this.verticalAlignment = verticalAlignment;
-    this.shadowEnabled = shadowEnabled;
-    this.shadowOffsetX = shadowOffsetX;
-    this.shadowOffsetY = shadowOffsetY;
-    this.shadowColor = shadowColor;
+  public Text(TextOptions options) {
+    this.text = options.text;
+    this.font = options.font;
+    this.fontStyle = options.fontStyle;
+    this.fontSize = options.fontSize;
+    this.color = options.color;
+    this.backgroundColor = options.backgroundColor;
+    this.alignment = options.alignment;
+    this.verticalAlignment = options.verticalAlignment;
+    this.shadowEnabled = options.shadowEnabled;
+    this.shadowOffsetX = options.shadowOffsetX;
+    this.shadowOffsetY = options.shadowOffsetY;
+    this.shadowColor = options.shadowColor;
 
     renderFont = font != null
       ? font.deriveFont(fontStyle, fontSize)
-      : new Font(fontFamily, fontStyle, fontSize);
+      : DEFAULT_FONT.deriveFont(fontStyle, fontSize);
     fontMetrics = UI.getFontMetrics(renderFont);
   }
 
-  @SafeVarargs
-  public static Text create(Param<? super TextParam>... params) {
-    return new Text(
-      Param.getValue(params, "text", "Text"),
-      Param.getValue(params, "fontFamily", Constants.DEFAULT_FONT_NAME),
-      Param.getValue(params, "fontStyle", Font.PLAIN),
-      Param.getValue(params, "fontSize", 16),
-      Param.getValue(params, "color", Color.WHITE),
-      Param.getValue(params, "backgroundColor", Constants.TRANSPARENT_COLOR),
-      Param.getValue(params, "font", Constants.DEFAULT_FONT),
-      Param.getValue(params, "alignment", Alignment.START),
-      Param.getValue(params, "verticalAlignment", Alignment.START),
-      Param.getValue(params, "shadowEnabled", false),
-      Param.getValue(params, "shadowOffsetX", 0),
-      Param.getValue(params, "shadowOffsetY", 0),
-      Param.getValue(params, "shadowColor", Color.WHITE)
-    );
+  public static Text create(TextOptions params) {
+    return new Text(params);
+  }
+
+  public static Text create(String text) {
+    return new Text(new TextOptions().text(text));
+  }
+
+  public static TextOptions options() {
+    return new TextOptions();
   }
 
   @Override
@@ -204,12 +182,11 @@ public class Text extends Leaf {
   public boolean stateEquals(Widget widget) {
     if (widget instanceof Text textWidget) {
       return Objects.equals(text, textWidget.text) &&
-        Objects.equals(fontFamily, textWidget.fontFamily) &&
+        Objects.equals(font, textWidget.font) &&
         Objects.equals(fontStyle, textWidget.fontStyle) &&
         Objects.equals(fontSize, textWidget.fontSize) &&
         Objects.equals(color, textWidget.color) &&
         Objects.equals(backgroundColor, textWidget.backgroundColor) &&
-        Objects.equals(font, textWidget.font) &&
         Objects.equals(shadowEnabled, textWidget.shadowEnabled) &&
         Objects.equals(shadowOffsetX, textWidget.shadowOffsetX) &&
         Objects.equals(shadowOffsetY, textWidget.shadowOffsetY) &&
@@ -217,5 +194,76 @@ public class Text extends Leaf {
     }
 
     return false;
+  }
+
+  public static class TextOptions {
+    String text = "Text";
+    Font font = DEFAULT_FONT;
+    int fontStyle = Font.PLAIN;
+    int fontSize = 16;
+    Color color = Color.WHITE;
+    Color backgroundColor = Constants.TRANSPARENT_COLOR;
+    Alignment alignment = Alignment.START;
+    Alignment verticalAlignment = Alignment.START;
+    boolean shadowEnabled = false;
+    int shadowOffsetX = 0;
+    int shadowOffsetY = 0;
+    Color shadowColor = Color.WHITE;
+
+    public TextOptions text(String text) {
+      this.text = text;
+      return this;
+    }
+
+    public TextOptions fontStyle(int fontStyle) {
+      this.fontStyle = fontStyle;
+      return this;
+    }
+
+    public TextOptions fontSize(int fontSize) {
+      this.fontSize = fontSize;
+      return this;
+    }
+
+    public TextOptions color(Color color) {
+      this.color = color;
+      return this;
+    }
+
+    public TextOptions backgroundColor(Color backgroundColor) {
+      this.backgroundColor = backgroundColor;
+      return this;
+    }
+
+    public TextOptions font(Font font) {
+      this.font = font;
+      return this;
+    }
+
+    public TextOptions alignment(Alignment alignment) {
+      this.alignment = alignment;
+      return this;
+    }
+
+    public TextOptions verticalAlignment(Alignment verticalAlignment) {
+      this.verticalAlignment = verticalAlignment;
+      return this;
+    }
+
+    public TextOptions shadowEnabled(boolean shadowEnabled) {
+      this.shadowEnabled = shadowEnabled;
+      return this;
+    }
+
+    public TextOptions shadowOffset(int shadowOffsetX, int shadowOffsetY) {
+      this.shadowOffsetX = shadowOffsetX;
+      this.shadowOffsetY = shadowOffsetY;
+      return this;
+    }
+
+    public TextOptions shadowColor(Color shadowColor) {
+      this.shadowColor = shadowColor;
+      return this;
+    }
   }
 }

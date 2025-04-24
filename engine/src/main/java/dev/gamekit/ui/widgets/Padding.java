@@ -1,7 +1,6 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.Param;
 import dev.gamekit.ui.Spacing;
 
 import java.util.Objects;
@@ -10,17 +9,17 @@ import java.util.Objects;
 public class Padding extends SingleChildParent {
   protected final Spacing padding;
 
-  public Padding(Spacing padding, Widget child) {
+  public Padding(PaddingOptions options, Widget child) {
     super(child);
-    this.padding = padding;
+    this.padding = options.padding;
   }
 
-  @SafeVarargs
-  public static Padding create(Param<? super PaddingParam>... params) {
-    return new Padding(
-      Param.getValue(params, "padding", new Spacing()),
-      Param.getValue(params, "child", null)
-    );
+  public static Padding create(PaddingOptions options, Widget child) {
+    return new Padding(options, child);
+  }
+
+  public static PaddingOptions options() {
+    return new PaddingOptions();
   }
 
   @Override
@@ -62,5 +61,16 @@ public class Padding extends SingleChildParent {
     }
 
     return false;
+  }
+
+  public static class PaddingOptions {
+    Spacing padding = new Spacing();
+
+    PaddingOptions() { }
+
+    public PaddingOptions padding(Spacing padding) {
+      this.padding = padding;
+      return this;
+    }
   }
 }

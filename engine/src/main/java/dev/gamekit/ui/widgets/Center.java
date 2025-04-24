@@ -1,47 +1,24 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.Param;
+import dev.gamekit.ui.enums.Alignment;
 
 /** An {@link SingleChildParent} which centers its single child within itself */
-public class Center extends SingleChildParent {
+public class Center extends Align {
   public Center(Widget child) {
-    super(child);
-  }
-
-  @SafeVarargs
-  public static Center create(Param<? super CenterParam>... params) {
-    return new Center(
-      Param.getValue(params, "child", null)
+    super(
+      new AlignOptions()
+        .verticalAlignment(Alignment.CENTER)
+        .horizontalAlignment(Alignment.CENTER),
+      child
     );
   }
 
-  @Override
-  protected void performLayout(Constraints constraints) {
-    child.layout(
-      new Constraints(
-        0, constraints.maxWidth(),
-        0, constraints.maxHeight()
-      )
-    );
-
-    intrinsicBounds.setSize(
-      child.computedBounds.width,
-      child.computedBounds.height
-    );
-
-    computedBounds.setSize(
-      constraints.maxWidth(),
-      constraints.maxHeight()
-    );
-
-    int hOffset = computedBounds.width / 2 - intrinsicBounds.width / 2;
-    int vOffset = computedBounds.height / 2 - intrinsicBounds.height / 2;
-    child.computedBounds.setPosition(hOffset, vOffset);
+  public static Center create(Widget child) {
+    return new Center(child);
   }
 
   @Override
   public boolean stateEquals(Widget widget) {
-    return widget instanceof Align;
+    return widget instanceof Center;
   }
 }

@@ -18,19 +18,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
-import static dev.gamekit.ui.widgets.AlignParam.horizontalAlignment;
-import static dev.gamekit.ui.widgets.AlignParam.verticalAlignment;
-import static dev.gamekit.ui.widgets.ButtonParam.mouseListener;
-import static dev.gamekit.ui.widgets.ButtonParam.spacing;
-import static dev.gamekit.ui.widgets.FlexParam.*;
-import static dev.gamekit.ui.widgets.ImageParam.image;
-import static dev.gamekit.ui.widgets.MultiChildParentParam.children;
-import static dev.gamekit.ui.widgets.PaddingParam.padding;
-import static dev.gamekit.ui.widgets.SingleChildParentParam.child;
-import static dev.gamekit.ui.widgets.SizedParam.height;
-import static dev.gamekit.ui.widgets.SizedParam.width;
-import static dev.gamekit.ui.widgets.TextParam.*;
-
 public class Demo3UserInterface extends Scene {
   BufferedImage backdrop = IO.getResourceImage("planetfall-artwork.jpg");
   BufferedImage icon = IO.getResourceImage("planetfall-logo.png");
@@ -51,136 +38,109 @@ public class Demo3UserInterface extends Scene {
   @Override
   public Widget createUI() {
     return Stack.create(
-      children(
-        Image.create(
-          image(backdrop)
-        ),
-        Align.create(
-          horizontalAlignment(Alignment.START),
-          verticalAlignment(Alignment.START),
-          child(
-            Padding.create(
-              padding(new Spacing(24, 0)),
-              child(
-                Sized.create(
-                  width(480),
-                  height(480),
-                  child(
-                    Image.create(
-                      image(icon)
-                    )
-                  )
-                )
-              )
-            )
+      Image.create(backdrop),
+      Align.create(
+        Align.options()
+          .horizontalAlignment(Alignment.START)
+          .verticalAlignment(Alignment.START),
+        Padding.create(
+          Padding.options()
+            .padding(new Spacing(24, 0)),
+          Sized.create(
+            Sized.options()
+              .width(480)
+              .height(480),
+            Image.create(icon)
           )
-        ),
-        Align.create(
-          horizontalAlignment(Alignment.START),
-          verticalAlignment(Alignment.CENTER),
-          child(
-            Padding.create(
-              padding(new Spacing(256, 0, 0, 96)),
-              child(
-                Column.create(
-                  mainAxisAlignment(MainAxisAlignment.START),
-                  crossAxisAlignment(CrossAxisAlignment.STRETCH),
-                  gapSize(24),
-                  children(
-                    MainMenuButton.create("Tutorial",
-                      e -> System.out.println("0: " + e.type)),
-                    MainMenuButton.create("New Planet",
-                      e -> System.out.println("1: " + e.type)),
-                    MainMenuButton.create("New Campaign", null),
-                    MainMenuButton.create("Load Game", null),
-                    MainMenuButton.create("Online Multiplayer", null),
+        )
+      ),
+      Align.create(
+        Align.options()
+          .horizontalAlignment(Alignment.START)
+          .verticalAlignment(Alignment.CENTER),
+        Padding.create(
+          Padding.options()
+            .padding(new Spacing(256, 0, 0, 96)),
+          Column.create(
+            Column.options()
+              .mainAxisAlignment(MainAxisAlignment.START)
+              .crossAxisAlignment(CrossAxisAlignment.STRETCH)
+              .gapSize(24),
+            MainMenuButton.create("Tutorial",
+              e -> System.out.println("0: " + e.type)),
+            MainMenuButton.create("New Planet",
+              e -> System.out.println("1: " + e.type)),
+            MainMenuButton.create("New Campaign", null),
+            MainMenuButton.create("Load Game", null),
+            MainMenuButton.create("Online Multiplayer", null),
 
-                    Column.create(
-                      mainAxisAlignment(MainAxisAlignment.START),
-                      crossAxisAlignment(CrossAxisAlignment.START),
-                      gapSize(12),
-                      children(
-                        SubMenuButton.create("Commander Customization"),
-                        SubMenuButton.create("Options"),
-                        SubMenuButton.create("Credits"),
-                        SubMenuButton.create("Exit Game")
-                      )
-                    )
-                  )
-                )
-              )
+            Column.create(
+              Column.options()
+                .mainAxisAlignment(MainAxisAlignment.START)
+                .crossAxisAlignment(CrossAxisAlignment.START)
+                .gapSize(12),
+              SubMenuButton.create("Commander Customization"),
+              SubMenuButton.create("Options"),
+              SubMenuButton.create("Credits"),
+              SubMenuButton.create("Exit Game")
             )
           )
-        ),
-        Align.create(
-          verticalAlignment(Alignment.START),
-          child(
-            Sized.create(
-              width(Resolution.NATIVE.width()),
-              height(128),
-              child(
-                Image.create(
-                  image(scrim)
-                )
-              )
-            )
-          )
-        ),
-        Align.create(
+        )
+      ),
+      Align.create(
+        Align.options()
+          .verticalAlignment(Alignment.START),
+        Sized.create(
+          Sized.options()
+            .width(Resolution.NATIVE.width())
+            .height(128),
+          Image.create(scrim)
+        )
+      ),
+      Align.create(
+        Align.options().
           verticalAlignment(Alignment.END),
-          child(
-            Stack.create(
-              children(
-                Sized.create(
-                  width(Resolution.NATIVE.width()),
-                  height(128),
-                  child(
-                    Image.create(
-                      image(scrim)
-                    )
+        Stack.create(
+          Sized.create(
+            Sized.options()
+              .width(Resolution.NATIVE.width())
+              .height(128),
+            Image.create(scrim)
+          ),
+          Sized.create(
+            Sized.options().
+              width(Resolution.NATIVE.width())
+              .height(128),
+            Row.create(
+              Row.options().
+                mainAxisAlignment(MainAxisAlignment.END)
+                .crossAxisAlignment(CrossAxisAlignment.CENTER)
+                .gapSize(24),
+              Button.create(
+                Button.options()
+                  .spacing(new Spacing(12)),
+                Padding.create(
+                  Padding.options().
+                    padding(new Spacing(12, 12, 18, 12)),
+                  Text.create(
+                    Text.options()
+                      .text("Create Account")
+                      .fontSize(12)
+                      .fontStyle(Font.BOLD)
                   )
-                ),
-                Sized.create(
-                  width(Resolution.NATIVE.width()),
-                  height(128),
-                  child(
-                    Row.create(
-                      mainAxisAlignment(MainAxisAlignment.END),
-                      crossAxisAlignment(CrossAxisAlignment.CENTER),
-                      gapSize(24),
-                      children(
-                        Button.create(
-                          spacing(new Spacing(12)),
-                          child(
-                            Padding.create(
-                              padding(new Spacing(12, 12, 18, 12)),
-                              child(
-                                Text.create(
-                                  text("Create Account"),
-                                  fontSize(12),
-                                  fontStyle(Font.BOLD)
-                                )
-                              )
-                            )
-                          )
-                        ),
-                        Button.create(
-                          spacing(new Spacing(12)),
-                          child(
-                            Padding.create(
-                              padding(new Spacing(12, 12, 18, 12)),
-                              child(
-                                Text.create(
-                                  text("Login"),
-                                  fontSize(12),
-                                  fontStyle(Font.BOLD)
-                                )
-                              )
-                            )
-                          )
-                        )
-                      )
-                    )
+                )
+              ),
+              Button.create(
+                Button.options()
+                  .spacing(new Spacing(12)),
+                Padding.create(
+                  Padding.options()
+                    .padding(new Spacing(12, 12, 18, 12)),
+                  Text.create(
+                    Text.options()
+                      .text("Login")
+                      .fontSize(12)
+                      .fontStyle(Font.BOLD)
                   )
                 )
               )
@@ -197,17 +157,16 @@ public class Demo3UserInterface extends Scene {
     public MainMenuButton(String text, MouseEvent.Listener mouseListener) {
       super(
         Button.create(
-          mouseListener(mouseListener),
-          child(
-            Padding.create(
-              padding(new Spacing(12, 12, 16, 12)),
-              child(
-                Text.create(
-                  text(text),
-                  fontSize(20),
-                  fontStyle(Font.BOLD)
-                )
-              )
+          Button.options()
+            .mouseListener(mouseListener),
+          Padding.create(
+            Padding.options()
+              .padding(new Spacing(12, 12, 16, 12)),
+            Text.create(
+              Text.options()
+                .text(text)
+                .fontSize(20)
+                .fontStyle(Font.BOLD)
             )
           )
         )
@@ -238,17 +197,16 @@ public class Demo3UserInterface extends Scene {
     public SubMenuButton(String text) {
       super(
         Button.create(
-          spacing(new Spacing(12)),
-          child(
-            Padding.create(
-              padding(new Spacing(6, 6, 12, 6)),
-              child(
-                Text.create(
-                  text(text),
-                  fontSize(12),
-                  fontStyle(Font.BOLD)
-                )
-              )
+          Button.options()
+            .spacing(new Spacing(12)),
+          Padding.create(
+            Padding.options()
+              .padding(new Spacing(6, 6, 12, 6)),
+            Text.create(
+              Text.options()
+                .text(text)
+                .fontSize(12)
+                .fontStyle(Font.BOLD)
             )
           )
         )

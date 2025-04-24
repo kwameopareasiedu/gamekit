@@ -8,7 +8,6 @@ import java.lang.Math;
 
 /** Holds constants accessible across the entire engine */
 public final class Constants {
-  public static final String DEFAULT_FONT_NAME = "Dogica Pixel";
   public static final Font DEFAULT_FONT = IO.getResourceFont("dogicapixel.ttf");
   public static final Color TRANSPARENT_COLOR = new Color(0x0000000, true);
   public static final BufferedImage DEFAULT_BUTTON_BG =

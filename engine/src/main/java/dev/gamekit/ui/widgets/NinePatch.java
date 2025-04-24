@@ -12,18 +12,18 @@ public interface NinePatch {
   default void renderNinePatch(
     BufferedImage image,
     Bounds absoluteBounds,
-    Spacing spacing,
+    Spacing padding,
     Graphics2D g
   ) {
     int dx1 = absoluteBounds.x, dy1 = absoluteBounds.y;
     int dx2 = dx1 + absoluteBounds.width, dy2 = dy1 + absoluteBounds.height;
 
-    int nl = spacing.left;
-    int nt = spacing.top;
+    int nl = padding.left;
+    int nt = padding.top;
     int iw = image.getWidth();
     int ih = image.getHeight();
-    int nr = iw - spacing.right;
-    int nb = ih - spacing.bottom;
+    int nr = iw - padding.right;
+    int nb = ih - padding.bottom;
 
     int[][] srcBounds = new int[][]{
       new int[]{ 0, 0, nl, nt },
@@ -37,10 +37,10 @@ public interface NinePatch {
       new int[]{ nr, nb, iw, ih },
     };
 
-    nl = dx1 + spacing.left;
-    nt = dy1 + spacing.top;
-    nr = dx2 - spacing.right;
-    nb = dy2 - spacing.bottom;
+    nl = dx1 + padding.left;
+    nt = dy1 + padding.top;
+    nr = dx2 - padding.right;
+    nb = dy2 - padding.bottom;
 
     int[][] destBounds = new int[][]{
       new int[]{ dx1, dy1, nl, nt },

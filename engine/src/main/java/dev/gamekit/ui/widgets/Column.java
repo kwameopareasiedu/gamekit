@@ -1,29 +1,30 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.Param;
-import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.enums.MainAxisAlignment;
 
 /** A {@link Flex} which arranges its children vertically */
 public class Column extends Flex {
   public Column(
-    int gapSize,
-    MainAxisAlignment mainAxisAlignment,
-    CrossAxisAlignment crossAxisAlignment,
+    ColumnOptions<? extends ColumnOptions<?>> options,
     Widget... children
   ) {
-    super(gapSize, mainAxisAlignment, crossAxisAlignment, children);
+    super(options, children);
   }
 
-  @SafeVarargs
-  public static Column create(Param<? super RowParam>... params) {
-    return new Column(
-      Param.getValue(params, "gapSize", 0),
-      Param.getValue(params, "mainAxisAlignment", MainAxisAlignment.START),
-      Param.getValue(params, "crossAxisAlignment", CrossAxisAlignment.START),
-      Param.getValue(params, "children", null)
-    );
+  public static Column create(
+    ColumnOptions<? extends ColumnOptions<?>> options,
+    Widget... children
+  ) {
+    return new Column(options, children);
+  }
+
+  public static Column create(Widget... children) {
+    return new Column(new ColumnOptions<>(), children);
+  }
+
+  public static ColumnOptions<? extends ColumnOptions<?>> options() {
+    return new ColumnOptions<>();
   }
 
   @Override
@@ -97,4 +98,6 @@ public class Column extends Flex {
   public boolean stateEquals(Widget widget) {
     return widget instanceof Column;
   }
+
+  public static class ColumnOptions<T extends ColumnOptions<T>> extends FlexOptions<T> { }
 }

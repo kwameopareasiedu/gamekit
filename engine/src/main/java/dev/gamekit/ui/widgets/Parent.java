@@ -12,8 +12,8 @@ public abstract class Parent extends Widget {
   /**
    * Renders the appearance of this parent
    * <p>
-   * By default, this clears the area of the {@link #computedBounds} with the
-   * transparent color
+   * Since {@link Parent parents} contain one or more children, subclasses should be able to
+   * control when their own appearance is rendered before that of the child or children
    */
   protected void renderAppearance(Graphics2D g) { /* No-op */ }
 }
