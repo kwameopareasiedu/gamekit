@@ -104,12 +104,23 @@ public abstract class Widget {
    * {@link #performRender(Graphics2D)}.
    */
   public final void render(Graphics2D canvasGraphics) {
-    canvasGraphics.setClip(
-      absoluteBounds.x,
-      absoluteBounds.y,
-      absoluteBounds.width,
-      absoluteBounds.height
-    );
+    if (parent != null) {
+      Bounds clipBounds = absoluteBounds.intersection(parent.absoluteBounds);
+
+      canvasGraphics.setClip(
+        clipBounds.x,
+        clipBounds.y,
+        clipBounds.width,
+        clipBounds.height
+      );
+    } else {
+      canvasGraphics.setClip(
+        absoluteBounds.x,
+        absoluteBounds.y,
+        absoluteBounds.width,
+        absoluteBounds.height
+      );
+    }
 
     performRender(canvasGraphics);
 

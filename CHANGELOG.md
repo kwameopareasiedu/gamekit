@@ -33,6 +33,10 @@
 height)` method to `Renderer` class
 - Added `static void withRotation(int x, int y, double deg, RenderActions 
 renderGroup)` method to `Renderer` class
+- Added `Expanded` which is a `SingleChildParent` which forces the maximum constrained size on
+  its child
+- Added `Fractional` which is a `SingleChildParent` which enforces a fractional size on its
+  child relative to its width and height
 
 ### Changed
 

@@ -104,13 +104,13 @@ public class Playground extends Scene {
         .gapSize(24),
       Text.create(
         Text.options()
-          .text("Press the Space Bar to play/restart the audio")
-          .alignment(Alignment.CENTER)
+          .alignment(Alignment.CENTER),
+        "Press the Space Bar to play/restart the audio"
       ),
       Text.create(
         Text.options()
-          .text("Move the mouse from left to right to pan the audio")
-          .alignment(Alignment.CENTER)
+          .alignment(Alignment.CENTER),
+        "Move the mouse from left to right to pan the audio"
       ),
       Row.create(
         Row.options()

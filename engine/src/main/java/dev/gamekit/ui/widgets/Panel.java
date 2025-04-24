@@ -49,8 +49,8 @@ public class Panel extends SingleChildParent implements NinePatch {
     );
 
     child.computedBounds.setPosition(
-      padding.left + computedBounds.width / 2 - child.computedBounds.width / 2,
-      padding.top + computedBounds.height / 2 - child.computedBounds.height / 2
+      padding.left - padding.right + computedBounds.width / 2 - child.computedBounds.width / 2,
+      padding.top - padding.bottom + computedBounds.height / 2 - child.computedBounds.height / 2
     );
   }
 
@@ -85,7 +85,7 @@ public class Panel extends SingleChildParent implements NinePatch {
       return this;
     }
 
-    public PanelOptions spacing(Spacing padding) {
+    public PanelOptions padding(Spacing padding) {
       this.padding = padding;
       return this;
     }

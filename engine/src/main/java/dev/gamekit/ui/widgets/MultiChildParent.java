@@ -41,6 +41,6 @@ public abstract class MultiChildParent extends Parent {
       );
     children.get(index).setParent(null);
     children.set(index, newChild);
-    newChild.setParent(this);
+    children.get(index).setParent(this);
   }
 }

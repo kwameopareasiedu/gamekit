@@ -33,8 +33,8 @@ public class Text extends Leaf {
   private final FontMetrics fontMetrics;
   private String[] multilineText;
 
-  public Text(TextOptions options) {
-    this.text = options.text;
+  public Text(TextOptions options, String text) {
+    this.text = text;
     this.font = options.font;
     this.fontStyle = options.fontStyle;
     this.fontSize = options.fontSize;
@@ -53,12 +53,12 @@ public class Text extends Leaf {
     fontMetrics = UI.getFontMetrics(renderFont);
   }
 
-  public static Text create(TextOptions params) {
-    return new Text(params);
+  public static Text create(TextOptions params, String text) {
+    return new Text(params, text);
   }
 
   public static Text create(String text) {
-    return new Text(new TextOptions().text(text));
+    return new Text(new TextOptions(), text);
   }
 
   public static TextOptions options() {
@@ -197,7 +197,6 @@ public class Text extends Leaf {
   }
 
   public static class TextOptions {
-    String text = "Text";
     Font font = DEFAULT_FONT;
     int fontStyle = Font.PLAIN;
     int fontSize = 16;
@@ -209,11 +208,6 @@ public class Text extends Leaf {
     int shadowOffsetX = 0;
     int shadowOffsetY = 0;
     Color shadowColor = Color.WHITE;
-
-    public TextOptions text(String text) {
-      this.text = text;
-      return this;
-    }
 
     public TextOptions fontStyle(int fontStyle) {
       this.fontStyle = fontStyle;

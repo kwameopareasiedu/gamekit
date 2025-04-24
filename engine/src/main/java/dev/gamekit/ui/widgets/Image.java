@@ -12,20 +12,20 @@ public class Image extends Leaf {
   protected final BufferedImage image;
   protected final ImageFit fit;
 
-  public Image(ImageOptions options) {
-    if (options.image == null)
+  public Image(ImageOptions options, BufferedImage image) {
+    if (image == null)
       throw new NullPointerException("Image cannot be null");
 
-    this.image = options.image;
+    this.image = image;
     this.fit = options.fit;
   }
 
-  public static Image create(BufferedImage image) {
-    return new Image(new ImageOptions().image(image));
+  public static Image create(ImageOptions options, BufferedImage image) {
+    return new Image(options, image);
   }
 
-  public static Image create(ImageOptions options) {
-    return new Image(options);
+  public static Image create(BufferedImage image) {
+    return new Image(new ImageOptions(), image);
   }
 
   public static ImageOptions options() {
@@ -82,13 +82,7 @@ public class Image extends Leaf {
   }
 
   public static class ImageOptions {
-    public BufferedImage image;
     public ImageFit fit = ImageFit.FIT;
-
-    public ImageOptions image(BufferedImage image) {
-      this.image = image;
-      return this;
-    }
 
     public ImageOptions fit(ImageFit fit) {
       this.fit = fit;

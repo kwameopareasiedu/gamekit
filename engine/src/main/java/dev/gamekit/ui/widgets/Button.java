@@ -11,8 +11,7 @@ import java.awt.image.BufferedImage;
 import java.util.Objects;
 
 /** A {@link Widget} which can be clicked to trigger an event */
-public class Button extends SingleChildParent implements NinePatch,
-  InputEventHandler {
+public class Button extends SingleChildParent implements NinePatch, InputEventHandler {
   protected final Spacing padding;
   protected final BufferedImage defaultBackground;
   protected final BufferedImage hoverBackground;
@@ -53,13 +52,13 @@ public class Button extends SingleChildParent implements NinePatch,
     );
 
     computedBounds.setSize(
-      constraints.constrainWidth(intrinsicBounds.width),
-      constraints.constrainHeight(intrinsicBounds.height)
+      constraints.constrainWidth(intrinsicBounds.width + padding.getHorizontal()),
+      constraints.constrainHeight(intrinsicBounds.height + padding.getVertical())
     );
 
     child.computedBounds.setPosition(
-      padding.left + computedBounds.width / 2 - child.computedBounds.width / 2,
-      padding.top + computedBounds.height / 2 - child.computedBounds.height / 2
+      padding.left - padding.right + computedBounds.width / 2 - child.computedBounds.width / 2,
+      padding.top - padding.bottom + computedBounds.height / 2 - child.computedBounds.height / 2
     );
   }
 
@@ -114,7 +113,7 @@ public class Button extends SingleChildParent implements NinePatch,
     BufferedImage pressedBackground = Constants.PRESSED_BUTTON_BG;
     MouseEvent.Listener mouseListener = e -> { };
 
-    public ButtonOptions spacing(Spacing padding) {
+    public ButtonOptions padding(Spacing padding) {
       this.padding = padding;
       return this;
     }

@@ -29,7 +29,7 @@ public class Demo3UserInterface extends Scene {
 
   public static void main(String[] args) {
     Application game = new Application(
-      new Config("Demo 3 - Declarative UI", Resolution.HD, false)
+      new Config("Demo 3 - Declarative UI", Resolution.NATIVE, true)
     ) { };
     game.loadScene(new Demo3UserInterface());
     game.run();
@@ -39,10 +39,12 @@ public class Demo3UserInterface extends Scene {
   public Widget createUI() {
     return Stack.create(
       Image.create(backdrop),
+
       Align.create(
         Align.options()
           .horizontalAlignment(Alignment.START)
           .verticalAlignment(Alignment.START),
+
         Padding.create(
           Padding.options()
             .padding(new Spacing(24, 0)),
@@ -66,6 +68,7 @@ public class Demo3UserInterface extends Scene {
               .mainAxisAlignment(MainAxisAlignment.START)
               .crossAxisAlignment(CrossAxisAlignment.STRETCH)
               .gapSize(24),
+
             MainMenuButton.create("Tutorial",
               e -> System.out.println("0: " + e.type)),
             MainMenuButton.create("New Planet",
@@ -87,30 +90,23 @@ public class Demo3UserInterface extends Scene {
           )
         )
       ),
-      Align.create(
-        Align.options()
+
+      Fractional.create(
+        Fractional.options()
+          .heightFactor(0.15)
           .verticalAlignment(Alignment.START),
-        Sized.create(
-          Sized.options()
-            .width(Resolution.NATIVE.width())
-            .height(128),
-          Image.create(scrim)
-        )
+        Image.create(scrim)
       ),
-      Align.create(
-        Align.options().
-          verticalAlignment(Alignment.END),
+
+      Fractional.create(
+        Fractional.options()
+          .heightFactor(0.15)
+          .verticalAlignment(Alignment.END),
         Stack.create(
-          Sized.create(
-            Sized.options()
-              .width(Resolution.NATIVE.width())
-              .height(128),
+          Expanded.create(
             Image.create(scrim)
           ),
-          Sized.create(
-            Sized.options().
-              width(Resolution.NATIVE.width())
-              .height(128),
+          Expanded.create(
             Row.create(
               Row.options().
                 mainAxisAlignment(MainAxisAlignment.END)
@@ -118,30 +114,22 @@ public class Demo3UserInterface extends Scene {
                 .gapSize(24),
               Button.create(
                 Button.options()
-                  .spacing(new Spacing(12)),
-                Padding.create(
-                  Padding.options().
-                    padding(new Spacing(12, 12, 18, 12)),
-                  Text.create(
-                    Text.options()
-                      .text("Create Account")
-                      .fontSize(12)
-                      .fontStyle(Font.BOLD)
-                  )
+                  .padding(new Spacing(12, 12, 18, 12)),
+                Text.create(
+                  Text.options()
+                    .fontSize(12)
+                    .fontStyle(Font.BOLD),
+                  "Create Account"
                 )
               ),
               Button.create(
                 Button.options()
-                  .spacing(new Spacing(12)),
-                Padding.create(
-                  Padding.options()
-                    .padding(new Spacing(12, 12, 18, 12)),
-                  Text.create(
-                    Text.options()
-                      .text("Login")
-                      .fontSize(12)
-                      .fontStyle(Font.BOLD)
-                  )
+                  .padding(new Spacing(12, 12, 18, 12)),
+                Text.create(
+                  Text.options()
+                    .fontSize(12)
+                    .fontStyle(Font.BOLD),
+                  "Login"
                 )
               )
             )
@@ -158,16 +146,13 @@ public class Demo3UserInterface extends Scene {
       super(
         Button.create(
           Button.options()
+            .padding(new Spacing(12, 12, 16, 12))
             .mouseListener(mouseListener),
-          Padding.create(
-            Padding.options()
-              .padding(new Spacing(12, 12, 16, 12)),
-            Text.create(
-              Text.options()
-                .text(text)
-                .fontSize(20)
-                .fontStyle(Font.BOLD)
-            )
+          Text.create(
+            Text.options()
+              .fontSize(20)
+              .fontStyle(Font.BOLD),
+            text
           )
         )
       );
@@ -198,16 +183,12 @@ public class Demo3UserInterface extends Scene {
       super(
         Button.create(
           Button.options()
-            .spacing(new Spacing(12)),
-          Padding.create(
-            Padding.options()
-              .padding(new Spacing(6, 6, 12, 6)),
-            Text.create(
-              Text.options()
-                .text(text)
-                .fontSize(12)
-                .fontStyle(Font.BOLD)
-            )
+            .padding(new Spacing(6, 6, 8, 6)),
+          Text.create(
+            Text.options()
+              .fontSize(12)
+              .fontStyle(Font.BOLD),
+            text
           )
         )
       );

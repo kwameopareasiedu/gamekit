@@ -217,15 +217,15 @@ public class MyAwesomeScene extends Scene {
   public Widget createUI() {
     return Center.create(
       Column.create(
-        Column.params()
+        Column.options()
           .mainAxisAlignment(MainAxisAlignment.CENTER)
           .crossAxisAlignment(CrossAxisAlignment.CENTER)
           .gapSize(24),
         Image.create(img),
         Text.create(
           Text.options()
-            .alignment(Alignment.CENTER),
-          "Hello World"
+            .alignment(Alignment.CENTER)
+            .text("Hello World")
         )
       )
     );

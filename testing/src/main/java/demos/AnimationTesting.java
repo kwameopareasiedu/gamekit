@@ -62,7 +62,7 @@ public class AnimationTesting extends Scene {
         Padding.options()
           .padding(new Spacing(16, 48)),
         Text.create(
-          Text.options().text(String.format("Value: %f", animationValue))
+          String.format("Value: %f", animationValue)
         )
       )
     );

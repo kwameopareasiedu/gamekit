@@ -116,5 +116,14 @@ public class UiTest {
     assertEquals(25, bounds.y);
     assertEquals(65, bounds.width);
     assertEquals(50, bounds.height);
+
+    bounds.set(0, 0, 1920, 1080);
+    bounds2.set(50, 50, 100, 100);
+    Bounds intersection = bounds.intersection(bounds2);
+
+    assertEquals(50, intersection.x);
+    assertEquals(50, intersection.y);
+    assertEquals(100, intersection.width);
+    assertEquals(100, intersection.height);
   }
 }

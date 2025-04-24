@@ -62,6 +62,15 @@ public class Bounds {
     set(x1, y1, w, h);
   }
 
+  public Bounds intersection(Bounds bounds) {
+    int x1 = Math.max(x, bounds.x);
+    int y1 = Math.max(y, bounds.y);
+    int x2 = Math.min(x + width, bounds.x + bounds.width);
+    int y2 = Math.min(y + height, bounds.y + bounds.height);
+
+    return new Bounds(x1, y1, x2 - x1, y2 - y1);
+  }
+
   @Override
   public String toString() {
     return String.format(
