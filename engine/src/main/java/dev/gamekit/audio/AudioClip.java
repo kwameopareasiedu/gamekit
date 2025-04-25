@@ -59,6 +59,16 @@ public abstract class AudioClip {
   /** Delegate method which performs the actual update and must be overridden in subclasses */
   public abstract void performUpdate();
 
+  /** Called internally to dispose resources held by this clip */
+  public final void dispose() {
+    stop();
+    clip.close();
+    performDispose();
+  }
+
+  /** Delegate method for subclasses to perform additional dispose logic */
+  public void performDispose() { /* No-op */ }
+
   @SuppressWarnings("unchecked")
   protected <T extends Control> T getControl(T.Type controlType) {
     if (clip != null && clip.isControlSupported(controlType))

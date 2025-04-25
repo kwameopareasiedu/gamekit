@@ -38,4 +38,9 @@ public class Audio {
   static void update() {
     CLIP_CACHE.forEach((key, clip) -> clip.update());
   }
+
+  static void dispose() {
+    CLIP_CACHE.forEach((key, clip) -> clip.dispose());
+    CLIP_CACHE.clear();
+  }
 }

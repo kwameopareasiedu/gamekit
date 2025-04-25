@@ -241,6 +241,7 @@ public abstract class Application {
     if (currentScene != null)
       currentScene._dispose();
 
+    Audio.dispose();
     IO.dispose();
   }
 }
