@@ -8,5 +8,4 @@ public enum Alignment {
   CENTER,
   /** Aligns to the end of an axis */
   END,
-
 }

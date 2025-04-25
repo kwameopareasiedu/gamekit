@@ -103,13 +103,11 @@ public class Playground extends Scene {
         .crossAxisAlignment(CrossAxisAlignment.STRETCH)
         .gapSize(24),
       Text.create(
-        Text.options()
-          .alignment(Alignment.CENTER),
+        Text.options().alignment(Alignment.CENTER),
         "Press the Space Bar to play/restart the audio"
       ),
       Text.create(
-        Text.options()
-          .alignment(Alignment.CENTER),
+        Text.options().alignment(Alignment.CENTER),
         "Move the mouse from left to right to pan the audio"
       ),
       Row.create(
@@ -118,20 +116,16 @@ public class Playground extends Scene {
           .crossAxisAlignment(CrossAxisAlignment.CENTER)
           .gapSize(8),
         Opacity.create(
-          Opacity.options()
-            .opacity(pan < 0 ? 1 : 1 - pan),
+          Opacity.options().opacity(pan < 0 ? 1 : 1 - pan),
           Scaled.create(
-            Scaled.options()
-              .scale(0.5),
+            Scaled.options().scale(0.5),
             Image.create(speakerImg)
           )
         ),
         Opacity.create(
-          Opacity.options()
-            .opacity(pan > 0 ? 1 : 1 + pan),
+          Opacity.options().opacity(pan > 0 ? 1 : 1 + pan),
           Scaled.create(
-            Scaled.options()
-              .scale(0.5),
+            Scaled.options().scale(0.5),
             Image.create(speakerImg)
           )
         )
