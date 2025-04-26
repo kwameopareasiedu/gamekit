@@ -46,4 +46,14 @@ public class MathTest {
     assertEquals(360, Math.radToDeg(2 * java.lang.Math.PI));
     assertEquals(450, Math.radToDeg(2.5 * java.lang.Math.PI));
   }
+
+  @Test
+  public void lerpTest() {
+    assertEquals(0, Math.lerp(0, 10, 0));
+    assertEquals(10, Math.lerp(0, 10, 1));
+    assertEquals(5, Math.lerp(0, 10, 0.5));
+    assertEquals(10, Math.lerp(10, 20, 0));
+    assertEquals(20, Math.lerp(10, 20, 1));
+    assertEquals(15, Math.lerp(10, 20, 0.5));
+  }
 }

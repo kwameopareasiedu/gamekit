@@ -37,6 +37,8 @@ renderGroup)` method to `Renderer` class
   its child
 - Added `Fractional` which is a `SingleChildParent` which enforces a fractional size on its
   child relative to its width and height
+- Added `static double lerp(double from, double to, double rate)` to `Math` class for linear 
+  interpolation
 
 ### Changed
 

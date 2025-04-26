@@ -38,4 +38,9 @@ public final class Math {
   public static double radToDeg(double rad) {
     return (rad / (2 * java.lang.Math.PI)) * 360;
   }
+
+  /** Linearly interpolates between two values using a specified rate */
+  public static double lerp(double from, double to, double rate) {
+    return from + rate * (to - from);
+  }
 }
