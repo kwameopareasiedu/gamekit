@@ -25,7 +25,7 @@ import java.util.List;
  */
 @SuppressWarnings("BusyWait")
 public abstract class Application {
-  public static final long FRAME_TIME = 1000 / 90;
+  public static final long FRAME_TIME_MS = 1000 / 120;
   private static Application instance;
 
   protected final Logger logger = LogManager.getLogger(getClass());
@@ -116,9 +116,9 @@ public abstract class Application {
         lastFrameTime = frameTimeNow;
         frameTimeAccumulator += elapsedTime;
 
-        while (frameTimeAccumulator >= FRAME_TIME) {
+        while (frameTimeAccumulator >= FRAME_TIME_MS) {
           Input.freeze();
-          frameTimeAccumulator -= FRAME_TIME;
+          frameTimeAccumulator -= FRAME_TIME_MS;
           update();
           Input.reset();
         }

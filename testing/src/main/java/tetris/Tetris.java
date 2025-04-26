@@ -81,7 +81,7 @@ public class Tetris extends Scene {
     super.update();
 
     if (gameState == PLAYING) {
-      stepTime += Application.FRAME_TIME;
+      stepTime += Application.FRAME_TIME_MS;
       if (Input.isKeyDown(Input.KEY_ESCAPE)) gameState = PAUSED;
     } else if (gameState == PAUSED && Input.isKeyDown(Input.KEY_ESCAPE)) {
       gameState = PLAYING;

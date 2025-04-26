@@ -27,7 +27,7 @@ public class Timeout {
    */
   public void update() {
     if (!completed) {
-      duration = java.lang.Math.max(0, duration - Application.FRAME_TIME);
+      duration = java.lang.Math.max(0, duration - Application.FRAME_TIME_MS);
 
       if (duration == 0) {
         completed = true;
