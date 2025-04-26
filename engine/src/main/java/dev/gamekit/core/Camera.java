@@ -45,7 +45,7 @@ public final class Camera {
 
   /** Sets the zoom level of the camera, clamped to a min of 1 */
   public static void setZoom(double zoom) {
-    Camera.zoom = Math.max(zoom, 0);
+    Camera.zoom = Math.max(zoom, 1);
     Camera.invZoom = 1.0 / Camera.zoom;
   }
 
