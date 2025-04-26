@@ -1,4 +1,6 @@
-package dev.gamekit.ui;
+package dev.gamekit.utils;
+
+import java.lang.Math;
 
 /** {@link Bounds} represents a region in 2D space */
 public class Bounds {
@@ -6,6 +8,10 @@ public class Bounds {
   public int y;
   public int width;
   public int height;
+
+  public Bounds() {
+    this(0, 0, 0, 0);
+  }
 
   /** Copy constructor for this class */
   public Bounds(Bounds bounds) {
@@ -21,10 +27,10 @@ public class Bounds {
 
   /** Returns a new bounds which is an intersection of two bounds */
   public static Bounds intersect(Bounds bounds1, Bounds bounds2) {
-    int x1 = Math.max(bounds1.x, bounds2.x);
-    int y1 = Math.max(bounds1.y, bounds2.y);
-    int x2 = Math.min(bounds1.x + bounds1.width, bounds2.x + bounds2.width);
-    int y2 = Math.min(bounds1.y + bounds1.height, bounds2.y + bounds2.height);
+    int x1 = java.lang.Math.max(bounds1.x, bounds2.x);
+    int y1 = java.lang.Math.max(bounds1.y, bounds2.y);
+    int x2 = java.lang.Math.min(bounds1.x + bounds1.width, bounds2.x + bounds2.width);
+    int y2 = java.lang.Math.min(bounds1.y + bounds1.height, bounds2.y + bounds2.height);
 
     return new Bounds(x1, y1, x2 - x1, y2 - y1);
   }
@@ -63,9 +69,9 @@ public class Bounds {
 
   /** Adjust this bounds to be a union of itself and {@code bounds} */
   public void extend(Bounds bounds) {
-    int x1 = Math.min(x, bounds.x);
-    int y1 = Math.min(y, bounds.y);
-    int w = Math.max(x + width, bounds.x + bounds.width) - x1;
+    int x1 = java.lang.Math.min(x, bounds.x);
+    int y1 = java.lang.Math.min(y, bounds.y);
+    int w = java.lang.Math.max(x + width, bounds.x + bounds.width) - x1;
     int h = Math.max(y + height, bounds.y + bounds.height) - y1;
     set(x1, y1, w, h);
   }

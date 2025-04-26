@@ -1,8 +1,10 @@
 package dev.gamekit.core;
 
+import dev.gamekit.utils.Bounds;
 import dev.gamekit.utils.Position;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import java.awt.*;
 import java.awt.geom.AffineTransform;
 
 /**
@@ -10,30 +12,23 @@ import java.awt.geom.AffineTransform;
  * It does this by manipulating the window's {@link AffineTransform} object
  */
 public final class Camera {
-  private static final Point POINT_CACHE = new Point();
+  private static final Logger LOGGER = LogManager.getLogger();
   private static final Position POSITION_CACHE = new Position();
+  private static final Bounds BOUNDS_CACHE = new Bounds();
+  private static final AffineTransform TRANSFORM = new AffineTransform(1, 0, 0, -1, 0, 0);
 
-  private static final AffineTransform transform = new AffineTransform(1, 0, 0, -1, 0, 0);
   private static double x = 0;
   private static double y = 0;
   private static double zoom = 1;
   private static double invZoom = 1.0 / zoom;
 
-  /** Transforms a screen-space point (x,y) into world-space */
-  public static Position screenToWorldPosition(int x, int y) {
+  /** Transforms a screen-space point (sx,sy) into world-space position */
+  public static Position screenToWorldPosition(int sx, int sy) {
     Window window = Window.getInstance();
     Position center = window.getCenter();
-    int tx = (int) (invZoom * (center.x - x - Camera.x));
-    int ty = (int) (invZoom * (center.y - y - Camera.y));
-    POSITION_CACHE.set(-tx, ty);
-    return POSITION_CACHE;
-  }
-
-  /** Transforms a point (x,y) relative to top-left origin into world-space */
-  public static Position pointToWorldPosition(int x, int y) {
-    POINT_CACHE.setLocation(x, y);
-    transform.transform(POINT_CACHE, POINT_CACHE);
-    POSITION_CACHE.set(POINT_CACHE);
+    int wx = (int) (invZoom * (center.x - sx - Camera.x));
+    int wy = (int) (invZoom * (center.y - sy - Camera.y));
+    POSITION_CACHE.set(-wx, wy);
     return POSITION_CACHE;
   }
 
@@ -57,7 +52,22 @@ public final class Camera {
   static void update() {
     Window window = Window.getInstance();
     Position center = window.getCenter();
-    transform.setTransform(zoom, 0, 0, zoom, center.x - x, center.y - y);
-    window.getSceneGraphics().setTransform(transform);
+    TRANSFORM.setTransform(zoom, 0, 0, zoom, center.x - x, center.y - y);
+    window.getSceneGraphics().setTransform(TRANSFORM);
+  }
+
+  /** Returns the visible render bounds based on the camera's parameters */
+  static Bounds getRenderBounds() {
+    Window window = Window.getInstance();
+    Position center = window.getCenter();
+
+    BOUNDS_CACHE.set(
+      (int) ((Camera.x - center.x) * invZoom),
+      (int) ((Camera.y - center.y) * invZoom),
+      (int) (window.getDisplayWidth() * invZoom),
+      (int) (window.getDisplayHeight() * invZoom)
+    );
+
+    return BOUNDS_CACHE;
   }
 }

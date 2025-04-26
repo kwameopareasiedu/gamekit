@@ -1,6 +1,5 @@
 package dev.gamekit.utils;
 
-import dev.gamekit.ui.Bounds;
 import dev.gamekit.ui.Spacing;
 import org.junit.jupiter.api.Test;
 

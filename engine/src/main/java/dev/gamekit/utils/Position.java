@@ -34,9 +34,6 @@ public class Position {
   /** Copies values from another position object */
   public void set(Position position) { set(position.x, position.y); }
 
-  /** Copies values from a {@link Point} object */
-  public void set(Point pt) { set(pt.x, pt.y); }
-
   public void setX(int x) { this.x = x; }
 
   public void setY(int y) { this.y = y; }

@@ -1,6 +1,6 @@
 package dev.gamekit.core;
 
-import dev.gamekit.utils.Position;
+import dev.gamekit.utils.Bounds;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -27,10 +27,8 @@ public final class Renderer {
   /** Clears the {@link Window} scene buffer with current state background color */
   public static void clear() {
     applyGraphicsState();
-    Window win = Window.getInstance();
-    int x = 0, y = 0, w = win.getDisplayWidth(), h = win.getDisplayHeight();
-    Position pos = Camera.pointToWorldPosition(x, y);
-    g.clearRect(-pos.x, -pos.y, w, h);
+    Bounds b = Camera.getRenderBounds();
+    g.clearRect(b.x, b.y, b.width, b.height);
     resetGraphicsState();
   }
 
@@ -207,12 +205,10 @@ public final class Renderer {
   /** Applies the current graphics state to the current graphics object */
   private static void applyGraphicsState() {
     Window win = Window.getInstance();
-    int x = 0, y = 0, w = win.getDisplayWidth(), h = win.getDisplayHeight();
-    Position pos = Camera.pointToWorldPosition(x, y);
-
-    // Clip rendering to avoid drawing outside viewport area
     g = win.getSceneGraphics();
-    g.setClip(-pos.x, -pos.y, w, h);
+
+    Bounds rb = Camera.getRenderBounds();
+    g.setClip(rb.x, rb.y, rb.width, rb.height);
 
     INITIAL_STATE.save(g);
     CURRENT_STATE.apply(g);

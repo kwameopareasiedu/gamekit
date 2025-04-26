@@ -13,11 +13,10 @@ import static dev.gamekit.utils.Math.clamp;
 public class CalibrationTest extends Scene {
   private static final int WORLD_WIDTH = 2400;
   private static final int WORLD_HEIGHT = 1400;
-  private static final Font LEXEND_FONT = IO.getResourceFont("lexend-regular.ttf").deriveFont(12f);
   private static final BufferedImage SPRITE = IO.getResourceImage("zainar.png");
 
   private double time;
-  private int x, y;
+  private int x = 0, y = 0;
 
   public CalibrationTest() {
     super("Calibration Test");
@@ -29,15 +28,6 @@ public class CalibrationTest extends Scene {
     ) { };
     game.loadScene(new CalibrationTest());
     game.run();
-  }
-
-  @Override
-  protected void start() {
-    super.start();
-
-    Position pos = Camera.pointToWorldPosition(0, 0);
-    x = pos.x;
-    y = pos.y;
   }
 
   @Override
@@ -69,6 +59,9 @@ public class CalibrationTest extends Scene {
     super.render();
     Renderer.setColor(Color.DARK_GRAY);
     Renderer.clear();
+
+    Renderer.setColor(Color.CYAN);
+    Renderer.drawRect(x, y, Resolution.SVGA.width(), Resolution.SVGA.height());
 
     Renderer.setColor(Color.BLUE);
     Renderer.drawLineH(-WORLD_WIDTH / 2, WORLD_WIDTH / 2, 0);

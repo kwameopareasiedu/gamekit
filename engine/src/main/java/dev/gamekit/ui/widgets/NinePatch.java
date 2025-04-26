@@ -1,7 +1,7 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.ui.Bounds;
 import dev.gamekit.ui.Spacing;
+import dev.gamekit.utils.Bounds;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

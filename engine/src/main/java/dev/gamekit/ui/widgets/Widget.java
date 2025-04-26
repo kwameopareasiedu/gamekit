@@ -1,8 +1,8 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.Scene;
-import dev.gamekit.ui.Bounds;
 import dev.gamekit.ui.Constraints;
+import dev.gamekit.utils.Bounds;
 import dev.gamekit.utils.Constants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
