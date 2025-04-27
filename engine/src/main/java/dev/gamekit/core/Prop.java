@@ -3,8 +3,8 @@ package dev.gamekit.core;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * {@link Prop} represent game objects in a {@link Scene}.
@@ -14,7 +14,7 @@ import java.util.Set;
  */
 public abstract class Prop {
   protected final Logger logger = LogManager.getLogger(getClass());
-  protected final Set<Prop> children;
+  protected final List<Prop> children;
   protected Prop parent;
 
   final String name;
@@ -23,13 +23,13 @@ public abstract class Prop {
   public Prop(String name) {
     this.name = name;
     this.ready = false;
-    children = new HashSet<>();
+    children = new ArrayList<>();
   }
 
   Prop(String name, boolean ready) {
     this.name = name;
     this.ready = ready;
-    children = new HashSet<>();
+    children = new ArrayList<>();
   }
 
   public void addChild(Prop prop) {

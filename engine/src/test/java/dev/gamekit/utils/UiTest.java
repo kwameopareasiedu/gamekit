@@ -3,7 +3,7 @@ package dev.gamekit.utils;
 import dev.gamekit.ui.Spacing;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UiTest {
   @Test
@@ -118,11 +118,31 @@ public class UiTest {
 
     bounds.set(0, 0, 1920, 1080);
     bounds2.set(50, 50, 100, 100);
-    Bounds intersection = Bounds.intersect(bounds, bounds2);
+    Bounds intersection = new Bounds();
+    Bounds.intersect(bounds, bounds2, intersection);
 
     assertEquals(50, intersection.x);
     assertEquals(50, intersection.y);
     assertEquals(100, intersection.width);
     assertEquals(100, intersection.height);
+
+    bounds.set(0, 0, 50, 50);
+    assertTrue(bounds.contains(0, 0));
+    assertTrue(bounds.contains(0, 10));
+    assertTrue(bounds.contains(10, 0));
+    assertTrue(bounds.contains(10, 10));
+    assertTrue(bounds.contains(40, 0));
+    assertTrue(bounds.contains(50, 0));
+    assertTrue(bounds.contains(0, 50));
+    assertTrue(bounds.contains(0, 40));
+    assertTrue(bounds.contains(49, 49));
+    assertTrue(bounds.contains(50, 50));
+
+    assertFalse(bounds.contains(-1, 0));
+    assertFalse(bounds.contains(-1, -1));
+    assertFalse(bounds.contains(0, -1));
+    assertFalse(bounds.contains(51, 50));
+    assertFalse(bounds.contains(50, 51));
+    assertFalse(bounds.contains(51, 51));
   }
 }

@@ -30,6 +30,7 @@ public abstract class Widget {
   protected final Bounds absoluteBounds;
   protected final Bounds computedBounds;
   protected final Bounds intrinsicBounds;
+  protected final Bounds clipBounds;
   protected Constraints constraints;
   protected Widget parent;
 
@@ -37,6 +38,7 @@ public abstract class Widget {
     absoluteBounds = new Bounds(0, 0, 0, 0);
     computedBounds = new Bounds(0, 0, 0, 0);
     intrinsicBounds = new Bounds(0, 0, 0, 0);
+    clipBounds = new Bounds(0, 0, 0, 0);
     parent = null;
   }
 
@@ -104,7 +106,7 @@ public abstract class Widget {
    */
   public final void render(Graphics2D canvasGraphics) {
     if (parent != null) {
-      Bounds clipBounds = Bounds.intersect(absoluteBounds, parent.absoluteBounds);
+      Bounds.intersect(absoluteBounds, parent.absoluteBounds, clipBounds);
 
       canvasGraphics.setClip(
         clipBounds.x,

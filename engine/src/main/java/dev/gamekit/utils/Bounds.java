@@ -25,14 +25,13 @@ public class Bounds {
     this.height = height;
   }
 
-  /** Returns a new bounds which is an intersection of two bounds */
-  public static Bounds intersect(Bounds bounds1, Bounds bounds2) {
+  /** Computes the intersection of two bounds and stores the result in {@code out} */
+  public static void intersect(Bounds bounds1, Bounds bounds2, Bounds out) {
     int x1 = java.lang.Math.max(bounds1.x, bounds2.x);
     int y1 = java.lang.Math.max(bounds1.y, bounds2.y);
     int x2 = java.lang.Math.min(bounds1.x + bounds1.width, bounds2.x + bounds2.width);
     int y2 = java.lang.Math.min(bounds1.y + bounds1.height, bounds2.y + bounds2.height);
-
-    return new Bounds(x1, y1, x2 - x1, y2 - y1);
+    out.set(x1, y1, x2 - x1, y2 - y1);
   }
 
   public void set(int x, int y, int width, int height) {
@@ -65,6 +64,12 @@ public class Bounds {
   /** Copies values from another bounds object */
   public void set(Bounds bounds) {
     set(bounds.x, bounds.y, bounds.width, bounds.height);
+  }
+
+  /** Determines if this bounds contains the point {@code (x,y)} */
+  public boolean contains(int x, int y) {
+    return this.x <= x && x <= this.x + this.width &&
+      this.y <= y && y <= this.y + this.height;
   }
 
   /** Adjust this bounds to be a union of itself and {@code bounds} */
