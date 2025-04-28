@@ -67,7 +67,7 @@ public class Bounds {
   }
 
   /** Determines if this bounds contains the point {@code (x,y)} */
-  public boolean contains(int x, int y) {
+  public boolean contains(double x, double y) {
     return this.x <= x && x <= this.x + this.width &&
       this.y <= y && y <= this.y + this.height;
   }
