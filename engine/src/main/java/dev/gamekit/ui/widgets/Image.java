@@ -44,12 +44,12 @@ public class Image extends Leaf {
 
   @Override
   protected void performRender(Graphics2D g) {
-    int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
+    double dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
 
     switch (fit) {
       case FIT, CROP -> {
-        double widthRatio = (double) absoluteBounds.width / intrinsicBounds.width;
-        double heightRatio = (double) absoluteBounds.height / intrinsicBounds.height;
+        double widthRatio = absoluteBounds.width / intrinsicBounds.width;
+        double heightRatio = absoluteBounds.height / intrinsicBounds.height;
 
         double scaleRatio = fit == ImageFit.FIT ?
           intrinsicBounds.width > intrinsicBounds.height ? widthRatio : heightRatio :
@@ -68,7 +68,10 @@ public class Image extends Leaf {
       }
     }
 
-    g.drawImage(image, dx1, dy1, dx2, dy2, 0, 0, intrinsicBounds.width, intrinsicBounds.height, null);
+    g.drawImage(
+      image, (int) dx1, (int) dy1, (int) dx2, (int) dy2,
+      0, 0, (int) intrinsicBounds.width, (int) intrinsicBounds.height, null
+    );
   }
 
   @Override

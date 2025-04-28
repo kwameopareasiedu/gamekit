@@ -31,8 +31,8 @@ public class Column extends Flex {
       0, constraints.maxHeight()
     );
 
-    int maxWidth = 0;
-    int currentHeight = 0;
+    double maxWidth = 0;
+    double currentHeight = 0;
 
     for (var child : children) {
       child.layout(cc);
@@ -53,11 +53,11 @@ public class Column extends Flex {
       constraints.constrainHeight(intrinsicBounds.height)
     );
 
-    int freeSpace =
+    double freeSpace =
       Math.max(0, computedBounds.height - intrinsicBounds.height);
-    int spaceBetween = freeSpace / Math.max(children.size() - 1, 1);
+    double spaceBetween = freeSpace / Math.max(children.size() - 1, 1);
 
-    int newY = switch (mainAxisAlignment) {
+    double newY = switch (mainAxisAlignment) {
       case CENTER -> computedBounds.height / 2 - intrinsicBounds.height / 2;
       case END -> computedBounds.height - intrinsicBounds.height;
       default -> 0;

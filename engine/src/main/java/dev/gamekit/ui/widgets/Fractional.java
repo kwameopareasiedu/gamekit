@@ -38,8 +38,8 @@ public class Fractional extends SingleChildParent {
       constraints.maxHeight()
     );
 
-    int fractionalWidth = (int) (widthFactor * computedBounds.width);
-    int fractionalHeight = (int) (heightFactor * computedBounds.height);
+    double fractionalWidth = widthFactor * computedBounds.width;
+    double fractionalHeight = heightFactor * computedBounds.height;
 
     child.layout(
       new Constraints(
@@ -53,13 +53,13 @@ public class Fractional extends SingleChildParent {
       child.computedBounds.height
     );
 
-    int hOffset = switch (horizontalAlignment) {
+    double hOffset = switch (horizontalAlignment) {
       case CENTER -> computedBounds.width / 2 - intrinsicBounds.width / 2;
       case END -> computedBounds.width - intrinsicBounds.width;
       default -> 0;
     };
 
-    int vOffset = switch (verticalAlignment) {
+    double vOffset = switch (verticalAlignment) {
       case CENTER -> computedBounds.height / 2 - intrinsicBounds.height / 2;
       case END -> computedBounds.height - intrinsicBounds.height;
       default -> 0;

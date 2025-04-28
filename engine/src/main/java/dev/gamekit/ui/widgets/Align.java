@@ -43,13 +43,13 @@ public class Align extends SingleChildParent {
       constraints.maxHeight()
     );
 
-    int hOffset = switch (horizontalAlignment) {
+    double hOffset = switch (horizontalAlignment) {
       case CENTER -> computedBounds.width / 2 - intrinsicBounds.width / 2;
       case END -> computedBounds.width - intrinsicBounds.width;
       default -> 0;
     };
 
-    int vOffset = switch (verticalAlignment) {
+    double vOffset = switch (verticalAlignment) {
       case CENTER -> computedBounds.height / 2 - intrinsicBounds.height / 2;
       case END -> computedBounds.height - intrinsicBounds.height;
       default -> 0;

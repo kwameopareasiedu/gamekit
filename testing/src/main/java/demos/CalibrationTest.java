@@ -42,8 +42,8 @@ public class CalibrationTest extends Scene {
         mousePos.x,
         mousePos.y
       );
-      x = pos.x;
-      y = pos.y;
+      x = (int) pos.x;
+      y = (int) pos.y;
     }
 
     double x = 50 * Math.sin(time);

@@ -14,7 +14,7 @@ public class Stack extends MultiChildParent {
 
   @Override
   protected void performLayout(Constraints constraints) {
-    int maxWidth = 0, maxHeight = 0;
+    double maxWidth = 0, maxHeight = 0;
 
     Constraints childConstraints = new Constraints(
       0, constraints.maxWidth(),

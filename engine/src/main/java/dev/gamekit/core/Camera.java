@@ -23,7 +23,7 @@ public final class Camera {
   private static double invZoom = 1.0 / zoom;
 
   /** Transforms a screen-space point (sx,sy) into world-space position */
-  public static Position screenToWorldPosition(int sx, int sy) {
+  public static Position screenToWorldPosition(double sx, double sy) {
     Window window = Window.getInstance();
     Position center = window.getCenter();
     int wx = (int) (invZoom * (center.x - sx - Camera.x));

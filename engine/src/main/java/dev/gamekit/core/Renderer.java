@@ -28,7 +28,7 @@ public final class Renderer {
   public static void clear() {
     applyGraphicsState();
     Bounds b = Camera.getRenderBounds();
-    g.clearRect(b.x, b.y, b.width, b.height);
+    g.clearRect((int) b.x, (int) b.y, (int) b.width, (int) b.height);
     resetGraphicsState();
   }
 
@@ -208,7 +208,7 @@ public final class Renderer {
     g = win.getSceneGraphics();
 
     Bounds rb = Camera.getRenderBounds();
-    g.setClip(rb.x, rb.y, rb.width, rb.height);
+    g.setClip((int) rb.x, (int) rb.y, (int) rb.width, (int) rb.height);
 
     INITIAL_STATE.save(g);
     CURRENT_STATE.apply(g);

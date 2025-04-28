@@ -109,17 +109,17 @@ public abstract class Widget {
       Bounds.intersect(absoluteBounds, parent.absoluteBounds, clipBounds);
 
       canvasGraphics.setClip(
-        clipBounds.x,
-        clipBounds.y,
-        clipBounds.width,
-        clipBounds.height
+        (int) clipBounds.x,
+        (int) clipBounds.y,
+        (int) clipBounds.width,
+        (int) clipBounds.height
       );
     } else {
       canvasGraphics.setClip(
-        absoluteBounds.x,
-        absoluteBounds.y,
-        absoluteBounds.width,
-        absoluteBounds.height
+        (int) absoluteBounds.x,
+        (int) absoluteBounds.y,
+        (int) absoluteBounds.width,
+        (int) absoluteBounds.height
       );
     }
 
@@ -131,10 +131,10 @@ public abstract class Widget {
       canvasGraphics.setColor(Color.CYAN);
       canvasGraphics.setStroke(DEBUG_OUTLINE_STROKE);
       canvasGraphics.drawRect(
-        absoluteBounds.x,
-        absoluteBounds.y,
-        absoluteBounds.width,
-        absoluteBounds.height
+        (int) absoluteBounds.x,
+        (int) absoluteBounds.y,
+        (int) absoluteBounds.width,
+        (int) absoluteBounds.height
       );
     }
   }
@@ -146,8 +146,8 @@ public abstract class Widget {
   protected abstract void performRender(Graphics2D g);
 
   protected void computeAbsoluteBounds() {
-    int absoluteX = computedBounds.x;
-    int absoluteY = computedBounds.y;
+    double absoluteX = computedBounds.x;
+    double absoluteY = computedBounds.y;
     Widget parent = this.parent;
 
     while (parent != null) {
@@ -164,9 +164,9 @@ public abstract class Widget {
   }
 
   /** Determines if point (x, y) falls within the absolute bounds of this widget */
-  public boolean hitTest(int x, int y) {
-    int absoluteRight = absoluteBounds.x + absoluteBounds.width;
-    int absoluteBottom = absoluteBounds.y + absoluteBounds.height;
+  public boolean hitTest(double x, double y) {
+    double absoluteRight = absoluteBounds.x + absoluteBounds.width;
+    double absoluteBottom = absoluteBounds.y + absoluteBounds.height;
     return absoluteBounds.x <= x && x <= absoluteRight &&
       absoluteBounds.y <= y && y <= absoluteBottom;
   }

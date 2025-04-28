@@ -3,8 +3,7 @@ package dev.gamekit.ui;
 import static dev.gamekit.utils.Math.clamp;
 
 /** An immutable record for width and height range values */
-public record Constraints(int minWidth, int maxWidth, int minHeight,
-                          int maxHeight) {
+public record Constraints(double minWidth, double maxWidth, double minHeight, double maxHeight) {
   public Constraints {
     minWidth = Math.max(minWidth, 0);
     maxWidth = Math.max(maxWidth, 0);
@@ -13,12 +12,12 @@ public record Constraints(int minWidth, int maxWidth, int minHeight,
   }
 
   /** Constraints the given width to respect {@link #minWidth} and {@link #maxWidth} */
-  public int constrainWidth(int width) {
+  public double constrainWidth(double width) {
     return clamp(width, minWidth, maxWidth);
   }
 
   /** Constraints the given height to respect {@link #minHeight} and {@link #maxHeight} */
-  public int constrainHeight(int height) {
+  public double constrainHeight(double height) {
     return clamp(height, minHeight, maxHeight);
   }
 

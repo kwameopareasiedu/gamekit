@@ -139,13 +139,13 @@ public class Text extends Leaf {
   protected void performRender(Graphics2D g) {
     g.setFont(renderFont);
 
-    int hOffset = absoluteBounds.x + switch (alignment) {
+    double hOffset = absoluteBounds.x + switch (alignment) {
       case CENTER -> absoluteBounds.width / 2 - intrinsicBounds.width / 2;
       case END -> absoluteBounds.width - intrinsicBounds.width;
       default -> 0;
     };
 
-    int vOffset = absoluteBounds.y + switch (verticalAlignment) {
+    double vOffset = absoluteBounds.y + switch (verticalAlignment) {
       case CENTER -> absoluteBounds.height / 2 - intrinsicBounds.height / 2;
       case END -> absoluteBounds.height - intrinsicBounds.height;
       default -> 0;
@@ -158,8 +158,9 @@ public class Text extends Leaf {
         String word = textLines[i];
 
         g.drawString(
-          word, hOffset + shadowOffsetX,
-          (i + 1) * fontSize + vOffset + shadowOffsetY
+          word,
+          (int) (hOffset + shadowOffsetX),
+          (int) ((i + 1) * fontSize + vOffset + shadowOffsetY)
         );
       }
     }
@@ -168,7 +169,12 @@ public class Text extends Leaf {
 
     for (int i = 0; i < textLines.length; i++) {
       String word = textLines[i];
-      g.drawString(word, hOffset, (i + 1) * fontSize + vOffset);
+
+      g.drawString(
+        word,
+        (int) hOffset,
+        (int) ((i + 1) * fontSize + vOffset)
+      );
     }
   }
 

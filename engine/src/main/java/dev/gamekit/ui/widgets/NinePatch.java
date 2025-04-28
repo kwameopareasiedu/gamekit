@@ -15,26 +15,26 @@ public interface NinePatch {
     Spacing padding,
     Graphics2D g
   ) {
-    int dx1 = absoluteBounds.x, dy1 = absoluteBounds.y;
-    int dx2 = dx1 + absoluteBounds.width, dy2 = dy1 + absoluteBounds.height;
+    double dx1 = absoluteBounds.x, dy1 = absoluteBounds.y;
+    double dx2 = dx1 + absoluteBounds.width, dy2 = dy1 + absoluteBounds.height;
 
-    int nl = padding.left;
-    int nt = padding.top;
-    int iw = image.getWidth();
-    int ih = image.getHeight();
-    int nr = iw - padding.right;
-    int nb = ih - padding.bottom;
+    double nl = padding.left;
+    double nt = padding.top;
+    double iw = image.getWidth();
+    double ih = image.getHeight();
+    double nr = iw - padding.right;
+    double nb = ih - padding.bottom;
 
-    int[][] srcBounds = new int[][]{
-      new int[]{ 0, 0, nl, nt },
-      new int[]{ nl, 0, nr, nt },
-      new int[]{ nr, 0, iw, nt },
-      new int[]{ 0, nt, nl, nb },
-      new int[]{ nl, nt, nr, nb },
-      new int[]{ nr, nt, iw, nb },
-      new int[]{ 0, nb, nl, ih },
-      new int[]{ nl, nb, nr, ih },
-      new int[]{ nr, nb, iw, ih },
+    double[][] srcBounds = new double[][]{
+      new double[]{ 0, 0, nl, nt },
+      new double[]{ nl, 0, nr, nt },
+      new double[]{ nr, 0, iw, nt },
+      new double[]{ 0, nt, nl, nb },
+      new double[]{ nl, nt, nr, nb },
+      new double[]{ nr, nt, iw, nb },
+      new double[]{ 0, nb, nl, ih },
+      new double[]{ nl, nb, nr, ih },
+      new double[]{ nr, nb, iw, ih },
     };
 
     nl = dx1 + padding.left;
@@ -42,25 +42,25 @@ public interface NinePatch {
     nr = dx2 - padding.right;
     nb = dy2 - padding.bottom;
 
-    int[][] destBounds = new int[][]{
-      new int[]{ dx1, dy1, nl, nt },
-      new int[]{ nl, dy1, nr, nt },
-      new int[]{ nr, dy1, dx2, nt },
-      new int[]{ dx1, nt, nl, nb },
-      new int[]{ nl, nt, nr, nb },
-      new int[]{ nr, nt, dx2, nb },
-      new int[]{ dx1, nb, nl, dy2 },
-      new int[]{ nl, nb, nr, dy2 },
-      new int[]{ nr, nb, dx2, dy2 },
+    double[][] destBounds = new double[][]{
+      new double[]{ dx1, dy1, nl, nt },
+      new double[]{ nl, dy1, nr, nt },
+      new double[]{ nr, dy1, dx2, nt },
+      new double[]{ dx1, nt, nl, nb },
+      new double[]{ nl, nt, nr, nb },
+      new double[]{ nr, nt, dx2, nb },
+      new double[]{ dx1, nb, nl, dy2 },
+      new double[]{ nl, nb, nr, dy2 },
+      new double[]{ nr, nb, dx2, dy2 },
     };
 
     for (int i = 0; i < srcBounds.length; i++) {
-      int[] src = srcBounds[i];
-      int[] dest = destBounds[i];
+      double[] src = srcBounds[i];
+      double[] dest = destBounds[i];
 
       g.drawImage(
-        image, dest[0], dest[1], dest[2], dest[3],
-        src[0], src[1], src[2], src[3], null
+        image, (int) dest[0], (int) dest[1], (int) dest[2], (int) dest[3],
+        (int) src[0], (int) src[1], (int) src[2], (int) src[3], null
       );
     }
   }

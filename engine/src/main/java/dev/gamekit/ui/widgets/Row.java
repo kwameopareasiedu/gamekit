@@ -28,8 +28,8 @@ public class Row extends Flex {
       0, constraints.maxHeight()
     );
 
-    int currentWidth = 0;
-    int maxHeight = 0;
+    double currentWidth = 0;
+    double maxHeight = 0;
 
     for (var child : children) {
       child.layout(cc);
@@ -51,10 +51,10 @@ public class Row extends Flex {
       constraints.constrainHeight(intrinsicBounds.height)
     );
 
-    int freeSpace = Math.max(0, computedBounds.width - intrinsicBounds.width);
-    int spaceBetween = freeSpace / Math.max(children.size() - 1, 1);
+    double freeSpace = Math.max(0, computedBounds.width - intrinsicBounds.width);
+    double spaceBetween = freeSpace / Math.max(children.size() - 1, 1);
 
-    int newX = switch (mainAxisAlignment) {
+    double newX = switch (mainAxisAlignment) {
       case CENTER -> computedBounds.width / 2 - intrinsicBounds.width / 2;
       case END -> computedBounds.width - intrinsicBounds.width;
       default -> 0;
