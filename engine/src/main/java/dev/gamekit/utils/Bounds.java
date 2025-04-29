@@ -84,7 +84,7 @@ public class Bounds {
   @Override
   public String toString() {
     return String.format(
-      getClass().getName() + "[x=%d,y=%d,width=%d,height=%d]",
+      getClass().getName() + "[x=%.2f,y=%.2f,width=%.2f,height=%.2f]",
       x, y, width, height
     );
   }
