@@ -48,7 +48,7 @@ public abstract class Prop {
 
   public void removeChild(Prop prop) {
     if (children.contains(prop)) {
-      logger.debug("Removing {} to {}", prop.name, name);
+      logger.debug("Removing {} from {}", prop.name, name);
 
       Application.getInstance().scheduleTask(() -> {
         children.remove(prop);
