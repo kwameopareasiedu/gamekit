@@ -2,6 +2,7 @@ package dev.gamekit.ui.widgets;
 
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Spacing;
+import dev.gamekit.ui.mixins.NinePatch;
 import dev.gamekit.utils.Constants;
 
 import java.awt.*;
@@ -79,7 +80,7 @@ public class Panel extends SingleChildParent implements NinePatch {
 
   public static class PanelOptions {
     public BufferedImage background = Constants.DEFAULT_PANEL_BG;
-    public Spacing padding;
+    public Spacing padding = new Spacing();
 
     public PanelOptions background(BufferedImage background) {
       this.background = background;

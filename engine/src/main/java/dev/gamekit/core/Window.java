@@ -135,24 +135,20 @@ public final class Window {
   }
 
   void createRenderBuffers() {
-    sceneBuffer = new BufferedImage(displaySize.width, displaySize.height,
-      BufferedImage.TYPE_INT_ARGB);
+    sceneBuffer =
+      new BufferedImage(displaySize.width, displaySize.height, BufferedImage.TYPE_INT_ARGB);
     sceneGraphics = sceneBuffer.createGraphics();
-    sceneGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-      RenderingHints.VALUE_ANTIALIAS_ON);
-    sceneGraphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-      RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+    sceneGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    sceneGraphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
-    uiBuffer = new BufferedImage(displaySize.width, displaySize.height,
-      BufferedImage.TYPE_INT_ARGB);
+    uiBuffer =
+      new BufferedImage(displaySize.width, displaySize.height, BufferedImage.TYPE_INT_ARGB);
     uiGraphics = uiBuffer.createGraphics();
-    uiGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-      RenderingHints.VALUE_ANTIALIAS_ON);
-    uiGraphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-      RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+    uiGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    uiGraphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
-    renderBuffer = new BufferedImage(Resolution.NATIVE.width(), Resolution.NATIVE.height(),
-      BufferedImage.TYPE_INT_ARGB);
+    renderBuffer =
+      new BufferedImage(Resolution.NATIVE.width(), Resolution.NATIVE.height(), BufferedImage.TYPE_INT_ARGB);
     renderGraphics = renderBuffer.createGraphics();
   }
 }

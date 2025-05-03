@@ -42,23 +42,16 @@ public final class UI {
 
   public UI(WidgetTreeCreator treeCreator) {
     Window win = Window.getInstance();
-    int displayWidth = win.getDisplayWidth();
-    int displayHeight = win.getDisplayHeight();
-
-    this.windowConstraints = new Constraints(
-      displayWidth, displayWidth,
-      displayHeight, displayHeight
-    );
+    int dw = win.getDisplayWidth();
+    int dh = win.getDisplayHeight();
 
     this.treeCreator = treeCreator;
+    this.windowConstraints = new Constraints(dw, dw, dh, dh);
     this.currentHitTestList = new ArrayList<>();
     this.previousHitTestList = new ArrayList<>();
     this.eventStore = new InputEventStore();
     this.mousePosition = new Position();
-    this.canvasImage = new BufferedImage(
-      displayWidth, displayHeight,
-      BufferedImage.TYPE_INT_ARGB
-    );
+    this.canvasImage = new BufferedImage(dw, dh, BufferedImage.TYPE_INT_ARGB);
     this.canvasGraphics = canvasImage.createGraphics();
 
     UI.instance = this;
@@ -81,9 +74,13 @@ public final class UI {
     }
   }
 
-  public void triggerUpdate() { needsLayout = true; }
+  public void triggerUpdate() {
+    needsLayout = true;
+  }
 
-  public void triggerRender() { needsRender = true; }
+  public void triggerRender() {
+    needsRender = true;
+  }
 
   /**
    * Called to update updates the UI state.
@@ -214,10 +211,9 @@ public final class UI {
       );
     }
 
-    // Generate a mouse enter event if widgets exist in currentHitTestCheckList
-    // but don't exist in previousHitTestCheckList.
-    // In essence, this means there are new widgets under the mouse cursor in the current frame
-    // that were not in the previous frame
+    // Generate a mouse enter event if widgets exist in currentHitTestCheckList but don't exist
+    // in previousHitTestCheckList. In essence, this means there are new widgets under the mouse
+    // cursor in the current frame that were not in the previous frame
     for (Widget widget : currentHitTestList) {
       if (!previousHitTestList.contains(widget))
         eventStore.mouseEnterEvent = new MouseEvent(
@@ -269,10 +265,9 @@ public final class UI {
       activeWidget = null;
     }
 
-    // Generate a mouse exit event if widgets exist in previousHitTestCheckList
-    // but don't exist in currentHitTestCheckList.
-    // In essence, this means there are widgets not under the mouse cursor in the current frame
-    // that were in the previous frame
+    // Generate a mouse exit event if widgets exist in previousHitTestCheckList but don't exist
+    // in currentHitTestCheckList. In essence, this means there are widgets not under the mouse
+    // cursor in the current frame that were in the previous frame
     for (Widget widget : previousHitTestList) {
       if (!currentHitTestList.contains(widget))
         eventStore.mouseExitEvent = new MouseEvent(
