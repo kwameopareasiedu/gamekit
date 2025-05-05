@@ -9,10 +9,8 @@ import static dev.gamekit.utils.Math.degToRad;
 
 /** {@link Renderer} provides draw methods to draw on the current {@link Window} */
 public final class Renderer {
-  private static final GraphicsState INITIAL_STATE = new GraphicsState();
+  private static final GraphicsState DEFAULT_STATE = new GraphicsState();
   private static final GraphicsState CURRENT_STATE = new GraphicsState();
-
-  private static Graphics2D g;
 
   private Renderer() { }
 
@@ -24,19 +22,21 @@ public final class Renderer {
 
   public static void setColor(Color color) { CURRENT_STATE.color = color; }
 
+  public static void resetOptions() { CURRENT_STATE.reset(); }
+
   /** Clears the {@link Window} scene buffer with current state background color */
   public static void clear() {
-    applyGraphicsState();
-    Bounds b = Camera.getRenderBounds();
-    g.clearRect((int) b.x, (int) b.y, (int) b.width, (int) b.height);
-    resetGraphicsState();
+    Graphics2D g = applyGraphicsState();
+    Bounds rb = Camera.getRenderBounds();
+    g.clearRect((int) rb.x, (int) rb.y, (int) rb.width, (int) rb.height);
+    resetGraphicsState(g);
   }
 
   /** Draws a line from {@code (x1, y1)} to {@code (x2, y2)} */
   public static void drawLine(int x1, int y1, int x2, int y2) {
-    applyGraphicsState();
+    Graphics2D g = applyGraphicsState();
     g.drawLine(x1, -y1, x2, -y2);
-    resetGraphicsState();
+    resetGraphicsState(g);
   }
 
   /** Draws a vertical line from {@code (x, y1)} to {@code (x, y2)} */
@@ -108,50 +108,30 @@ public final class Renderer {
   public static void drawImage(
     BufferedImage img, int x, int y, int width, int height
   ) {
-    applyGraphicsState();
+    Graphics2D g = applyGraphicsState();
     int x0 = x - width / 2, y0 = y + height / 2;
     int x1 = x0 + width, y1 = y0 - height;
     g.drawImage(img, x0, -y0, x1, -y1, 0, 0, img.getWidth(), img.getHeight(), null);
-    resetGraphicsState();
-  }
-
-  /** Draws a string at (x, y) */
-  public static void drawString(String content, int x, int y) {
-    applyGraphicsState();
-    //    int x0 = x - width / 2, y0 = y + height / 2;
-    //    int x1 = x0 + width, y1 = y0 - height;
-    //    g.drawImage(img, x0, -y0, x1, -y1, 0, 0, img.getWidth(), img.getHeight(), null);
-    g.drawString(content, x, y);
-    resetGraphicsState();
+    resetGraphicsState(g);
   }
 
   /**
-   * {@code withRotation} rotates the {@link Graphics2D} object by {@code deg} about point
-   * {@code (x, y)}, performs the render operations defined by {@code action} and restores the
-   * rotation of the {@link Graphics2D} object afterward
-   * <p>
-   * Rotation is performed using the steps below:
-   * <ul>
-   * <li>Translate to the target point</li>
-   * <li>Rotate the {@link Graphics2D} object by a value</li>
-   * <li>Perform the render</li>
-   * <li>Translate to the target point again</li>
-   * <li>Rotate the {@link Graphics2D} object by the negated rotation</li>
-   * </ul>
+   * Rotates the {@link Graphics2D} object by {@code deg} about point {@code (x, y)}, performs
+   * the operations defined by {@code action} and restores the rotation of the {@link Graphics2D}
+   * object afterward
    */
   public static void withRotation(
     int x, int y, double deg,
-    RenderActions renderGroup
+    Runnable action
   ) {
+    Graphics2D g = Window.getInstance().getSceneGraphics();
     double rad = degToRad(deg);
-    Window win = Window.getInstance();
-    g = win.getSceneGraphics();
 
     g.translate(x, -y);
     g.rotate(rad);
     g.translate(-x, y);
 
-    renderGroup.run();
+    action.run();
 
     g.translate(x, -y);
     g.rotate(-rad);
@@ -166,11 +146,11 @@ public final class Renderer {
    * @see #fillCircle(int, int, int)
    */
   private static void oval(int x, int y, int width, int height, boolean fill) {
-    applyGraphicsState();
+    Graphics2D g = applyGraphicsState();
     int x0 = x - width / 2, y0 = y + height / 2;
     if (fill) g.fillOval(x0, -y0, width, height);
     else g.drawOval(x0, -y0, width, height);
-    resetGraphicsState();
+    resetGraphicsState(g);
   }
 
   /**
@@ -179,11 +159,11 @@ public final class Renderer {
    * @see #fillRect(int, int, int, int)
    */
   private static void rect(int x, int y, int width, int height, boolean fill) {
-    applyGraphicsState();
+    Graphics2D g = applyGraphicsState();
     int x0 = x - width / 2, y0 = y + height / 2;
     if (fill) g.fillRect(x0, -y0, width, height);
     else g.drawRect(x0, -y0, width, height);
-    resetGraphicsState();
+    resetGraphicsState(g);
   }
 
   /**
@@ -195,37 +175,27 @@ public final class Renderer {
     int x, int y, int width, int height,
     int arcWidth, int arcHeight, boolean fill
   ) {
-    applyGraphicsState();
+    Graphics2D g = applyGraphicsState();
     int x0 = x - width / 2, y0 = y + height / 2;
     if (fill) g.fillRoundRect(x0, -y0, width, height, arcWidth, arcHeight);
     else g.drawRoundRect(x0, -y0, width, height, arcWidth, arcHeight);
-    resetGraphicsState();
+    resetGraphicsState(g);
   }
 
   /** Applies the current graphics state to the current graphics object */
-  private static void applyGraphicsState() {
-    Window win = Window.getInstance();
-    g = win.getSceneGraphics();
-
+  private static Graphics2D applyGraphicsState() {
     Bounds rb = Camera.getRenderBounds();
+    Graphics2D g = Window.getInstance().getSceneGraphics();
     g.setClip((int) rb.x, (int) rb.y, (int) rb.width, (int) rb.height);
-
-    INITIAL_STATE.save(g);
     CURRENT_STATE.apply(g);
+    return g;
   }
 
   /** Restores the initial graphics state to the current graphics object */
-  private static void resetGraphicsState() {
+  private static void resetGraphicsState(Graphics2D g) {
     g.setClip(null);
-    INITIAL_STATE.apply(g);
+    DEFAULT_STATE.apply(g);
     CURRENT_STATE.reset();
-    INITIAL_STATE.reset();
-  }
-
-  /** {@link RenderActions} defines a group of rendering operations */
-  public interface RenderActions {
-    /** Called run rendering operations */
-    void run();
   }
 
   /** G2DState maintains the state of a {@link Graphics2D} object */
@@ -240,16 +210,6 @@ public final class Renderer {
     Color color;
     Font font;
     Shape clip;
-
-    /** Copies the state of a {@link Graphics2D} object */
-    void save(Graphics2D g) {
-      bgColor = g.getBackground();
-      stroke = g.getStroke();
-      paint = g.getPaint();
-      color = g.getColor();
-      font = g.getFont();
-      clip = g.getClip();
-    }
 
     /** Applies the internal state to a {@link Graphics2D} object */
     void apply(Graphics2D g) {

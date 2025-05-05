@@ -3,6 +3,7 @@ package demos;
 import dev.gamekit.core.Application;
 import dev.gamekit.core.IO;
 import dev.gamekit.core.Scene;
+import dev.gamekit.settings.*;
 import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
@@ -11,8 +12,6 @@ import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.widgets.Button;
 import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.ui.widgets.*;
-import dev.gamekit.utils.Config;
-import dev.gamekit.utils.Resolution;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -29,7 +28,11 @@ public class Demo3UserInterface extends Scene {
 
   public static void main(String[] args) {
     Application game = new Application(
-      new Config("Demo 3 - Declarative UI", Resolution.NATIVE, true)
+      new Settings(
+        "Demo 3 - Declarative UI", Resolution.NATIVE, true,
+        Antialiasing.ON, AlphaInterpolation.QUALITY, ImageInterpolation.BICUBIC,
+        RenderingStrategy.QUALITY, Dithering.ON
+      )
     ) { };
     game.loadScene(new Demo3UserInterface());
     game.run();
@@ -41,40 +44,29 @@ public class Demo3UserInterface extends Scene {
       Image.create(backdrop),
 
       Align.create(
-        Align.options()
-          .horizontalAlignment(Alignment.START)
-          .verticalAlignment(Alignment.START),
-
+        Align.options().horizontalAlignment(Alignment.START).verticalAlignment(Alignment.START),
         Padding.create(
-          Padding.options()
-            .padding(new Spacing(24, 0)),
+          Padding.options().padding(new Spacing(24, 0)),
           Sized.create(
-            Sized.options()
-              .width(480)
-              .height(480),
+            Sized.options().width(480).height(480),
             Image.create(icon)
           )
         )
       ),
       Align.create(
-        Align.options()
-          .horizontalAlignment(Alignment.START)
-          .verticalAlignment(Alignment.CENTER),
+        Align.options().horizontalAlignment(Alignment.START).verticalAlignment(Alignment.CENTER),
         Padding.create(
-          Padding.options()
-            .padding(new Spacing(256, 0, 0, 96)),
+          Padding.options().padding(new Spacing(256, 0, 0, 96)),
           Column.create(
             Column.options()
               .mainAxisAlignment(MainAxisAlignment.START)
               .crossAxisAlignment(CrossAxisAlignment.STRETCH)
               .gapSize(24),
-
             MainMenuButton.create("Tutorial", e -> System.out.println("0: " + e.type)),
             MainMenuButton.create("New Planet", e -> System.out.println("1: " + e.type)),
             MainMenuButton.create("New Campaign", null),
             MainMenuButton.create("Load Game", null),
             MainMenuButton.create("Online Multiplayer", null),
-
             Column.create(
               Column.options()
                 .mainAxisAlignment(MainAxisAlignment.START)
@@ -88,45 +80,33 @@ public class Demo3UserInterface extends Scene {
           )
         )
       ),
-
       Fractional.create(
-        Fractional.options()
-          .heightFactor(0.15)
-          .verticalAlignment(Alignment.START),
+        Fractional.options().heightFactor(0.15).verticalAlignment(Alignment.START),
         Image.create(scrim)
       ),
-
       Fractional.create(
-        Fractional.options()
-          .heightFactor(0.15)
-          .verticalAlignment(Alignment.END),
+        Fractional.options().heightFactor(0.15).verticalAlignment(Alignment.END),
         Stack.create(
           Expanded.create(
             Image.create(scrim)
           ),
           Expanded.create(
             Row.create(
-              Row.options().
-                mainAxisAlignment(MainAxisAlignment.END)
+              Row.options()
+                .mainAxisAlignment(MainAxisAlignment.END)
                 .crossAxisAlignment(CrossAxisAlignment.CENTER)
                 .gapSize(24),
               Button.create(
-                Button.options()
-                  .padding(new Spacing(12, 12, 18, 12)),
+                Button.options().padding(new Spacing(12, 12, 18, 12)),
                 Text.create(
-                  Text.options()
-                    .fontSize(12)
-                    .fontStyle(Font.BOLD),
+                  Text.options().fontSize(12).fontStyle(Font.BOLD),
                   "Create Account"
                 )
               ),
               Button.create(
-                Button.options()
-                  .padding(new Spacing(12, 12, 18, 12)),
+                Button.options().padding(new Spacing(12, 12, 18, 12)),
                 Text.create(
-                  Text.options()
-                    .fontSize(12)
-                    .fontStyle(Font.BOLD),
+                  Text.options().fontSize(12).fontStyle(Font.BOLD),
                   "Login"
                 )
               )

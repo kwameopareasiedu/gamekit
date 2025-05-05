@@ -1,8 +1,7 @@
 package dev.gamekit.core;
 
 import dev.gamekit.animation.Animation;
-import dev.gamekit.utils.Config;
-import dev.gamekit.utils.Resolution;
+import dev.gamekit.settings.Settings;
 import dev.gamekit.utils.Task;
 import dev.gamekit.utils.Timeout;
 import org.apache.logging.log4j.LogManager;
@@ -30,6 +29,7 @@ public abstract class Application {
 
   protected final Logger logger = LogManager.getLogger(getClass());
 
+  private final Settings settings;
   private final List<Timeout> timeouts;
   private final List<Timeout> newTimeouts;
   private final List<Animation> animations;
@@ -39,23 +39,25 @@ public abstract class Application {
   private Scene nextScene;
 
   public Application(String title) {
-    this(new Config(title, Resolution.SVGA, false));
+    this(new Settings(title));
   }
 
-  public Application(Config config) {
-    logger.debug("Created application \"{}\"", config.title());
-    logger.debug("Configuration: {}", config);
+  public Application(Settings settings) {
+    Application.instance = this;
 
-    this.window = new Window(config);
+    logger.debug("Created application \"{}\"", settings);
+
+    this.settings = settings;
+    this.window = new Window();
     this.timeouts = new ArrayList<>();
     this.newTimeouts = new ArrayList<>();
     this.animations = new ArrayList<>();
     this.isRunning = true;
-
-    Application.instance = this;
   }
 
   public static Application getInstance() { return instance; }
+
+  public Settings getSettings() { return settings; }
 
   /** Schedules a scene to be loaded after the end of the current frame */
   public void loadScene(Scene scene) {

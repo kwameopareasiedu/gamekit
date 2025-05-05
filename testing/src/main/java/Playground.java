@@ -2,14 +2,14 @@ import dev.gamekit.audio.*;
 import dev.gamekit.audio.shapes.AudioShapeCircle;
 import dev.gamekit.core.Window;
 import dev.gamekit.core.*;
+import dev.gamekit.settings.Resolution;
+import dev.gamekit.settings.Settings;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.enums.MainAxisAlignment;
 import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.ui.widgets.*;
-import dev.gamekit.utils.Config;
 import dev.gamekit.utils.Position;
-import dev.gamekit.utils.Resolution;
 import dev.gamekit.utils.Vector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,7 +45,7 @@ public class Playground extends Scene {
 
   public static void main(String[] args) {
     Application game = new Application(
-      new Config("Playground", Resolution.SVGA, false)
+      new Settings("Playground", Resolution.SVGA, false)
     ) { };
     game.loadScene(new Playground());
     game.run();

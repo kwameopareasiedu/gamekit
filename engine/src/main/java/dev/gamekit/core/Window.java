@@ -1,8 +1,8 @@
 package dev.gamekit.core;
 
-import dev.gamekit.utils.Config;
+import dev.gamekit.settings.Resolution;
+import dev.gamekit.settings.Settings;
 import dev.gamekit.utils.Position;
-import dev.gamekit.utils.Resolution;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,7 +16,6 @@ public final class Window {
 
   private static Window instance;
 
-  private final Config config;
   private final Dimension displaySize;
   private final Position center;
   private final double displayScaleRatio;
@@ -29,24 +28,27 @@ public final class Window {
   private BufferedImage uiBuffer;
   private Graphics2D uiGraphics;
 
-  Window(Config config) {
+  Window() {
     LOGGER.debug("Creating window");
-    this.config = config;
+
+    Window.instance = this;
+
+    Settings settings = Application.getInstance().getSettings();
 
     displaySize = new Dimension(
-      config.resolution().width(),
-      config.resolution().height()
+      settings.resolution().width,
+      settings.resolution().height
     );
 
     center = new Position(
-      config.resolution().width() / 2,
-      config.resolution().height() / 2
+      settings.resolution().width / 2,
+      settings.resolution().height / 2
     );
 
-    frame = new JFrame(config.title());
+    frame = new JFrame(settings.title());
     frame.getContentPane().setBackground(Color.BLACK);
 
-    if (config.isFullScreen()) {
+    if (settings.fullScreen()) {
       frame.setUndecorated(true);
 
       GraphicsEnvironment
@@ -55,13 +57,13 @@ public final class Window {
         .setFullScreenWindow(frame);
 
       displayScaleRatio = Math.min(
-        (double) Resolution.NATIVE.width() / config.resolution().width(),
-        (double) Resolution.NATIVE.height() / config.resolution().height()
+        (double) Resolution.NATIVE.width / settings.resolution().width,
+        (double) Resolution.NATIVE.height / settings.resolution().height
       );
     } else {
       Dimension d = new Dimension(
-        config.resolution().width(),
-        config.resolution().height()
+        settings.resolution().width,
+        settings.resolution().height
       );
 
       frame.setMinimumSize(d);
@@ -77,8 +79,6 @@ public final class Window {
     frame.pack();
 
     createRenderBuffers();
-
-    Window.instance = this;
   }
 
   public static Window getInstance() { return instance; }
@@ -108,7 +108,9 @@ public final class Window {
   Graphics2D getUiGraphics() { return uiGraphics; }
 
   void redraw() {
-    if (config.isFullScreen()) {
+    Settings settings = Application.getInstance().getSettings();
+
+    if (settings.fullScreen()) {
       int scaledWidth = (int) (displaySize.width * displayScaleRatio);
       int scaledHeight = (int) (displaySize.height * displayScaleRatio);
       int dx1 = (int) (0.5 * (frame.getWidth() - scaledWidth));
@@ -135,20 +137,29 @@ public final class Window {
   }
 
   void createRenderBuffers() {
-    sceneBuffer =
-      new BufferedImage(displaySize.width, displaySize.height, BufferedImage.TYPE_INT_ARGB);
+    Settings settings = Application.getInstance().getSettings();
+    int displayWidth = displaySize.width;
+    int displayHeight = displaySize.height;
+
+    sceneBuffer = new BufferedImage(displayWidth, displayHeight, BufferedImage.TYPE_INT_ARGB);
     sceneGraphics = sceneBuffer.createGraphics();
-    sceneGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-    sceneGraphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+    settings.antialiasing().apply(sceneGraphics);
+    settings.alphaInterpolation().apply(sceneGraphics);
+    settings.imageInterpolation().apply(sceneGraphics);
+    settings.renderingStrategy().apply(sceneGraphics);
+    settings.dithering().apply(sceneGraphics);
 
-    uiBuffer =
-      new BufferedImage(displaySize.width, displaySize.height, BufferedImage.TYPE_INT_ARGB);
+    uiBuffer = new BufferedImage(displayWidth, displayHeight, BufferedImage.TYPE_INT_ARGB);
     uiGraphics = uiBuffer.createGraphics();
-    uiGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-    uiGraphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+    settings.antialiasing().apply(uiGraphics);
+    settings.alphaInterpolation().apply(uiGraphics);
+    settings.imageInterpolation().apply(uiGraphics);
+    settings.renderingStrategy().apply(uiGraphics);
+    settings.dithering().apply(uiGraphics);
 
-    renderBuffer =
-      new BufferedImage(Resolution.NATIVE.width(), Resolution.NATIVE.height(), BufferedImage.TYPE_INT_ARGB);
+    int renderWidth = settings.fullScreen() ? Resolution.NATIVE.width : displaySize.width;
+    int renderHeight = settings.fullScreen() ? Resolution.NATIVE.height : displaySize.height;
+    renderBuffer = new BufferedImage(renderWidth, renderHeight, BufferedImage.TYPE_INT_ARGB);
     renderGraphics = renderBuffer.createGraphics();
   }
 }

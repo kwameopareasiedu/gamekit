@@ -1,9 +1,9 @@
 package demos;
 
 import dev.gamekit.core.*;
-import dev.gamekit.utils.Config;
+import dev.gamekit.settings.Resolution;
+import dev.gamekit.settings.Settings;
 import dev.gamekit.utils.Position;
-import dev.gamekit.utils.Resolution;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -24,7 +24,7 @@ public class CalibrationTest extends Scene {
 
   public static void main(String[] args) {
     Application game = new Application(
-      new Config("Calibration Test", Resolution.SVGA, false)
+      new Settings("Calibration Test", Resolution.SVGA, false)
     ) { };
     game.loadScene(new CalibrationTest());
     game.run();
@@ -61,7 +61,7 @@ public class CalibrationTest extends Scene {
     Renderer.clear();
 
     Renderer.setColor(Color.CYAN);
-    Renderer.drawRect(x, y, Resolution.SVGA.width(), Resolution.SVGA.height());
+    Renderer.drawRect(x, y, Resolution.SVGA.width, Resolution.SVGA.height);
 
     Renderer.setColor(Color.BLUE);
     Renderer.drawLineH(-WORLD_WIDTH / 2, WORLD_WIDTH / 2, 0);
