@@ -41,8 +41,8 @@ public class Panel extends SingleChildParent implements NinePatch {
     );
 
     intrinsicBounds.setSize(
-      Math.max(background.getWidth(), child.computedBounds.width),
-      Math.max(background.getHeight(), child.computedBounds.height)
+      child.computedBounds.width + padding.getHorizontal(),
+      child.computedBounds.height + padding.getVertical()
     );
 
     computedBounds.setSize(

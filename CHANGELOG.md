@@ -6,7 +6,7 @@
 
 - Added `Opacity` which is a `SingleChildParent` which renders its child
   with transparency
-- Added `Scaled` which is a `SingleChildParent` which scaled the computed
+- Added `Scaled` which is a `SingleChildParent` which scales the computed
   size of its child
 - Added `Audio` class which manages loaded audio clips
 - Added abstract `AudioClip` which loads and manages the clip from a resource
@@ -28,7 +28,7 @@
 - Added `InputEventHandler` interface to be implemented by `Widgets` which
   would like to receive input events
 - Added `Compose` which is a `SingleChildParent` which delegates layout and
-  rendering to the provided widget tree
+  rendering to the provided widget tree, essentially a base for custom widgets
 - Added `static void drawString(String content, int x, int y, int width, int 
 height)` method to `Renderer` class
 - Added `static void withRotation(int x, int y, double deg, RenderActions 
@@ -42,6 +42,7 @@ renderGroup)` method to `Renderer` class
 - Added `static void resetOptions()` to `Renderer` class
 - Added `static BufferedImage getResourceImage(String resPath, int x, int y, int w, int h)` to 
   `IO` class for reading a slice of a resource image
+- Added `Color` which is a `SingleChildParent` which renders a solid color background
 
 ### Changed
 

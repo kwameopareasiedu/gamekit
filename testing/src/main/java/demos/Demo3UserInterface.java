@@ -96,6 +96,13 @@ public class Demo3UserInterface extends Scene {
                 .mainAxisAlignment(MainAxisAlignment.END)
                 .crossAxisAlignment(CrossAxisAlignment.CENTER)
                 .gapSize(24),
+              Sized.create(
+                Sized.options().width(48).height(48),
+                Colored.create(
+                  Colored.options().color(Color.RED).borderRadius(4),
+                  Empty.create()
+                )
+              ),
               Button.create(
                 Button.options().padding(new Spacing(12, 12, 18, 12)),
                 Text.create(
