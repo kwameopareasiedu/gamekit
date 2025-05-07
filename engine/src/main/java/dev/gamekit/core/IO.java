@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.RasterFormatException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -49,6 +50,21 @@ public class IO {
       return image;
     } catch (IOException e) {
       LOGGER.error("Unable to load resource image at {}", resPath);
+      LOGGER.catching(e);
+      return null;
+    }
+  }
+
+  /** Read and cache an image <b>resource file</b>, returning a slice of it */
+  public static BufferedImage getResourceImage(String resPath, int x, int y, int w, int h) {
+    try {
+      return getResourceImage(resPath).getSubimage(x, y, w, h);
+    } catch (NullPointerException e) {
+      LOGGER.error("Unable to load resource image at {}", resPath);
+      LOGGER.catching(e);
+      return null;
+    } catch (RasterFormatException e) {
+      LOGGER.error("Invalid slice bounds for {}", resPath);
       LOGGER.catching(e);
       return null;
     }

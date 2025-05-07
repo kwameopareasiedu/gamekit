@@ -40,6 +40,8 @@ renderGroup)` method to `Renderer` class
 - Added `static double lerp(double from, double to, double rate)` to `Math` class for linear
   interpolation
 - Added `static void resetOptions()` to `Renderer` class
+- Added `static BufferedImage getResourceImage(String resPath, int x, int y, int w, int h)` to 
+  `IO` class for reading a slice of a resource image
 
 ### Changed
 
