@@ -91,5 +91,20 @@ public class Panel extends SingleChildParent implements NinePatch {
       this.padding = padding;
       return this;
     }
+
+    public PanelOptions padding(int padding) {
+      this.padding = new Spacing(padding);
+      return this;
+    }
+
+    public PanelOptions padding(int horizontal, int vertical) {
+      this.padding = new Spacing(horizontal, vertical);
+      return this;
+    }
+
+    public PanelOptions padding(int top, int right, int bottom, int left) {
+      this.padding = new Spacing(top, right, bottom, left);
+      return this;
+    }
   }
 }

@@ -119,6 +119,21 @@ public class Button extends SingleChildParent implements NinePatch, InputEventHa
       return this;
     }
 
+    public ButtonOptions padding(int padding) {
+      this.padding = new Spacing(padding);
+      return this;
+    }
+
+    public ButtonOptions padding(int horizontal, int vertical) {
+      this.padding = new Spacing(horizontal, vertical);
+      return this;
+    }
+
+    public ButtonOptions padding(int top, int right, int bottom, int left) {
+      this.padding = new Spacing(top, right, bottom, left);
+      return this;
+    }
+
     public ButtonOptions defaultBackground(BufferedImage defaultBackground) {
       this.defaultBackground = defaultBackground;
       return this;
