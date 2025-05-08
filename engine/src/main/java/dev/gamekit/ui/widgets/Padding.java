@@ -56,9 +56,8 @@ public class Padding extends SingleChildParent {
 
   @Override
   public boolean stateEquals(Widget widget) {
-    if (widget instanceof Padding paddingWidget) {
+    if (widget instanceof Padding paddingWidget)
       return Objects.equals(padding, paddingWidget.padding);
-    }
 
     return false;
   }

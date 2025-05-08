@@ -93,7 +93,10 @@ public class Column extends Flex {
 
   @Override
   public boolean stateEquals(Widget widget) {
-    return widget instanceof Column;
+    if (widget instanceof Column columnWidget)
+      return super.stateEquals(columnWidget);
+
+    return false;
   }
 
   public static class ColumnOptions<T extends ColumnOptions<T>> extends FlexOptions<T> { }

@@ -90,7 +90,10 @@ public class Row extends Flex {
 
   @Override
   public boolean stateEquals(Widget widget) {
-    return widget instanceof Row;
+    if (widget instanceof Row rowWidget)
+      return super.stateEquals(rowWidget);
+
+    return false;
   }
 
   public static class RowOptions<T extends RowOptions<T>> extends FlexOptions<T> { }
