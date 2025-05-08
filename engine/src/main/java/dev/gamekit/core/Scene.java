@@ -64,6 +64,11 @@ public abstract class Scene implements UI.WidgetTreeCreator {
     ui.triggerUpdate();
   }
 
+  /** Trigger a widget tree update. You would use this when some UI variables have changed */
+  protected final void updateUI() {
+    ui.triggerUpdate();
+  }
+
   /** Called <b>once</b> by {@link Application} to initialize the scene */
   final void _start() {
     logger.debug("Starting scene");
