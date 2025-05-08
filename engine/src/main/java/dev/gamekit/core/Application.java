@@ -24,7 +24,7 @@ import java.util.List;
  */
 @SuppressWarnings("BusyWait")
 public abstract class Application {
-  public static final long FRAME_TIME_MS = 1000 / 120;
+  public static final long FRAME_TIME_MS = 1000 / 240;
   private static Application instance;
 
   protected final Logger logger = LogManager.getLogger(getClass());
@@ -110,11 +110,13 @@ public abstract class Application {
       setup();
 
       long lastFrameTime = System.currentTimeMillis();
+      long frameTimeAccumulator = 0;
 
       while (isRunning) {
-        long frameTimeNow = System.currentTimeMillis();
-        long frameTimeAccumulator = frameTimeNow - lastFrameTime;
-        lastFrameTime = frameTimeNow;
+        long currentFrameTime = System.currentTimeMillis();
+        long timeDiff = currentFrameTime - lastFrameTime;
+        lastFrameTime = currentFrameTime;
+        frameTimeAccumulator += timeDiff;
 
         while (frameTimeAccumulator >= FRAME_TIME_MS) {
           Input.freeze();

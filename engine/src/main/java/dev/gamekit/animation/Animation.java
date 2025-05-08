@@ -20,21 +20,21 @@ public class Animation {
   private State state;
   private double value;
 
-  public Animation(double duration) {
-    this(duration, RepeatMode.NONE, null);
+  public Animation(double durationMs) {
+    this(durationMs, RepeatMode.NONE, null);
   }
 
-  public Animation(double duration, RepeatMode repeatMode) {
-    this(duration, repeatMode, null);
+  public Animation(double durationMs, RepeatMode repeatMode) {
+    this(durationMs, repeatMode, null);
   }
 
-  public Animation(double duration, RepeatMode repeatMode, AnimationCurve curve) {
-    if (duration <= 0)
+  public Animation(double durationMs, RepeatMode repeatMode, AnimationCurve curve) {
+    if (durationMs <= 0)
       throw new IllegalArgumentException("Animation duration must be positive");
 
     this.repeatMode = repeatMode;
     this.curve = curve;
-    rate = 1.0 / duration;
+    rate = 1000.0 / durationMs;
     state = State.IDLE;
     value = 0;
   }

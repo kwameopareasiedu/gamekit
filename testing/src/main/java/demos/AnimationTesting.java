@@ -5,6 +5,8 @@ import dev.gamekit.animation.AnimationCurve;
 import dev.gamekit.core.Application;
 import dev.gamekit.core.Renderer;
 import dev.gamekit.core.Scene;
+import dev.gamekit.settings.Resolution;
+import dev.gamekit.settings.Settings;
 import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.widgets.Align;
@@ -20,7 +22,7 @@ public class AnimationTesting extends Scene {
   double animationValue = 0;
 
   private final Animation bounceAnimation = new Animation(
-    4, Animation.RepeatMode.ALTERNATE, AnimationCurve.EASE_IN_OUT_BOUNCE
+    4000, Animation.RepeatMode.ALTERNATE, AnimationCurve.EASE_IN_OUT_BOUNCE
   ).setValueListener(value -> updateUI(() -> animationValue = value));
 
   public AnimationTesting() {
@@ -29,7 +31,9 @@ public class AnimationTesting extends Scene {
 
   public static void main(String[] args) {
     // Create a new game application
-    Application game = new Application("Animation Testing") { };
+    Application game = new Application(
+      new Settings("Animation Testing", Resolution.HD, false)
+    ) { };
     // Load an instance of our Scene class
     game.loadScene(new AnimationTesting());
     // Run the game application
@@ -56,11 +60,9 @@ public class AnimationTesting extends Scene {
   @Override
   public Widget createUI() {
     return Align.create(
-      Align.options()
-        .horizontalAlignment(Alignment.START),
+      Align.options().horizontalAlignment(Alignment.START),
       Padding.create(
-        Padding.options()
-          .padding(new Spacing(16, 48)),
+        Padding.options().padding(new Spacing(16, 48)),
         Text.create(
           String.format("Value: %f", animationValue)
         )

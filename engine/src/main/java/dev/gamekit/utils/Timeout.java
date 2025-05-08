@@ -5,15 +5,15 @@ import dev.gamekit.core.Application;
 /** Timeout executes a specified {@link Task} after its duration has elapsed. */
 public class Timeout {
   boolean completed;
-  long duration;
+  long durationMs;
   Task task;
 
-  public Timeout(long duration, Task task) {
-    if (duration < 0)
+  public Timeout(long durationMs, Task task) {
+    if (durationMs < 0)
       throw new RuntimeException("Timeout duration cannot be negative");
     if (task == null)
       throw new RuntimeException("Timeout task cannot be null");
-    this.duration = duration;
+    this.durationMs = durationMs;
     this.completed = false;
     this.task = task;
   }
@@ -27,9 +27,9 @@ public class Timeout {
    */
   public void update() {
     if (!completed) {
-      duration = java.lang.Math.max(0, duration - Application.FRAME_TIME_MS);
+      durationMs = java.lang.Math.max(0, durationMs - Application.FRAME_TIME_MS);
 
-      if (duration == 0) {
+      if (durationMs == 0) {
         completed = true;
         task.run();
       }
