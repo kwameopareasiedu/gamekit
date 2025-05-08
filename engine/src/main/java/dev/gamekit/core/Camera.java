@@ -22,6 +22,21 @@ public final class Camera {
   private static double zoom = 1;
   private static double invZoom = 1.0 / zoom;
 
+  /** Returns the visible render bounds based on the camera's parameters */
+  public static Bounds getRenderBounds() {
+    Window window = Window.getInstance();
+    Position center = window.getCenter();
+
+    BOUNDS_CACHE.set(
+      (int) ((Camera.x - center.x) * invZoom),
+      (int) ((Camera.y - center.y) * invZoom),
+      (int) (window.getDisplayWidth() * invZoom),
+      (int) (window.getDisplayHeight() * invZoom)
+    );
+
+    return BOUNDS_CACHE;
+  }
+
   /** Transforms a screen-space point (sx,sy) into world-space position */
   public static Position screenToWorldPosition(double sx, double sy) {
     Window window = Window.getInstance();
@@ -54,20 +69,5 @@ public final class Camera {
     Position center = window.getCenter();
     TRANSFORM.setTransform(zoom, 0, 0, zoom, center.x - x, center.y - y);
     window.getSceneGraphics().setTransform(TRANSFORM);
-  }
-
-  /** Returns the visible render bounds based on the camera's parameters */
-  static Bounds getRenderBounds() {
-    Window window = Window.getInstance();
-    Position center = window.getCenter();
-
-    BOUNDS_CACHE.set(
-      (int) ((Camera.x - center.x) * invZoom),
-      (int) ((Camera.y - center.y) * invZoom),
-      (int) (window.getDisplayWidth() * invZoom),
-      (int) (window.getDisplayHeight() * invZoom)
-    );
-
-    return BOUNDS_CACHE;
   }
 }

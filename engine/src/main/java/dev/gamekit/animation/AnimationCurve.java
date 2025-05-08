@@ -25,7 +25,7 @@ public interface AnimationCurve {
 
   AnimationCurve EASE_IN_CUBIC = value -> value * value * value;
 
-  AnimationCurve EASE_OUT_CUBIC = value -> 1 - value * value * value;
+  AnimationCurve EASE_OUT_CUBIC = value -> 1 - Math.pow(1 - value, 3);
 
   AnimationCurve EASE_IN_OUT_CUBIC = value -> value < 0.5
     ? 4 * value * value * value
