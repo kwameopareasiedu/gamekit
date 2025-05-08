@@ -110,13 +110,11 @@ public abstract class Application {
       setup();
 
       long lastFrameTime = System.currentTimeMillis();
-      long frameTimeAccumulator = 0;
 
       while (isRunning) {
         long frameTimeNow = System.currentTimeMillis();
-        long elapsedTime = frameTimeNow - lastFrameTime;
+        long frameTimeAccumulator = frameTimeNow - lastFrameTime;
         lastFrameTime = frameTimeNow;
-        frameTimeAccumulator += elapsedTime;
 
         while (frameTimeAccumulator >= FRAME_TIME_MS) {
           Input.freeze();
@@ -127,7 +125,7 @@ public abstract class Application {
 
         render();
         endFrame();
-        Thread.sleep(Math.max(frameTimeAccumulator, 5));
+        Thread.sleep(Math.max(frameTimeAccumulator, 1));
       }
 
       dispose();
