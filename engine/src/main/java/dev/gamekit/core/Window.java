@@ -107,7 +107,7 @@ public final class Window {
 
   Graphics2D getUiGraphics() { return uiGraphics; }
 
-  void redraw() {
+  void render() {
     Settings settings = Application.getInstance().getSettings();
 
     if (settings.fullScreen()) {

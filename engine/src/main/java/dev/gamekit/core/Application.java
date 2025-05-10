@@ -30,9 +30,7 @@ public abstract class Application {
   protected final Logger logger = LogManager.getLogger(getClass());
 
   private final Settings settings;
-  private final List<Timeout> timeouts;
-  private final List<Timeout> newTimeouts;
-  private final List<Animation> animations;
+  private final UtilityWorker utility;
   private final Window window;
   private boolean isRunning;
   private Scene currentScene;
@@ -48,10 +46,8 @@ public abstract class Application {
     logger.debug("Created application \"{}\"", settings);
 
     this.settings = settings;
+    this.utility = new UtilityWorker();
     this.window = new Window();
-    this.timeouts = new ArrayList<>();
-    this.newTimeouts = new ArrayList<>();
-    this.animations = new ArrayList<>();
     this.isRunning = true;
   }
 
@@ -81,7 +77,7 @@ public abstract class Application {
   public void scheduleTask(Task task, long timeout) {
     if (timeout < 0)
       throw new RuntimeException("timeout cannot be negative");
-    newTimeouts.add(new Timeout(timeout, task));
+    utility.scheduleTimeout(new Timeout(timeout, task));
   }
 
   /**
@@ -89,9 +85,7 @@ public abstract class Application {
    * {@code onUpdate()} to ensure current values are available to the scene's next update cycle
    */
   public void scheduleAnimation(Animation animation) {
-    if (!animations.contains(animation)) {
-      animations.add(animation);
-    }
+    utility.scheduleAnimation(animation);
   }
 
   /**
@@ -127,7 +121,7 @@ public abstract class Application {
 
         render();
         endFrame();
-        Thread.sleep(Math.max(frameTimeAccumulator, 1));
+        Thread.sleep(1);
       }
 
       dispose();
@@ -156,27 +150,13 @@ public abstract class Application {
     });
 
     window.getFrame().setVisible(true);
+    utility.start();
   }
 
-  /**
-   * Called in each frame to update the current scene all running animations and timeouts have
-   * been updated
-   */
+  /** Called in each frame to update the current scene */
   private void update() {
-    if (!animations.isEmpty()) {
-      for (var anim : animations)
-        anim.update();
-    }
-
-    if (!timeouts.isEmpty()) {
-      for (var timeout : timeouts)
-        timeout.update();
-    }
-
     if (currentScene != null)
       currentScene._update();
-
-    Audio.update();
   }
 
   /**
@@ -189,7 +169,7 @@ public abstract class Application {
       currentScene._render();
     }
 
-    window.redraw();
+    window.render();
   }
 
   /**
@@ -201,24 +181,8 @@ public abstract class Application {
    * </ul>
    */
   private void endFrame() {
-    if (!animations.isEmpty()) {
-      animations.removeIf(animation ->
-        animation.getState() == Animation.State.ENDED
-      );
-    }
-
-    if (!timeouts.isEmpty()) {
-      timeouts.removeIf(Timeout::isCompleted);
-    }
-
-    if (!newTimeouts.isEmpty()) {
-      timeouts.addAll(newTimeouts);
-      newTimeouts.clear();
-    }
-
     if (nextScene != null) {
-      animations.clear();
-      timeouts.clear();
+      utility.clear();
 
       if (currentScene != null) {
         currentScene._dispose();
@@ -237,13 +201,114 @@ public abstract class Application {
   }
 
   /** Runs cleanup code before exiting the application */
-  protected void dispose() {
+  protected void dispose() throws InterruptedException {
     logger.debug("Disposing application");
 
     if (currentScene != null)
       currentScene._dispose();
 
+    utility.interrupt();
+    utility.join(1000);
+
     Audio.dispose();
     IO.dispose();
+  }
+
+  private static final class UtilityWorker extends Thread {
+    private final List<Timeout> timeouts;
+    private final List<Timeout> newTimeouts;
+    private final List<Animation> animations;
+
+    UtilityWorker() {
+      timeouts = new ArrayList<>();
+      newTimeouts = new ArrayList<>();
+      animations = new ArrayList<>();
+    }
+
+    private void scheduleAnimation(Animation animation) {
+      synchronized (animations) {
+        if (!animations.contains(animation))
+          animations.add(animation);
+      }
+    }
+
+    private void scheduleTimeout(Timeout timeout) {
+      synchronized (newTimeouts) {
+        newTimeouts.add(timeout);
+      }
+    }
+
+    @Override
+    public void run() {
+      super.run();
+
+      long lastFrameTime = System.currentTimeMillis();
+      long frameTimeAccumulator = 0;
+
+      while (!isInterrupted()) {
+        long currentFrameTime = System.currentTimeMillis();
+        long timeDiff = currentFrameTime - lastFrameTime;
+        lastFrameTime = currentFrameTime;
+        frameTimeAccumulator += timeDiff;
+
+        while (frameTimeAccumulator >= FRAME_TIME_MS) {
+          frameTimeAccumulator -= FRAME_TIME_MS;
+          update();
+        }
+
+        endFrame();
+
+        try {
+          Thread.sleep(1);
+        } catch (InterruptedException ignored) {
+
+        }
+      }
+    }
+
+    private void clear() {
+      synchronized (animations) {
+        animations.clear();
+      }
+
+      timeouts.clear();
+    }
+
+    private void update() {
+      synchronized (animations) {
+        if (!animations.isEmpty()) {
+          for (var anim : animations)
+            anim.update();
+        }
+      }
+
+      if (!timeouts.isEmpty()) {
+        for (var timeout : timeouts)
+          timeout.update();
+      }
+
+      Audio.update();
+    }
+
+    private void endFrame() {
+      synchronized (animations) {
+        if (!animations.isEmpty()) {
+          animations.removeIf(animation ->
+            animation.getState() == Animation.State.ENDED
+          );
+        }
+      }
+
+      if (!timeouts.isEmpty()) {
+        timeouts.removeIf(Timeout::isCompleted);
+      }
+
+      synchronized (newTimeouts) {
+        if (!newTimeouts.isEmpty()) {
+          timeouts.addAll(newTimeouts);
+          newTimeouts.clear();
+        }
+      }
+    }
   }
 }

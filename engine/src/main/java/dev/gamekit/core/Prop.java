@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * {@link Prop} represent game objects in a {@link Scene}.
@@ -14,16 +13,14 @@ import java.util.List;
  */
 public abstract class Prop {
   protected final Logger logger = LogManager.getLogger(getClass());
-  protected final List<Prop> children;
+  protected final ArrayList<Prop> children;
   protected Prop parent;
 
   final String name;
   boolean ready;
 
   public Prop(String name) {
-    this.name = name;
-    this.ready = false;
-    children = new ArrayList<>();
+    this(name, false);
   }
 
   Prop(String name, boolean ready) {
@@ -37,7 +34,10 @@ public abstract class Prop {
       logger.debug("Adding {} to {}", prop.name, name);
 
       Application.getInstance().scheduleTask(() -> {
-        children.add(prop);
+        synchronized (children) {
+          children.add(prop);
+        }
+
         prop.setParent(this);
 
         if (!prop.ready)
@@ -51,7 +51,10 @@ public abstract class Prop {
       logger.debug("Removing {} from {}", prop.name, name);
 
       Application.getInstance().scheduleTask(() -> {
-        children.remove(prop);
+        synchronized (children) {
+          children.remove(prop);
+        }
+
         prop.setParent(null);
 
         if (prop.ready)
@@ -85,19 +88,25 @@ public abstract class Prop {
   /** Called by the parent {@link Prop} to update the prop */
   void _update() {
     update();
-    children.forEach(Prop::_update);
+    synchronized (children) {
+      children.forEach(Prop::_update);
+    }
   }
 
   /** Called by the parent {@link Prop} to render the prop */
   void _render() {
     render();
-    children.forEach(Prop::_render);
+    synchronized (children) {
+      children.forEach(Prop::_render);
+    }
   }
 
   /** Called <b>once</b> by the parent {@link Prop} to dispose the prop */
   void _dispose() {
     dispose();
-    children.forEach(Prop::_dispose);
+    synchronized (children) {
+      children.forEach(Prop::_dispose);
+    }
     parent = null;
   }
 }

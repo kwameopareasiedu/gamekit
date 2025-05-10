@@ -22,13 +22,14 @@ public abstract class Scene implements UI.WidgetTreeCreator {
 
   protected final Logger logger = LogManager.getLogger(getClass());
   protected final String name;
-  protected final Prop tree;
 
-  private UI ui;
+  private final Prop tree;
+  private final UI ui;
 
   public Scene(String name) {
     this.name = name;
     this.tree = new Prop("Root", true) { };
+    this.ui = new UI(this);
   }
 
   public static Scene getCurrent() { return current; }
@@ -72,7 +73,6 @@ public abstract class Scene implements UI.WidgetTreeCreator {
   /** Called <b>once</b> by {@link Application} to initialize the scene */
   final void _start() {
     logger.debug("Starting scene");
-    ui = new UI(this);
     ui.setWidgetTree(createUI());
     start();
     tree._start();
