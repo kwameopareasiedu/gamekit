@@ -121,7 +121,7 @@ public abstract class Application {
 
         render();
         endFrame();
-        Thread.sleep(Math.max(frameTimeAccumulator, 1));
+        Thread.sleep(1);
       }
 
       dispose();
@@ -259,7 +259,7 @@ public abstract class Application {
         endFrame();
 
         try {
-          Thread.sleep(Math.max(frameTimeAccumulator, 1));
+          Thread.sleep(1);
         } catch (InterruptedException ignored) {
 
         }
