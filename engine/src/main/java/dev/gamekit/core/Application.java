@@ -30,7 +30,7 @@ public abstract class Application {
   protected final Logger logger = LogManager.getLogger(getClass());
 
   private final Settings settings;
-  private final UtilityThread worker;
+  private final UtilityWorker utility;
   private final Window window;
   private boolean isRunning;
   private Scene currentScene;
@@ -46,7 +46,7 @@ public abstract class Application {
     logger.debug("Created application \"{}\"", settings);
 
     this.settings = settings;
-    this.worker = new UtilityThread();
+    this.utility = new UtilityWorker();
     this.window = new Window();
     this.isRunning = true;
   }
@@ -77,7 +77,7 @@ public abstract class Application {
   public void scheduleTask(Task task, long timeout) {
     if (timeout < 0)
       throw new RuntimeException("timeout cannot be negative");
-    worker.scheduleTimeout(new Timeout(timeout, task));
+    utility.scheduleTimeout(new Timeout(timeout, task));
   }
 
   /**
@@ -85,7 +85,7 @@ public abstract class Application {
    * {@code onUpdate()} to ensure current values are available to the scene's next update cycle
    */
   public void scheduleAnimation(Animation animation) {
-    worker.scheduleAnimation(animation);
+    utility.scheduleAnimation(animation);
   }
 
   /**
@@ -102,7 +102,6 @@ public abstract class Application {
   public void run() {
     try {
       setup();
-      worker.start();
 
       long lastFrameTime = System.currentTimeMillis();
       long frameTimeAccumulator = 0;
@@ -151,6 +150,7 @@ public abstract class Application {
     });
 
     window.getFrame().setVisible(true);
+    utility.start();
   }
 
   /** Called in each frame to update the current scene */
@@ -169,7 +169,7 @@ public abstract class Application {
       currentScene._render();
     }
 
-    window.redraw();
+    window.render();
   }
 
   /**
@@ -182,7 +182,7 @@ public abstract class Application {
    */
   private void endFrame() {
     if (nextScene != null) {
-      worker.clear();
+      utility.clear();
 
       if (currentScene != null) {
         currentScene._dispose();
@@ -207,19 +207,19 @@ public abstract class Application {
     if (currentScene != null)
       currentScene._dispose();
 
-    worker.interrupt();
-    worker.join(1000);
+    utility.interrupt();
+    utility.join(1000);
 
     Audio.dispose();
     IO.dispose();
   }
 
-  static final class UtilityThread extends Thread {
+  private static final class UtilityWorker extends Thread {
     private final List<Timeout> timeouts;
     private final List<Timeout> newTimeouts;
     private final List<Animation> animations;
 
-    UtilityThread() {
+    UtilityWorker() {
       timeouts = new ArrayList<>();
       newTimeouts = new ArrayList<>();
       animations = new ArrayList<>();
