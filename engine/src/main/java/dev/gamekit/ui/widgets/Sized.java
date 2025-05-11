@@ -34,12 +34,14 @@ public class Sized extends SingleChildParent {
 
   @Override
   protected void performLayout(Constraints constraints) {
-    child.layout(
-      new Constraints(
-        0, constraints.maxWidth(),
-        0, constraints.maxHeight()
-      )
-    );
+    if (widthType == DimensionType.INTRINSIC || heightType == DimensionType.INTRINSIC) {
+      child.layout(
+        new Constraints(
+          0, constraints.maxWidth(),
+          0, constraints.maxHeight()
+        )
+      );
+    }
 
     double targetWidth = switch (widthType) {
       case FIXED -> width;
@@ -53,18 +55,37 @@ public class Sized extends SingleChildParent {
       case FRACTIONAL -> height * constraints.maxHeight();
     };
 
-    intrinsicBounds.setSize(targetWidth, targetHeight);
+    if (widthType == DimensionType.INTRINSIC) {
+      child.layout(
+        new Constraints(
+          0, constraints.maxWidth(),
+          targetHeight, targetHeight
+        )
+      );
+    } else if (heightType == DimensionType.INTRINSIC) {
+      child.layout(
+        new Constraints(
+          targetWidth, targetWidth,
+          0, constraints.maxHeight()
+        )
+      );
+    } else {
+      child.layout(
+        new Constraints(
+          targetWidth, targetWidth,
+          targetHeight, targetHeight
+        )
+      );
+    }
+
+    intrinsicBounds.setSize(
+      child.computedBounds.width,
+      child.computedBounds.height
+    );
 
     computedBounds.setSize(
       constraints.constrainWidth(intrinsicBounds.width),
       constraints.constrainHeight(intrinsicBounds.height)
-    );
-
-    child.layout(
-      new Constraints(
-        computedBounds.width, computedBounds.width,
-        computedBounds.height, computedBounds.height
-      )
     );
   }
 
@@ -92,18 +113,20 @@ public class Sized extends SingleChildParent {
     }
 
     public SizedOptions height(int height) {
-      this.heightType = heightType = DimensionType.FIXED;
+      this.heightType = DimensionType.FIXED;
       this.height = height;
       return this;
     }
 
     public SizedOptions intrinsicWidth() {
       this.widthType = DimensionType.INTRINSIC;
+      this.width = 0;
       return this;
     }
 
     public SizedOptions intrinsicHeight() {
       this.heightType = DimensionType.INTRINSIC;
+      this.height = 0;
       return this;
     }
 

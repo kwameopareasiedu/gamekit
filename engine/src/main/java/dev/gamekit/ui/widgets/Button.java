@@ -13,7 +13,7 @@ import java.util.Objects;
 
 /** A {@link Widget} which can be clicked to trigger an event */
 public class Button extends SingleChildParent implements NinePatch, InputEventHandler {
-  protected final Spacing padding;
+  protected final Spacing ninePatchBorder;
   protected final BufferedImage defaultBackground;
   protected final BufferedImage hoverBackground;
   protected final BufferedImage pressedBackground;
@@ -23,7 +23,7 @@ public class Button extends SingleChildParent implements NinePatch, InputEventHa
 
   public Button(ButtonOptions options, Widget child) {
     super(child);
-    this.padding = options.padding;
+    this.ninePatchBorder = options.ninePatchBorder;
     this.defaultBackground = options.defaultBackground;
     this.hoverBackground = options.hoverBackground;
     this.pressedBackground = options.pressedBackground;
@@ -42,15 +42,12 @@ public class Button extends SingleChildParent implements NinePatch, InputEventHa
   protected void performLayout(Constraints constraints) {
     child.layout(
       new Constraints(
-        0, constraints.maxWidth() - padding.getHorizontal(),
-        0, constraints.maxHeight() - padding.getVertical()
+        0, constraints.maxWidth(),
+        0, constraints.maxHeight()
       )
     );
 
-    intrinsicBounds.setSize(
-      child.computedBounds.width + padding.getHorizontal(),
-      child.computedBounds.height + padding.getVertical()
-    );
+    intrinsicBounds.setSize(child.computedBounds.width, child.computedBounds.height);
 
     computedBounds.setSize(
       constraints.constrainWidth(intrinsicBounds.width),
@@ -58,8 +55,8 @@ public class Button extends SingleChildParent implements NinePatch, InputEventHa
     );
 
     child.computedBounds.setPosition(
-      padding.left - padding.right + computedBounds.width / 2 - child.computedBounds.width / 2,
-      padding.top - padding.bottom + computedBounds.height / 2 - child.computedBounds.height / 2
+      computedBounds.width / 2 - intrinsicBounds.width / 2,
+      computedBounds.height / 2 - intrinsicBounds.height / 2
     );
   }
 
@@ -75,9 +72,9 @@ public class Button extends SingleChildParent implements NinePatch, InputEventHa
       bgImage = hoverBackground;
     }
 
-    if (bgImage != null && padding != null) {
+    if (bgImage != null && ninePatchBorder != null) {
       super.renderAppearance(g);
-      renderNinePatch(bgImage, absoluteBounds, padding, g);
+      renderNinePatch(bgImage, absoluteBounds, ninePatchBorder, g);
     }
   }
 
@@ -108,29 +105,29 @@ public class Button extends SingleChildParent implements NinePatch, InputEventHa
   }
 
   public static class ButtonOptions {
-    Spacing padding = new Spacing(24);
+    Spacing ninePatchBorder = new Spacing(24);
     BufferedImage defaultBackground = Constants.DEFAULT_BUTTON_BG;
     BufferedImage hoverBackground = Constants.HOVER_BUTTON_BG;
     BufferedImage pressedBackground = Constants.PRESSED_BUTTON_BG;
     MouseEvent.Listener mouseListener = e -> { };
 
-    public ButtonOptions padding(Spacing padding) {
-      this.padding = padding;
+    public ButtonOptions ninePatch(Spacing border) {
+      this.ninePatchBorder = border;
       return this;
     }
 
-    public ButtonOptions padding(int padding) {
-      this.padding = new Spacing(padding);
+    public ButtonOptions ninePatch(int all) {
+      this.ninePatchBorder = new Spacing(all);
       return this;
     }
 
-    public ButtonOptions padding(int horizontal, int vertical) {
-      this.padding = new Spacing(horizontal, vertical);
+    public ButtonOptions ninePatch(int horizontal, int vertical) {
+      this.ninePatchBorder = new Spacing(horizontal, vertical);
       return this;
     }
 
-    public ButtonOptions padding(int top, int right, int bottom, int left) {
-      this.padding = new Spacing(top, right, bottom, left);
+    public ButtonOptions ninePatch(int top, int right, int bottom, int left) {
+      this.ninePatchBorder = new Spacing(top, right, bottom, left);
       return this;
     }
 

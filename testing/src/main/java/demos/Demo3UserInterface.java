@@ -3,9 +3,7 @@ package demos;
 import dev.gamekit.core.Application;
 import dev.gamekit.core.IO;
 import dev.gamekit.core.Scene;
-import dev.gamekit.settings.WindowMode;
 import dev.gamekit.settings.*;
-import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.enums.MainAxisAlignment;
@@ -47,23 +45,26 @@ public class Demo3UserInterface extends Scene {
 
   @Override
   public Widget createUI() {
+    Widget.DEBUG_DRAW = true;
+
     return Stack.create(
       Image.create(backdrop),
 
       Align.create(
         Align.options().horizontalAlignment(Alignment.START).verticalAlignment(Alignment.START),
         Padding.create(
-          Padding.options().padding(new Spacing(24, 0)),
+          Padding.options().padding(24, 0),
           Sized.create(
             Sized.options().width(480).height(480),
             Image.create(icon)
           )
         )
       ),
+
       Align.create(
         Align.options().horizontalAlignment(Alignment.START).verticalAlignment(Alignment.CENTER),
         Padding.create(
-          Padding.options().padding(new Spacing(256, 0, 0, 96)),
+          Padding.options().padding(256, 8, 16, 96),
           Column.create(
             Column.options()
               .mainAxisAlignment(MainAxisAlignment.START)
@@ -73,20 +74,21 @@ public class Demo3UserInterface extends Scene {
             MainMenuButton.create("New Planet", e -> System.out.println("1: " + e.type)),
             MainMenuButton.create("New Campaign", null),
             MainMenuButton.create("Load Game", null),
-            MainMenuButton.create("Online Multiplayer", null),
-            Column.create(
-              Column.options()
-                .mainAxisAlignment(MainAxisAlignment.START)
-                .crossAxisAlignment(CrossAxisAlignment.START)
-                .gapSize(12),
-              SubMenuButton.create("Commander Customization"),
-              SubMenuButton.create("Options"),
-              SubMenuButton.create("Credits"),
-              SubMenuButton.create("Exit Game")
-            )
+            MainMenuButton.create("Online Multiplayer", null)
+//            Column.create(
+//              Column.options()
+//                .mainAxisAlignment(MainAxisAlignment.START)
+//                .crossAxisAlignment(CrossAxisAlignment.START)
+//                .gapSize(12),
+//              SubMenuButton.create("Commander Customization"),
+//              SubMenuButton.create("Options"),
+//              SubMenuButton.create("Credits"),
+//              SubMenuButton.create("Exit Game")
+//            )
           )
         )
       ),
+
       Align.create(
         Align.options().verticalAlignment(Alignment.START),
         Sized.create(
@@ -94,15 +96,18 @@ public class Demo3UserInterface extends Scene {
           Image.create(scrim)
         )
       ),
+
       Align.create(
         Align.options().verticalAlignment(Alignment.END),
         Sized.create(
           Sized.options().fractionalWidth(1).fractionalHeight(0.15),
           Stack.create(
-            Expanded.create(
+            Sized.create(
+              Sized.options().fractionalWidth(1).fractionalHeight(1),
               Image.create(scrim)
             ),
-            Expanded.create(
+            Sized.create(
+              Sized.options().fractionalWidth(1).fractionalHeight(1),
               Row.create(
                 Row.options()
                   .mainAxisAlignment(MainAxisAlignment.END)
@@ -115,14 +120,14 @@ public class Demo3UserInterface extends Scene {
                   )
                 ),
                 Button.create(
-                  Button.options().padding(new Spacing(12, 12, 18, 12)),
+                  Button.options().ninePatch(12, 12, 18, 12),
                   Text.create(
                     Text.options().fontSize(12).fontStyle(Font.BOLD),
                     "Create Account"
                   )
                 ),
                 Button.create(
-                  Button.options().padding(new Spacing(12, 12, 18, 12)),
+                  Button.options().ninePatch(12, 12, 18, 12),
                   Text.create(
                     Text.options().fontSize(12).fontStyle(Font.BOLD),
                     "Login"
@@ -142,14 +147,13 @@ public class Demo3UserInterface extends Scene {
     public MainMenuButton(String text, MouseEvent.Listener mouseListener) {
       super(
         Button.create(
-          Button.options()
-            .padding(new Spacing(12, 12, 16, 12))
-            .mouseListener(mouseListener),
-          Text.create(
-            Text.options()
-              .fontSize(20)
-              .fontStyle(Font.BOLD),
-            text
+          Button.options().ninePatch(12, 12, 16, 12).mouseListener(mouseListener),
+          Padding.create(
+            Padding.options().padding(12, 12, 16, 12),
+            Text.create(
+              Text.options().fontSize(20).fontStyle(Font.BOLD),
+              text
+            )
           )
         )
       );
@@ -179,13 +183,13 @@ public class Demo3UserInterface extends Scene {
     public SubMenuButton(String text) {
       super(
         Button.create(
-          Button.options()
-            .padding(new Spacing(6, 6, 8, 6)),
-          Text.create(
-            Text.options()
-              .fontSize(12)
-              .fontStyle(Font.BOLD),
-            text
+          Button.options().ninePatch(6, 6, 8, 6),
+          Padding.create(
+            Padding.options().padding(6, 6, 8, 6),
+            Text.create(
+              Text.options().fontSize(12).fontStyle(Font.BOLD),
+              text
+            )
           )
         )
       );

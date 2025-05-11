@@ -41,10 +41,7 @@ public class Padding extends SingleChildParent {
       constraints.constrainHeight(intrinsicBounds.height)
     );
 
-    child.computedBounds.setPosition(
-      padding.left - padding.right + computedBounds.width / 2 - child.computedBounds.width / 2,
-      padding.top - padding.bottom + computedBounds.height / 2 - child.computedBounds.height / 2
-    );
+    child.computedBounds.setPosition(padding.left, padding.top);
   }
 
   @Override

@@ -216,7 +216,7 @@ public class Text extends Leaf {
   public static class TextOptions {
     Font font = DEFAULT_FONT;
     int fontStyle = Font.PLAIN;
-    int fontSize = 16;
+    int fontSize = 20;
     Color color = Color.WHITE;
     Color backgroundColor = Constants.TRANSPARENT_COLOR;
     Alignment alignment = Alignment.START;

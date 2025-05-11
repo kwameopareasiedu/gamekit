@@ -29,10 +29,10 @@ public class Spacing {
   }
 
   public Spacing(int top, int right, int bottom, int left) {
-    this.top = top;
-    this.right = right;
-    this.bottom = bottom;
-    this.left = left;
+    this.top = Math.max(0, top);
+    this.right = Math.max(0, right);
+    this.bottom = Math.max(0, bottom);
+    this.left = Math.max(0, left);
   }
 
   /** Returns the sum of the top and bottom spacing */
@@ -41,7 +41,9 @@ public class Spacing {
   /** Returns the sum of the left and right spacing */
   public int getHorizontal() { return left + right; }
 
-  public void set(int size) { set(size, size); }
+  public void set(int size) {
+    set(size, size, size, size);
+  }
 
   public void set(int horizontal, int vertical) {
     set(vertical, horizontal, vertical, horizontal);

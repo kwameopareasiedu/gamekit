@@ -17,7 +17,7 @@ public abstract class Compose extends SingleChildParent {
   @Override
   protected final void performLayout(Constraints constraints) {
     Widget child = getChild();
-    child.performLayout(constraints);
+    child.layout(constraints);
 
     computedBounds.setSize(
       child.computedBounds.width,

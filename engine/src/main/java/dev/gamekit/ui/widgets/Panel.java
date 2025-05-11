@@ -15,12 +15,12 @@ import java.util.Objects;
  */
 public class Panel extends SingleChildParent implements NinePatch {
   protected final BufferedImage background;
-  protected final Spacing padding;
+  protected final Spacing ninePatchBorder;
 
   public Panel(PanelOptions options, Widget child) {
     super(child);
     this.background = options.background;
-    this.padding = options.padding;
+    this.ninePatchBorder = options.ninePatchBorder;
   }
 
   public static Panel create(PanelOptions options, Widget child) {
@@ -35,15 +35,12 @@ public class Panel extends SingleChildParent implements NinePatch {
   protected void performLayout(Constraints constraints) {
     child.layout(
       new Constraints(
-        0, constraints.maxWidth() - padding.getHorizontal(),
-        0, constraints.maxHeight() - padding.getVertical()
+        0, constraints.maxWidth(),
+        0, constraints.maxHeight()
       )
     );
 
-    intrinsicBounds.setSize(
-      child.computedBounds.width + padding.getHorizontal(),
-      child.computedBounds.height + padding.getVertical()
-    );
+    intrinsicBounds.setSize(child.computedBounds.width, child.computedBounds.height);
 
     computedBounds.setSize(
       constraints.constrainWidth(intrinsicBounds.width),
@@ -51,8 +48,8 @@ public class Panel extends SingleChildParent implements NinePatch {
     );
 
     child.computedBounds.setPosition(
-      padding.left - padding.right + computedBounds.width / 2 - child.computedBounds.width / 2,
-      padding.top - padding.bottom + computedBounds.height / 2 - child.computedBounds.height / 2
+      computedBounds.width / 2 - intrinsicBounds.width / 2,
+      computedBounds.height / 2 - intrinsicBounds.height / 2
     );
   }
 
@@ -63,7 +60,7 @@ public class Panel extends SingleChildParent implements NinePatch {
     renderNinePatch(
       background,
       absoluteBounds,
-      padding,
+      ninePatchBorder,
       g
     );
   }
@@ -72,7 +69,7 @@ public class Panel extends SingleChildParent implements NinePatch {
   public boolean stateEquals(Widget widget) {
     if (widget instanceof Panel panelWidget) {
       return Objects.equals(background, panelWidget.background)
-        && Objects.equals(padding, panelWidget.padding);
+        && Objects.equals(ninePatchBorder, panelWidget.ninePatchBorder);
     }
 
     return false;
@@ -80,30 +77,30 @@ public class Panel extends SingleChildParent implements NinePatch {
 
   public static class PanelOptions {
     public BufferedImage background = Constants.DEFAULT_PANEL_BG;
-    public Spacing padding = new Spacing();
+    public Spacing ninePatchBorder = new Spacing();
 
     public PanelOptions background(BufferedImage background) {
       this.background = background;
       return this;
     }
 
-    public PanelOptions padding(Spacing padding) {
-      this.padding = padding;
+    public PanelOptions ninePatch(Spacing border) {
+      this.ninePatchBorder = border;
       return this;
     }
 
-    public PanelOptions padding(int padding) {
-      this.padding = new Spacing(padding);
+    public PanelOptions ninePatch(int all) {
+      this.ninePatchBorder = new Spacing(all);
       return this;
     }
 
-    public PanelOptions padding(int horizontal, int vertical) {
-      this.padding = new Spacing(horizontal, vertical);
+    public PanelOptions ninePatch(int horizontal, int vertical) {
+      this.ninePatchBorder = new Spacing(horizontal, vertical);
       return this;
     }
 
-    public PanelOptions padding(int top, int right, int bottom, int left) {
-      this.padding = new Spacing(top, right, bottom, left);
+    public PanelOptions ninePatch(int top, int right, int bottom, int left) {
+      this.ninePatchBorder = new Spacing(top, right, bottom, left);
       return this;
     }
   }
