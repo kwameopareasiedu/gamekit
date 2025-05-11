@@ -5,19 +5,22 @@ import dev.gamekit.ui.Constraints;
 import java.awt.*;
 import java.util.Objects;
 
-/** A {@link SingleChildParent} which renders a solid color background */
-public class Colored extends SingleChildParent {
+/** A {@link Leaf} which renders a solid color background */
+public class Colored extends Leaf {
   protected final Color color;
   protected final int borderRadius;
 
-  public Colored(ColoredOptions options, Widget child) {
-    super(child);
+  public Colored(ColoredOptions options) {
     this.color = options.color;
     this.borderRadius = options.borderRadius;
   }
 
-  public static Colored create(ColoredOptions options, Widget child) {
-    return new Colored(options, child);
+  public static Colored create(ColoredOptions options) {
+    return new Colored(options);
+  }
+
+  public static Colored create(Color color, int borderRadius) {
+    return new Colored(new ColoredOptions().color(color).borderRadius(borderRadius));
   }
 
   public static ColoredOptions options() {
@@ -26,30 +29,19 @@ public class Colored extends SingleChildParent {
 
   @Override
   protected void performLayout(Constraints constraints) {
-    child.layout(
-      new Constraints(
-        0, constraints.maxWidth(),
-        0, constraints.maxHeight()
-      )
-    );
-
     intrinsicBounds.setSize(
-      child.computedBounds.width,
-      child.computedBounds.height
+      constraints.maxWidth(),
+      constraints.maxHeight()
     );
 
     computedBounds.setSize(
       constraints.constrainWidth(intrinsicBounds.width),
       constraints.constrainHeight(intrinsicBounds.height)
     );
-
-    child.computedBounds.setPosition(0, 0);
   }
 
   @Override
-  public void renderAppearance(Graphics2D g) {
-    super.renderAppearance(g);
-
+  public void performRender(Graphics2D g) {
     g.setColor(color);
     g.fillRoundRect(
       (int) absoluteBounds.x, (int) absoluteBounds.y,

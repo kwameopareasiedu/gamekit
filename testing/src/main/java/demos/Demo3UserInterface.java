@@ -111,8 +111,7 @@ public class Demo3UserInterface extends Scene {
                 Sized.create(
                   Sized.options().width(48).height(48),
                   Colored.create(
-                    Colored.options().color(Color.RED).borderRadius(4),
-                    Empty.create()
+                    Colored.options().color(Color.RED).borderRadius(4)
                   )
                 ),
                 Button.create(
