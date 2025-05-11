@@ -59,22 +59,43 @@ public class Animation {
 
   /** Starts this animation and changes its state to {@link State#RUNNING} */
   public void start() {
-    if (state == State.IDLE) {
-      state = State.RUNNING;
-      if (stateListener != null)
-        stateListener.onStateChanged(state);
+    if (state == State.IDLE)
       Application.getInstance().scheduleAnimation(this);
-    }
+
+    state = State.RUNNING;
+    value = 0;
+
+    if (stateListener != null)
+      stateListener.onStateChanged(state);
   }
 
   /**
-   * Stops this animation and changes its state to {@link State#ENDED}.
-   * Ended animation cannot be restarted.
+   * Stops and resets this animation by changing its state to {@link State#STOPPED} and its value
+   * to {@code 0}. Stopped animations can be restarted by calling {@link #start()}
    */
   public void stop() {
-    state = State.ENDED;
+    state = State.STOPPED;
+
     if (stateListener != null)
       stateListener.onStateChanged(state);
+
+    if (valueListener != null)
+      valueListener.onValueChanged(value);
+  }
+
+  /**
+   * Ends this animation and changes its state to {@link State#ENDED}. Ended animations are
+   * removed from the engine and cannot be restarted.
+   */
+  public void end() {
+    state = State.ENDED;
+
+    if (stateListener != null)
+      stateListener.onStateChanged(state);
+  }
+
+  public boolean isEnded() {
+    return state == State.ENDED;
   }
 
   /** Called internally by the application game loop to update this animation */
@@ -99,7 +120,9 @@ public class Animation {
     IDLE,
     /** Indicates a started animation */
     RUNNING,
-    /** Indicates an ended or stopped animation */
+    /** Indicates a stopped animation which can be restarted */
+    STOPPED,
+    /** Indicates an ended animation which cannot be restarted */
     ENDED
   }
 

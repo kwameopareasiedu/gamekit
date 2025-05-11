@@ -292,16 +292,12 @@ public abstract class Application {
 
     private void endFrame() {
       synchronized (animations) {
-        if (!animations.isEmpty()) {
-          animations.removeIf(animation ->
-            animation.getState() == Animation.State.ENDED
-          );
-        }
+        if (!animations.isEmpty())
+          animations.removeIf(Animation::isEnded);
       }
 
-      if (!timeouts.isEmpty()) {
+      if (!timeouts.isEmpty())
         timeouts.removeIf(Timeout::isCompleted);
-      }
 
       synchronized (newTimeouts) {
         if (!newTimeouts.isEmpty()) {

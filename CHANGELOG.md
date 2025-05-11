@@ -43,6 +43,7 @@ renderGroup)` method to `Renderer` class
 - Added `static BufferedImage getResourceImage(String resPath, int x, int y, int w, int h)` to 
   `IO` class for reading a slice of a resource image
 - Added `Color` which is a `SingleChildParent` which renders a solid color background
+- Implemented safe multithreading in `Application` class
 
 ### Changed
 
@@ -67,6 +68,7 @@ BufferedImage getResourceImage(String path)` in `IO` class
 - Renamed `void onUpdate()` to `void update()` in `Scene` and `Prop` class
 - Renamed `void onRender()` to `void render()` in `Scene` and `Prop` class
 - Renamed `void onDispose()` to `void dispose()` in `Scene` and `Prop` class
+- Modified `Animation` to be restartable
 
 ### Deprecated
 
