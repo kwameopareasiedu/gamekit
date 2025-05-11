@@ -80,41 +80,47 @@ public class Demo3UserInterface extends Scene {
           )
         )
       ),
-      Fractional.create(
-        Fractional.options().heightFactor(0.15).verticalAlignment(Alignment.START),
-        Image.create(scrim)
+      Align.create(
+        Align.options().verticalAlignment(Alignment.START),
+        Sized.create(
+          Sized.options().fractionalWidth(1).fractionalHeight(0.15),
+          Image.create(scrim)
+        )
       ),
-      Fractional.create(
-        Fractional.options().heightFactor(0.15).verticalAlignment(Alignment.END),
-        Stack.create(
-          Expanded.create(
-            Image.create(scrim)
-          ),
-          Expanded.create(
-            Row.create(
-              Row.options()
-                .mainAxisAlignment(MainAxisAlignment.END)
-                .crossAxisAlignment(CrossAxisAlignment.CENTER)
-                .gapSize(24),
-              Sized.create(
-                Sized.options().width(48).height(48),
-                Colored.create(
-                  Colored.options().color(Color.RED).borderRadius(4),
-                  Empty.create()
-                )
-              ),
-              Button.create(
-                Button.options().padding(new Spacing(12, 12, 18, 12)),
-                Text.create(
-                  Text.options().fontSize(12).fontStyle(Font.BOLD),
-                  "Create Account"
-                )
-              ),
-              Button.create(
-                Button.options().padding(new Spacing(12, 12, 18, 12)),
-                Text.create(
-                  Text.options().fontSize(12).fontStyle(Font.BOLD),
-                  "Login"
+      Align.create(
+        Align.options().verticalAlignment(Alignment.END),
+        Sized.create(
+          Sized.options().fractionalWidth(1).fractionalHeight(0.15),
+          Stack.create(
+            Expanded.create(
+              Image.create(scrim)
+            ),
+            Expanded.create(
+              Row.create(
+                Row.options()
+                  .mainAxisAlignment(MainAxisAlignment.END)
+                  .crossAxisAlignment(CrossAxisAlignment.CENTER)
+                  .gapSize(24),
+                Sized.create(
+                  Sized.options().width(48).height(48),
+                  Colored.create(
+                    Colored.options().color(Color.RED).borderRadius(4),
+                    Empty.create()
+                  )
+                ),
+                Button.create(
+                  Button.options().padding(new Spacing(12, 12, 18, 12)),
+                  Text.create(
+                    Text.options().fontSize(12).fontStyle(Font.BOLD),
+                    "Create Account"
+                  )
+                ),
+                Button.create(
+                  Button.options().padding(new Spacing(12, 12, 18, 12)),
+                  Text.create(
+                    Text.options().fontSize(12).fontStyle(Font.BOLD),
+                    "Login"
+                  )
                 )
               )
             )

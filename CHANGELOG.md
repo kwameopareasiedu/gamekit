@@ -35,12 +35,10 @@ height)` method to `Renderer` class
 renderGroup)` method to `Renderer` class
 - Added `Expanded` which is a `SingleChildParent` which forces the maximum constrained size on
   its child
-- Added `Fractional` which is a `SingleChildParent` which enforces a fractional size on its
-  child relative to its width and height
 - Added `static double lerp(double from, double to, double rate)` to `Math` class for linear
   interpolation
 - Added `static void resetOptions()` to `Renderer` class
-- Added `static BufferedImage getResourceImage(String resPath, int x, int y, int w, int h)` to 
+- Added `static BufferedImage getResourceImage(String resPath, int x, int y, int w, int h)` to
   `IO` class for reading a slice of a resource image
 - Added `Color` which is a `SingleChildParent` which renders a solid color background
 - Implemented safe multithreading in `Application` class
@@ -69,6 +67,7 @@ BufferedImage getResourceImage(String path)` in `IO` class
 - Renamed `void onRender()` to `void render()` in `Scene` and `Prop` class
 - Renamed `void onDispose()` to `void dispose()` in `Scene` and `Prop` class
 - Modified `Animation` to be restartable
+- Modified `Sized` widget to enforce a fixed size, intrinsic size or fractional size on its child
 
 ### Deprecated
 

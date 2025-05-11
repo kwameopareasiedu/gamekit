@@ -156,6 +156,10 @@ public final class UI {
           currentParent.updateChild(index, newWidget);
           treeUpdated = true;
         }
+
+        if (treeWidget == focusWidget) focusWidget = newWidget;
+        if (treeWidget == activeWidget) activeWidget = newWidget;
+        if (treeWidget == lastActiveWidget) lastActiveWidget = newWidget;
       } else if (treeWidget instanceof SingleChildParent currentParent
         && newWidget instanceof SingleChildParent newParent) {
         // Add child of SingleChildParent to queue for processing
