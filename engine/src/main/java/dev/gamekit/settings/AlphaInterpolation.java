@@ -7,7 +7,7 @@ import static java.awt.RenderingHints.*;
 public enum AlphaInterpolation implements Setting {
   QUALITY, SPEED, DEFAULT;
 
-  static AlphaInterpolation from(Graphics2D g) {
+  public static AlphaInterpolation from(Graphics2D g) {
     Object hint = g.getRenderingHint(KEY_ALPHA_INTERPOLATION);
     if (hint == VALUE_ALPHA_INTERPOLATION_QUALITY) return QUALITY;
     if (hint == VALUE_ALPHA_INTERPOLATION_SPEED) return SPEED;

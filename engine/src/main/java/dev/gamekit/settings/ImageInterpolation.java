@@ -5,9 +5,9 @@ import java.awt.*;
 import static java.awt.RenderingHints.*;
 
 public enum ImageInterpolation implements Setting {
-  BICUBIC, BILINEAR, NEAREST;
+  BICUBIC, BILINEAR, NEAREST, DEFAULT;
 
-  static ImageInterpolation from(Graphics2D g) {
+  public static ImageInterpolation from(Graphics2D g) {
     Object hint = g.getRenderingHint(KEY_INTERPOLATION);
     if (hint == VALUE_INTERPOLATION_BICUBIC) return BICUBIC;
     if (hint == VALUE_INTERPOLATION_BILINEAR) return BILINEAR;

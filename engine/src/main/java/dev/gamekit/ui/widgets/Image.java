@@ -1,5 +1,6 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.settings.ImageInterpolation;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.enums.ImageFit;
 
@@ -11,6 +12,7 @@ import java.util.Objects;
 public class Image extends Leaf {
   protected final BufferedImage image;
   protected final ImageFit fit;
+  protected final ImageInterpolation interpolation;
 
   public Image(ImageOptions options, BufferedImage image) {
     if (image == null)
@@ -18,6 +20,7 @@ public class Image extends Leaf {
 
     this.image = image;
     this.fit = options.fit;
+    this.interpolation = options.interpolation;
   }
 
   public static Image create(ImageOptions options, BufferedImage image) {
@@ -68,10 +71,17 @@ public class Image extends Leaf {
       }
     }
 
+    ImageInterpolation originalInterpolation = ImageInterpolation.from(g);
+
+    if (interpolation != ImageInterpolation.DEFAULT)
+      interpolation.apply(g);
+
     g.drawImage(
       image, (int) dx1, (int) dy1, (int) dx2, (int) dy2,
       0, 0, (int) intrinsicBounds.width, (int) intrinsicBounds.height, null
     );
+
+    originalInterpolation.apply(g);
   }
 
   @Override
@@ -86,9 +96,15 @@ public class Image extends Leaf {
 
   public static class ImageOptions {
     public ImageFit fit = ImageFit.FIT;
+    public ImageInterpolation interpolation = ImageInterpolation.DEFAULT;
 
     public ImageOptions fit(ImageFit fit) {
       this.fit = fit;
+      return this;
+    }
+
+    public ImageOptions interpolation(ImageInterpolation interpolation) {
+      this.interpolation = interpolation;
       return this;
     }
   }

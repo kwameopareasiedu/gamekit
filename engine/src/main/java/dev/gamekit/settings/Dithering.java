@@ -7,7 +7,7 @@ import static java.awt.RenderingHints.*;
 public enum Dithering implements Setting {
   ON, OFF, DEFAULT;
 
-  static Dithering from(Graphics2D g) {
+  public static Dithering from(Graphics2D g) {
     Object hint = g.getRenderingHint(KEY_DITHERING);
     if (hint == VALUE_DITHER_ENABLE) return ON;
     if (hint == VALUE_DITHER_DISABLE) return OFF;

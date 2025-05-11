@@ -7,7 +7,7 @@ import static java.awt.RenderingHints.*;
 public enum RenderingStrategy implements Setting {
   QUALITY, SPEED, DEFAULT;
 
-  static RenderingStrategy from(Graphics2D g) {
+  public static RenderingStrategy from(Graphics2D g) {
     Object hint = g.getRenderingHint(KEY_RENDERING);
     if (hint == VALUE_RENDER_QUALITY) return QUALITY;
     if (hint == VALUE_RENDER_SPEED) return SPEED;
