@@ -3,6 +3,7 @@ package demos;
 import dev.gamekit.core.Application;
 import dev.gamekit.core.IO;
 import dev.gamekit.core.Scene;
+import dev.gamekit.settings.WindowMode;
 import dev.gamekit.settings.*;
 import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.enums.Alignment;
@@ -29,9 +30,15 @@ public class Demo3UserInterface extends Scene {
   public static void main(String[] args) {
     Application game = new Application(
       new Settings(
-        "Demo 3 - Declarative UI", Resolution.NATIVE, true,
-        Antialiasing.ON, AlphaInterpolation.QUALITY, ImageInterpolation.BICUBIC,
-        RenderingStrategy.QUALITY, Dithering.ON
+        "Demo 3 - Declarative UI",
+        Resolution.NATIVE,
+        WindowMode.FULLSCREEN,
+        Antialiasing.OFF,
+        TextAntialiasing.ON,
+        AlphaInterpolation.SPEED,
+        ImageInterpolation.NEAREST,
+        RenderingStrategy.SPEED,
+        Dithering.OFF
       )
     ) { };
     game.loadScene(new Demo3UserInterface());

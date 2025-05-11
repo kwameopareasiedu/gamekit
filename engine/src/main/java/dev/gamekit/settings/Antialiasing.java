@@ -4,7 +4,7 @@ import java.awt.*;
 
 import static java.awt.RenderingHints.*;
 
-public enum Antialiasing {
+public enum Antialiasing implements Setting {
   ON, OFF, DEFAULT;
 
   static Antialiasing from(Graphics2D g) {

@@ -34,7 +34,12 @@ public class Sized extends SingleChildParent {
 
   @Override
   protected void performLayout(Constraints constraints) {
-    child.layout(constraints);
+    child.layout(
+      new Constraints(
+        0, constraints.maxWidth(),
+        0, constraints.maxHeight()
+      )
+    );
 
     double targetWidth = switch (widthType) {
       case FIXED -> width;

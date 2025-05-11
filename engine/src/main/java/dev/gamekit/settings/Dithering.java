@@ -4,7 +4,7 @@ import java.awt.*;
 
 import static java.awt.RenderingHints.*;
 
-public enum Dithering {
+public enum Dithering implements Setting {
   ON, OFF, DEFAULT;
 
   static Dithering from(Graphics2D g) {

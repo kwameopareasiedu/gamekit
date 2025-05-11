@@ -4,6 +4,7 @@ import dev.gamekit.core.Window;
 import dev.gamekit.core.*;
 import dev.gamekit.settings.Resolution;
 import dev.gamekit.settings.Settings;
+import dev.gamekit.settings.WindowMode;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.enums.MainAxisAlignment;
@@ -45,7 +46,7 @@ public class Playground extends Scene {
 
   public static void main(String[] args) {
     Application game = new Application(
-      new Settings("Playground", Resolution.SVGA, false)
+      new Settings("Playground", Resolution.SVGA, WindowMode.WINDOWED)
     ) { };
     game.loadScene(new Playground());
     game.run();

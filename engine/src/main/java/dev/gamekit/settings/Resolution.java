@@ -3,7 +3,7 @@ package dev.gamekit.settings;
 import java.awt.*;
 
 /** Represents the width and height the window at startup */
-public enum Resolution {
+public enum Resolution implements Setting {
   VGA(640, 480),
   SVGA(800, 600),
   XGA(1024, 768),

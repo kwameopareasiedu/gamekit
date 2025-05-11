@@ -56,11 +56,12 @@ public final class UI {
     this.canvasImage = new BufferedImage(dw, dh, BufferedImage.TYPE_INT_ARGB);
     this.canvasGraphics = canvasImage.createGraphics();
 
-    settings.antialiasing().apply(canvasGraphics);
-    settings.alphaInterpolation().apply(canvasGraphics);
-    settings.imageInterpolation().apply(canvasGraphics);
-    settings.renderingStrategy().apply(canvasGraphics);
-    settings.dithering().apply(canvasGraphics);
+    settings.antialiasing.apply(canvasGraphics);
+    settings.textAntialiasing.apply(canvasGraphics);
+    settings.alphaInterpolation.apply(canvasGraphics);
+    settings.imageInterpolation.apply(canvasGraphics);
+    settings.renderingStrategy.apply(canvasGraphics);
+    settings.dithering.apply(canvasGraphics);
 
     UI.instance = this;
   }

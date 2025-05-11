@@ -8,7 +8,7 @@ import java.lang.Math;
 
 /** Constants store for engine */
 public final class Constants {
-  public static final Font DEFAULT_FONT = IO.getResourceFont("dogicapixel.ttf");
+  public static final Font DEFAULT_FONT = IO.getResourceFont("font-default.ttf");
   public static final Color TRANSPARENT_COLOR = new Color(0x0000000, true);
   public static final BufferedImage DEFAULT_BUTTON_BG = IO.getResourceImage("btn-default.png");
   public static final BufferedImage HOVER_BUTTON_BG = IO.getResourceImage("btn-hover.png");

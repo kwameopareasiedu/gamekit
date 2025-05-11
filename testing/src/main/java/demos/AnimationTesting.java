@@ -7,6 +7,7 @@ import dev.gamekit.core.Renderer;
 import dev.gamekit.core.Scene;
 import dev.gamekit.settings.Resolution;
 import dev.gamekit.settings.Settings;
+import dev.gamekit.settings.WindowMode;
 import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.widgets.Align;
@@ -32,7 +33,7 @@ public class AnimationTesting extends Scene {
   public static void main(String[] args) {
     // Create a new game application
     Application game = new Application(
-      new Settings("Animation Testing", Resolution.HD, false)
+      new Settings("Animation Testing", Resolution.HD, WindowMode.WINDOWED)
     ) { };
     // Load an instance of our Scene class
     game.loadScene(new AnimationTesting());

@@ -4,7 +4,7 @@ import java.awt.*;
 
 import static java.awt.RenderingHints.*;
 
-public enum RenderingStrategy {
+public enum RenderingStrategy implements Setting {
   QUALITY, SPEED, DEFAULT;
 
   static RenderingStrategy from(Graphics2D g) {

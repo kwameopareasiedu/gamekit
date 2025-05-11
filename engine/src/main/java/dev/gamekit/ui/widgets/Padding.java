@@ -26,8 +26,8 @@ public class Padding extends SingleChildParent {
   protected void performLayout(Constraints constraints) {
     child.layout(
       new Constraints(
-        0, constraints.maxWidth(),
-        0, constraints.maxHeight()
+        0, constraints.maxWidth() - padding.getHorizontal(),
+        0, constraints.maxHeight() - padding.getVertical()
       )
     );
 
@@ -41,17 +41,10 @@ public class Padding extends SingleChildParent {
       constraints.constrainHeight(intrinsicBounds.height)
     );
 
-    if (intrinsicBounds.width > computedBounds.width ||
-      intrinsicBounds.height > computedBounds.height) {
-      child.layout(
-        new Constraints(
-          0, computedBounds.width - padding.getHorizontal(),
-          0, computedBounds.height - padding.getVertical()
-        )
-      );
-    }
-
-    child.computedBounds.setPosition(padding.left, padding.top);
+    child.computedBounds.setPosition(
+      padding.left - padding.right + computedBounds.width / 2 - child.computedBounds.width / 2,
+      padding.top - padding.bottom + computedBounds.height / 2 - child.computedBounds.height / 2
+    );
   }
 
   @Override

@@ -16,13 +16,14 @@ public class Stack extends MultiChildParent {
   protected void performLayout(Constraints constraints) {
     double maxWidth = 0, maxHeight = 0;
 
-    Constraints childConstraints = new Constraints(
-      0, constraints.maxWidth(),
-      0, constraints.maxHeight()
-    );
-
     for (Widget child : children) {
-      child.layout(childConstraints);
+      child.layout(
+        new Constraints(
+          0, constraints.maxWidth(),
+          0, constraints.maxHeight()
+        )
+      );
+
       maxWidth = Math.max(maxWidth, child.computedBounds.width);
       maxHeight = Math.max(maxHeight, child.computedBounds.height);
     }

@@ -36,19 +36,19 @@ public final class Window {
     Settings settings = Application.getInstance().getSettings();
 
     displaySize = new Dimension(
-      settings.resolution().width,
-      settings.resolution().height
+      settings.resolution.width,
+      settings.resolution.height
     );
 
     center = new Position(
-      settings.resolution().width / 2,
-      settings.resolution().height / 2
+      settings.resolution.width / 2,
+      settings.resolution.height / 2
     );
 
-    frame = new JFrame(settings.title());
+    frame = new JFrame(settings.title);
     frame.getContentPane().setBackground(Color.BLACK);
 
-    if (settings.fullScreen()) {
+    if (settings.fullScreen) {
       frame.setUndecorated(true);
 
       GraphicsEnvironment
@@ -57,13 +57,13 @@ public final class Window {
         .setFullScreenWindow(frame);
 
       displayScaleRatio = Math.min(
-        (double) Resolution.NATIVE.width / settings.resolution().width,
-        (double) Resolution.NATIVE.height / settings.resolution().height
+        (double) Resolution.NATIVE.width / settings.resolution.width,
+        (double) Resolution.NATIVE.height / settings.resolution.height
       );
     } else {
       Dimension d = new Dimension(
-        settings.resolution().width,
-        settings.resolution().height
+        settings.resolution.width,
+        settings.resolution.height
       );
 
       frame.setMinimumSize(d);
@@ -110,7 +110,7 @@ public final class Window {
   void render() {
     Settings settings = Application.getInstance().getSettings();
 
-    if (settings.fullScreen()) {
+    if (settings.fullScreen) {
       int scaledWidth = (int) (displaySize.width * displayScaleRatio);
       int scaledHeight = (int) (displaySize.height * displayScaleRatio);
       int dx1 = (int) (0.5 * (frame.getWidth() - scaledWidth));
@@ -143,22 +143,22 @@ public final class Window {
 
     sceneBuffer = new BufferedImage(displayWidth, displayHeight, BufferedImage.TYPE_INT_ARGB);
     sceneGraphics = sceneBuffer.createGraphics();
-    settings.antialiasing().apply(sceneGraphics);
-    settings.alphaInterpolation().apply(sceneGraphics);
-    settings.imageInterpolation().apply(sceneGraphics);
-    settings.renderingStrategy().apply(sceneGraphics);
-    settings.dithering().apply(sceneGraphics);
+    settings.antialiasing.apply(sceneGraphics);
+    settings.alphaInterpolation.apply(sceneGraphics);
+    settings.imageInterpolation.apply(sceneGraphics);
+    settings.renderingStrategy.apply(sceneGraphics);
+    settings.dithering.apply(sceneGraphics);
 
     uiBuffer = new BufferedImage(displayWidth, displayHeight, BufferedImage.TYPE_INT_ARGB);
     uiGraphics = uiBuffer.createGraphics();
-    settings.antialiasing().apply(uiGraphics);
-    settings.alphaInterpolation().apply(uiGraphics);
-    settings.imageInterpolation().apply(uiGraphics);
-    settings.renderingStrategy().apply(uiGraphics);
-    settings.dithering().apply(uiGraphics);
+    settings.antialiasing.apply(uiGraphics);
+    settings.alphaInterpolation.apply(uiGraphics);
+    settings.imageInterpolation.apply(uiGraphics);
+    settings.renderingStrategy.apply(uiGraphics);
+    settings.dithering.apply(uiGraphics);
 
-    int renderWidth = settings.fullScreen() ? Resolution.NATIVE.width : displaySize.width;
-    int renderHeight = settings.fullScreen() ? Resolution.NATIVE.height : displaySize.height;
+    int renderWidth = settings.fullScreen ? Resolution.NATIVE.width : displaySize.width;
+    int renderHeight = settings.fullScreen ? Resolution.NATIVE.height : displaySize.height;
     renderBuffer = new BufferedImage(renderWidth, renderHeight, BufferedImage.TYPE_INT_ARGB);
     renderGraphics = renderBuffer.createGraphics();
   }

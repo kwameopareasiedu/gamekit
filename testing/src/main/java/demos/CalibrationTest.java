@@ -3,6 +3,7 @@ package demos;
 import dev.gamekit.core.*;
 import dev.gamekit.settings.Resolution;
 import dev.gamekit.settings.Settings;
+import dev.gamekit.settings.WindowMode;
 import dev.gamekit.utils.Position;
 
 import java.awt.*;
@@ -24,7 +25,7 @@ public class CalibrationTest extends Scene {
 
   public static void main(String[] args) {
     Application game = new Application(
-      new Settings("Calibration Test", Resolution.SVGA, false)
+      new Settings("Calibration Test", Resolution.SVGA, WindowMode.WINDOWED)
     ) { };
     game.loadScene(new CalibrationTest());
     game.run();

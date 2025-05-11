@@ -4,7 +4,7 @@ import java.awt.*;
 
 import static java.awt.RenderingHints.*;
 
-public enum ImageInterpolation {
+public enum ImageInterpolation implements Setting {
   BICUBIC, BILINEAR, NEAREST;
 
   static ImageInterpolation from(Graphics2D g) {

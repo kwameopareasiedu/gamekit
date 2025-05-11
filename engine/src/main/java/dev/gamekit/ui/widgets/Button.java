@@ -48,13 +48,13 @@ public class Button extends SingleChildParent implements NinePatch, InputEventHa
     );
 
     intrinsicBounds.setSize(
-      child.computedBounds.width,
-      child.computedBounds.height
+      child.computedBounds.width + padding.getHorizontal(),
+      child.computedBounds.height + padding.getVertical()
     );
 
     computedBounds.setSize(
-      constraints.constrainWidth(intrinsicBounds.width + padding.getHorizontal()),
-      constraints.constrainHeight(intrinsicBounds.height + padding.getVertical())
+      constraints.constrainWidth(intrinsicBounds.width),
+      constraints.constrainHeight(intrinsicBounds.height)
     );
 
     child.computedBounds.setPosition(

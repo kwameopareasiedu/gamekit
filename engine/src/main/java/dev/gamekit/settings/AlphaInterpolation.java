@@ -4,7 +4,7 @@ import java.awt.*;
 
 import static java.awt.RenderingHints.*;
 
-public enum AlphaInterpolation {
+public enum AlphaInterpolation implements Setting {
   QUALITY, SPEED, DEFAULT;
 
   static AlphaInterpolation from(Graphics2D g) {
