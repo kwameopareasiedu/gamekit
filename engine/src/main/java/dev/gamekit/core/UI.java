@@ -1,5 +1,6 @@
 package dev.gamekit.core;
 
+import dev.gamekit.settings.Settings;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.events.InputEvent;
 import dev.gamekit.ui.events.InputEventHandler;
@@ -41,6 +42,7 @@ public final class UI {
   private boolean needsRender = true;
 
   public UI(WidgetTreeCreator treeCreator) {
+    Settings settings = Application.getInstance().getSettings();
     Window win = Window.getInstance();
     int dw = win.getDisplayWidth();
     int dh = win.getDisplayHeight();
@@ -53,6 +55,12 @@ public final class UI {
     this.mousePosition = new Position();
     this.canvasImage = new BufferedImage(dw, dh, BufferedImage.TYPE_INT_ARGB);
     this.canvasGraphics = canvasImage.createGraphics();
+
+    settings.antialiasing().apply(canvasGraphics);
+    settings.alphaInterpolation().apply(canvasGraphics);
+    settings.imageInterpolation().apply(canvasGraphics);
+    settings.renderingStrategy().apply(canvasGraphics);
+    settings.dithering().apply(canvasGraphics);
 
     UI.instance = this;
   }

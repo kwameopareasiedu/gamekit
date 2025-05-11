@@ -32,6 +32,7 @@ public class Text extends Leaf {
   private final Font renderFont;
   private final FontMetrics fontMetrics;
   private String[] textLines;
+  private double[] textOffsets;
 
   public Text(TextOptions options, String text) {
     this.text = text;
@@ -69,8 +70,7 @@ public class Text extends Leaf {
   @Override
   protected void performLayout(Constraints constraints) {
     int textWidth = fontMetrics.stringWidth(text);
-    int textHeight =
-      1 + fontMetrics.getAscent() + Math.abs(fontMetrics.getDescent());
+    int textHeight = fontMetrics.getHeight();
 
     if (shadowEnabled) {
       textWidth += Math.abs(shadowOffsetX);
@@ -93,8 +93,8 @@ public class Text extends Leaf {
       );
 
       if (singleWordExceedingComputedWidth) {
-        separator = "";
         words = text.split("");
+        separator = "";
       }
 
       List<String> lines = new ArrayList<>();
@@ -121,8 +121,7 @@ public class Text extends Leaf {
       if (!line.isEmpty())
         lines.add(line.toString());
 
-      textLines = new String[lines.size()];
-      textLines = lines.toArray(textLines);
+      textLines = lines.toArray(String[]::new);
 
       intrinsicBounds.setSize(maxLineWidth, textHeight * lines.size());
 
@@ -130,20 +129,36 @@ public class Text extends Leaf {
         constraints.constrainWidth(intrinsicBounds.width),
         constraints.constrainHeight(intrinsicBounds.height)
       );
+
+      textOffsets = new double[lines.size()];
+
+      for (int i = 0; i < lines.size(); i++) {
+        String line1 = lines.get(i);
+        int line1Width = fontMetrics.stringWidth(line1);
+
+        double line1Offset = switch (alignment) {
+          case CENTER -> computedBounds.width / 2 - line1Width / 2.0;
+          case END -> computedBounds.width - line1Width;
+          default -> 0;
+        };
+
+        textOffsets[i] = line1Offset;
+      }
     } else {
       textLines = new String[]{ text };
+      textOffsets = new double[]{
+        switch (alignment) {
+          case CENTER -> computedBounds.width / 2 - intrinsicBounds.width / 2.0;
+          case END -> computedBounds.width - intrinsicBounds.width;
+          default -> 0;
+        }
+      };
     }
   }
 
   @Override
   protected void performRender(Graphics2D g) {
     g.setFont(renderFont);
-
-    double hOffset = absoluteBounds.x + switch (alignment) {
-      case CENTER -> absoluteBounds.width / 2 - intrinsicBounds.width / 2;
-      case END -> absoluteBounds.width - intrinsicBounds.width;
-      default -> 0;
-    };
 
     double vOffset = absoluteBounds.y + switch (verticalAlignment) {
       case CENTER -> absoluteBounds.height / 2 - intrinsicBounds.height / 2;
@@ -155,11 +170,12 @@ public class Text extends Leaf {
       g.setColor(shadowColor);
 
       for (int i = 0; i < textLines.length; i++) {
-        String word = textLines[i];
+        String line = textLines[i];
+        double offset = textOffsets[i];
 
         g.drawString(
-          word,
-          (int) (hOffset + shadowOffsetX),
+          line,
+          (int) (absoluteBounds.x + offset + shadowOffsetX),
           (int) ((i + 1) * fontSize + vOffset + shadowOffsetY)
         );
       }
@@ -168,11 +184,12 @@ public class Text extends Leaf {
     g.setColor(color);
 
     for (int i = 0; i < textLines.length; i++) {
-      String word = textLines[i];
+      String line = textLines[i];
+      double offset = textOffsets[i];
 
       g.drawString(
-        word,
-        (int) hOffset,
+        line,
+        (int) (absoluteBounds.x + offset),
         (int) ((i + 1) * fontSize + vOffset)
       );
     }
