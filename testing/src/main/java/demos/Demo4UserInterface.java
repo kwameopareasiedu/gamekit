@@ -16,12 +16,12 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
-public class Demo3UserInterface extends Scene {
+public class Demo4UserInterface extends Scene {
   BufferedImage backdrop = IO.getResourceImage("planetfall-artwork.jpg");
   BufferedImage icon = IO.getResourceImage("planetfall-logo.png");
   BufferedImage scrim = IO.getResourceImage("transparent-black.png");
 
-  public Demo3UserInterface() {
+  public Demo4UserInterface() {
     super("Main Scene");
   }
 
@@ -39,7 +39,7 @@ public class Demo3UserInterface extends Scene {
         Dithering.OFF
       )
     ) { };
-    game.loadScene(new Demo3UserInterface());
+    game.loadScene(new Demo4UserInterface());
     game.run();
   }
 

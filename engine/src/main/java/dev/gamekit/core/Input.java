@@ -219,7 +219,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   private final ButtonState[] buttonStates;
   private final Position absMousePosition;
   private final Position mousePosition;
-  private boolean isFrozen = false;
+  private boolean frozen = false;
 
   private Input() {
     keyStates = new KeyState[KEY_COUNT];
@@ -294,7 +294,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
    * This makes for predictable reads in the scene's update function
    */
   static void freeze() {
-    INSTANCE.isFrozen = true;
+    INSTANCE.frozen = true;
   }
 
   /** Resets the current state and allows Window input events to affect the current input state */
@@ -307,23 +307,27 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
       i -> INSTANCE.buttonStates[i].reset()
     );
 
-    INSTANCE.isFrozen = false;
+    INSTANCE.frozen = false;
   }
 
   @Override
   public synchronized void keyPressed(KeyEvent e) {
+    if (frozen) return;
+
     int keyCode = e.getKeyCode();
-    if (!isFrozen && keyCode >= 0 && keyCode < KEY_COUNT) {
+
+    if (keyCode >= 0 && keyCode < KEY_COUNT)
       keyStates[keyCode].update(true);
-    }
   }
 
   @Override
   public synchronized void keyReleased(KeyEvent e) {
+    if (frozen) return;
+
     int keyCode = e.getKeyCode();
-    if (!isFrozen && keyCode >= 0 && keyCode < KEY_COUNT) {
+
+    if (keyCode >= 0 && keyCode < KEY_COUNT)
       keyStates[keyCode].update(false);
-    }
   }
 
   @Override
@@ -331,28 +335,36 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
   @Override
   public synchronized void mousePressed(MouseEvent e) {
+    if (frozen) return;
+
     int buttonCode = e.getButton();
-    if (!isFrozen && buttonCode >= 1) {
+
+    if (buttonCode >= 1)
       buttonStates[buttonCode - 1].update(true);
-    }
   }
 
   @Override
   public synchronized void mouseReleased(MouseEvent e) {
+    if (frozen) return;
+
     int buttonCode = e.getButton();
-    if (!isFrozen && buttonCode >= 1) {
+
+    if (buttonCode >= 1)
       buttonStates[buttonCode - 1].update(false);
-    }
   }
 
   @Override
   public synchronized void mouseDragged(MouseEvent e) {
-    if (!isFrozen) absMousePosition.set(e.getX(), e.getY());
+    if (frozen) return;
+
+    absMousePosition.set(e.getX(), e.getY());
   }
 
   @Override
   public synchronized void mouseMoved(MouseEvent e) {
-    if (!isFrozen) absMousePosition.set(e.getX(), e.getY());
+    if (frozen) return;
+
+    absMousePosition.set(e.getX(), e.getY());
   }
 
   @Override

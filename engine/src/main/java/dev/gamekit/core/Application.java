@@ -113,8 +113,8 @@ public abstract class Application {
         frameTimeAccumulator += timeDiff;
 
         while (frameTimeAccumulator >= FRAME_TIME_MS) {
-          Input.freeze();
           frameTimeAccumulator -= FRAME_TIME_MS;
+          Input.freeze();
           update();
           Input.reset();
         }
