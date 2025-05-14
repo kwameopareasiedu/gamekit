@@ -1,5 +1,12 @@
 # ChangeLog
 
+## TODO
+
+- Implement spanning for text widget which is the ability to use different text attributes for 
+  the same text widget
+- Research into using triple state buffers and atomic flags to decouple rendering into a 
+  separate thread
+
 ## 0.4.0-SNAPSHOT-1 [UNRELEASED]
 
 ### Added
