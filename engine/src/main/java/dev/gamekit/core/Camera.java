@@ -12,7 +12,7 @@ import java.awt.geom.AffineTransform;
  * It does this by manipulating the window's {@link AffineTransform} object
  */
 public final class Camera {
-  private static final Logger LOGGER = LogManager.getLogger();
+  private static final Logger LOGGER = LogManager.getLogger(Camera.class);
   private static final Position POSITION_CACHE = new Position();
   private static final Bounds BOUNDS_CACHE = new Bounds();
   private static final AffineTransform TRANSFORM = new AffineTransform(1, 0, 0, -1, 0, 0);

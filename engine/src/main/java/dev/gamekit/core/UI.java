@@ -23,7 +23,7 @@ import java.util.Objects;
 
 /** {@link UI} manages the user interface within a {@link Scene} */
 public final class UI {
-  private static final Logger LOGGER = LogManager.getLogger();
+  private static final Logger LOGGER = LogManager.getLogger(UI.class);
   private static UI instance;
 
   private final WidgetTreeCreator treeCreator;

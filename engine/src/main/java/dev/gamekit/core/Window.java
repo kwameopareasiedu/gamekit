@@ -12,7 +12,7 @@ import java.awt.image.BufferedImage;
 
 /** Window which manages the {@link JFrame} and image buffers the application is rendered in */
 public final class Window {
-  private static final Logger LOGGER = LogManager.getLogger();
+  private static final Logger LOGGER = LogManager.getLogger(Window.class);
 
   private static Window instance;
 

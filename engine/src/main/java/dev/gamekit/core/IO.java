@@ -24,7 +24,7 @@ import java.util.Map;
  * application exits
  */
 public class IO {
-  private static final Logger LOGGER = LogManager.getLogger();
+  private static final Logger LOGGER = LogManager.getLogger(IO.class);
   private static final Map<String, Object> CACHE = new HashMap<>();
   private static final List<InputStream> INPUT_STREAMS = new ArrayList<>();
 
