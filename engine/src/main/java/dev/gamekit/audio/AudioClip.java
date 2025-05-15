@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.sound.sampled.*;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 
 import static dev.gamekit.utils.Math.clamp;
@@ -81,7 +82,9 @@ public abstract class AudioClip {
       logger.debug("Loading audio clip at {}", resPath);
 
       Clip clip = AudioSystem.getClip();
-      clip.open(AudioSystem.getAudioInputStream(IO.getResourceStream(resPath)));
+      clip.open(AudioSystem.getAudioInputStream(
+        new BufferedInputStream(IO.getResourceStream(resPath))
+      ));
       return clip;
     } catch (LineUnavailableException e) {
       logger.error("Could not get audio clip resource from system mixer", e);
