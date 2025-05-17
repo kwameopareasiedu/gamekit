@@ -9,19 +9,24 @@ import static dev.gamekit.utils.Math.clamp;
 
 /** A {@link SingleChildParent} which renders its child with transparency */
 public class Opacity extends SingleChildParent {
-  protected double opacity;
+  protected final double opacity;
 
   private final AlphaComposite composite;
 
-  protected Opacity(double opacity, Widget child) {
+  public Opacity(OpacityOptions options, Widget child) {
     super(child);
-    this.opacity = clamp(opacity, 0, 1);
-    composite =
-      AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) this.opacity);
+    this.opacity = clamp(options.opacity, 0, 1);
+    this.composite = AlphaComposite.getInstance(
+      AlphaComposite.SRC_OVER, (float) this.opacity
+    );
   }
 
-  public static Opacity create(double opacity, Widget child) {
-    return new Opacity(opacity, child);
+  public static Opacity create(OpacityOptions options, Widget child) {
+    return new Opacity(options, child);
+  }
+
+  public static OpacityOptions options() {
+    return new OpacityOptions();
   }
 
   @Override
@@ -52,16 +57,28 @@ public class Opacity extends SingleChildParent {
   }
 
   @Override
-  public void performRender(Graphics2D g) {
+  protected void performRender(Graphics2D g) {
+    Composite c = g.getComposite();
     g.setComposite(composite);
     super.performRender(g);
+    g.setComposite(c);
   }
 
   @Override
-  protected boolean stateEquals(Widget widget) {
+  public boolean stateEquals(Widget widget) {
     if (widget instanceof Opacity opacityWidget) {
       return Objects.equals(opacity, opacityWidget.opacity);
     }
+
     return false;
+  }
+
+  public static class OpacityOptions {
+    double opacity = 1.0;
+
+    public OpacityOptions opacity(double opacity) {
+      this.opacity = opacity;
+      return this;
+    }
   }
 }

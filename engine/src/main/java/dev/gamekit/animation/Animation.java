@@ -5,12 +5,11 @@ import dev.gamekit.core.Application;
 import static dev.gamekit.utils.Math.clamp;
 
 /**
- * Animation holds a value which increments from 0 to 1 over some duration.
- * The value can then be connected to any property for smooth transitions.
+ * {@link Animation} holds a value which increments from 0 to 1 over some duration. The value can
+ * then be connected to any property for smooth transitions.
  * <p>
- * Animation can be set to run once or repeat (either restart or revers).
- * Additionally, an {@link AnimationCurve} can be attached to change how the
- * animation's value is interpolated.
+ * Animation can be set to run once or repeat (either restart or alternate). Additionally, an
+ * {@link AnimationCurve} can be attached to change how the animation's value is interpolated.
  */
 public class Animation {
   private final RepeatMode repeatMode;
@@ -21,28 +20,30 @@ public class Animation {
   private State state;
   private double value;
 
-  public Animation(double duration) {
-    this(duration, RepeatMode.NONE, null);
+  public Animation(double durationMs) {
+    this(durationMs, RepeatMode.NONE, null);
   }
 
-  public Animation(double duration, RepeatMode repeatMode) {
-    this(duration, repeatMode, null);
+  public Animation(double durationMs, RepeatMode repeatMode) {
+    this(durationMs, repeatMode, null);
   }
 
-  public Animation(double duration, RepeatMode repeatMode, AnimationCurve curve) {
-    if (duration <= 0)
+  public Animation(double durationMs, RepeatMode repeatMode, AnimationCurve curve) {
+    if (durationMs <= 0)
       throw new IllegalArgumentException("Animation duration must be positive");
 
     this.repeatMode = repeatMode;
     this.curve = curve;
-    rate = 1.0 / duration;
+    rate = 1000.0 / durationMs;
     state = State.IDLE;
     value = 0;
   }
 
   public State getState() { return state; }
 
-  public double getValue() { return curve != null ? curve.get(value) : value; }
+  public double getValue() {
+    return curve != null ? curve.get(value) : value;
+  }
 
   /** Sets the value listener and returns this animation */
   public Animation setValueListener(ValueListener listener) {
@@ -58,39 +59,56 @@ public class Animation {
 
   /** Starts this animation and changes its state to {@link State#RUNNING} */
   public void start() {
-    if (state == State.IDLE) {
-      state = State.RUNNING;
-      if (stateListener != null)
-        stateListener.onStateChanged(state);
+    if (state == State.IDLE)
       Application.getInstance().scheduleAnimation(this);
-    }
+
+    state = State.RUNNING;
+    value = 0;
+
+    if (stateListener != null)
+      stateListener.onStateChanged(state);
   }
 
   /**
-   * Stops this animation and changes its state to {@link State#ENDED}.
-   * Ended animation cannot be restarted.
+   * Stops and resets this animation by changing its state to {@link State#STOPPED} and its value
+   * to {@code 0}. Stopped animations can be restarted by calling {@link #start()}
    */
   public void stop() {
-    state = State.ENDED;
+    state = State.STOPPED;
+
     if (stateListener != null)
       stateListener.onStateChanged(state);
+
+    if (valueListener != null)
+      valueListener.onValueChanged(value);
+  }
+
+  /**
+   * Ends this animation and changes its state to {@link State#ENDED}. Ended animations are
+   * removed from the engine and cannot be restarted.
+   */
+  public void end() {
+    state = State.ENDED;
+
+    if (stateListener != null)
+      stateListener.onStateChanged(state);
+  }
+
+  public boolean isEnded() {
+    return state == State.ENDED;
   }
 
   /** Called internally by the application game loop to update this animation */
   public void update() {
     if (state == State.RUNNING) {
-      value = clamp(value + 0.001 * rate * Application.FRAME_TIME, 0, 1);
+      value = clamp(value + 0.001 * rate * Application.FRAME_TIME_MS, 0, 1);
       if (valueListener != null) valueListener.onValueChanged(value);
 
       if ((value >= 1 && rate > 0) || (value <= 0 && rate < 0)) {
         switch (repeatMode) {
-          case NONE -> {
-            state = State.ENDED;
-            if (stateListener != null)
-              stateListener.onStateChanged(state);
-          }
+          case NONE -> stop();
           case RESTART -> value = 0;
-          case REVERSE -> rate *= -1;
+          case ALTERNATE -> rate *= -1;
         }
       }
     }
@@ -102,20 +120,37 @@ public class Animation {
     IDLE,
     /** Indicates a started animation */
     RUNNING,
-    /** Indicates an ended or stopped animation */
+    /** Indicates a stopped animation which can be restarted */
+    STOPPED,
+    /** Indicates an ended animation which cannot be restarted */
     ENDED
   }
 
   /** Indicates how an animation behaves when it reaches its end */
   public enum RepeatMode {
     /**
-     * Indicates a running animation not repeat and transition to
-     * {@link State#ENDED} when at its end
+     * Indicates a running animation not repeat and transition to {@link State#ENDED} when at its
+     * end
      */
     NONE,
     /** Indicates a running animation start over when at its end */
     RESTART,
     /** Indicates a running animation changes direction when at its end */
-    REVERSE
+    ALTERNATE
+  }
+
+  /** Callback interface for {@link Animation} value changes */
+  public interface ValueListener {
+    /**
+     * Called with the new base value of the animation without the
+     * {@link AnimationCurve} transformation
+     */
+    void onValueChanged(double value);
+  }
+
+  /** Callback interface for {@link Animation} state changes */
+  public interface StateListener {
+    /** Called with the new {@link State} of the animation */
+    void onStateChanged(State state);
   }
 }

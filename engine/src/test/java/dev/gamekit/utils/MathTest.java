@@ -26,4 +26,34 @@ public class MathTest {
     assertEquals(5, Math.clamp(5, 0, 10));
     assertEquals(10, Math.clamp(15.0, 0, 10));
   }
+
+  @Test
+  public void degToRadTest() {
+    assertEquals(0, Math.degToRad(0));
+    assertEquals(0.5 * java.lang.Math.PI, Math.degToRad(90));
+    assertEquals(java.lang.Math.PI, Math.degToRad(180));
+    assertEquals(1.5 * java.lang.Math.PI, Math.degToRad(270));
+    assertEquals(2 * java.lang.Math.PI, Math.degToRad(360));
+    assertEquals(2.5 * java.lang.Math.PI, Math.degToRad(450));
+  }
+
+  @Test
+  public void radToDegTest() {
+    assertEquals(0, Math.radToDeg(0));
+    assertEquals(90, Math.radToDeg(0.5 * java.lang.Math.PI));
+    assertEquals(180, Math.radToDeg(java.lang.Math.PI));
+    assertEquals(270, Math.radToDeg(1.5 * java.lang.Math.PI));
+    assertEquals(360, Math.radToDeg(2 * java.lang.Math.PI));
+    assertEquals(450, Math.radToDeg(2.5 * java.lang.Math.PI));
+  }
+
+  @Test
+  public void lerpTest() {
+    assertEquals(0, Math.lerp(0, 10, 0));
+    assertEquals(10, Math.lerp(0, 10, 1));
+    assertEquals(5, Math.lerp(0, 10, 0.5));
+    assertEquals(10, Math.lerp(10, 20, 0));
+    assertEquals(20, Math.lerp(10, 20, 1));
+    assertEquals(15, Math.lerp(10, 20, 0.5));
+  }
 }

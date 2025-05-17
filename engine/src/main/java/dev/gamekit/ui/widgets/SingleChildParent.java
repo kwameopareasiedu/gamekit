@@ -1,13 +1,12 @@
 package dev.gamekit.ui.widgets;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 /** A parent which contains only one child {@link Widget} */
 public abstract class SingleChildParent extends Parent {
   protected Widget child;
 
-  protected SingleChildParent(Widget child) {
+  public SingleChildParent(Widget child) {
     if (child == null)
       throw new IllegalArgumentException("Child of SingleChildParent cannot be null");
     this.child = child;
@@ -15,20 +14,14 @@ public abstract class SingleChildParent extends Parent {
   }
 
   @Override
-  public void performRender(Graphics2D g) {
-    renderBackground(g);
+  protected void performPostLayout() {
+    child.postLayout();
+  }
 
-    // Renders its children within self to enable clipping
-    BufferedImage childCanvasImage = child.render();
-
-    if (childCanvasImage != null) {
-      g.drawImage(
-        childCanvasImage,
-        child.computedBounds.x,
-        child.computedBounds.y,
-        null
-      );
-    }
+  @Override
+  protected void performRender(Graphics2D g) {
+    renderAppearance(g);
+    child.render(g);
   }
 
   public Widget getChild() { return child; }
@@ -36,6 +29,6 @@ public abstract class SingleChildParent extends Parent {
   public final void updateChild(Widget newChild) {
     child.setParent(null);
     child = newChild;
-    child.setParent(this);
+    newChild.setParent(this);
   }
 }

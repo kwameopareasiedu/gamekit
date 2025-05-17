@@ -1,22 +1,58 @@
 # ChangeLog
 
-## 0.3.0-SNAPSHOT-4 [UNRELEASED]
+## TODO
+
+- Implement spanning for text widget which is the ability to use different text attributes for 
+  the same text widget
+- Research into using triple state buffers and atomic flags to decouple rendering into a 
+  separate thread
+
+## 0.4.0-SNAPSHOT-1
 
 ### Added
 
-- Added `static Clip getResourceAudioClip(String path)` to `IO` class
-- Added `Audio` class which handles loading and playback of audio
 - Added `Opacity` which is a `SingleChildParent` which renders its child
   with transparency
-- Added `Scaled` which is a `SingleChildParent` which scaled the computed
+- Added `Scaled` which is a `SingleChildParent` which scales the computed
   size of its child
+- Added `Audio` class which manages loaded audio clips
+- Added abstract `AudioClip` which loads and manages the clip from a resource
+- Added `AudioClip2D` which loads and plays non-spatial audio clips
+- Added `AudioClip3D` which loads and plays spatial clips and whose volume
+  and pan depend on its position and the position of the `AudioListener`
+- Added `AudioListener` which is a reference for `AudioClip3D` to compute
+  its volume and pan
+- Added `AudioGroup` which manages the volume and mute status of
+  `AudioClip`s added to it
+- Added `AudioAttenuation` interface which defines a distance attenuation
+  function for `AudioClip3D`
+- Added abstract `AudioShape` which defines the shape, minimum and maximum
+  attenuation distances of the field of `AudioClip3D`
+- Added `AudioShapeCircle` which defines a circular audio field for  
+  `AudioClip3D`
+- Added `static boolean isButtonClicked(int buttonCode)` to `Input` class
+- Added event handling code to `Widget` class
+- Added `InputEventHandler` interface to be implemented by `Widgets` which
+  would like to receive input events
+- Added `Compose` which is a `SingleChildParent` which delegates layout and
+  rendering to the provided widget tree, essentially a base for custom widgets
+- Added `static void drawString(String content, int x, int y, int width, int 
+height)` method to `Renderer` class
+- Added `static void withRotation(int x, int y, double deg, RenderActions 
+renderGroup)` method to `Renderer` class
+- Added `static double lerp(double from, double to, double rate)` to `Math` class for linear
+  interpolation
+- Added `static void resetOptions()` to `Renderer` class
+- Added `static BufferedImage getResourceImage(String resPath, int x, int y, int w, int h)` to
+  `IO` class for reading a slice of a resource image
+- Added `Color` which is a `SingleChildParent` which renders a solid color background
+- Implemented safe multithreading in `Application` class
 
 ### Changed
 
 - Modified `Button` widget to center child
 - Modified `Padding` widget to center child
 - Modified `NinePatch` widget to center child
-- Modified `Decorated` widget to center child
 - Renamed `FixedSize` widget to `Sized`
 - Renamed `static Font loadFontResource(String path)` to `static Font 
 getResourceFong(String path)` in `IO` class
@@ -24,6 +60,19 @@ getResourceFong(String path)` in `IO` class
 getResourceFong(String path)` in `IO` class
 - Renamed `static BufferedImage loadImageResource(String path)` to `static 
 BufferedImage getResourceImage(String path)` in `IO` class
+- Renamed `NinePatch` widget to `Panel`
+- Renamed `static Input.isButtonJustPressed(int buttonCode)` to `static 
+  Input.isButtonDown(int buttonId)`
+- Renamed `static Input.isButtonJustReleased(int buttonCode)` to `static 
+  Input.isButtonReleased(int buttonId)`
+- Renamed `static Camera.screenToWorldPoint(int x, int y)` to `static 
+  Camera.screenPointToWorld(int x, int y)`
+- Renamed `void onStart()` to `void start()` in `Scene` and `Prop` class
+- Renamed `void onUpdate()` to `void update()` in `Scene` and `Prop` class
+- Renamed `void onRender()` to `void render()` in `Scene` and `Prop` class
+- Renamed `void onDispose()` to `void dispose()` in `Scene` and `Prop` class
+- Modified `Animation` to be restartable
+- Modified `Sized` widget to enforce a fixed size, intrinsic size or fractional size on its child
 
 ### Deprecated
 
@@ -33,8 +82,18 @@ BufferedImage getResourceImage(String path)` in `IO` class
   HORIZONTAL` instead
 - Removed `IntrinsicHeight` widget. Use `IntrinsicSize` with `Axis.VERTICAL`
   instead
-- Removed `static BufferedReader loadBufferedResource(String path)` from IO
+- Removed `static BufferedReader loadBufferedResource(String path)` from `IO`
   class
+- Removed `MouseMotionEvent` class and merged function into `MouseEvent` class
+- Removed `MouseClickEvent` class and merged function into `MouseEvent` class
+- Removed `MouseEnterEvent` class and merged function into `MouseEvent` class
+- Removed `MouseExitEvent` class and merged function into `MouseEvent` class
+- Removed `TextAlignment` enum in favour or `Alignment` enum
+- Removed `Decorated` widget
+- Removed `Intrinsic Size` widget
+- Removed `Axis` widget
+- Removed `static void beginGroup()` from `Renderer` class
+- Removed `static void endGroup()` from `Renderer` class
 
 ## 0.3.0-SNAPSHOT-3
 

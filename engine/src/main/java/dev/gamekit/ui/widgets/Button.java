@@ -1,29 +1,41 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.core.Scene;
 import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.events.*;
-import dev.gamekit.utils.Blend;
+import dev.gamekit.ui.Spacing;
+import dev.gamekit.ui.events.InputEventHandler;
+import dev.gamekit.ui.events.MouseEvent;
+import dev.gamekit.ui.mixins.NinePatch;
+import dev.gamekit.utils.Constants;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.Objects;
 
 /** A {@link Widget} which can be clicked to trigger an event */
-public class Button extends SingleChildParent {
-  protected MouseMotionEvent.Listener mouseMotionListener;
-  protected MouseEnterEvent.Listener mouseEnterListener;
-  protected MouseExitEvent.Listener mouseExitListener;
-  protected MouseClickEvent.Listener mouseClickListener;
-  protected Color hoverTintColor;
-  protected boolean intersectsWithMouse;
+public class Button extends SingleChildParent implements NinePatch, InputEventHandler {
+  protected final Spacing ninePatchBorder;
+  protected final BufferedImage defaultBackground;
+  protected final BufferedImage hoverBackground;
+  protected final BufferedImage pressedBackground;
+  protected final MouseEvent.Listener mouseListener;
+  protected boolean mouseEntered;
+  protected boolean mousePressed;
 
-  protected Button(Widget child) {
+  public Button(ButtonOptions options, Widget child) {
     super(child);
-    hoverTintColor = new Color(0x22ffffff, true);
+    this.ninePatchBorder = options.ninePatchBorder;
+    this.defaultBackground = options.defaultBackground;
+    this.hoverBackground = options.hoverBackground;
+    this.pressedBackground = options.pressedBackground;
+    this.mouseListener = options.mouseListener;
   }
 
-  public static Button create(Widget child) {
-    return new Button(child);
+  public static Button create(ButtonOptions options, Widget child) {
+    return new Button(options, child);
+  }
+
+  public static ButtonOptions options() {
+    return new ButtonOptions();
   }
 
   @Override
@@ -35,10 +47,7 @@ public class Button extends SingleChildParent {
       )
     );
 
-    intrinsicBounds.setSize(
-      child.computedBounds.width,
-      child.computedBounds.height
-    );
+    intrinsicBounds.setSize(child.computedBounds.width, child.computedBounds.height);
 
     computedBounds.setSize(
       constraints.constrainWidth(intrinsicBounds.width),
@@ -46,81 +55,100 @@ public class Button extends SingleChildParent {
     );
 
     child.computedBounds.setPosition(
-      computedBounds.width / 2 - child.computedBounds.width / 2,
-      computedBounds.height / 2 - child.computedBounds.height / 2
+      computedBounds.width / 2 - intrinsicBounds.width / 2,
+      computedBounds.height / 2 - intrinsicBounds.height / 2
     );
   }
 
   @Override
-  public void performRender(Graphics2D g) {
-    super.performRender(g);
+  protected void renderAppearance(Graphics2D g) {
+    super.renderAppearance(g);
 
-    if (intersectsWithMouse) {
-      Composite composite = g.getComposite();
+    BufferedImage bgImage = defaultBackground;
 
-      g.setColor(hoverTintColor);
-      g.setComposite(Blend.MULTIPLY);
-      g.fillRect(0, 0, computedBounds.width, computedBounds.height);
-      g.setComposite(composite);
+    if (mousePressed) {
+      bgImage = pressedBackground;
+    } else if (mouseEntered) {
+      bgImage = hoverBackground;
+    }
+
+    if (bgImage != null && ninePatchBorder != null) {
+      super.renderAppearance(g);
+      renderNinePatch(bgImage, absoluteBounds, ninePatchBorder, g);
     }
   }
 
   @Override
-  protected boolean stateEquals(Widget widget) {
+  public boolean stateEquals(Widget widget) {
     if (widget instanceof Button buttonWidget) {
-      return Objects.equals(hoverTintColor, buttonWidget.hoverTintColor);
+      return Objects.equals(defaultBackground, buttonWidget.defaultBackground) &&
+        Objects.equals(hoverBackground, buttonWidget.hoverBackground) &&
+        Objects.equals(pressedBackground, buttonWidget.pressedBackground);
     }
 
     return false;
   }
 
   @Override
-  public void handleEvent(InputEvent event) {
-    super.handleEvent(event);
+  public MouseEvent.Listener getMouseListener() {
+    return mouseListener;
+  }
 
-    if (event instanceof MouseClickEvent mouseClickEvent) {
-      if (mouseClickListener != null)
-        mouseClickListener.onMouseClick(mouseClickEvent);
-    } else if (event instanceof MouseEnterEvent mouseEnterEvent) {
-      intersectsWithMouse = true;
-      Scene.getCurrent().redrawUI();
+  @Override
+  public void setMouseEntered(boolean mouseEntered) {
+    this.mouseEntered = mouseEntered;
+  }
 
-      if (mouseEnterListener != null)
-        mouseEnterListener.onMouseEnter(mouseEnterEvent);
-    } else if (event instanceof MouseExitEvent mouseExitEvent) {
-      intersectsWithMouse = false;
-      Scene.getCurrent().redrawUI();
+  @Override
+  public void setMousePressed(boolean mousePressed) {
+    this.mousePressed = mousePressed;
+  }
 
-      if (mouseExitListener != null)
-        mouseExitListener.onMouseExit(mouseExitEvent);
-    } else if (event instanceof MouseMotionEvent mouseMotionEvent) {
-      if (mouseMotionListener != null)
-        mouseMotionListener.onMouseMove(mouseMotionEvent);
+  public static class ButtonOptions {
+    Spacing ninePatchBorder = new Spacing(24);
+    BufferedImage defaultBackground = Constants.DEFAULT_BUTTON_BG;
+    BufferedImage hoverBackground = Constants.HOVER_BUTTON_BG;
+    BufferedImage pressedBackground = Constants.PRESSED_BUTTON_BG;
+    MouseEvent.Listener mouseListener = e -> { };
+
+    public ButtonOptions ninePatch(Spacing border) {
+      this.ninePatchBorder = border;
+      return this;
     }
-  }
 
-  public Button onMouseEnter(MouseEnterEvent.Listener listener) {
-    this.mouseEnterListener = listener;
-    return this;
-  }
+    public ButtonOptions ninePatch(int all) {
+      this.ninePatchBorder = new Spacing(all);
+      return this;
+    }
 
-  public Button onMouseExit(MouseExitEvent.Listener listener) {
-    this.mouseExitListener = listener;
-    return this;
-  }
+    public ButtonOptions ninePatch(int horizontal, int vertical) {
+      this.ninePatchBorder = new Spacing(horizontal, vertical);
+      return this;
+    }
 
-  public Button onHover(MouseMotionEvent.Listener listener) {
-    this.mouseMotionListener = listener;
-    return this;
-  }
+    public ButtonOptions ninePatch(int top, int right, int bottom, int left) {
+      this.ninePatchBorder = new Spacing(top, right, bottom, left);
+      return this;
+    }
 
-  public Button onClick(MouseClickEvent.Listener listener) {
-    this.mouseClickListener = listener;
-    return this;
-  }
+    public ButtonOptions defaultBackground(BufferedImage defaultBackground) {
+      this.defaultBackground = defaultBackground;
+      return this;
+    }
 
-  public Button withHoverTintColor(Color hoverTintColor) {
-    this.hoverTintColor = hoverTintColor;
-    return this;
+    public ButtonOptions hoverBackground(BufferedImage hoverBackground) {
+      this.hoverBackground = hoverBackground;
+      return this;
+    }
+
+    public ButtonOptions pressedBackground(BufferedImage pressedBackground) {
+      this.pressedBackground = pressedBackground;
+      return this;
+    }
+
+    public ButtonOptions mouseListener(MouseEvent.Listener mouseListener) {
+      this.mouseListener = mouseListener;
+      return this;
+    }
   }
 }

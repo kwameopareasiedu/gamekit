@@ -1,9 +1,7 @@
 package demos;
 
 import dev.gamekit.core.Application;
-import dev.gamekit.core.Window;
 import dev.gamekit.core.Scene;
-import dev.gamekit.utils.Resolution;
 
 /**
  * This demo shows how GameKit is used its simplest form.

@@ -7,15 +7,21 @@ import java.util.Objects;
 
 /** A {@link SingleChildParent} which aligns its single child within itself */
 public class Align extends SingleChildParent {
-  protected Alignment alignment;
+  protected final Alignment horizontalAlignment;
+  protected final Alignment verticalAlignment;
 
-  protected Align(Alignment alignment, Widget child) {
+  public Align(AlignOptions options, Widget child) {
     super(child);
-    this.alignment = alignment;
+    this.horizontalAlignment = options.horizontalAlignment;
+    this.verticalAlignment = options.verticalAlignment;
   }
 
-  public static Align create(Alignment alignment, Widget child) {
-    return new Align(alignment, child);
+  public static Align create(AlignOptions options, Widget child) {
+    return new Align(options, child);
+  }
+
+  public static AlignOptions options() {
+    return new AlignOptions();
   }
 
   @Override
@@ -37,57 +43,43 @@ public class Align extends SingleChildParent {
       constraints.maxHeight()
     );
 
-    int drawX = 0, drawY = 0;
+    double hOffset = switch (horizontalAlignment) {
+      case CENTER -> computedBounds.width / 2 - intrinsicBounds.width / 2;
+      case END -> computedBounds.width - intrinsicBounds.width;
+      default -> 0;
+    };
 
-    switch (alignment) {
-      case TOP_LEFT -> {
-        drawX = 0;
-        drawY = 0;
-      }
-      case TOP_CENTER -> {
-        drawX = computedBounds.width / 2 - intrinsicBounds.width / 2;
-        drawY = 0;
-      }
-      case TOP_RIGHT -> {
-        drawX = computedBounds.width - intrinsicBounds.width;
-        drawY = 0;
-      }
-      case LEFT -> {
-        drawX = 0;
-        drawY = computedBounds.height / 2 - intrinsicBounds.height / 2;
-      }
-      case CENTER -> {
-        drawX = computedBounds.width / 2 - intrinsicBounds.width / 2;
-        drawY = computedBounds.height / 2 - intrinsicBounds.height / 2;
-      }
-      case RIGHT -> {
-        drawX = computedBounds.width - intrinsicBounds.width;
-        drawY = computedBounds.height / 2 - intrinsicBounds.height / 2;
-      }
-      case BOTTOM_LEFT -> {
-        drawX = 0;
-        drawY = computedBounds.height - intrinsicBounds.height;
-      }
-      case BOTTOM_CENTER -> {
-        drawX = computedBounds.width / 2 - intrinsicBounds.width / 2;
-        drawY = computedBounds.height - intrinsicBounds.height;
-      }
-      case BOTTOM_RIGHT -> {
-        drawX = computedBounds.width - intrinsicBounds.width;
-        drawY = computedBounds.height - intrinsicBounds.height;
-      }
-    }
+    double vOffset = switch (verticalAlignment) {
+      case CENTER -> computedBounds.height / 2 - intrinsicBounds.height / 2;
+      case END -> computedBounds.height - intrinsicBounds.height;
+      default -> 0;
+    };
 
-    child.computedBounds.setPosition(drawX, drawY);
+    child.computedBounds.setPosition(hOffset, vOffset);
   }
 
   @Override
-  protected boolean stateEquals(Widget widget) {
+  public boolean stateEquals(Widget widget) {
     if (widget instanceof Align alignWidget) {
-      return Objects.equals(child, alignWidget.child)
-        && Objects.equals(alignment, alignWidget.alignment);
+      return Objects.equals(horizontalAlignment, alignWidget.horizontalAlignment)
+        && Objects.equals(verticalAlignment, alignWidget.verticalAlignment);
     }
 
     return false;
+  }
+
+  public static class AlignOptions {
+    Alignment horizontalAlignment = Alignment.START;
+    Alignment verticalAlignment = Alignment.START;
+
+    public AlignOptions horizontalAlignment(Alignment horizontalAlignment) {
+      this.horizontalAlignment = horizontalAlignment;
+      return this;
+    }
+
+    public AlignOptions verticalAlignment(Alignment verticalAlignment) {
+      this.verticalAlignment = verticalAlignment;
+      return this;
+    }
   }
 }

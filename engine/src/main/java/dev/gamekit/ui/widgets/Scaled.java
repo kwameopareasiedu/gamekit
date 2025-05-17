@@ -8,13 +8,17 @@ import java.util.Objects;
 public class Scaled extends SingleChildParent {
   protected final double scale;
 
-  protected Scaled(double scale, Widget child) {
+  public Scaled(ScaledOptions options, Widget child) {
     super(child);
-    this.scale = Math.max(0, scale);
+    this.scale = Math.max(0, options.scale);
   }
 
-  public static Scaled create(double scale, Widget child) {
-    return new Scaled(scale, child);
+  public static Scaled create(ScaledOptions options, Widget child) {
+    return new Scaled(options, child);
+  }
+
+  public static ScaledOptions options() {
+    return new ScaledOptions();
   }
 
   @Override
@@ -45,10 +49,19 @@ public class Scaled extends SingleChildParent {
   }
 
   @Override
-  protected boolean stateEquals(Widget widget) {
+  public boolean stateEquals(Widget widget) {
     if (widget instanceof Scaled scaledWidget) {
       return Objects.equals(scale, scaledWidget.scale);
     }
     return false;
+  }
+
+  public static class ScaledOptions {
+    double scale = 1.0;
+
+    public ScaledOptions scale(double scale) {
+      this.scale = scale;
+      return this;
+    }
   }
 }

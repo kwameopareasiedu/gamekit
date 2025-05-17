@@ -1,0 +1,107 @@
+package dev.gamekit.ui.widgets;
+
+import dev.gamekit.ui.Constraints;
+import dev.gamekit.ui.Spacing;
+import dev.gamekit.ui.mixins.NinePatch;
+import dev.gamekit.utils.Constants;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.Objects;
+
+/**
+ * A {@link SingleChildParent} which uses the 9-patch algorithm to render a {@link BufferedImage}
+ * as a background to its descendants
+ */
+public class Panel extends SingleChildParent implements NinePatch {
+  protected final BufferedImage background;
+  protected final Spacing ninePatchBorder;
+
+  public Panel(PanelOptions options, Widget child) {
+    super(child);
+    this.background = options.background;
+    this.ninePatchBorder = options.ninePatchBorder;
+  }
+
+  public static Panel create(PanelOptions options, Widget child) {
+    return new Panel(options, child);
+  }
+
+  public static PanelOptions options() {
+    return new PanelOptions();
+  }
+
+  @Override
+  protected void performLayout(Constraints constraints) {
+    child.layout(
+      new Constraints(
+        0, constraints.maxWidth(),
+        0, constraints.maxHeight()
+      )
+    );
+
+    intrinsicBounds.setSize(child.computedBounds.width, child.computedBounds.height);
+
+    computedBounds.setSize(
+      constraints.constrainWidth(intrinsicBounds.width),
+      constraints.constrainHeight(intrinsicBounds.height)
+    );
+
+    child.computedBounds.setPosition(
+      computedBounds.width / 2 - intrinsicBounds.width / 2,
+      computedBounds.height / 2 - intrinsicBounds.height / 2
+    );
+  }
+
+  @Override
+  public void renderAppearance(Graphics2D g) {
+    super.renderAppearance(g);
+
+    renderNinePatch(
+      background,
+      absoluteBounds,
+      ninePatchBorder,
+      g
+    );
+  }
+
+  @Override
+  public boolean stateEquals(Widget widget) {
+    if (widget instanceof Panel panelWidget) {
+      return Objects.equals(background, panelWidget.background)
+        && Objects.equals(ninePatchBorder, panelWidget.ninePatchBorder);
+    }
+
+    return false;
+  }
+
+  public static class PanelOptions {
+    public BufferedImage background = Constants.DEFAULT_PANEL_BG;
+    public Spacing ninePatchBorder = new Spacing();
+
+    public PanelOptions background(BufferedImage background) {
+      this.background = background;
+      return this;
+    }
+
+    public PanelOptions ninePatch(Spacing border) {
+      this.ninePatchBorder = border;
+      return this;
+    }
+
+    public PanelOptions ninePatch(int all) {
+      this.ninePatchBorder = new Spacing(all);
+      return this;
+    }
+
+    public PanelOptions ninePatch(int horizontal, int vertical) {
+      this.ninePatchBorder = new Spacing(horizontal, vertical);
+      return this;
+    }
+
+    public PanelOptions ninePatch(int top, int right, int bottom, int left) {
+      this.ninePatchBorder = new Spacing(top, right, bottom, left);
+      return this;
+    }
+  }
+}

@@ -1,47 +1,34 @@
 package dev.gamekit.audio;
 
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.Control;
-import javax.sound.sampled.FloatControl;
+import dev.gamekit.core.IO;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.sound.sampled.*;
+import java.io.BufferedInputStream;
+import java.io.IOException;
 
 import static dev.gamekit.utils.Math.clamp;
 
 /**
- * {@code AudioClip} stores and handles playback for audio content.
+ * {@link AudioClip} is abstract class which stores and handles playback for audio in GameKit.
  * <p>
- * All {@code AudioClip} must belong to an {@link AudioGroup}. This makes it
- * possible to control multiple {@code AudioClip} by adjusting the group's
- * properties.
+ * All {@link AudioClip} must belong to an {@link AudioGroup}. This makes it possible to control
+ * the properties of all audio clips in specific groups by adjusting the group's properties.
  */
-public final class AudioClip {
-  private final Clip clip;
-  private final AudioGroup group;
-  private final double maxVolume;
-  private final boolean spatial;
-  private final FloatControl gainControl;
-  private final FloatControl panControl;
+public abstract class AudioClip {
+  protected final Logger logger = LogManager.getLogger(getClass());
+  protected final Clip clip;
+  protected final AudioGroup group;
+  protected final double maxVolume;
+  protected final FloatControl gainControl;
 
-  // Caches the effective volume since log10() is an expensive operation to
-  // be performing every frame
-  private double effectiveVolume = -1;
-
-  public AudioClip(Clip clip, AudioGroup group, double maxVolume) {
-    this(clip, group, maxVolume, false);
-  }
-
-  public AudioClip(
-    Clip clip,
-    AudioGroup group,
-    double maxVolume,
-    boolean spatial
-  ) {
-    this.clip = clip;
+  public AudioClip(String resPath, AudioGroup group, double maxVolume) {
+    this.clip = loadClip(resPath);
     this.group = group;
     this.maxVolume = clamp(maxVolume, 0, 1);
-    this.spatial = spatial;
 
     gainControl = getControl(FloatControl.Type.MASTER_GAIN);
-    panControl = getControl(FloatControl.Type.PAN);
   }
 
   public void play() { play(false); }
@@ -65,29 +52,49 @@ public final class AudioClip {
   }
 
   /** Called internally to update the clip's parameters */
-  public void update() {
-    if (!spatial) {
-      double effectiveVolume = !group.isMuted() ?
-        maxVolume * group.getMaxVolume() : 0;
-
-      if (gainControl != null && this.effectiveVolume != effectiveVolume) {
-        double gain = 20 * Math.log10(effectiveVolume);
-        gain = clamp(gain, gainControl.getMinimum(), gainControl.getMaximum());
-        gainControl.setValue((float) gain);
-        this.effectiveVolume = effectiveVolume;
-      }
-
-      if (panControl != null && panControl.getValue() != 0f)
-        panControl.setValue(0);
-    } else {
-      // TODO: Compute spatial volume and pan
-    }
+  public final void update() {
+    if (clip.isRunning())
+      performUpdate();
   }
 
+  /** Delegate method which performs the actual update and must be overridden in subclasses */
+  public abstract void performUpdate();
+
+  /** Called internally to dispose resources held by this clip */
+  public final void dispose() {
+    stop();
+    clip.close();
+    performDispose();
+  }
+
+  /** Delegate method for subclasses to perform additional dispose logic */
+  public void performDispose() { /* No-op */ }
+
   @SuppressWarnings("unchecked")
-  private <T extends Control> T getControl(T.Type controlType) {
+  protected <T extends Control> T getControl(T.Type controlType) {
     if (clip != null && clip.isControlSupported(controlType))
       return (T) clip.getControl(controlType);
     return null;
+  }
+
+  private Clip loadClip(String resPath) {
+    try {
+      logger.debug("Loading audio clip at {}", resPath);
+
+      Clip clip = AudioSystem.getClip();
+      clip.open(AudioSystem.getAudioInputStream(
+        new BufferedInputStream(IO.getResourceStream(resPath))
+      ));
+      return clip;
+    } catch (LineUnavailableException e) {
+      logger.error("Could not get audio clip resource from system mixer", e);
+      throw new RuntimeException(e);
+    } catch (UnsupportedAudioFileException e) {
+      logger.error("Unsupported audio file format", e);
+      throw new RuntimeException(e);
+    } catch (IOException e) {
+      logger.error("Unable to load resource audio clip at {}", resPath);
+      throw new RuntimeException(e);
+    }
   }
 }

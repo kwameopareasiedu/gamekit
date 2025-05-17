@@ -1,14 +1,16 @@
 package dev.gamekit.core;
 
+import dev.gamekit.utils.Bounds;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-/** Static class which provides draw methods to draw on the window scene. */
-public final class Renderer {
-  private static final GraphicsState INITIAL_STATE = new GraphicsState();
-  private static final GraphicsState CURRENT_STATE = new GraphicsState();
+import static dev.gamekit.utils.Math.degToRad;
 
-  private static Graphics2D g;
+/** {@link Renderer} provides draw methods to draw on the current {@link Window} */
+public final class Renderer {
+  private static final GraphicsState DEFAULT_STATE = new GraphicsState();
+  private static final GraphicsState CURRENT_STATE = new GraphicsState();
 
   private Renderer() { }
 
@@ -20,35 +22,21 @@ public final class Renderer {
 
   public static void setColor(Color color) { CURRENT_STATE.color = color; }
 
-  /**
-   * By default, the state (I.e. fg/bg color, stroke or paint) of the renderer
-   * resets after each draw method.
-   * <p>
-   * This disables this default behaviour and preserves the state until
-   * {@link #endGroup()} is called
-   */
-  public static void beginGroup() { CURRENT_STATE.preserve(); }
-
-  /**
-   * Restores the default behaviour of clearing the state after each draw method.
-   * @see #beginGroup()
-   */
-  public static void endGroup() { CURRENT_STATE.discard(); }
+  public static void resetOptions() { CURRENT_STATE.reset(); }
 
   /** Clears the {@link Window} scene buffer with current state background color */
   public static void clear() {
-    applyGraphicsState();
-    int x = 0, y = 0, w = Window.getInstance().getDisplayWidth(), h = Window.getInstance().getDisplayHeight();
-    var pt = Camera.screenToWorldPoint(x, y);
-    g.clearRect(pt.x, -pt.y, w, h);
-    resetGraphicsState();
+    Graphics2D g = applyGraphicsState();
+    Bounds rb = Camera.getRenderBounds();
+    g.clearRect((int) rb.x, (int) rb.y, (int) rb.width, (int) rb.height);
+    resetGraphicsState(g);
   }
 
   /** Draws a line from {@code (x1, y1)} to {@code (x2, y2)} */
   public static void drawLine(int x1, int y1, int x2, int y2) {
-    applyGraphicsState();
+    Graphics2D g = applyGraphicsState();
     g.drawLine(x1, -y1, x2, -y2);
-    resetGraphicsState();
+    resetGraphicsState(g);
   }
 
   /** Draws a vertical line from {@code (x, y1)} to {@code (x, y2)} */
@@ -57,7 +45,7 @@ public final class Renderer {
   }
 
   /** Draws a horizontal line from {@code (x1, y)} to {@code (x2, y)} */
-  public static void drawLineH(int x1, int y, int x2) {
+  public static void drawLineH(int x1, int x2, int y) {
     drawLine(x1, y, x2, y);
   }
 
@@ -72,18 +60,22 @@ public final class Renderer {
   }
 
   /**
-   * Fills a <b>center-origin</b> rounded rect at (x, y) with width and height
-   * and corner width and height
+   * Fills a <b>center-origin</b> rounded rect at (x, y) with width and height and corner width
+   * and height
    */
-  public static void fillRoundRect(int x, int y, int width, int height, int cornerWidth, int cornerHeight) {
+  public static void fillRoundRect(
+    int x, int y, int width, int height, int cornerWidth, int cornerHeight
+  ) {
     roundRect(x, y, width, height, cornerWidth, cornerHeight, true);
   }
 
   /**
-   * Draws a <b>center-origin</b> rounded rect at (x, y) with width and height
-   * and corner width and height
+   * Draws a <b>center-origin</b> rounded rect at (x, y) with width and height and corner width
+   * and height
    */
-  public static void drawRoundRect(int x, int y, int width, int height, int cornerWidth, int cornerHeight) {
+  public static void drawRoundRect(
+    int x, int y, int width, int height, int cornerWidth, int cornerHeight
+  ) {
     roundRect(x, y, width, height, cornerWidth, cornerHeight, false);
   }
 
@@ -110,15 +102,40 @@ public final class Renderer {
   }
 
   /**
-   * Draws a <b>center-origin</b> {@link BufferedImage} at (x, y) with width
-   * and height. The image is scaled to fit within the provided bounds
+   * Draws a <b>center-origin</b> {@link BufferedImage} at (x, y) with width and height.
+   * The image is scaled to fit within the provided bounds
    */
-  public static void drawImage(BufferedImage img, int x, int y, int width, int height) {
-    applyGraphicsState();
+  public static void drawImage(
+    BufferedImage img, int x, int y, int width, int height
+  ) {
+    Graphics2D g = applyGraphicsState();
     int x0 = x - width / 2, y0 = y + height / 2;
     int x1 = x0 + width, y1 = y0 - height;
     g.drawImage(img, x0, -y0, x1, -y1, 0, 0, img.getWidth(), img.getHeight(), null);
-    resetGraphicsState();
+    resetGraphicsState(g);
+  }
+
+  /**
+   * Rotates the {@link Graphics2D} object by {@code deg} about point {@code (x, y)}, performs
+   * the operations defined by {@code action} and restores the rotation of the {@link Graphics2D}
+   * object afterward
+   */
+  public static void withRotation(
+    int x, int y, double deg,
+    Runnable action
+  ) {
+    Graphics2D g = Window.getInstance().getSceneGraphics();
+    double rad = degToRad(deg);
+
+    g.translate(x, -y);
+    g.rotate(rad);
+    g.translate(-x, y);
+
+    action.run();
+
+    g.translate(x, -y);
+    g.rotate(-rad);
+    g.translate(-x, y);
   }
 
   /**
@@ -129,11 +146,11 @@ public final class Renderer {
    * @see #fillCircle(int, int, int)
    */
   private static void oval(int x, int y, int width, int height, boolean fill) {
-    applyGraphicsState();
+    Graphics2D g = applyGraphicsState();
     int x0 = x - width / 2, y0 = y + height / 2;
     if (fill) g.fillOval(x0, -y0, width, height);
     else g.drawOval(x0, -y0, width, height);
-    resetGraphicsState();
+    resetGraphicsState(g);
   }
 
   /**
@@ -142,11 +159,11 @@ public final class Renderer {
    * @see #fillRect(int, int, int, int)
    */
   private static void rect(int x, int y, int width, int height, boolean fill) {
-    applyGraphicsState();
+    Graphics2D g = applyGraphicsState();
     int x0 = x - width / 2, y0 = y + height / 2;
     if (fill) g.fillRect(x0, -y0, width, height);
     else g.drawRect(x0, -y0, width, height);
-    resetGraphicsState();
+    resetGraphicsState(g);
   }
 
   /**
@@ -154,39 +171,34 @@ public final class Renderer {
    * @see #drawRoundRect(int, int, int, int, int, int)
    * @see #fillRoundRect(int, int, int, int, int, int)
    */
-  private static void roundRect(int x, int y, int width, int height, int arcWidth, int arcHeight, boolean fill) {
-    applyGraphicsState();
+  private static void roundRect(
+    int x, int y, int width, int height,
+    int arcWidth, int arcHeight, boolean fill
+  ) {
+    Graphics2D g = applyGraphicsState();
     int x0 = x - width / 2, y0 = y + height / 2;
     if (fill) g.fillRoundRect(x0, -y0, width, height, arcWidth, arcHeight);
     else g.drawRoundRect(x0, -y0, width, height, arcWidth, arcHeight);
-    resetGraphicsState();
+    resetGraphicsState(g);
   }
 
   /** Applies the current graphics state to the current graphics object */
-  private static void applyGraphicsState() {
-    g = Window.getInstance().getSceneGraphics();
-    INITIAL_STATE.save(g);
+  private static Graphics2D applyGraphicsState() {
+    Bounds rb = Camera.getRenderBounds();
+    Graphics2D g = Window.getInstance().getSceneGraphics();
+    g.setClip((int) rb.x, (int) rb.y, (int) rb.width, (int) rb.height);
     CURRENT_STATE.apply(g);
+    return g;
   }
 
   /** Restores the initial graphics state to the current graphics object */
-  private static void resetGraphicsState() {
-    INITIAL_STATE.apply(g);
+  private static void resetGraphicsState(Graphics2D g) {
+    g.setClip(null);
+    DEFAULT_STATE.apply(g);
     CURRENT_STATE.reset();
-    INITIAL_STATE.reset();
   }
 
-  /**
-   * G2DState maintains the state of a {@link Graphics2D} object.
-   * <p>
-   * This state includes the following:
-   * <ul>
-   *   <li>Foreground {@link Color color}</li>
-   *   <li>Background {@link Color color}</li>
-   *   <li>{@link Stroke Stroke}</li>
-   *   <li>{@link Paint Paint}</li>
-   * </ul>
-   */
+  /** G2DState maintains the state of a {@link Graphics2D} object */
   private static class GraphicsState {
     public static final Stroke DEFAULT_STROKE = new BasicStroke(
       1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND
@@ -197,16 +209,7 @@ public final class Renderer {
     Paint paint;
     Color color;
     Font font;
-    private boolean preserve;
-
-    /** Copies the state of a {@link Graphics2D} object */
-    void save(Graphics2D g) {
-      bgColor = g.getBackground();
-      stroke = g.getStroke();
-      paint = g.getPaint();
-      color = g.getColor();
-      font = g.getFont();
-    }
+    Shape clip;
 
     /** Applies the internal state to a {@link Graphics2D} object */
     void apply(Graphics2D g) {
@@ -215,40 +218,16 @@ public final class Renderer {
       g.setPaint(paint);
       g.setColor(color);
       g.setFont(font);
+      g.setClip(clip);
     }
 
-    /**
-     * Activates the preserve mode of this state. In preserve mode, calls to
-     * {@link #reset()} are ignored
-     * @see #discard()
-     */
-    void preserve() {
-      reset();
-      preserve = true;
-    }
-
-    /**
-     * Deactivates the preserve mode of this state.
-     * @see #preserve()
-     */
-    void discard() {
-      preserve = false;
-      reset();
-    }
-
-    /**
-     * Resets the internal state to null, if preserve mode is not <b>active</b>
-     * @see #preserve()
-     * @see #discard()
-     */
     void reset() {
-      if (preserve) return;
-
       bgColor = null;
       stroke = null;
       paint = null;
       color = null;
       font = null;
+      clip = null;
     }
   }
 }

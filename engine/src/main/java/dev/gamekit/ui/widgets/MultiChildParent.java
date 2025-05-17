@@ -1,7 +1,6 @@
 package dev.gamekit.ui.widgets;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,31 +9,24 @@ public abstract class MultiChildParent extends Parent {
   protected final List<Widget> children;
 
   public MultiChildParent(Widget... children) {
-    if (children == null)
-      throw new IllegalArgumentException("MultiChildParent children cannot be null");
-    if (children.length == 0)
-      throw new IllegalArgumentException("MultiChildParent must have at least one child");
+    for (Widget child : children) {
+      if (child == null)
+        throw new IllegalArgumentException("MultiChildParent child cannot be null");
+    }
+
     this.children = new ArrayList<>(List.of(children));
     this.children.forEach(c -> c.setParent(this));
   }
 
   @Override
-  public void performRender(Graphics2D g) {
-    renderBackground(g);
+  protected void performPostLayout() {
+    children.forEach(Widget::postLayout);
+  }
 
-    // Renders its children within self to enable clipping
-    children.forEach(child -> {
-      BufferedImage childCanvasImage = child.render();
-
-      if (childCanvasImage != null) {
-        g.drawImage(
-          childCanvasImage,
-          child.computedBounds.x,
-          child.computedBounds.y,
-          null
-        );
-      }
-    });
+  @Override
+  protected void performRender(Graphics2D g) {
+    renderAppearance(g);
+    children.forEach(child -> child.render(g));
   }
 
   public List<Widget> getChildren() { return children; }
@@ -49,6 +41,6 @@ public abstract class MultiChildParent extends Parent {
       );
     children.get(index).setParent(null);
     children.set(index, newChild);
-    newChild.setParent(this);
+    children.get(index).setParent(this);
   }
 }

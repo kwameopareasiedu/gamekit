@@ -1,31 +1,38 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.settings.ImageInterpolation;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.enums.ImageFit;
-import dev.gamekit.utils.Constants;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
-/** A {@link Widget} which renders a {@link BufferedImage} to the screen */
-public class Image extends Widget {
+/** A {@link Leaf} which renders a {@link BufferedImage} to the screen */
+public class Image extends Leaf {
   protected final BufferedImage image;
-  protected ImageFit imageFit;
+  protected final ImageFit fit;
+  protected final ImageInterpolation interpolation;
 
-  /* Draw bounds stored and only redrawn if they change */
-  private int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
-
-  protected Image(BufferedImage image) {
+  public Image(ImageOptions options, BufferedImage image) {
     if (image == null)
       throw new NullPointerException("Image cannot be null");
 
     this.image = image;
-    this.imageFit = ImageFit.FIT;
+    this.fit = options.fit;
+    this.interpolation = options.interpolation;
+  }
+
+  public static Image create(ImageOptions options, BufferedImage image) {
+    return new Image(options, image);
   }
 
   public static Image create(BufferedImage image) {
-    return new Image(image);
+    return new Image(new ImageOptions(), image);
+  }
+
+  public static ImageOptions options() {
+    return new ImageOptions();
   }
 
   @Override
@@ -39,55 +46,66 @@ public class Image extends Widget {
   }
 
   @Override
-  public void performRender(Graphics2D g) {
-    int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
+  protected void performRender(Graphics2D g) {
+    double dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
 
-    switch (imageFit) {
+    switch (fit) {
       case FIT, CROP -> {
-        double widthRatio = (double) computedBounds.width / intrinsicBounds.width;
-        double heightRatio = (double) computedBounds.height / intrinsicBounds.height;
+        double widthRatio = absoluteBounds.width / intrinsicBounds.width;
+        double heightRatio = absoluteBounds.height / intrinsicBounds.height;
 
-        double scaleRatio = imageFit == ImageFit.FIT ?
+        double scaleRatio = fit == ImageFit.FIT ?
           intrinsicBounds.width > intrinsicBounds.height ? widthRatio : heightRatio :
           intrinsicBounds.width <= intrinsicBounds.height ? widthRatio : heightRatio;
 
         int scaledWidth = (int) (intrinsicBounds.width * scaleRatio);
         int scaledHeight = (int) (intrinsicBounds.height * scaleRatio);
-        dx1 = (computedBounds.width - scaledWidth) / 2;
-        dy1 = (computedBounds.height - scaledHeight) / 2;
+        dx1 = absoluteBounds.x + (absoluteBounds.width - scaledWidth) / 2;
+        dy1 = absoluteBounds.y + (absoluteBounds.height - scaledHeight) / 2;
         dx2 = dx1 + scaledWidth;
         dy2 = dy1 + scaledHeight;
       }
       case STRETCH -> {
-        dx2 = computedBounds.width;
-        dy2 = computedBounds.height;
+        dx2 = absoluteBounds.width;
+        dy2 = absoluteBounds.height;
       }
     }
 
-    if (this.dx1 != dx1 || this.dy1 != dy1 || this.dx2 != dx2 || this.dy2 != dy2) {
-      g.setBackground(Constants.TRANSPARENT_COLOR);
-      g.clearRect(0, 0, computedBounds.width, computedBounds.height);
-      g.drawImage(image, dx1, dy1, dx2, dy2, 0, 0, intrinsicBounds.width, intrinsicBounds.height, null);
+    ImageInterpolation originalInterpolation = ImageInterpolation.from(g);
 
-      this.dx1 = dx1;
-      this.dy1 = dy1;
-      this.dx2 = dx2;
-      this.dy2 = dy2;
-    }
+    if (interpolation != ImageInterpolation.DEFAULT)
+      interpolation.apply(g);
+
+    g.drawImage(
+      image, (int) dx1, (int) dy1, (int) dx2, (int) dy2,
+      0, 0, (int) intrinsicBounds.width, (int) intrinsicBounds.height, null
+    );
+
+    originalInterpolation.apply(g);
   }
 
   @Override
-  protected boolean stateEquals(Widget widget) {
+  public boolean stateEquals(Widget widget) {
     if (widget instanceof Image imageWidget) {
       return Objects.equals(image, imageWidget.image)
-        && Objects.equals(imageFit, imageWidget.imageFit);
+        && Objects.equals(fit, imageWidget.fit);
     }
 
     return false;
   }
 
-  public Image withImageFit(ImageFit imageFit) {
-    this.imageFit = imageFit;
-    return this;
+  public static class ImageOptions {
+    public ImageFit fit = ImageFit.FIT;
+    public ImageInterpolation interpolation = ImageInterpolation.DEFAULT;
+
+    public ImageOptions fit(ImageFit fit) {
+      this.fit = fit;
+      return this;
+    }
+
+    public ImageOptions interpolation(ImageInterpolation interpolation) {
+      this.interpolation = interpolation;
+      return this;
+    }
   }
 }

@@ -2,14 +2,10 @@ package dev.gamekit.ui.enums;
 
 /** Represents the alignment of an object relative to another */
 public enum Alignment {
-  TOP_LEFT,
-  TOP_CENTER,
-  TOP_RIGHT,
-  LEFT,
+  /** Aligns to the start of an axis */
+  START,
+  /** Aligns to the center of an axis */
   CENTER,
-  RIGHT,
-  BOTTOM_LEFT,
-  BOTTOM_CENTER,
-  BOTTOM_RIGHT
-
+  /** Aligns to the end of an axis */
+  END,
 }

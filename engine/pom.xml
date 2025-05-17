@@ -11,7 +11,7 @@
   </parent>
 
   <artifactId>engine</artifactId>
-  <version>0.3.0-SNAPSHOT-4</version>
+  <version>0.4.0-SNAPSHOT-1</version>
   <packaging>jar</packaging>
 
   <properties>
@@ -59,6 +59,21 @@
             <phase>package</phase>
             <goals>
               <goal>javadoc</goal>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.3.1</version>
+        <executions>
+          <execution>
+            <id>attach-source</id>
+            <phase>package</phase>
+            <goals>
               <goal>jar</goal>
             </goals>
           </execution>

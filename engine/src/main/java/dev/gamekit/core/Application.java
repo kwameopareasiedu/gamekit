@@ -1,8 +1,7 @@
 package dev.gamekit.core;
 
 import dev.gamekit.animation.Animation;
-import dev.gamekit.utils.Config;
-import dev.gamekit.utils.Resolution;
+import dev.gamekit.settings.Settings;
 import dev.gamekit.utils.Task;
 import dev.gamekit.utils.Timeout;
 import org.apache.logging.log4j.LogManager;
@@ -14,41 +13,47 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Application is the heart of a GameKit program.
+ * {@link Application} is the heart of a GameKit program. A game or application must extend this
+ * class to do anything with the engine.
  * <p>
- * A game or application must extend this class to do anything with the engine.
+ * It runs a fixed-step game update loop which protects against lag spikes. It also loads scenes,
+ * schedule animations and timeouts and quit the running instance. Use
+ * {@link Application#getInstance()} to get the current instance from anywhere in your project
+ * to access its methods.
+ * <p>
  */
 @SuppressWarnings("BusyWait")
 public abstract class Application {
-  public static final long FRAME_TIME = 1000 / 90;
+  public static final long FRAME_TIME_MS = 1000 / 240;
   private static Application instance;
 
   protected final Logger logger = LogManager.getLogger(getClass());
 
-  private final List<Timeout> timeouts;
-  private final List<Animation> animations;
+  private final Settings settings;
+  private final UtilityWorker utility;
   private final Window window;
   private boolean isRunning;
   private Scene currentScene;
   private Scene nextScene;
 
   public Application(String title) {
-    this(new Config(title, Resolution.SVGA, false));
+    this(new Settings(title));
   }
 
-  public Application(Config config) {
-    logger.debug("Created application \"{}\"", config.title());
-    logger.debug("Configuration: {}", config);
-
-    this.window = new Window(config);
-    this.timeouts = new ArrayList<>();
-    this.animations = new ArrayList<>();
-    this.isRunning = true;
-
+  public Application(Settings settings) {
     Application.instance = this;
+
+    logger.debug("Created application \"{}\"", settings);
+
+    this.settings = settings;
+    this.utility = new UtilityWorker();
+    this.window = new Window();
+    this.isRunning = true;
   }
 
   public static Application getInstance() { return instance; }
+
+  public Settings getSettings() { return settings; }
 
   /** Schedules a scene to be loaded after the end of the current frame */
   public void loadScene(Scene scene) {
@@ -61,39 +66,31 @@ public abstract class Application {
     this.nextScene = scene;
   }
 
-  /**
-   * Schedule a task to be executed immediately after the end of the current
-   * frame.
-   */
+  /** Schedule a task to be executed immediately after the end of the current frame. */
   public void scheduleTask(Task task) { scheduleTask(task, 0); }
 
   /**
    * Schedule a task to be executed after some timeout in <b>milliseconds</b>.
    * <p>
-   * If {@code timeout} is zero, {@code task} is executed immediately after the
-   * current frame
+   * If {@code timeout} is zero, {@code task} is executed immediately after the current frame
    */
   public void scheduleTask(Task task, long timeout) {
     if (timeout < 0)
       throw new RuntimeException("timeout cannot be negative");
-    timeouts.add(new Timeout(timeout, task));
+    utility.scheduleTimeout(new Timeout(timeout, task));
   }
 
   /**
-   * Schedule an {@link Animation} to run. Animations are updated before the
-   * scene's {@code onUpdate()} to ensure current values are available to the
-   * scene.
+   * Schedule an {@link Animation} to run. Animations are updated before the scene's
+   * {@code onUpdate()} to ensure current values are available to the scene's next update cycle
    */
   public void scheduleAnimation(Animation animation) {
-    if (!animations.contains(animation)) {
-      animations.add(animation);
-    }
+    utility.scheduleAnimation(animation);
   }
 
   /**
-   * Quit the current {@link Application} by dispatching a
-   * {@link WindowEvent#WINDOW_CLOSING} event to the {@link Window}
-   * {@link javax.swing.JFrame frame}
+   * Quit the current {@link Application} by dispatching a {@link WindowEvent#WINDOW_CLOSING}
+   * event to the {@link Window} {@link javax.swing.JFrame frame}
    */
   public void quit() {
     window.getFrame().dispatchEvent(
@@ -104,30 +101,30 @@ public abstract class Application {
   /** Begins the game loop of this application */
   public void run() {
     try {
-      onSetup();
+      setup();
 
       long lastFrameTime = System.currentTimeMillis();
       long frameTimeAccumulator = 0;
 
       while (isRunning) {
-        long frameTimeNow = System.currentTimeMillis();
-        long elapsedTime = frameTimeNow - lastFrameTime;
-        lastFrameTime = frameTimeNow;
-        frameTimeAccumulator += elapsedTime;
+        long currentFrameTime = System.currentTimeMillis();
+        long timeDiff = currentFrameTime - lastFrameTime;
+        lastFrameTime = currentFrameTime;
+        frameTimeAccumulator += timeDiff;
 
-        while (frameTimeAccumulator >= FRAME_TIME) {
+        while (frameTimeAccumulator >= FRAME_TIME_MS) {
+          frameTimeAccumulator -= FRAME_TIME_MS;
           Input.freeze();
-          frameTimeAccumulator -= FRAME_TIME;
-          onUpdate();
+          update();
           Input.reset();
         }
 
-        onRender();
-        onFrameEnd();
-        Thread.sleep(Math.max(frameTimeAccumulator, 5));
+        render();
+        endFrame();
+        Thread.sleep(1);
       }
 
-      onDispose();
+      dispose();
       System.exit(0);
     } catch (Exception e) {
       logger.error("Application loop raised an exception", e);
@@ -136,7 +133,7 @@ public abstract class Application {
   }
 
   /** Sets up GameKit's internals before starting the game loop */
-  private void onSetup() {
+  private void setup() {
     logger.debug("Initializing application");
 
     window.getFrame().addKeyListener(Input.INSTANCE);
@@ -153,41 +150,26 @@ public abstract class Application {
     });
 
     window.getFrame().setVisible(true);
+    utility.start();
+  }
+
+  /** Called in each frame to update the current scene */
+  private void update() {
+    if (currentScene != null)
+      currentScene._update();
   }
 
   /**
-   * Called in each frame to update the current scene all running animations and
-   * timeouts have been updated
+   * Applies the camera's transformation on the {@link Window} scene buffer and renders the
+   * current scene
    */
-  private void onUpdate() {
-    if (!animations.isEmpty()) {
-      for (var anim : animations)
-        anim.update();
-    }
-
-    if (!timeouts.isEmpty()) {
-      for (var timeout : timeouts)
-        timeout.onUpdate();
-    }
-
-    if (currentScene != null) {
-      currentScene.update();
-    }
-
-    Audio.update();
-  }
-
-  /**
-   * Applies the camera's transformation on the {@link Window} scene buffer and
-   * renders the current scene
-   */
-  private void onRender() {
+  private void render() {
     if (currentScene != null) {
       Camera.update();
-      currentScene.render();
+      currentScene._render();
     }
 
-    window.redraw();
+    window.render();
   }
 
   /**
@@ -198,30 +180,19 @@ public abstract class Application {
    *   <li>Loading a scheduled scene</li>
    * </ul>
    */
-  private void onFrameEnd() {
-    if (!animations.isEmpty()) {
-      animations.removeIf(animation ->
-        animation.getState() == Animation.State.ENDED
-      );
-    }
-
-    if (!timeouts.isEmpty()) {
-      timeouts.removeIf(Timeout::isCompleted);
-    }
-
+  private void endFrame() {
     if (nextScene != null) {
-      animations.clear();
-      timeouts.clear();
+      utility.clear();
 
       if (currentScene != null) {
-        currentScene.dispose();
+        currentScene._dispose();
         logger.debug("Switching scene: {} -> {}", currentScene.getName(), nextScene.getName());
       } else {
         logger.debug("Loading scene: {}", nextScene.getName());
       }
 
       currentScene = nextScene;
-      currentScene.start();
+      currentScene._start();
       nextScene = null;
 
       window.createRenderBuffers();
@@ -230,13 +201,110 @@ public abstract class Application {
   }
 
   /** Runs cleanup code before exiting the application */
-  protected void onDispose() {
+  protected void dispose() throws InterruptedException {
     logger.debug("Disposing application");
 
-    if (currentScene != null) {
-      currentScene.dispose();
+    if (currentScene != null)
+      currentScene._dispose();
+
+    utility.interrupt();
+    utility.join(1000);
+
+    Audio.dispose();
+    IO.dispose();
+  }
+
+  private static final class UtilityWorker extends Thread {
+    private final List<Timeout> timeouts;
+    private final List<Timeout> newTimeouts;
+    private final List<Animation> animations;
+
+    UtilityWorker() {
+      timeouts = new ArrayList<>();
+      newTimeouts = new ArrayList<>();
+      animations = new ArrayList<>();
     }
 
-    IO.dispose();
+    private void scheduleAnimation(Animation animation) {
+      synchronized (animations) {
+        if (!animations.contains(animation))
+          animations.add(animation);
+      }
+    }
+
+    private void scheduleTimeout(Timeout timeout) {
+      synchronized (newTimeouts) {
+        newTimeouts.add(timeout);
+      }
+    }
+
+    @Override
+    public void run() {
+      super.run();
+
+      long lastFrameTime = System.currentTimeMillis();
+      long frameTimeAccumulator = 0;
+
+      while (!isInterrupted()) {
+        long currentFrameTime = System.currentTimeMillis();
+        long timeDiff = currentFrameTime - lastFrameTime;
+        lastFrameTime = currentFrameTime;
+        frameTimeAccumulator += timeDiff;
+
+        while (frameTimeAccumulator >= FRAME_TIME_MS) {
+          frameTimeAccumulator -= FRAME_TIME_MS;
+          update();
+        }
+
+        endFrame();
+
+        try {
+          Thread.sleep(1);
+        } catch (InterruptedException ignored) {
+
+        }
+      }
+    }
+
+    private void clear() {
+      synchronized (animations) {
+        animations.clear();
+      }
+
+      timeouts.clear();
+    }
+
+    private void update() {
+      synchronized (animations) {
+        if (!animations.isEmpty()) {
+          for (var anim : animations)
+            anim.update();
+        }
+      }
+
+      if (!timeouts.isEmpty()) {
+        for (var timeout : timeouts)
+          timeout.update();
+      }
+
+      Audio.update();
+    }
+
+    private void endFrame() {
+      synchronized (animations) {
+        if (!animations.isEmpty())
+          animations.removeIf(Animation::isEnded);
+      }
+
+      if (!timeouts.isEmpty())
+        timeouts.removeIf(Timeout::isCompleted);
+
+      synchronized (newTimeouts) {
+        if (!newTimeouts.isEmpty()) {
+          timeouts.addAll(newTimeouts);
+          newTimeouts.clear();
+        }
+      }
+    }
   }
 }

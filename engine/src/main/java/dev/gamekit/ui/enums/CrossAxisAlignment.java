@@ -1,9 +1,8 @@
 package dev.gamekit.ui.enums;
 
 /**
- * Constants determining how children of a
- * {@link dev.gamekit.ui.widgets.Flex Flex} parent are aligned along the
- * cross axis
+ * Constants determining how children of a {@link dev.gamekit.ui.widgets.Flex Flex} parent are
+ * aligned along the cross axis
  */
 public enum CrossAxisAlignment {
   /** Aligns all children to the start of the cross axis */

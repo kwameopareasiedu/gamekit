@@ -7,23 +7,27 @@ import java.util.Objects;
 
 /** A {@link SingleChildParent} which adds padding around its single child */
 public class Padding extends SingleChildParent {
-  protected Spacing padding;
+  protected final Spacing padding;
 
-  protected Padding(Spacing padding, Widget child) {
+  public Padding(PaddingOptions options, Widget child) {
     super(child);
-    this.padding = padding;
+    this.padding = options.padding;
   }
 
-  public static Padding create(Spacing padding, Widget child) {
-    return new Padding(padding, child);
+  public static Padding create(PaddingOptions options, Widget child) {
+    return new Padding(options, child);
+  }
+
+  public static PaddingOptions options() {
+    return new PaddingOptions();
   }
 
   @Override
   protected void performLayout(Constraints constraints) {
     child.layout(
       new Constraints(
-        0, constraints.maxWidth(),
-        0, constraints.maxHeight()
+        0, constraints.maxWidth() - padding.getHorizontal(),
+        0, constraints.maxHeight() - padding.getVertical()
       )
     );
 
@@ -37,29 +41,40 @@ public class Padding extends SingleChildParent {
       constraints.constrainHeight(intrinsicBounds.height)
     );
 
-    if (intrinsicBounds.width > computedBounds.width ||
-      intrinsicBounds.height > computedBounds.height) {
-      child.layout(
-        new Constraints(
-          0, computedBounds.width - padding.getHorizontal(),
-          0, computedBounds.height - padding.getVertical()
-        )
-      );
-    }
-
-    child.computedBounds.setPosition(
-      computedBounds.width / 2 - child.computedBounds.width / 2,
-      computedBounds.height / 2 - child.computedBounds.height / 2
-    );
+    child.computedBounds.setPosition(padding.left, padding.top);
   }
 
   @Override
-  protected boolean stateEquals(Widget widget) {
-    if (widget instanceof Padding paddingWidget) {
-      return Objects.equals(child, paddingWidget.child)
-        && Objects.equals(padding, paddingWidget.padding);
-    }
+  public boolean stateEquals(Widget widget) {
+    if (widget instanceof Padding paddingWidget)
+      return Objects.equals(padding, paddingWidget.padding);
 
     return false;
+  }
+
+  public static class PaddingOptions {
+    Spacing padding = new Spacing();
+
+    PaddingOptions() { }
+
+    public PaddingOptions padding(Spacing padding) {
+      this.padding = padding;
+      return this;
+    }
+
+    public PaddingOptions padding(int padding) {
+      this.padding = new Spacing(padding);
+      return this;
+    }
+
+    public PaddingOptions padding(int horizontal, int vertical) {
+      this.padding = new Spacing(horizontal, vertical);
+      return this;
+    }
+
+    public PaddingOptions padding(int top, int right, int bottom, int left) {
+      this.padding = new Spacing(top, right, bottom, left);
+      return this;
+    }
   }
 }

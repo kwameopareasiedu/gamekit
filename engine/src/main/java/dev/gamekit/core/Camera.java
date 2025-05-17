@@ -1,29 +1,49 @@
 package dev.gamekit.core;
 
+import dev.gamekit.utils.Bounds;
 import dev.gamekit.utils.Position;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import java.awt.*;
 import java.awt.geom.AffineTransform;
 
 /**
- * Camera controls which part of the game world is visible in the {@link Window}.
+ * {@link Camera} controls which part of the game world is visible in the {@link Window}.
  * It does this by manipulating the window's {@link AffineTransform} object
  */
 public final class Camera {
-  private static final Point POINT_CACHE = new Point();
+  private static final Logger LOGGER = LogManager.getLogger(Camera.class);
   private static final Position POSITION_CACHE = new Position();
+  private static final Bounds BOUNDS_CACHE = new Bounds();
+  private static final AffineTransform TRANSFORM = new AffineTransform(1, 0, 0, -1, 0, 0);
 
-  private static final AffineTransform transform = new AffineTransform(1, 0, 0, -1, 0, 0);
   private static double x = 0;
   private static double y = 0;
   private static double zoom = 1;
+  private static double invZoom = 1.0 / zoom;
 
-  /** Transforms a screen-space point (x,y) to the world-space */
-  public static Position screenToWorldPoint(int x, int y) {
+  /** Returns the visible render bounds based on the camera's parameters */
+  public static Bounds getRenderBounds() {
     Window window = Window.getInstance();
-    POINT_CACHE.setLocation(x - window.getDisplayWidth(), -y);
-    transform.transform(POINT_CACHE, POINT_CACHE);
-    POSITION_CACHE.set(POINT_CACHE);
+    Position center = window.getCenter();
+
+    BOUNDS_CACHE.set(
+      (int) ((Camera.x - center.x) * invZoom),
+      (int) ((Camera.y - center.y) * invZoom),
+      (int) (window.getDisplayWidth() * invZoom),
+      (int) (window.getDisplayHeight() * invZoom)
+    );
+
+    return BOUNDS_CACHE;
+  }
+
+  /** Transforms a screen-space point (sx,sy) into world-space position */
+  public static Position screenToWorldPosition(double sx, double sy) {
+    Window window = Window.getInstance();
+    Position center = window.getCenter();
+    int wx = (int) (invZoom * (center.x - sx - Camera.x));
+    int wy = (int) (invZoom * (center.y - sy - Camera.y));
+    POSITION_CACHE.set(-wx, wy);
     return POSITION_CACHE;
   }
 
@@ -34,20 +54,20 @@ public final class Camera {
   }
 
   /** Sets the zoom level of the camera, clamped to a min of 1 */
-  public static void setZoom(double zoom) { Camera.zoom = Math.max(zoom, 1); }
+  public static void setZoom(double zoom) {
+    Camera.zoom = Math.max(zoom, 1);
+    Camera.invZoom = 1.0 / Camera.zoom;
+  }
 
   public static double getX() { return x; }
 
   public static double getY() { return y; }
 
-  /**
-   * Applies the camera's position and zoom to the current window's transform
-   * matrix
-   */
+  /** Applies the camera's position and zoom to the current window's transform matrix */
   static void update() {
     Window window = Window.getInstance();
     Position center = window.getCenter();
-    transform.setTransform(zoom, 0, 0, zoom, center.x - x, center.y - y);
-    window.getSceneGraphics().setTransform(transform);
+    TRANSFORM.setTransform(zoom, 0, 0, zoom, center.x - x, center.y - y);
+    window.getSceneGraphics().setTransform(TRANSFORM);
   }
 }

@@ -4,42 +4,146 @@ import dev.gamekit.ui.Constraints;
 
 import java.util.Objects;
 
-/** A {@link SingleChildParent} which enforces a fixed size on its child */
-public class Sized extends SingleChildParent {
-  protected final int width;
-  protected final int height;
+import static dev.gamekit.utils.Math.clamp;
 
-  public Sized(int width, int height, Widget child) {
+/**
+ * A {@link SingleChildParent} which enforces a size on its child. This can be a fixed size, the
+ * child's intrinsic size or a fractional size relative to this {@link Sized}'s parent
+ */
+public class Sized extends SingleChildParent {
+  protected final DimensionType widthType;
+  protected final DimensionType heightType;
+  protected final double width;
+  protected final double height;
+
+  public Sized(SizedOptions options, Widget child) {
     super(child);
-    this.width = width;
-    this.height = height;
+    this.width = options.width;
+    this.height = options.height;
+    this.widthType = options.widthType;
+    this.heightType = options.heightType;
   }
 
-  public static Sized create(int width, int height, Widget child) {
-    return new Sized(width, height, child);
+  public static Sized create(SizedOptions options, Widget child) {
+    return new Sized(options, child);
+  }
+
+  public static SizedOptions options() {
+    return new SizedOptions();
   }
 
   @Override
   protected void performLayout(Constraints constraints) {
-    computedBounds.setSize(
-      constraints.constrainWidth(width),
-      constraints.constrainHeight(height)
+    if (widthType == DimensionType.INTRINSIC || heightType == DimensionType.INTRINSIC) {
+      child.layout(
+        new Constraints(
+          0, constraints.maxWidth(),
+          0, constraints.maxHeight()
+        )
+      );
+    }
+
+    double targetWidth = switch (widthType) {
+      case FIXED -> width;
+      case INTRINSIC -> child.computedBounds.width;
+      case FRACTIONAL -> width * constraints.maxWidth();
+    };
+
+    double targetHeight = switch (heightType) {
+      case FIXED -> height;
+      case INTRINSIC -> child.computedBounds.height;
+      case FRACTIONAL -> height * constraints.maxHeight();
+    };
+
+    if (widthType == DimensionType.INTRINSIC) {
+      child.layout(
+        new Constraints(
+          0, constraints.maxWidth(),
+          targetHeight, targetHeight
+        )
+      );
+    } else if (heightType == DimensionType.INTRINSIC) {
+      child.layout(
+        new Constraints(
+          targetWidth, targetWidth,
+          0, constraints.maxHeight()
+        )
+      );
+    } else {
+      child.layout(
+        new Constraints(
+          targetWidth, targetWidth,
+          targetHeight, targetHeight
+        )
+      );
+    }
+
+    intrinsicBounds.setSize(
+      child.computedBounds.width,
+      child.computedBounds.height
     );
 
-    child.layout(
-      new Constraints(
-        computedBounds.width, computedBounds.width,
-        computedBounds.height, computedBounds.height
-      )
+    computedBounds.setSize(
+      constraints.constrainWidth(intrinsicBounds.width),
+      constraints.constrainHeight(intrinsicBounds.height)
     );
   }
 
   @Override
-  protected boolean stateEquals(Widget widget) {
+  public boolean stateEquals(Widget widget) {
     if (widget instanceof Sized sizedWidget) {
-      return Objects.equals(width, sizedWidget.width) &&
+      return Objects.equals(widthType, sizedWidget.widthType) &&
+        Objects.equals(heightType, sizedWidget.heightType) &&
+        Objects.equals(width, sizedWidget.width) &&
         Objects.equals(height, sizedWidget.height);
     }
     return false;
+  }
+
+  public static class SizedOptions {
+    DimensionType widthType = DimensionType.FIXED;
+    DimensionType heightType = DimensionType.FIXED;
+    double width = 64;
+    double height = 64;
+
+    public SizedOptions width(int width) {
+      this.widthType = DimensionType.FIXED;
+      this.width = width;
+      return this;
+    }
+
+    public SizedOptions height(int height) {
+      this.heightType = DimensionType.FIXED;
+      this.height = height;
+      return this;
+    }
+
+    public SizedOptions intrinsicWidth() {
+      this.widthType = DimensionType.INTRINSIC;
+      this.width = 0;
+      return this;
+    }
+
+    public SizedOptions intrinsicHeight() {
+      this.heightType = DimensionType.INTRINSIC;
+      this.height = 0;
+      return this;
+    }
+
+    public SizedOptions fractionalWidth(double width) {
+      this.widthType = DimensionType.FRACTIONAL;
+      this.width = clamp(width, 0, 1);
+      return this;
+    }
+
+    public SizedOptions fractionalHeight(double height) {
+      this.heightType = DimensionType.FRACTIONAL;
+      this.height = clamp(height, 0, 1);
+      return this;
+    }
+  }
+
+  protected enum DimensionType {
+    FIXED, INTRINSIC, FRACTIONAL
   }
 }

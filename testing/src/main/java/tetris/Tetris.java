@@ -77,26 +77,26 @@ public class Tetris extends Scene {
   }
 
   @Override
-  public void onUpdate() {
-    super.onUpdate();
+  public void update() {
+    super.update();
 
     if (gameState == PLAYING) {
-      stepTime += Application.FRAME_TIME;
-      if (Input.isKeyJustPressed(Input.KEY_ESCAPE)) gameState = PAUSED;
-    } else if (gameState == PAUSED && Input.isKeyJustPressed(Input.KEY_ESCAPE)) {
+      stepTime += Application.FRAME_TIME_MS;
+      if (Input.isKeyDown(Input.KEY_ESCAPE)) gameState = PAUSED;
+    } else if (gameState == PAUSED && Input.isKeyDown(Input.KEY_ESCAPE)) {
       gameState = PLAYING;
-    } else if (gameState == GAME_OVER && Input.isKeyJustPressed(Input.KEY_R)) {
+    } else if (gameState == GAME_OVER && Input.isKeyDown(Input.KEY_R)) {
       Application.getInstance().loadScene(new Tetris());
     }
 
     if (tetromino != null) {
-      if (Input.isKeyJustPressed(Input.KEY_LEFT)) {
+      if (Input.isKeyDown(Input.KEY_LEFT)) {
         tetromino.move(grid, COLS, Direction.LEFT);
-      } else if (Input.isKeyJustPressed(Input.KEY_RIGHT)) {
+      } else if (Input.isKeyDown(Input.KEY_RIGHT)) {
         tetromino.move(grid, COLS, Direction.RIGHT);
-      } else if (Input.isKeyJustPressed(Input.KEY_UP)) {
+      } else if (Input.isKeyDown(Input.KEY_UP)) {
         tetromino.rotateCW();
-      } else if (Input.isKeyJustPressed(Input.KEY_DOWN)) {
+      } else if (Input.isKeyDown(Input.KEY_DOWN)) {
         tetromino.rotateCCW();
       }
     }
@@ -200,8 +200,8 @@ public class Tetris extends Scene {
   }
 
   @Override
-  public void onRender() {
-    super.onRender();
+  public void render() {
+    super.render();
 
     Graphics2D g = null;
     g.setColor(CLEAR_COLOR);

@@ -5,6 +5,9 @@ import dev.gamekit.animation.AnimationCurve;
 import dev.gamekit.core.Application;
 import dev.gamekit.core.Renderer;
 import dev.gamekit.core.Scene;
+import dev.gamekit.settings.Resolution;
+import dev.gamekit.settings.Settings;
+import dev.gamekit.settings.WindowMode;
 import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.widgets.Align;
@@ -20,7 +23,7 @@ public class AnimationTesting extends Scene {
   double animationValue = 0;
 
   private final Animation bounceAnimation = new Animation(
-    4, Animation.RepeatMode.REVERSE, AnimationCurve.EASE_IN_OUT_BOUNCE
+    4000, Animation.RepeatMode.ALTERNATE, AnimationCurve.EASE_IN_OUT_BOUNCE
   ).setValueListener(value -> updateUI(() -> animationValue = value));
 
   public AnimationTesting() {
@@ -29,7 +32,9 @@ public class AnimationTesting extends Scene {
 
   public static void main(String[] args) {
     // Create a new game application
-    Application game = new Application("Animation Testing") { };
+    Application game = new Application(
+      new Settings("Animation Testing", Resolution.HD, WindowMode.WINDOWED)
+    ) { };
     // Load an instance of our Scene class
     game.loadScene(new AnimationTesting());
     // Run the game application
@@ -37,14 +42,14 @@ public class AnimationTesting extends Scene {
   }
 
   @Override
-  public void onStart() {
-    super.onStart();
+  public void start() {
+    super.start();
     bounceAnimation.start();
   }
 
   @Override
-  public void onRender() {
-    super.onRender();
+  public void render() {
+    super.render();
     // Clear the screen with black
     Renderer.setColor(Color.BLACK);
     Renderer.clear();
@@ -54,12 +59,14 @@ public class AnimationTesting extends Scene {
   }
 
   @Override
-  public Widget onCreateUI() {
+  public Widget createUI() {
     return Align.create(
-      Alignment.TOP_LEFT,
+      Align.options().horizontalAlignment(Alignment.START),
       Padding.create(
-        new Spacing(16, 48),
-        Text.create(String.format("Value: %f", animationValue))
+        Padding.options().padding(new Spacing(16, 48)),
+        Text.create(
+          String.format("Value: %f", animationValue)
+        )
       )
     );
   }

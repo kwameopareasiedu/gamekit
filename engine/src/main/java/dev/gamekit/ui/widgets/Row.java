@@ -5,12 +5,20 @@ import dev.gamekit.ui.enums.MainAxisAlignment;
 
 /** A {@link Flex} which arranges its children horizontally */
 public class Row extends Flex {
-  protected Row(Widget... children) {
-    super(children);
+  public Row(RowOptions<? extends RowOptions<?>> options, Widget... children) {
+    super(options, children);
+  }
+
+  public static Row create(RowOptions<? extends RowOptions<?>> options, Widget... children) {
+    return new Row(options, children);
   }
 
   public static Row create(Widget... children) {
-    return new Row(children);
+    return new Row(new RowOptions<>(), children);
+  }
+
+  public static RowOptions<? extends RowOptions<?>> options() {
+    return new RowOptions<>();
   }
 
   @Override
@@ -20,8 +28,8 @@ public class Row extends Flex {
       0, constraints.maxHeight()
     );
 
-    int currentWidth = 0;
-    int maxHeight = 0;
+    double currentWidth = 0;
+    double maxHeight = 0;
 
     for (var child : children) {
       child.layout(cc);
@@ -43,10 +51,10 @@ public class Row extends Flex {
       constraints.constrainHeight(intrinsicBounds.height)
     );
 
-    int freeSpace = Math.max(0, computedBounds.width - intrinsicBounds.width);
-    int spaceBetween = freeSpace / Math.max(children.size() - 1, 1);
+    double freeSpace = Math.max(0, computedBounds.width - intrinsicBounds.width);
+    double spaceBetween = freeSpace / Math.max(children.size() - 1, 1);
 
-    int newX = switch (mainAxisAlignment) {
+    double newX = switch (mainAxisAlignment) {
       case CENTER -> computedBounds.width / 2 - intrinsicBounds.width / 2;
       case END -> computedBounds.width - intrinsicBounds.width;
       default -> 0;
@@ -79,4 +87,14 @@ public class Row extends Flex {
       }
     }
   }
+
+  @Override
+  public boolean stateEquals(Widget widget) {
+    if (widget instanceof Row rowWidget)
+      return super.stateEquals(rowWidget);
+
+    return false;
+  }
+
+  public static class RowOptions<T extends RowOptions<T>> extends FlexOptions<T> { }
 }

@@ -3,13 +3,10 @@ package dev.gamekit.audio;
 import static dev.gamekit.utils.Math.clamp;
 
 /**
- * Represents parameters for a group of {@link AudioClip} objects
+ * {@link AudioGroup} are attached to multiple a group of {@link AudioClip} objects in order to
+ * group control their properties
  * <p>
- * Audio groups allows you to update the parameters of linked
- * {@link AudioClip} objects.
- * <p>
- * A common use-case is setting the volume of all background music and all
- * sound effects of a game
+ * A common use-case is setting the volume of all background music and all sound effects in a game
  */
 public class AudioGroup {
   public static final AudioGroup MUSIC = new AudioGroup("Music", 0.85);

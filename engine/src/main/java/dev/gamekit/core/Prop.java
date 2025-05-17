@@ -1,31 +1,112 @@
 package dev.gamekit.core;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.ArrayList;
+
 /**
- * Represents game objects within Scenes. Because these are part of the "game world",
- * they have lifecycle methods which are called by the engine to set up, update, render
- * and dispose.
+ * {@link Prop} represent game objects in a {@link Scene}.
  * <p>
- * <p>
- * Props im
+ * Like {@link Scene}, {@link Prop} has lifecycle methods which are called by the engine to
+ * set up, update, render and dispose.
  */
 public abstract class Prop {
-  private static int idCounter = 0;
+  protected final Logger logger = LogManager.getLogger(getClass());
+  protected final ArrayList<Prop> children;
+  protected Prop parent;
 
-  final int internalId;
   final String name;
   boolean ready;
 
   public Prop(String name) {
-    internalId = Prop.idCounter++;
-    this.name = name;
-    this.ready = false;
+    this(name, false);
   }
 
-  protected void onStart() { }
+  Prop(String name, boolean ready) {
+    this.name = name;
+    this.ready = ready;
+    children = new ArrayList<>();
+  }
 
-  protected void onUpdate() { }
+  public void addChild(Prop prop) {
+    if (!children.contains(prop)) {
+      logger.debug("Adding {} to {}", prop.name, name);
 
-  protected void onRender() { }
+      Application.getInstance().scheduleTask(() -> {
+        synchronized (children) {
+          children.add(prop);
+        }
 
-  protected void onDispose() { }
+        prop.setParent(this);
+
+        if (!prop.ready)
+          prop._start();
+      });
+    }
+  }
+
+  public void removeChild(Prop prop) {
+    if (children.contains(prop)) {
+      logger.debug("Removing {} from {}", prop.name, name);
+
+      Application.getInstance().scheduleTask(() -> {
+        synchronized (children) {
+          children.remove(prop);
+        }
+
+        prop.setParent(null);
+
+        if (prop.ready)
+          prop._dispose();
+      });
+    }
+  }
+
+  public void setParent(Prop parent) {
+    this.parent = parent;
+  }
+
+  /** Called to set up the prop */
+  protected void start() { }
+
+  /** Called to update the prop */
+  protected void update() { }
+
+  /** Called to render the prop */
+  protected void render() { }
+
+  /** Called to dispose the prop */
+  protected void dispose() { }
+
+  /** Called <b>once</b> by the parent {@link Prop} to initialize the prop */
+  void _start() {
+    ready = true;
+    start();
+  }
+
+  /** Called by the parent {@link Prop} to update the prop */
+  void _update() {
+    update();
+    synchronized (children) {
+      children.forEach(Prop::_update);
+    }
+  }
+
+  /** Called by the parent {@link Prop} to render the prop */
+  void _render() {
+    render();
+    synchronized (children) {
+      children.forEach(Prop::_render);
+    }
+  }
+
+  /** Called <b>once</b> by the parent {@link Prop} to dispose the prop */
+  void _dispose() {
+    dispose();
+    synchronized (children) {
+      children.forEach(Prop::_dispose);
+    }
+    parent = null;
+  }
 }

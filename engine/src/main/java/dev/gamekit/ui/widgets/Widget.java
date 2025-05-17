@@ -1,10 +1,8 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.core.UI;
-import dev.gamekit.ui.Bounds;
+import dev.gamekit.core.Scene;
 import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.events.InputEvent;
-import dev.gamekit.utils.Config;
+import dev.gamekit.utils.Bounds;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,37 +10,36 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
- * A widget is an abstract representation of a portion of a
- * {@link dev.gamekit.core.Scene Scene's} user interface.
+ * A widget is an abstract representation of a portion of a {@link Scene Scene's} user interface.
  * <p>
- * Subclasses must implement the {@link #performLayout} and
- * {@link #performRender(Graphics2D)} to compute their position and size
+ * Subclasses must implement the {@link #performLayout} and {@link #performRender(Graphics2D)} to
+ * compute their position and size
  * <p>
  * Widget layout is based on the
  * <a href="https://docs.flutter.dev/ui/layout/constraints">box-constraint</a>
- * model which is used in Flutter, where constraints go down the tree, size go
- * up and parents set positions
+ * model which is used in Flutter, where constraints go down the tree, size go up and parents set
+ * positions
  */
 public abstract class Widget {
+  public static boolean DEBUG_DRAW = false;
+
   private static final BasicStroke DEBUG_OUTLINE_STROKE = new BasicStroke(
-    2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND
+    1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND
   );
 
   protected final Logger logger = LogManager.getLogger(getClass());
+  protected final Bounds absoluteBounds;
   protected final Bounds computedBounds;
-  protected final Bounds previousBounds;
   protected final Bounds intrinsicBounds;
+  protected final Bounds clipBounds;
   protected Constraints constraints;
   protected Widget parent;
-  protected boolean needsRepaint;
-
-  private BufferedImage canvasImage;
-  private Graphics2D canvasGraphics;
 
   public Widget() {
+    absoluteBounds = new Bounds(0, 0, 0, 0);
     computedBounds = new Bounds(0, 0, 0, 0);
-    previousBounds = new Bounds(0, 0, 0, 0);
     intrinsicBounds = new Bounds(0, 0, 0, 0);
+    clipBounds = new Bounds(0, 0, 0, 0);
     parent = null;
   }
 
@@ -50,94 +47,108 @@ public abstract class Widget {
 
   public Widget getParent() { return parent; }
 
-  public void setParent(Widget parent) { this.parent = parent; }
-
-  @Override
-  public boolean equals(Object obj) {
-    return obj == this ||
-      (obj instanceof Widget widget && stateEquals(widget));
+  public void setParent(Widget parent) {
+    this.parent = parent;
   }
 
   /**
-   * Delegate method which returns {@code true} if this widget has the same
-   * state as {@code widget}
+   * Delegate method which returns {@code true} if this widget has the same state as {@code widget}
    */
-  protected abstract boolean stateEquals(Widget widget);
+  public abstract boolean stateEquals(Widget widget);
 
   /**
    * Computes the layout for the widget
    * <p>
-   * This is called by either the parent widget or window and receives the
-   * {@link Constraints} from its parent or the window, and the resulting
-   * computed size must always respect this constraint
+   * This is called by either the parent widget or window and receives the {@link Constraints}
+   * from its parent or the window, and the resulting computed size must always respect this
+   * constraint
    * <p>
-   * The goal of this method is to set the {@link #computedBounds} which
-   * controls where on the screen the widget is rendered.
+   * The goal of this method is to set the {@link #computedBounds} which controls where on the
+   * screen the widget is rendered.
    * <p>
-   * Since this method is marked as {@code final}, subclasses should override
-   * the {@link #performLayout} method instead to perform their layout
+   * Since this method is marked as {@code final}, subclasses should override the
+   * {@link #performLayout} method instead to perform their layout
    */
   public final void layout(Constraints constraints) {
     this.constraints = constraints;
     performLayout(constraints);
-    needsRepaint = !computedBounds.equals(previousBounds);
   }
 
   /**
-   * Delegate method which performs the actual layout and is passed
-   * the constraints from {@link #layout(Constraints)}.
+   * Delegate method which performs the actual layout and is passed the constraints from
+   * {@link #layout(Constraints)}.
    */
   protected abstract void performLayout(Constraints constraints);
 
   /**
-   * Renders the widget unto its {@link BufferedImage canvasImage} and returns it
+   * Performs post-layout logic
+   * <p>
+   * This exists because {@link #layout(Constraints)} uses a depth-first approach in traversing
+   * this widget tree.
+   * <p>
+   * With this approach, certain data (e.g. computed bounds position and parent computed bounds)
+   * may not be available until after the scene's UI widget tree has been completely laid out
+   * <p>
+   * Since this method is marked as {@code final}, subclasses should override the
+   * {@link #performPostLayout} method instead to perform any post layout logic
+   */
+  public final void postLayout() {
+    computeAbsoluteBounds();
+    performPostLayout();
+  }
+
+  protected void performPostLayout() { /* No-op */ }
+
+  /**
+   * Renders the widget unto the provided {@link BufferedImage}
    * <p>
    * This method is {@code final} and delegates the actual drawing to
    * {@link #performRender(Graphics2D)}.
    */
-  public final BufferedImage render() {
-    if ((canvasImage == null || needsRepaint) && computedBounds.getArea() > 0) {
-      canvasImage = new BufferedImage(
-        computedBounds.width,
-        computedBounds.height,
-        BufferedImage.TYPE_INT_ARGB
+  public final void render(Graphics2D canvasGraphics) {
+    if (parent != null) {
+      Bounds.intersect(absoluteBounds, parent.absoluteBounds, clipBounds);
+
+      canvasGraphics.setClip(
+        (int) clipBounds.x,
+        (int) clipBounds.y,
+        (int) clipBounds.width,
+        (int) clipBounds.height
       );
-
-      canvasGraphics = canvasImage.createGraphics();
+    } else {
+      canvasGraphics.setClip(
+        (int) absoluteBounds.x,
+        (int) absoluteBounds.y,
+        (int) absoluteBounds.width,
+        (int) absoluteBounds.height
+      );
     }
 
-    if (canvasImage != null) {
-      performRender(canvasGraphics);
+    performRender(canvasGraphics);
 
-      if (Config.DEBUG_DRAW) {
-        canvasGraphics.setColor(Color.CYAN);
-        canvasGraphics.setStroke(DEBUG_OUTLINE_STROKE);
-        canvasGraphics.drawRect(0, 0, computedBounds.width, computedBounds.height);
-      }
+    canvasGraphics.setClip(null);
+
+    if (DEBUG_DRAW) {
+      canvasGraphics.setColor(Color.CYAN);
+      canvasGraphics.setStroke(DEBUG_OUTLINE_STROKE);
+      canvasGraphics.drawRect(
+        (int) absoluteBounds.x,
+        (int) absoluteBounds.y,
+        (int) absoluteBounds.width,
+        (int) absoluteBounds.height
+      );
     }
-
-    previousBounds.set(computedBounds);
-    needsRepaint = false;
-    return canvasImage;
   }
 
   /**
-   * Delegate method which performs the actual rendering and is passed a
-   * {@link Graphics2D} object of the widget's {@code canvasImage}.
+   * Delegate method which performs the actual rendering and is passed a {@link Graphics2D}
+   * object of the widget's {@code canvasImage}.
    */
   protected abstract void performRender(Graphics2D g);
 
-  /**
-   * Called by the {@link UI} manager to handle an event generated for this
-   * widget. This should be overridden by subclasses to handle different event
-   * types
-   */
-  public void handleEvent(InputEvent event) { /* No-op */ }
-
-  /** Determines if point (x, y) falls within the absolute bounds of this widget */
-  public boolean hitTest(int x, int y) {
-    int absoluteX = computedBounds.x;
-    int absoluteY = computedBounds.y;
+  protected void computeAbsoluteBounds() {
+    double absoluteX = computedBounds.x;
+    double absoluteY = computedBounds.y;
     Widget parent = this.parent;
 
     while (parent != null) {
@@ -146,7 +157,18 @@ public abstract class Widget {
       parent = parent.parent;
     }
 
-    return absoluteX <= x && x <= absoluteX + computedBounds.width &&
-      absoluteY <= y && y <= absoluteY + computedBounds.height;
+    absoluteBounds.set(
+      absoluteX, absoluteY,
+      computedBounds.width,
+      computedBounds.height
+    );
+  }
+
+  /** Determines if point (x, y) falls within the absolute bounds of this widget */
+  public boolean hitTest(double x, double y) {
+    double absoluteRight = absoluteBounds.x + absoluteBounds.width;
+    double absoluteBottom = absoluteBounds.y + absoluteBounds.height;
+    return absoluteBounds.x <= x && x <= absoluteRight &&
+      absoluteBounds.y <= y && y <= absoluteBottom;
   }
 }

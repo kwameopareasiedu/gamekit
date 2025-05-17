@@ -5,12 +5,23 @@ import dev.gamekit.ui.enums.MainAxisAlignment;
 
 /** A {@link Flex} which arranges its children vertically */
 public class Column extends Flex {
-  protected Column(Widget... children) {
-    super(children);
+  public Column(ColumnOptions<? extends ColumnOptions<?>> options, Widget... children) {
+    super(options, children);
+  }
+
+  public static Column create(
+    ColumnOptions<? extends ColumnOptions<?>> options,
+    Widget... children
+  ) {
+    return new Column(options, children);
   }
 
   public static Column create(Widget... children) {
-    return new Column(children);
+    return new Column(new ColumnOptions<>(), children);
+  }
+
+  public static ColumnOptions<? extends ColumnOptions<?>> options() {
+    return new ColumnOptions<>();
   }
 
   @Override
@@ -20,8 +31,8 @@ public class Column extends Flex {
       0, constraints.maxHeight()
     );
 
-    int maxWidth = 0;
-    int currentHeight = 0;
+    double maxWidth = 0;
+    double currentHeight = 0;
 
     for (var child : children) {
       child.layout(cc);
@@ -42,11 +53,11 @@ public class Column extends Flex {
       constraints.constrainHeight(intrinsicBounds.height)
     );
 
-    int freeSpace =
+    double freeSpace =
       Math.max(0, computedBounds.height - intrinsicBounds.height);
-    int spaceBetween = freeSpace / Math.max(children.size() - 1, 1);
+    double spaceBetween = freeSpace / Math.max(children.size() - 1, 1);
 
-    int newY = switch (mainAxisAlignment) {
+    double newY = switch (mainAxisAlignment) {
       case CENTER -> computedBounds.height / 2 - intrinsicBounds.height / 2;
       case END -> computedBounds.height - intrinsicBounds.height;
       default -> 0;
@@ -79,4 +90,14 @@ public class Column extends Flex {
       }
     }
   }
+
+  @Override
+  public boolean stateEquals(Widget widget) {
+    if (widget instanceof Column columnWidget)
+      return super.stateEquals(columnWidget);
+
+    return false;
+  }
+
+  public static class ColumnOptions<T extends ColumnOptions<T>> extends FlexOptions<T> { }
 }
