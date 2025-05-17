@@ -7,7 +7,7 @@
 - Research into using triple state buffers and atomic flags to decouple rendering into a 
   separate thread
 
-## 0.4.0-SNAPSHOT-1 [UNRELEASED]
+## 0.4.0-SNAPSHOT-1
 
 ### Added
 
