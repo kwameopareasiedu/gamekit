@@ -5,7 +5,7 @@ import dev.gamekit.audio.AudioClip;
 import java.util.HashMap;
 
 /** {@link Audio} handles loading and playback of sounds in GameKit */
-public class Audio {
+public final class Audio {
   private static final HashMap<Object, AudioClip> CLIP_CACHE = new HashMap<>();
 
   private Audio() { }
@@ -35,7 +35,7 @@ public class Audio {
   }
 
   /** Called internally to perform update logic */
-  static void update() {
+  public static void update() {
     CLIP_CACHE.forEach((key, clip) -> clip.update());
   }
 

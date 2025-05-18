@@ -26,7 +26,7 @@ public final class UI {
   private static final Logger LOGGER = LogManager.getLogger(UI.class);
   private static UI instance;
 
-  private final WidgetTreeCreator treeCreator;
+  private final Scene scene;
   private final Constraints windowConstraints;
   private final List<Widget> currentHitTestList;
   private final List<Widget> previousHitTestList;
@@ -41,13 +41,13 @@ public final class UI {
   private boolean needsLayout = false;
   private boolean needsRender = true;
 
-  public UI(WidgetTreeCreator treeCreator) {
+  public UI(Scene scene) {
     Settings settings = Application.getInstance().getSettings();
     Window win = Window.getInstance();
     int dw = win.getDisplayWidth();
     int dh = win.getDisplayHeight();
 
-    this.treeCreator = treeCreator;
+    this.scene = scene;
     this.windowConstraints = new Constraints(dw, dw, dh, dh);
     this.currentHitTestList = new ArrayList<>();
     this.previousHitTestList = new ArrayList<>();
@@ -142,7 +142,7 @@ public final class UI {
     boolean treeUpdated = false;
 
     currentWidgetQueue.add(tree);
-    newWidgetQueue.add(treeCreator.createUI());
+    newWidgetQueue.add(scene.createUI());
 
     while (!currentWidgetQueue.isEmpty() && !newWidgetQueue.isEmpty()) {
       Widget treeWidget = currentWidgetQueue.remove(0);
@@ -394,11 +394,6 @@ public final class UI {
 
   private enum TraverseDirection {
     UP, DOWN
-  }
-
-  public interface WidgetTreeCreator {
-    /** Called to create a widget tree */
-    Widget createUI();
   }
 
   public interface WidgetTreeUpdater {

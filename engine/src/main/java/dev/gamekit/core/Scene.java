@@ -8,8 +8,8 @@ import org.apache.logging.log4j.Logger;
  * {@link Scene} represents a logical part of your game. This can be a main menu, or a level
  * within your game.
  * <p>
- * For simple games, the scene's {@link #start()}, {@link #update()} and {@link #render()}
- * methods are enough to set up, update and render the state of the level.
+ * For simple games, the scene's {@link #start()}, {@link #update()} and
+ * {@link #render()} methods are enough to set up, update and render the state of the level.
  * <p>
  * For more complex use cases, a {@link Scene} can contain multiple game objects called
  * {@link Prop} which interact with each other. Each {@link Prop} has its own lifecycle methods
@@ -17,7 +17,7 @@ import org.apache.logging.log4j.Logger;
  * <p>
  * A scene also supports user interface rendering using {@link Widget} components
  */
-public abstract class Scene implements UI.WidgetTreeCreator {
+public abstract class Scene {
   static Scene current;
 
   protected final Logger logger = LogManager.getLogger(getClass());
@@ -25,6 +25,10 @@ public abstract class Scene implements UI.WidgetTreeCreator {
 
   private final Prop tree;
   private final UI ui;
+
+  private State updateState;
+  private State renderState;
+  private State bufferState;
 
   public Scene(String name) {
     this.name = name;
@@ -56,8 +60,16 @@ public abstract class Scene implements UI.WidgetTreeCreator {
   /** Called to dispose the scene */
   protected void dispose() { /* No-op */ }
 
-  @Override
-  public Widget createUI() { return null; }
+  /** Called to create the {@link State} of the scene */
+  protected <T extends State> T createState() {
+    //noinspection unchecked
+    return (T) new State() { };
+  }
+
+  /** Called to create the UI {@link Widget} tree of the scene */
+  protected Widget createUI() {
+    return null;
+  }
 
   /** Trigger a widget tree update. You would use this when some UI variables have changed */
   protected final void updateUI(UI.WidgetTreeUpdater updater) {
@@ -76,12 +88,23 @@ public abstract class Scene implements UI.WidgetTreeCreator {
     ui.setWidgetTree(createUI());
     start();
     tree._start();
+
+    updateState = createState();
+    renderState = createState();
+    bufferState = createState();
+
+    if (updateState == null) {
+      throw new RuntimeException(
+        "Scene.createState() must return a non-null state object"
+      );
+    }
   }
 
   /** Called by {@link Application} to update the scene */
   final void _update() {
     ui.update();
     update();
+    swapUpdateState();
     tree._update();
   }
 
@@ -89,6 +112,7 @@ public abstract class Scene implements UI.WidgetTreeCreator {
   final void _render() {
     ui.render();
     render();
+    swapRenderState();
     tree._render();
   }
 
@@ -98,4 +122,34 @@ public abstract class Scene implements UI.WidgetTreeCreator {
     tree._dispose();
     dispose();
   }
+
+  private void swapUpdateState() {
+    synchronized (this) {
+      State tempState = updateState;
+      updateState = bufferState;
+      bufferState = tempState;
+    }
+  }
+
+  private void swapRenderState() {
+    synchronized (this) {
+      State tempState = renderState;
+      renderState = bufferState;
+      bufferState = tempState;
+    }
+  }
+
+  /**
+   * {@link State} is a container for {@link Scene} related data that would have otherwise
+   * declared as instance variables in the scene. This forms a foundation to decouple update and
+   * rendering into separate threads.
+   * <p>
+   * During update, the engine passes a state instance to {@link Scene#update()}. Reads and
+   * writes that would have otherwise involved instance variables should be done on the supplied
+   * state instance.
+   * <p>
+   * During render, the updated state is passed to {@link Scene#render()}. The values of the
+   * updated state should be used for rendering.
+   */
+  public static abstract class State { }
 }
