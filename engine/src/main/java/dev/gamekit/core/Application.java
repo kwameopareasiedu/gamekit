@@ -1,7 +1,6 @@
 package dev.gamekit.core;
 
 import dev.gamekit.animation.Animation;
-import dev.gamekit.core.threads.TaskThread;
 import dev.gamekit.settings.Settings;
 import dev.gamekit.utils.Task;
 import dev.gamekit.utils.Timeout;
@@ -10,6 +9,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * {@link Application} is the heart of a GameKit program. A game or application must extend this
@@ -21,6 +22,7 @@ import java.awt.event.WindowEvent;
  * to access its methods.
  * <p>
  */
+@SuppressWarnings("BusyWait")
 public abstract class Application {
   public static final long FRAME_TIME_MS = 1000 / 240;
   private static Application instance;
@@ -119,7 +121,6 @@ public abstract class Application {
 
         render();
         endFrame();
-        //noinspection BusyWait
         Thread.sleep(1);
       }
 
@@ -211,5 +212,83 @@ public abstract class Application {
 
     Audio.dispose();
     IO.dispose();
+  }
+
+  private static final class TaskThread extends Thread {
+    private final List<Timeout> timeouts;
+    private final List<Timeout> newTimeouts;
+    private final List<Animation> animations;
+
+    private TaskThread() {
+      timeouts = new ArrayList<>();
+      newTimeouts = new ArrayList<>();
+      animations = new ArrayList<>();
+    }
+
+    private void scheduleAnimation(Animation animation) {
+      synchronized (animations) {
+        if (!animations.contains(animation))
+          animations.add(animation);
+      }
+    }
+
+    private void scheduleTimeout(Timeout timeout) {
+      synchronized (newTimeouts) {
+        newTimeouts.add(timeout);
+      }
+    }
+
+    private void clear() {
+      synchronized (animations) {
+        animations.clear();
+      }
+
+      timeouts.clear();
+    }
+
+    @Override
+    public void run() {
+      super.run();
+
+      long lastFrameTime = System.currentTimeMillis();
+      long frameTimeAccumulator = 0;
+
+      while (!isInterrupted()) {
+        long currentFrameTime = System.currentTimeMillis();
+        long timeDiff = currentFrameTime - lastFrameTime;
+        lastFrameTime = currentFrameTime;
+        frameTimeAccumulator += timeDiff;
+
+        while (frameTimeAccumulator >= Application.FRAME_TIME_MS) {
+          frameTimeAccumulator -= Application.FRAME_TIME_MS;
+          try { performUpdate(); } catch (Exception ignored) { }
+        }
+
+        try { Thread.sleep(1); } catch (InterruptedException ignored) { }
+      }
+    }
+
+    public void performUpdate() {
+      synchronized (animations) {
+        if (!animations.isEmpty()) {
+          animations.forEach(Animation::update);
+          animations.removeIf(Animation::isEnded);
+        }
+      }
+
+      if (!timeouts.isEmpty()) {
+        timeouts.forEach(Timeout::update);
+        timeouts.removeIf(Timeout::isCompleted);
+      }
+
+      Audio.update();
+
+      synchronized (newTimeouts) {
+        if (!newTimeouts.isEmpty()) {
+          timeouts.addAll(newTimeouts);
+          newTimeouts.clear();
+        }
+      }
+    }
   }
 }

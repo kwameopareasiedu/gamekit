@@ -35,7 +35,7 @@ public final class Audio {
   }
 
   /** Called internally to perform update logic */
-  public static void update() {
+  static void update() {
     CLIP_CACHE.forEach((key, clip) -> clip.update());
   }
 

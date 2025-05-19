@@ -85,9 +85,6 @@ public abstract class Scene {
   /** Called <b>once</b> by {@link Application} to initialize the scene */
   final void _start() {
     logger.debug("Starting scene");
-    ui.setWidgetTree(createUI());
-    start();
-    tree._start();
 
     updateState = createState();
     renderState = createState();
@@ -98,22 +95,26 @@ public abstract class Scene {
         "Scene.createState() must return a non-null state object"
       );
     }
+
+    start();
+    tree._start();
+    ui.setWidgetTree(createUI());
   }
 
   /** Called by {@link Application} to update the scene */
   final void _update() {
-    ui.update();
     update();
-    swapUpdateState();
+    ui.update();
     tree._update();
+    swapUpdateState();
   }
 
   /** Called by {@link Application} to render the scene */
   final void _render() {
-    ui.render();
     render();
-    swapRenderState();
+    ui.render();
     tree._render();
+    swapRenderState();
   }
 
   /** Called <b>once</b> by {@link Application} to dispose the scene */
