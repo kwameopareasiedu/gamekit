@@ -1,0 +1,4 @@
+node_modules
+.firebase
+.idea
+dist

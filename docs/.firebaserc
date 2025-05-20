@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "oparedotdev"
+  },
+  "targets": {
+    "oparedotdev": {
+      "hosting": {
+        "gamekit": [
+          "gamekitengine"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

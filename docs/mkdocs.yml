@@ -1,0 +1,7 @@
+site_name: GameKit
+site_dir: dist
+docs_dir: pages
+nav:
+  - Home: index.md
+  - Engine: engine.md
+theme: mkdocs

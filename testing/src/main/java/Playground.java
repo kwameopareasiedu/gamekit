@@ -79,9 +79,8 @@ public class Playground extends Scene {
     AudioListener.setPosition(listenerPos);
 
     if (!prevMousePos.equals(mousePos)) {
-      updateUI(() ->
-        pan = (double) (mousePos.x - halfWindowWidth) / (halfWindowWidth)
-      );
+      pan = (double) (mousePos.x - halfWindowWidth) / halfWindowWidth;
+      updateUI();
     }
     //    Audio.setPan("alert", (float) pan);
 
