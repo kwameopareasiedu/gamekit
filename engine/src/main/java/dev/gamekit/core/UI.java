@@ -41,6 +41,13 @@ public final class UI {
   private boolean needsLayout = false;
   private boolean needsRender = true;
 
+  /** Return the {@link FontMetrics} for a given font */
+  public static FontMetrics getFontMetrics(Font font) {
+    return Window.getInstance().getUiGraphics().getFontMetrics(font);
+  }
+
+  public static UI getInstance() { return instance; }
+
   public UI(Scene scene) {
     Settings settings = Application.getInstance().getSettings();
     Window win = Window.getInstance();
@@ -66,15 +73,8 @@ public final class UI {
     UI.instance = this;
   }
 
-  public static UI getInstance() { return instance; }
-
-  /** Return the {@link FontMetrics} for a given font */
-  public static FontMetrics getFontMetrics(Font font) {
-    return Window.getInstance().getUiGraphics().getFontMetrics(font);
-  }
-
   /** Set the initial widget tree */
-  public void setWidgetTree(Widget tree) {
+  void setWidgetTree(Widget tree) {
     this.tree = tree;
 
     if (this.tree != null) {
@@ -83,7 +83,7 @@ public final class UI {
     }
   }
 
-  public void triggerUpdate() {
+  void triggerUpdate() {
     needsLayout = true;
   }
 
@@ -394,10 +394,6 @@ public final class UI {
 
   private enum TraverseDirection {
     UP, DOWN
-  }
-
-  public interface WidgetTreeUpdater {
-    void onUpdate();
   }
 
   private interface WidgetTreeVisitor {

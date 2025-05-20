@@ -72,12 +72,6 @@ public abstract class Scene {
   }
 
   /** Trigger a widget tree update. You would use this when some UI variables have changed */
-  protected final void updateUI(UI.WidgetTreeUpdater updater) {
-    updater.onUpdate();
-    ui.triggerUpdate();
-  }
-
-  /** Trigger a widget tree update. You would use this when some UI variables have changed */
   protected final void updateUI() {
     ui.triggerUpdate();
   }
