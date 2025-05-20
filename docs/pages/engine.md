@@ -1,8 +1,10 @@
-# Engine Components
+# Engine
 
-In this section, we'll take a look at the core components of the GameKit engine.
+In this section, we'll delve more into the GameKit engine structure.
 
 ## Application
+
+`dev.gamekit.core.Application`
 
 `Application` is the heart of a GameKit program. Your game must extend this class to do anything with the engine.
 
@@ -10,15 +12,11 @@ In this section, we'll take a look at the core components of the GameKit engine.
 end-of-frame tasks. This fixed time step approach makes sure during lag spikes don't overshoot logic and physics
 updates.
 
-### Startup
-
 When your game is run, it sets up the engine internals which include:
 
 - Creating the window object
 - Attaching keyboard and mouse listeners to the window
 - Making the window visible
-
-### Game Loop
 
 After setup, the main thread starts which runs the following until the application exits:
 
@@ -47,3 +45,95 @@ protected void dispose() {
 ```
 
 To access the application from anywhere in the application, use `Application.getInstance()`.
+
+## Scene
+
+`dev.gamekit.core.Scene`
+
+A `Scene` represents a logical part of your game. This can be a main menu or a level in your game.
+
+Simple scenes can have all the logic contained within them, but more complex scenes can contain `Prop` objects which can
+be scripted to interact with each other.
+
+Each scene can also render a user interface (UI) which is a collection of `Widget`.
+
+`Scene` has five (5) lifecycle methods which can be overridden:
+
+- `start()` is called **once** when `Application` loads the scene
+- `update()` is called every frame to update the state of the scene
+- `render()` is called every frame after `onUpdate()` to draw the state of the scene to `Window`
+- `dispose()` is called **once** when the scene is about to be unloaded during a scene switch
+- `createUI()` is called when the scene creates/recreates the user interface
+
+## Input
+
+`dev.gamekit.core.Input`
+
+`Input` provides mechanisms for detecting keyboard key and mouse button events. You can detect `down`, `click` and
+`released` for any key or button.
+
+When the game is launched, `Application` attaches `Input` as an event listener for `Window`. During each frame, `Input`
+preserves a snapshot of the current key and button states, which the scene can then read from in the update phase.
+
+`Input` contains public static constants which map to
+Java's [KeyEvent](https://docs.oracle.com/javase/8/docs/api/java/awt/event/KeyEvent.html) constants so they can be used
+interchangeably. An example is shown below:
+
+```java
+import java.awt.event.KeyEvent;
+
+import dev.gamekit.core.Scene;
+import dev.gamekit.core.Input;
+
+import java.awt.KeyEvent;
+
+public class MyAwesomeScene extends Scene {
+  public MyAwesomeScene() {
+    super("MyAwesomeScene");
+  }
+
+  @Override
+  public void update() {
+    // Instead of using KeyEvent.VK_SPACE
+    Input.isKeyDown(KeyEvent.VK_SPACE);
+
+    // You can use Input.KEY_SPACE
+    Input.isKeyDown(Input.KEY_SPACE);
+  }
+}
+```
+
+## IO
+
+`dev.gamekit.core.IO`
+
+`IO` is GameKit's asset loader. It allows you to load files placed in the **resource directory** of your application.
+This includes images, font and audio (`.wav`).
+
+Assets loaded by `IO` are cached using the file path as a key. When the same file path is requested, the cache responds,
+improving your game's performance.
+
+## Renderer
+
+`dev.gamekit.core.Renderer`
+
+So `Application` manages your game and `Window` manages the view frame, but how do we get stuff drawn unto the screen?
+
+That's where `Renderer` comes in. It's a static utility class containing all the supported draw functions of the engine.
+This includes drawing lines, arcs, curves, shapes (rects, ovals) and images.
+
+Before calling a draw function, you can set attributes like, color, stroke, paint to be applied. These are reset after
+the draw function is done.
+
+## Camera
+
+`dev.gamekit.core.Camera`
+
+`Camera` is a utility which provides functions to control which part of a `Scene` is being rendered to `Window`. These
+functions include:
+
+- Panning around in the scene
+- Zooming in/out
+
+It does this by updating the transform matrix of `Window`
+scene [BufferedImage](https://docs.oracle.com/javase/8/docs/api/java/awt/image/BufferedImage.html).

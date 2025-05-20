@@ -12,7 +12,6 @@ small to medium-sized games.
 GameKit is distributed as a Maven dependency. Include it in your project add its dependency to your `pom.xml`
 
 ```xml
-
 <project>
     <repositories>
         <repository>
