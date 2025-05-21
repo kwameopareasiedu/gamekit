@@ -11,15 +11,14 @@ import java.awt.image.BufferedImage;
 
 import static dev.gamekit.utils.Math.clamp;
 
-public class CalibrationTest extends Scene {
+public class Calibration extends Scene<Calibration.State> {
   private static final int WORLD_WIDTH = 2400;
   private static final int WORLD_HEIGHT = 1400;
   private static final BufferedImage SPRITE = IO.getResourceImage("zainar.png");
+  private static final double INTERVAL = Application.FRAME_TIME_MS / 1000.0;
+  private static final double FREQ = 0.5;
 
-  private double time;
-  private int x = 0, y = 0;
-
-  public CalibrationTest() {
+  public Calibration() {
     super("Calibration Test");
   }
 
@@ -27,42 +26,39 @@ public class CalibrationTest extends Scene {
     Application game = new Application(
       new Settings("Calibration Test", Resolution.SVGA, WindowMode.WINDOWED)
     ) { };
-    game.loadScene(new CalibrationTest());
+    game.loadScene(new Calibration());
     game.run();
   }
 
   @Override
-  public void update() {
-    super.update();
-
-    time += 0.025;
+  public void update(State state) {
+    state.time += INTERVAL;
 
     if (Input.isButtonPressed(Input.BUTTON_LMB)) {
       Position mousePos = Input.getMousePosition();
-      Position pos = Camera.screenToWorldPosition(
-        mousePos.x,
-        mousePos.y
-      );
-      x = (int) pos.x;
-      y = (int) pos.y;
+      Position pos = Camera.screenToWorldPosition(mousePos.x, mousePos.y);
+      state.x = pos.x;
+      state.y = pos.y;
     }
 
-    double x = 50 * Math.sin(time);
-    double y = 50 * Math.cos(time);
+    double v = 2 * Math.PI * FREQ * state.time;
+    double vsin = Math.sin(v);
+
+    double x = 50 * vsin;
+    double y = 50 * Math.cos(v);
     Camera.lookAt(x, y);
-    Camera.setZoom(clamp(1 + Math.sin(time), 1, 2));
+    Camera.setZoom(clamp(1 + vsin, 1, 2));
     //    Camera.lookAt(-200, -100);
     //    Camera.setZoom(1);
   }
 
   @Override
-  public void render() {
-    super.render();
+  public void render(State state) {
     Renderer.setColor(Color.DARK_GRAY);
     Renderer.clear();
 
     Renderer.setColor(Color.CYAN);
-    Renderer.drawRect(x, y, Resolution.SVGA.width, Resolution.SVGA.height);
+    Renderer.drawRect(state.x, state.y, Resolution.SVGA.width, Resolution.SVGA.height);
 
     Renderer.setColor(Color.BLUE);
     Renderer.drawLineH(-WORLD_WIDTH / 2, WORLD_WIDTH / 2, 0);
@@ -103,6 +99,23 @@ public class CalibrationTest extends Scene {
     Renderer.setColor(Color.MAGENTA);
     Renderer.drawRect(0, 0, 10, 10);
 
-    Renderer.drawImage(SPRITE, x, y, 10, 10);
+    Renderer.drawImage(SPRITE, state.x, state.y, 10, 10);
+  }
+
+  @Override
+  protected State createState() {
+    return new State();
+  }
+
+  public static final class State extends Scene.State<State> {
+    double time;
+    int x = 0, y = 0;
+
+    @Override
+    public void copy(State state) {
+      time = state.time;
+      x = state.x;
+      y = state.y;
+    }
   }
 }

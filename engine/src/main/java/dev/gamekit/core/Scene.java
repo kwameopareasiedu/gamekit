@@ -8,8 +8,8 @@ import org.apache.logging.log4j.Logger;
  * {@link Scene} represents a logical part of your game. This can be a main menu, or a level
  * within your game.
  * <p>
- * For simple games, the scene's {@link #start()}, {@link #update()} and
- * {@link #render()} methods are enough to set up, update and render the state of the level.
+ * For simple games, the scene's {@link #start()}, {@link #update(State)} and
+ * {@link #render(State)} methods are enough to set up, update and render the state of the level.
  * <p>
  * For more complex use cases, a {@link Scene} can contain multiple game objects called
  * {@link Prop} which interact with each other. Each {@link Prop} has its own lifecycle methods
@@ -17,26 +17,23 @@ import org.apache.logging.log4j.Logger;
  * <p>
  * A scene also supports user interface rendering using {@link Widget} components
  */
-public abstract class Scene {
-  static Scene current;
-
+@SuppressWarnings("SynchronizeOnNonFinalField")
+public abstract class Scene<T extends Scene.State<T>> {
   protected final Logger logger = LogManager.getLogger(getClass());
   protected final String name;
 
   private final Prop tree;
-  private final UI ui;
+  private final UI<T> ui;
 
-  private State updateState;
-  private State renderState;
-  private State bufferState;
+  private T updateState;
+  private T renderState;
+  private T bufferState;
 
   public Scene(String name) {
     this.name = name;
     this.tree = new Prop("Root", true) { };
-    this.ui = new UI(this);
+    this.ui = new UI<>(this);
   }
-
-  public static Scene getCurrent() { return current; }
 
   public String getName() { return name; }
 
@@ -52,22 +49,19 @@ public abstract class Scene {
   protected void start() { /* No-op */ }
 
   /** Called to update the scene */
-  protected void update() { /* No-op */ }
+  protected void update(T updateState) { /* No-op */ }
 
   /** Called to render the scene */
-  protected void render() { /* No-op */ }
+  protected void render(T renderState) { /* No-op */ }
 
   /** Called to dispose the scene */
   protected void dispose() { /* No-op */ }
 
   /** Called to create the {@link State} of the scene */
-  protected <T extends State> T createState() {
-    //noinspection unchecked
-    return (T) new State() { };
-  }
+  protected abstract T createState();
 
   /** Called to create the UI {@link Widget} tree of the scene */
-  protected Widget createUI() {
+  protected Widget createUI(T updateState) {
     return null;
   }
 
@@ -92,20 +86,20 @@ public abstract class Scene {
 
     start();
     tree._start();
-    ui.setWidgetTree(createUI());
+    ui.setWidgetTree(createUI(updateState));
   }
 
   /** Called by {@link Application} to update the scene */
   final void _update() {
-    update();
-    ui.update();
+    update(updateState);
+    ui.update(updateState);
     tree._update();
     swapUpdateState();
   }
 
   /** Called by {@link Application} to render the scene */
   final void _render() {
-    render();
+    render(renderState);
     ui.render();
     tree._render();
     swapRenderState();
@@ -120,17 +114,21 @@ public abstract class Scene {
 
   private void swapUpdateState() {
     synchronized (this) {
-      State tempState = updateState;
+      T tempState = updateState;
       updateState = bufferState;
       bufferState = tempState;
+
+      updateState.copy(bufferState);
     }
   }
 
   private void swapRenderState() {
     synchronized (this) {
-      State tempState = renderState;
+      T tempState = renderState;
       renderState = bufferState;
       bufferState = tempState;
+
+      renderState.copy(updateState);
     }
   }
 
@@ -139,12 +137,14 @@ public abstract class Scene {
    * declared as instance variables in the scene. This forms a foundation to decouple update and
    * rendering into separate threads.
    * <p>
-   * During update, the engine passes a state instance to {@link Scene#update()}. Reads and
+   * During update, the engine passes a state instance to {@link Scene#update(State)}. Reads and
    * writes that would have otherwise involved instance variables should be done on the supplied
    * state instance.
    * <p>
-   * During render, the updated state is passed to {@link Scene#render()}. The values of the
+   * During render, the updated state is passed to {@link Scene#render(State)}. The values of the
    * updated state should be used for rendering.
    */
-  public static abstract class State { }
+  public static abstract class State<T extends State<T>> {
+    public abstract void copy(T state);
+  }
 }

@@ -29,9 +29,9 @@ public final class Window {
   private Graphics2D uiGraphics;
 
   Window() {
-    LOGGER.debug("Creating window");
-
     Window.instance = this;
+
+    LOGGER.debug("Created window");
 
     Settings settings = Application.getInstance().getSettings();
 

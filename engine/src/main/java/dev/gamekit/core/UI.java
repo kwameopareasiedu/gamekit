@@ -22,11 +22,11 @@ import java.util.List;
 import java.util.Objects;
 
 /** {@link UI} manages the user interface within a {@link Scene} */
-public final class UI {
+public final class UI<T extends Scene.State<T>> {
   private static final Logger LOGGER = LogManager.getLogger(UI.class);
-  private static UI instance;
+  private static UI<?> instance;
 
-  private final Scene scene;
+  private final Scene<T> scene;
   private final Constraints windowConstraints;
   private final List<Widget> currentHitTestList;
   private final List<Widget> previousHitTestList;
@@ -46,9 +46,9 @@ public final class UI {
     return Window.getInstance().getUiGraphics().getFontMetrics(font);
   }
 
-  public static UI getInstance() { return instance; }
+  public static UI<?> getInstance() { return instance; }
 
-  public UI(Scene scene) {
+  public UI(Scene<T> scene) {
     Settings settings = Application.getInstance().getSettings();
     Window win = Window.getInstance();
     int dw = win.getDisplayWidth();
@@ -96,10 +96,10 @@ public final class UI {
    * <p>
    * This involves recomputing layout (if necessary), generating and dispatching input events
    */
-  void update() {
+  void update(T updateState) {
     if (tree != null && needsLayout) {
       LOGGER.debug("Laying out UI");
-      updateTree();
+      updateTree(updateState);
     }
 
     generateInputEvents();
@@ -136,13 +136,13 @@ public final class UI {
    * This "diffing" algorithm involves generating a new widget tree with the new state,
    * comparing it to the current widget tree and updating widgets whose states have changed.
    */
-  private void updateTree() {
+  private void updateTree(T updateState) {
     List<Widget> currentWidgetQueue = new ArrayList<>();
     List<Widget> newWidgetQueue = new ArrayList<>();
     boolean treeUpdated = false;
 
     currentWidgetQueue.add(tree);
-    newWidgetQueue.add(scene.createUI());
+    newWidgetQueue.add(scene.createUI(updateState));
 
     while (!currentWidgetQueue.isEmpty() && !newWidgetQueue.isEmpty()) {
       Widget treeWidget = currentWidgetQueue.remove(0);

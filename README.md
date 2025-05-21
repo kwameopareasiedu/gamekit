@@ -7,7 +7,7 @@ doesn't use OpenGL hence rendering is CPU based and not GPU based.
 GameKit is in no way a AAA engine and has limitations due to it not using
 OpenGL, but performance is decent enough for small to medium-sized games.
 
-## Full Documentation
+## Documentation
 
 Read the full engine documentation [here](https://gamekit.opare.dev).
 

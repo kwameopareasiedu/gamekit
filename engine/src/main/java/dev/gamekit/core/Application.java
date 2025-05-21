@@ -22,19 +22,23 @@ import java.util.List;
  * to access its methods.
  * <p>
  */
-@SuppressWarnings("BusyWait")
+@SuppressWarnings({ "BusyWait", "SynchronizeOnNonFinalField" })
 public abstract class Application {
   public static final long FRAME_TIME_MS = 1000 / 240;
   private static Application instance;
 
   protected final Logger logger = LogManager.getLogger(getClass());
 
-  private final Settings settings;
-  private final TaskThread taskThread;
   private final Window window;
+  private final Settings settings;
+  private final List<Timeout> timeouts;
+  private final List<Timeout> newTimeouts;
+  private final List<Animation> animations;
+  private final WorkerThread renderThread;
+  private final WorkerThread audioThread;
   private boolean isRunning;
-  private Scene currentScene;
-  private Scene nextScene;
+  private Scene<?> currentScene;
+  private Scene<?> nextScene;
 
   public Application(String title) {
     this(new Settings(title));
@@ -43,11 +47,16 @@ public abstract class Application {
   public Application(Settings settings) {
     Application.instance = this;
 
-    logger.debug("Created application \"{}\"", settings);
+    logger.debug("Created application");
+    logger.debug(settings);
 
     this.settings = settings;
-    this.taskThread = new TaskThread();
     this.window = new Window();
+    this.timeouts = new ArrayList<>();
+    this.newTimeouts = new ArrayList<>();
+    this.animations = new ArrayList<>();
+    this.renderThread = new WorkerThread("render", FRAME_TIME_MS, this::render);
+    this.audioThread = new WorkerThread("audio", 1000 / 90, Audio::update);
     this.isRunning = true;
   }
 
@@ -56,7 +65,7 @@ public abstract class Application {
   public Settings getSettings() { return settings; }
 
   /** Schedules a scene to be loaded after the end of the current frame */
-  public void loadScene(Scene scene) {
+  public void loadScene(Scene<?> scene) {
     if (scene == null) {
       logger.fatal("Load scene called with a null scene");
       throw new NullPointerException("Unable to load a null scene");
@@ -77,7 +86,7 @@ public abstract class Application {
   public void scheduleTask(Task task, long timeout) {
     if (timeout < 0)
       throw new RuntimeException("timeout cannot be negative");
-    taskThread.scheduleTimeout(new Timeout(timeout, task));
+    newTimeouts.add(new Timeout(timeout, task));
   }
 
   /**
@@ -85,7 +94,8 @@ public abstract class Application {
    * {@code onUpdate()} to ensure current values are available to the scene's next update cycle
    */
   public void scheduleAnimation(Animation animation) {
-    taskThread.scheduleAnimation(animation);
+    if (!animations.contains(animation))
+      animations.add(animation);
   }
 
   /**
@@ -119,17 +129,17 @@ public abstract class Application {
           Input.reset();
         }
 
-        render();
-        endFrame();
+        disposeFrame();
         Thread.sleep(1);
       }
-
-      dispose();
-      System.exit(0);
     } catch (Exception e) {
       logger.error("Application loop raised an exception", e);
-      System.exit(-1);
+    } finally {
+      try { dispose(); } //
+      catch (Exception ignored) { }
     }
+
+    System.exit(0);
   }
 
   /** Sets up GameKit's internals before starting the game loop */
@@ -150,11 +160,22 @@ public abstract class Application {
     });
 
     window.getFrame().setVisible(true);
-    taskThread.start();
+    renderThread.start();
+    audioThread.start();
   }
 
   /** Called in each frame to update the current scene */
   private void update() {
+    if (!animations.isEmpty()) {
+      animations.forEach(Animation::update);
+      animations.removeIf(Animation::isEnded);
+    }
+
+    if (!timeouts.isEmpty()) {
+      timeouts.forEach(Timeout::update);
+      timeouts.removeIf(Timeout::isCompleted);
+    }
+
     if (currentScene != null)
       currentScene._update();
   }
@@ -166,37 +187,41 @@ public abstract class Application {
   private void render() {
     if (currentScene != null) {
       Camera.update();
-      currentScene._render();
+
+      synchronized (currentScene) {
+        currentScene._render();
+      }
     }
 
     window.render();
   }
 
-  /**
-   * Runs end-of-frame tasks which include:
-   * <ul>
-   *   <li>Removing ended animations</li>
-   *   <li>Removing completed timeouts</li>
-   *   <li>Loading a scheduled scene</li>
-   * </ul>
-   */
-  private void endFrame() {
+  /** Runs cleanup code at the end of a frame */
+  private void disposeFrame() {
+    if (!newTimeouts.isEmpty()) {
+      timeouts.addAll(newTimeouts);
+      newTimeouts.clear();
+    }
+
     if (nextScene != null) {
-      taskThread.clear();
+      animations.clear();
+      timeouts.clear();
+      newTimeouts.clear();
 
       if (currentScene != null) {
-        currentScene._dispose();
-        logger.debug("Switching scene: {} -> {}", currentScene.getName(), nextScene.getName());
-      } else {
-        logger.debug("Loading scene: {}", nextScene.getName());
+        logger.debug("Disposing scene: {}", currentScene.getName());
+
+        synchronized (currentScene) {
+          currentScene._dispose();
+        }
       }
 
+      logger.debug("Starting scene: {}", nextScene.getName());
       currentScene = nextScene;
       currentScene._start();
       nextScene = null;
 
       window.createRenderBuffers();
-      Scene.current = currentScene;
     }
   }
 
@@ -207,47 +232,28 @@ public abstract class Application {
     if (currentScene != null)
       currentScene._dispose();
 
-    taskThread.interrupt();
-    taskThread.join(1000);
+    renderThread.interrupt();
+    renderThread.join(1000);
+
+    audioThread.interrupt();
+    audioThread.join(1000);
 
     Audio.dispose();
     IO.dispose();
   }
 
-  private static final class TaskThread extends Thread {
-    private final List<Timeout> timeouts;
-    private final List<Timeout> newTimeouts;
-    private final List<Animation> animations;
+  private static class WorkerThread extends Thread {
+    private final long frameTimeMs;
+    private final Runnable runnable;
 
-    private TaskThread() {
-      timeouts = new ArrayList<>();
-      newTimeouts = new ArrayList<>();
-      animations = new ArrayList<>();
-    }
-
-    private void scheduleAnimation(Animation animation) {
-      synchronized (animations) {
-        if (!animations.contains(animation))
-          animations.add(animation);
-      }
-    }
-
-    private void scheduleTimeout(Timeout timeout) {
-      synchronized (newTimeouts) {
-        newTimeouts.add(timeout);
-      }
-    }
-
-    private void clear() {
-      synchronized (animations) {
-        animations.clear();
-      }
-
-      timeouts.clear();
+    private WorkerThread(String threadName, long frameTimeMs, Runnable runnable) {
+      super(threadName);
+      this.frameTimeMs = frameTimeMs;
+      this.runnable = runnable;
     }
 
     @Override
-    public void run() {
+    public final void run() {
       super.run();
 
       long lastFrameTime = System.currentTimeMillis();
@@ -259,35 +265,12 @@ public abstract class Application {
         lastFrameTime = currentFrameTime;
         frameTimeAccumulator += timeDiff;
 
-        while (frameTimeAccumulator >= Application.FRAME_TIME_MS) {
-          frameTimeAccumulator -= Application.FRAME_TIME_MS;
-          try { performUpdate(); } catch (Exception ignored) { }
+        while (frameTimeAccumulator >= frameTimeMs) {
+          frameTimeAccumulator -= frameTimeMs;
+          try { runnable.run(); } catch (Exception ignored) { }
         }
 
         try { Thread.sleep(1); } catch (InterruptedException ignored) { }
-      }
-    }
-
-    public void performUpdate() {
-      synchronized (animations) {
-        if (!animations.isEmpty()) {
-          animations.forEach(Animation::update);
-          animations.removeIf(Animation::isEnded);
-        }
-      }
-
-      if (!timeouts.isEmpty()) {
-        timeouts.forEach(Timeout::update);
-        timeouts.removeIf(Timeout::isCompleted);
-      }
-
-      Audio.update();
-
-      synchronized (newTimeouts) {
-        if (!newTimeouts.isEmpty()) {
-          timeouts.addAll(newTimeouts);
-          newTimeouts.clear();
-        }
       }
     }
   }
