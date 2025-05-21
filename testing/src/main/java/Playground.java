@@ -51,9 +51,7 @@ public class Playground extends Scene<Playground.State> {
   }
 
   @Override
-  protected void start() {
-    super.start();
-
+  protected void start(State state) {
     Audio.<AudioClip3D>get("waterflow").setPosition(0, 0);
     //    Audio.get("waterflow").play(true);
   }

@@ -4,14 +4,16 @@
 
 - Implement spanning for text widget which is the ability to use different text attributes for
   the same text widget
-- Research into using triple state buffers and atomic flags to decouple rendering into a
-  separate thread
 
 ## 0.4.0-SNAPSHOT-2
 
 ### Added
 
+- Decoupled application rendering into a separate thread using triple buffering
+
 ### Changed
+
+- Renamed `Prop` class to `Entity`
 
 ### Deprecated
 

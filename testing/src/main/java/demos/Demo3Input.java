@@ -1,60 +1,86 @@
-//package demos;
-//
-//import dev.gamekit.core.Application;
-//import dev.gamekit.core.Input;
-//import dev.gamekit.core.Renderer;
-//import dev.gamekit.core.Scene;
-//
-//import java.awt.*;
-//
-//import static dev.gamekit.utils.Math.cycle;
-//
-///**
-// * This demo shows how to detect input using the {@link Input} interface.
-// * <p>
-// * This demo performs the following actions:
-// * <ul>
-// *   <li>Create an {@link Application application}</li>
-// *   <li>Override the {@link Scene#render()} method to draw</li>
-// *   <li>Use the {@link Renderer} to draw a red box</li>
-// *   <li>Detect mouse input using {@link Input} to change the color</li>
-// * </ul>
-// */
-//public class Demo3Input extends Scene {
-//  public Demo3Input() {
-//    super("Main Scene");
-//  }
-//
-//  private static final Color[] COLORS = new Color[] {
-//    Color.RED,
-//    Color.YELLOW,
-//    Color.GREEN,
-//    Color.BLUE,
-//  };
-//
-//  private int colorIndex = 0;
-//
-//  public static void main(String[] args) {
-//    Application game = new Application("Demo 3 - Input") { };
-//    game.loadScene(new Demo3Input());
-//    game.run();
-//  }
-//
-//  @Override
-//  protected void update() {
-//    if (Input.isButtonDown(Input.BUTTON_LMB)) {
-//      colorIndex = cycle(colorIndex + 1, 0, COLORS.length - 1);
-//    }
-//  }
-//
-//  @Override
-//  public void render() {
-//    super.render();
-//    // Clear the screen with dark gray
-//    Renderer.setColor(Color.DARK_GRAY);
-//    Renderer.clear();
-//    // Draw a red box
-//    Renderer.setColor(COLORS[colorIndex]);
-//    Renderer.fillRect(0, 0, 100, 100);
-//  }
-//}
+package demos;
+
+import dev.gamekit.core.*;
+import dev.gamekit.ui.enums.Alignment;
+import dev.gamekit.ui.widgets.Align;
+import dev.gamekit.ui.widgets.Padding;
+import dev.gamekit.ui.widgets.Text;
+import dev.gamekit.ui.widgets.Widget;
+
+import java.awt.*;
+
+import static dev.gamekit.utils.Math.cycle;
+
+/**
+ * This demo shows how to detect input using the {@link Input} interface and performs the
+ * following actions:
+ * <ul>
+ *   <li>Creates an {@link Application application}</li>
+ *   <li>Overrides the {@link Scene#render(Entity.State)}} method to draw</li>
+ *   <li>Detects mouse input using {@link Input} to change the color</li>
+ *   <li>Uses the {@link Renderer} to draw box with the current color</li>
+ * </ul>
+ */
+public class Demo3Input extends Scene<Demo3Input.State> {
+  public Demo3Input() {
+    super("Main Scene");
+  }
+
+  private static final Color[] COLORS = new Color[] {
+    Color.RED,
+    Color.YELLOW,
+    Color.GREEN,
+    Color.BLUE,
+  };
+
+  public static void main(String[] args) {
+    Application game = new Application("Demo 3 - Input") { };
+    game.loadScene(new Demo3Input());
+    game.run();
+  }
+
+  @Override
+  protected void update(State state) {
+    if (Input.isButtonDown(Input.BUTTON_LMB)) {
+      state.colorIndex = cycle(state.colorIndex + 1, 0, COLORS.length - 1);
+    }
+  }
+
+  @Override
+  public void render(State state) {
+    // Clear the screen with dark gray
+    Renderer.setColor(Color.DARK_GRAY);
+    Renderer.clear();
+    // Draw a red box
+    Renderer.setColor(COLORS[state.colorIndex]);
+    Renderer.fillRect(0, 0, 100, 100);
+  }
+
+  @Override
+  protected Widget createUI(State updateState) {
+    return Align.create(
+      Align.options().horizontalAlignment(Alignment.CENTER).verticalAlignment(Alignment.END),
+      Padding.create(
+        Padding.options().padding(48),
+        Text.create(
+          Text.options().alignment(Alignment.CENTER),
+          "Left Mouse Button to change color"
+        )
+      )
+    );
+  }
+
+  @Override
+  protected State createState() {
+    return new State();
+  }
+
+  public static class State extends Entity.State<State> {
+    int colorIndex = 0;
+
+    @Override
+    public void copy(State state) {
+      colorIndex = state.colorIndex;
+    }
+  }
+}

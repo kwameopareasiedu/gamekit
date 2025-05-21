@@ -16,7 +16,7 @@ public class Settings {
 
   public Settings(String title, Setting... settings) {
     this.title = title;
-    this.resolution = get(Resolution.class, settings, Resolution.HD);
+    this.resolution = get(Resolution.class, settings, Resolution.SVGA);
     this.fullScreen = get(WindowMode.class, settings, WindowMode.WINDOWED) == WindowMode.FULLSCREEN;
     this.antialiasing = get(Antialiasing.class, settings, Antialiasing.DEFAULT);
     this.textAntialiasing = get(TextAntialiasing.class, settings, TextAntialiasing.ON);

@@ -44,8 +44,7 @@ public class Animations extends Scene<Animations.State> {
   }
 
   @Override
-  public void start() {
-    super.start();
+  public void start(State state) {
     bounceAnimation.start();
   }
 

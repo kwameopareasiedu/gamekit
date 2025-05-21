@@ -25,6 +25,7 @@ import java.util.List;
 @SuppressWarnings({ "BusyWait", "SynchronizeOnNonFinalField" })
 public abstract class Application {
   public static final long FRAME_TIME_MS = 1000 / 240;
+  private static final long RENDER_FRAME_TIME_MS = 1000 / 60;
   private static Application instance;
 
   protected final Logger logger = LogManager.getLogger(getClass());
@@ -55,8 +56,8 @@ public abstract class Application {
     this.timeouts = new ArrayList<>();
     this.newTimeouts = new ArrayList<>();
     this.animations = new ArrayList<>();
-    this.renderThread = new WorkerThread("render", FRAME_TIME_MS, this::render);
-    this.audioThread = new WorkerThread("audio", 1000 / 90, Audio::update);
+    this.renderThread = new WorkerThread("render", RENDER_FRAME_TIME_MS, this::render);
+    this.audioThread = new WorkerThread("audio", FRAME_TIME_MS, Audio::update);
     this.isRunning = true;
   }
 
@@ -67,16 +68,18 @@ public abstract class Application {
   /** Schedules a scene to be loaded after the end of the current frame */
   public void loadScene(Scene<?> scene) {
     if (scene == null) {
-      logger.fatal("Load scene called with a null scene");
+      logger.fatal("Unable to load a null scene");
       throw new NullPointerException("Unable to load a null scene");
     }
 
-    logger.debug("Queued scene: {}", scene.getName());
+    logger.debug("Loaded scene: {}", scene.name);
     this.nextScene = scene;
   }
 
   /** Schedule a task to be executed immediately after the end of the current frame. */
-  public void scheduleTask(Task task) { scheduleTask(task, 0); }
+  public void scheduleTask(Task task) {
+    scheduleTask(task, 0);
+  }
 
   /**
    * Schedule a task to be executed after some timeout in <b>milliseconds</b>.
@@ -85,7 +88,7 @@ public abstract class Application {
    */
   public void scheduleTask(Task task, long timeout) {
     if (timeout < 0)
-      throw new RuntimeException("timeout cannot be negative");
+      throw new RuntimeException("Timeout cannot be negative");
     newTimeouts.add(new Timeout(timeout, task));
   }
 
@@ -166,18 +169,14 @@ public abstract class Application {
 
   /** Called in each frame to update the current scene */
   private void update() {
-    if (!animations.isEmpty()) {
-      animations.forEach(Animation::update);
-      animations.removeIf(Animation::isEnded);
-    }
-
-    if (!timeouts.isEmpty()) {
-      timeouts.forEach(Timeout::update);
-      timeouts.removeIf(Timeout::isCompleted);
-    }
+    animations.forEach(Animation::update);
+    timeouts.forEach(Timeout::update);
 
     if (currentScene != null)
       currentScene._update();
+
+    animations.removeIf(Animation::isEnded);
+    timeouts.removeIf(Timeout::isCompleted);
   }
 
   /**
@@ -209,14 +208,11 @@ public abstract class Application {
       newTimeouts.clear();
 
       if (currentScene != null) {
-        logger.debug("Disposing scene: {}", currentScene.getName());
-
         synchronized (currentScene) {
           currentScene._dispose();
         }
       }
 
-      logger.debug("Starting scene: {}", nextScene.getName());
       currentScene = nextScene;
       currentScene._start();
       nextScene = null;

@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 /** {@link UI} manages the user interface within a {@link Scene} */
-public final class UI<T extends Scene.State<T>> {
+public final class UI<T extends Entity.State<T>> {
   private static final Logger LOGGER = LogManager.getLogger(UI.class);
   private static UI<?> instance;
 
@@ -80,6 +80,7 @@ public final class UI<T extends Scene.State<T>> {
     if (this.tree != null) {
       this.tree.layout(windowConstraints);
       this.tree.postLayout();
+      Application.getInstance().scheduleTask(this::triggerRender);
     }
   }
 
@@ -92,9 +93,8 @@ public final class UI<T extends Scene.State<T>> {
   }
 
   /**
-   * Called to update updates the UI state.
-   * <p>
-   * This involves recomputing layout (if necessary), generating and dispatching input events
+   * Called to update updates the UI state. This involves recomputing layout, generating input
+   * events and dispatching them
    */
   void update(T updateState) {
     if (tree != null && needsLayout) {
