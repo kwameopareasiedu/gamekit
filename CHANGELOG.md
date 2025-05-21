@@ -19,6 +19,8 @@
 
 ### Removed
 
+- Removed `Animation.setValueListener(ValueListener)` method
+
 ## 0.4.0-SNAPSHOT-1
 
 ### Added

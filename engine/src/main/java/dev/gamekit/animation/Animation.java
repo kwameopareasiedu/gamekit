@@ -14,10 +14,9 @@ import static dev.gamekit.utils.Math.clamp;
 public class Animation {
   private final RepeatMode repeatMode;
   private final AnimationCurve curve;
-  private ValueListener valueListener;
   private StateListener stateListener;
-  private double rate;
   private State state;
+  private double rate;
   private double value;
 
   public Animation(double durationMs) {
@@ -43,12 +42,6 @@ public class Animation {
 
   public double getValue() {
     return curve != null ? curve.get(value) : value;
-  }
-
-  /** Sets the value listener and returns this animation */
-  public Animation setValueListener(ValueListener listener) {
-    this.valueListener = listener;
-    return this;
   }
 
   /** Sets the state listener and returns this animation */
@@ -78,9 +71,6 @@ public class Animation {
 
     if (stateListener != null)
       stateListener.onStateChanged(state);
-
-    if (valueListener != null)
-      valueListener.onValueChanged(value);
   }
 
   /**
@@ -102,7 +92,6 @@ public class Animation {
   public void update() {
     if (state == State.RUNNING) {
       value = clamp(value + 0.001 * rate * Application.FRAME_TIME_MS, 0, 1);
-      if (valueListener != null) valueListener.onValueChanged(value);
 
       if ((value >= 1 && rate > 0) || (value <= 0 && rate < 0)) {
         switch (repeatMode) {
@@ -137,15 +126,6 @@ public class Animation {
     RESTART,
     /** Indicates a running animation changes direction when at its end */
     ALTERNATE
-  }
-
-  /** Callback interface for {@link Animation} value changes */
-  public interface ValueListener {
-    /**
-     * Called with the new base value of the animation without the
-     * {@link AnimationCurve} transformation
-     */
-    void onValueChanged(double value);
   }
 
   /** Callback interface for {@link Animation} state changes */

@@ -23,10 +23,7 @@ public class Animations extends Scene<Animations.State> {
 
   private final Animation bounceAnimation = new Animation(
     4000, Animation.RepeatMode.ALTERNATE, AnimationCurve.EASE_IN_OUT_BOUNCE
-  ).setValueListener(value -> {
-//    animationValue = value;
-//    updateUI();
-  });
+  );
 
   public Animations() {
     super("Animation Testing");

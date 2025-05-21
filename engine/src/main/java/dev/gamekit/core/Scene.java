@@ -41,8 +41,8 @@ public abstract class Scene<T extends Entity.State<T>> extends Entity<T> {
   @Override
   void _start() {
     logger.debug("Starting scene");
-    ui.setWidgetTree(createUI(updateState));
     super._start();
+    ui.setWidgetTree(createUI(updateState));
   }
 
   /** Called by {@link Application} to update the scene */
