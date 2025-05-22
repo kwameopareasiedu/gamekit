@@ -1,25 +1,25 @@
 # ChangeLog
 
-## TODO
+## UNRELEASED
+
+### TODO
 
 - Implement spanning for text widget which is the ability to use different text attributes for
   the same text widget
 
-## 0.4.0-SNAPSHOT-2
-
 ### Added
 
-- Decoupled application rendering into a separate thread using triple buffering
-
 ### Changed
-
-- Renamed `Prop` class to `Entity`
 
 ### Deprecated
 
 ### Removed
 
-- Removed `Animation.setValueListener(ValueListener)` method
+## 0.4.0-SNAPSHOT-2
+
+### Changed
+
+- Renamed `Prop` class to `Entity`
 
 ## 0.4.0-SNAPSHOT-1
 
@@ -87,8 +87,6 @@ BufferedImage getResourceImage(String path)` in `IO` class
 - Renamed `void onDispose()` to `void dispose()` in `Scene` and `Prop` class
 - Modified `Animation` to be restartable
 - Modified `Sized` widget to enforce a fixed size, intrinsic size or fractional size on its child
-
-### Deprecated
 
 ### Removed
 
