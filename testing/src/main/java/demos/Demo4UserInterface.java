@@ -17,9 +17,9 @@ import java.awt.image.BufferedImage;
 import java.util.Objects;
 
 public class Demo4UserInterface extends Scene {
-  BufferedImage backdrop = IO.getResourceImage("planetfall-artwork.jpg");
-  BufferedImage icon = IO.getResourceImage("planetfall-logo.png");
-  BufferedImage scrim = IO.getResourceImage("transparent-black.png");
+  private static final BufferedImage BACKDROP = IO.getResourceImage("planetfall-artwork.jpg");
+  private static final BufferedImage LOGO = IO.getResourceImage("planetfall-logo.png");
+  private static final BufferedImage SCRIM = IO.getResourceImage("transparent-black.png");
 
   public Demo4UserInterface() {
     super("Main Scene");
@@ -45,10 +45,8 @@ public class Demo4UserInterface extends Scene {
 
   @Override
   public Widget createUI() {
-    Widget.DEBUG_DRAW = true;
-
     return Stack.create(
-      Image.create(backdrop),
+      Image.create(BACKDROP),
 
       Align.create(
         Align.options().horizontalAlignment(Alignment.START).verticalAlignment(Alignment.START),
@@ -56,7 +54,7 @@ public class Demo4UserInterface extends Scene {
           Padding.options().padding(24, 0),
           Sized.create(
             Sized.options().width(480).height(480),
-            Image.create(icon)
+            Image.create(LOGO)
           )
         )
       ),
@@ -74,17 +72,17 @@ public class Demo4UserInterface extends Scene {
             MainMenuButton.create("New Planet", e -> System.out.println("1: " + e.type)),
             MainMenuButton.create("New Campaign", null),
             MainMenuButton.create("Load Game", null),
-            MainMenuButton.create("Online Multiplayer", null)
-//            Column.create(
-//              Column.options()
-//                .mainAxisAlignment(MainAxisAlignment.START)
-//                .crossAxisAlignment(CrossAxisAlignment.START)
-//                .gapSize(12),
-//              SubMenuButton.create("Commander Customization"),
-//              SubMenuButton.create("Options"),
-//              SubMenuButton.create("Credits"),
-//              SubMenuButton.create("Exit Game")
-//            )
+            MainMenuButton.create("Online Multiplayer", null),
+            Column.create(
+              Column.options()
+                .mainAxisAlignment(MainAxisAlignment.START)
+                .crossAxisAlignment(CrossAxisAlignment.START)
+                .gapSize(12),
+              SubMenuButton.create("Commander Customization"),
+              SubMenuButton.create("Options"),
+              SubMenuButton.create("Credits"),
+              SubMenuButton.create("Exit Game")
+            )
           )
         )
       ),
@@ -93,7 +91,7 @@ public class Demo4UserInterface extends Scene {
         Align.options().verticalAlignment(Alignment.START),
         Sized.create(
           Sized.options().fractionalWidth(1).fractionalHeight(0.15),
-          Image.create(scrim)
+          Image.create(SCRIM)
         )
       ),
 
@@ -104,7 +102,7 @@ public class Demo4UserInterface extends Scene {
           Stack.create(
             Sized.create(
               Sized.options().fractionalWidth(1).fractionalHeight(1),
-              Image.create(scrim)
+              Image.create(SCRIM)
             ),
             Sized.create(
               Sized.options().fractionalWidth(1).fractionalHeight(1),

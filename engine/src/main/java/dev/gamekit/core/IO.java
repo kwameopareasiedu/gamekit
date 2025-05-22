@@ -23,7 +23,7 @@ import java.util.Map;
  * It also keeps track of opened {@link InputStream} objects and closes them when the current
  * application exits
  */
-public class IO {
+public final class IO {
   private static final Logger LOGGER = LogManager.getLogger(IO.class);
   private static final Map<String, Object> CACHE = new HashMap<>();
   private static final List<InputStream> INPUT_STREAMS = new ArrayList<>();

@@ -26,7 +26,7 @@ public final class UI {
   private static final Logger LOGGER = LogManager.getLogger(UI.class);
   private static UI instance;
 
-  private final WidgetTreeCreator treeCreator;
+  private final Scene scene;
   private final Constraints windowConstraints;
   private final List<Widget> currentHitTestList;
   private final List<Widget> previousHitTestList;
@@ -41,13 +41,20 @@ public final class UI {
   private boolean needsLayout = false;
   private boolean needsRender = true;
 
-  public UI(WidgetTreeCreator treeCreator) {
+  /** Return the {@link FontMetrics} for a given font */
+  public static FontMetrics getFontMetrics(Font font) {
+    return Window.getInstance().getUiGraphics().getFontMetrics(font);
+  }
+
+  public static UI getInstance() { return instance; }
+
+  public UI(Scene scene) {
     Settings settings = Application.getInstance().getSettings();
     Window win = Window.getInstance();
     int dw = win.getDisplayWidth();
     int dh = win.getDisplayHeight();
 
-    this.treeCreator = treeCreator;
+    this.scene = scene;
     this.windowConstraints = new Constraints(dw, dw, dh, dh);
     this.currentHitTestList = new ArrayList<>();
     this.previousHitTestList = new ArrayList<>();
@@ -66,15 +73,8 @@ public final class UI {
     UI.instance = this;
   }
 
-  public static UI getInstance() { return instance; }
-
-  /** Return the {@link FontMetrics} for a given font */
-  public static FontMetrics getFontMetrics(Font font) {
-    return Window.getInstance().getUiGraphics().getFontMetrics(font);
-  }
-
   /** Set the initial widget tree */
-  public void setWidgetTree(Widget tree) {
+  void setWidgetTree(Widget tree) {
     this.tree = tree;
 
     if (this.tree != null) {
@@ -83,7 +83,7 @@ public final class UI {
     }
   }
 
-  public void triggerUpdate() {
+  void triggerUpdate() {
     needsLayout = true;
   }
 
@@ -92,9 +92,8 @@ public final class UI {
   }
 
   /**
-   * Called to update updates the UI state.
-   * <p>
-   * This involves recomputing layout (if necessary), generating and dispatching input events
+   * Called to update updates the UI state. This involves recomputing layout, generating input
+   * events and dispatching them
    */
   void update() {
     if (tree != null && needsLayout) {
@@ -142,7 +141,7 @@ public final class UI {
     boolean treeUpdated = false;
 
     currentWidgetQueue.add(tree);
-    newWidgetQueue.add(treeCreator.createUI());
+    newWidgetQueue.add(scene.createUI());
 
     while (!currentWidgetQueue.isEmpty() && !newWidgetQueue.isEmpty()) {
       Widget treeWidget = currentWidgetQueue.remove(0);
@@ -394,15 +393,6 @@ public final class UI {
 
   private enum TraverseDirection {
     UP, DOWN
-  }
-
-  public interface WidgetTreeCreator {
-    /** Called to create a widget tree */
-    Widget createUI();
-  }
-
-  public interface WidgetTreeUpdater {
-    void onUpdate();
   }
 
   private interface WidgetTreeVisitor {

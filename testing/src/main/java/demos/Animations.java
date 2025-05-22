@@ -19,14 +19,18 @@ import java.awt.*;
 
 import static dev.gamekit.utils.Math.toInt;
 
-public class AnimationTesting extends Scene {
-  double animationValue = 0;
+public class Animations extends Scene {
 
   private final Animation bounceAnimation = new Animation(
     4000, Animation.RepeatMode.ALTERNATE, AnimationCurve.EASE_IN_OUT_BOUNCE
-  ).setValueListener(value -> updateUI(() -> animationValue = value));
+  ).setValueListener((value) -> {
+    animationValue = value;
+    updateUI();
+  });
 
-  public AnimationTesting() {
+  double animationValue = 0;
+
+  public Animations() {
     super("Animation Testing");
   }
 
@@ -36,26 +40,24 @@ public class AnimationTesting extends Scene {
       new Settings("Animation Testing", Resolution.HD, WindowMode.WINDOWED)
     ) { };
     // Load an instance of our Scene class
-    game.loadScene(new AnimationTesting());
+    game.loadScene(new Animations());
     // Run the game application
     game.run();
   }
 
   @Override
   public void start() {
-    super.start();
     bounceAnimation.start();
   }
 
   @Override
   public void render() {
-    super.render();
     // Clear the screen with black
     Renderer.setColor(Color.BLACK);
     Renderer.clear();
 
     Renderer.setColor(Color.CYAN);
-    Renderer.fillCircle(0, toInt(-200 * bounceAnimation.getValue()) + 150, 50);
+    Renderer.fillCircle(0, toInt(-200 * animationValue) + 150, 50);
   }
 
   @Override

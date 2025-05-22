@@ -17,19 +17,21 @@ import org.apache.logging.log4j.Logger;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Objects;
 
 public class Playground extends Scene {
   private static final Logger LOGGER = LogManager.getLogger();
-  final Vector listenerPos;
-  final Position prevMousePos;
+  private static final BufferedImage SPEAKER_IMG = IO.getResourceImage("speaker.png");
 
-  double pan = 0;
-  int halfWindowWidth = 0;
-  BufferedImage speakerImg = IO.getResourceImage("speaker.png");
+  private double pan = 0;
+  private final int halfWindowWidth;
+  private final Vector listenerPos;
+  private final Position prevMousePos;
 
   public Playground() {
     super("Main Scene");
 
+    halfWindowWidth = Window.getInstance().getFrameWidth() / 2;
     listenerPos = new Vector(0, 0);
     prevMousePos = new Position(0, 0);
 
@@ -54,17 +56,12 @@ public class Playground extends Scene {
 
   @Override
   protected void start() {
-    super.start();
-
-    halfWindowWidth = Window.getInstance().getFrameWidth() / 2;
     Audio.<AudioClip3D>get("waterflow").setPosition(0, 0);
-    //    Audio.get("waterflow").play(true);
+    Audio.get("waterflow").play(true);
   }
 
   @Override
   protected void update() {
-    super.update();
-
     if (Input.isKeyDown(Input.KEY_SPACE)) {
       Audio.get("alert").play();
     }
@@ -78,20 +75,15 @@ public class Playground extends Scene {
 
     AudioListener.setPosition(listenerPos);
 
-    if (!prevMousePos.equals(mousePos)) {
-      updateUI(() ->
-        pan = (double) (mousePos.x - halfWindowWidth) / (halfWindowWidth)
-      );
+    if (!Objects.equals(prevMousePos, mousePos)) {
+      pan = (double) (mousePos.x - halfWindowWidth) / halfWindowWidth;
+      prevMousePos.set(mousePos);
+      updateUI();
     }
-    //    Audio.setPan("alert", (float) pan);
-
-    prevMousePos.set(mousePos);
   }
 
   @Override
   protected void render() {
-    super.render();
-
     Renderer.setBackground(Color.DARK_GRAY);
     Renderer.clear();
   }
@@ -120,14 +112,14 @@ public class Playground extends Scene {
           Opacity.options().opacity(pan < 0 ? 1 : 1 - pan),
           Scaled.create(
             Scaled.options().scale(0.5),
-            Image.create(speakerImg)
+            Image.create(SPEAKER_IMG)
           )
         ),
         Opacity.create(
           Opacity.options().opacity(pan > 0 ? 1 : 1 + pan),
           Scaled.create(
             Scaled.options().scale(0.5),
-            Image.create(speakerImg)
+            Image.create(SPEAKER_IMG)
           )
         )
       )

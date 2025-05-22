@@ -8,9 +8,9 @@ import dev.gamekit.core.Scene;
  * <p>
  * This demo performs the following actions:
  * <ul>
- *   <li>Create a simple {@link Scene scene}</li>
- *   <li>Create a <b>windowed</b> {@link Application application} with an 800x600 resolution</li>
- *   <li>Launch the application</li>
+ *   <li>Creates a <b>windowed</b> {@link Application application} with a 800x600 resolution</li>
+ *   <li>Creates a simple {@link Scene scene}</li>
+ *   <li>Launches the application</li>
  * </ul>
  */
 public class Demo1BasicWindow extends Scene {

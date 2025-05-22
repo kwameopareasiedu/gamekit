@@ -1,0 +1,88 @@
+package dev.gamekit.core;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.ArrayList;
+
+/**
+ * {@link Entity} represent game objects in a {@link Scene}.
+ * <p>
+ * Like {@link Scene}, {@link Entity} has lifecycle methods which are called by the engine to
+ * set up, update, render and dispose.
+ */
+public abstract class Entity {
+  protected final Logger logger = LogManager.getLogger(getClass());
+  protected final ArrayList<Entity> children;
+  protected final String name;
+  protected Entity parent;
+
+  public Entity(String name) {
+    this.name = name;
+    children = new ArrayList<>();
+  }
+
+  public void addChild(Entity child) {
+    if (!children.contains(child)) {
+      logger.debug("Adding {} to {}", child.name, name);
+
+      Application.getInstance().scheduleTask(() -> {
+        children.add(child);
+        child.setParent(this);
+        child._start();
+      });
+    }
+  }
+
+  public void removeChild(Entity child) {
+    if (children.contains(child)) {
+      logger.debug("Removing {} from {}", child.name, name);
+
+      Application.getInstance().scheduleTask(() -> {
+        children.remove(child);
+        child.setParent(null);
+        child._dispose();
+      });
+    }
+  }
+
+  /** Called to set up the entity */
+  protected void start() { }
+
+  /** Called to update the entity */
+  protected void update() { }
+
+  /** Called to render the entity */
+  protected void render() { }
+
+  /** Called to dispose the entity */
+  protected void dispose() { }
+
+  void setParent(Entity parent) {
+    this.parent = parent;
+  }
+
+  /** Called <b>once</b> by the parent {@link Entity} to initialize the entity */
+  void _start() {
+    start();
+  }
+
+  /** Called by the parent {@link Entity} to update the entity */
+  void _update() {
+    update();
+    children.forEach(Entity::_update);
+  }
+
+  /** Called by the parent {@link Entity} to render the entity */
+  void _render() {
+    render();
+    children.forEach(Entity::_render);
+  }
+
+  /** Called <b>once</b> by the parent {@link Entity} to dispose the entity */
+  void _dispose() {
+    dispose();
+    children.forEach(Entity::_dispose);
+    parent = null;
+  }
+}

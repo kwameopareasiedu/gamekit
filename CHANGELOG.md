@@ -1,11 +1,25 @@
 # ChangeLog
 
-## TODO
+## UNRELEASED
 
-- Implement spanning for text widget which is the ability to use different text attributes for 
+### TODO
+
+- Implement spanning for text widget which is the ability to use different text attributes for
   the same text widget
-- Research into using triple state buffers and atomic flags to decouple rendering into a 
-  separate thread
+
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+## 0.4.0-SNAPSHOT-2
+
+### Changed
+
+- Renamed `Prop` class to `Entity`
 
 ## 0.4.0-SNAPSHOT-1
 
@@ -73,8 +87,6 @@ BufferedImage getResourceImage(String path)` in `IO` class
 - Renamed `void onDispose()` to `void dispose()` in `Scene` and `Prop` class
 - Modified `Animation` to be restartable
 - Modified `Sized` widget to enforce a fixed size, intrinsic size or fractional size on its child
-
-### Deprecated
 
 ### Removed
 

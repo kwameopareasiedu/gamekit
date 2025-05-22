@@ -61,7 +61,7 @@ This doesn't translate to world/scene space which uses a cartesian coordinate
 system where the origin is at the center of the screen, `+x` is to the right
 and `+y` is upwards.
 
-![](./docs/assets/screen-space-vs-world-space.png)
+![](docs2/assets/screen-space-vs-world-space.png)
 
 ### Multiple Render Targets
 
