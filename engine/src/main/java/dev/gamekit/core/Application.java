@@ -25,7 +25,6 @@ import java.util.List;
 @SuppressWarnings({ "BusyWait", "SynchronizeOnNonFinalField" })
 public abstract class Application {
   public static final long FRAME_TIME_MS = 1000 / 240;
-  private static final long RENDER_FRAME_TIME_MS = 1000 / 60;
   private static Application instance;
 
   protected final Logger logger = LogManager.getLogger(getClass());
@@ -35,11 +34,10 @@ public abstract class Application {
   private final List<Timeout> timeouts;
   private final List<Timeout> newTimeouts;
   private final List<Animation> animations;
-  private final WorkerThread renderThread;
   private final WorkerThread audioThread;
   private boolean isRunning;
-  private Scene<?> currentScene;
-  private Scene<?> nextScene;
+  private Scene currentScene;
+  private Scene nextScene;
 
   public Application(String title) {
     this(new Settings(title));
@@ -56,7 +54,6 @@ public abstract class Application {
     this.timeouts = new ArrayList<>();
     this.newTimeouts = new ArrayList<>();
     this.animations = new ArrayList<>();
-    this.renderThread = new WorkerThread("render", RENDER_FRAME_TIME_MS, this::render);
     this.audioThread = new WorkerThread("audio", FRAME_TIME_MS, Audio::update);
     this.isRunning = true;
   }
@@ -66,7 +63,7 @@ public abstract class Application {
   public Settings getSettings() { return settings; }
 
   /** Schedules a scene to be loaded after the end of the current frame */
-  public void loadScene(Scene<?> scene) {
+  public void loadScene(Scene scene) {
     if (scene == null) {
       logger.fatal("Unable to load a null scene");
       throw new NullPointerException("Unable to load a null scene");
@@ -84,12 +81,12 @@ public abstract class Application {
   /**
    * Schedule a task to be executed after some timeout in <b>milliseconds</b>.
    * <p>
-   * If {@code timeout} is zero, {@code task} is executed immediately after the current frame
+   * If {@code timeoutMs} is zero, {@code task} is executed immediately after the current frame
    */
-  public void scheduleTask(Task task, long timeout) {
-    if (timeout < 0)
+  public void scheduleTask(Task task, long timeoutMs) {
+    if (timeoutMs < 0)
       throw new RuntimeException("Timeout cannot be negative");
-    newTimeouts.add(new Timeout(timeout, task));
+    newTimeouts.add(new Timeout(timeoutMs, task));
   }
 
   /**
@@ -132,6 +129,7 @@ public abstract class Application {
           Input.reset();
         }
 
+        render();
         disposeFrame();
         Thread.sleep(1);
       }
@@ -163,7 +161,6 @@ public abstract class Application {
     });
 
     window.getFrame().setVisible(true);
-    renderThread.start();
     audioThread.start();
   }
 
@@ -227,9 +224,6 @@ public abstract class Application {
 
     if (currentScene != null)
       currentScene._dispose();
-
-    renderThread.interrupt();
-    renderThread.join(1000);
 
     audioThread.interrupt();
     audioThread.join(1000);

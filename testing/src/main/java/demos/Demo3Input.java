@@ -1,6 +1,9 @@
 package demos;
 
-import dev.gamekit.core.*;
+import dev.gamekit.core.Application;
+import dev.gamekit.core.Input;
+import dev.gamekit.core.Renderer;
+import dev.gamekit.core.Scene;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.widgets.Align;
 import dev.gamekit.ui.widgets.Padding;
@@ -16,22 +19,24 @@ import static dev.gamekit.utils.Math.cycle;
  * following actions:
  * <ul>
  *   <li>Creates an {@link Application application}</li>
- *   <li>Overrides the {@link Scene#render(Entity.State)}} method to draw</li>
+ *   <li>Overrides the {@link Scene#render()}} method to draw</li>
  *   <li>Detects mouse input using {@link Input} to change the color</li>
  *   <li>Uses the {@link Renderer} to draw box with the current color</li>
  * </ul>
  */
-public class Demo3Input extends Scene<Demo3Input.State> {
+public class Demo3Input extends Scene {
   public Demo3Input() {
     super("Main Scene");
   }
 
-  private static final Color[] COLORS = new Color[] {
+  private static final Color[] COLORS = new Color[]{
     Color.RED,
     Color.YELLOW,
     Color.GREEN,
     Color.BLUE,
   };
+
+  private int colorIndex = 0;
 
   public static void main(String[] args) {
     Application game = new Application("Demo 3 - Input") { };
@@ -40,24 +45,24 @@ public class Demo3Input extends Scene<Demo3Input.State> {
   }
 
   @Override
-  protected void update(State state) {
+  protected void update() {
     if (Input.isButtonDown(Input.BUTTON_LMB)) {
-      state.colorIndex = cycle(state.colorIndex + 1, 0, COLORS.length - 1);
+      colorIndex = cycle(colorIndex + 1, 0, COLORS.length - 1);
     }
   }
 
   @Override
-  public void render(State state) {
+  public void render() {
     // Clear the screen with dark gray
     Renderer.setColor(Color.DARK_GRAY);
     Renderer.clear();
     // Draw a red box
-    Renderer.setColor(COLORS[state.colorIndex]);
+    Renderer.setColor(COLORS[colorIndex]);
     Renderer.fillRect(0, 0, 100, 100);
   }
 
   @Override
-  protected Widget createUI(State updateState) {
+  protected Widget createUI() {
     return Align.create(
       Align.options().horizontalAlignment(Alignment.CENTER).verticalAlignment(Alignment.END),
       Padding.create(
@@ -68,19 +73,5 @@ public class Demo3Input extends Scene<Demo3Input.State> {
         )
       )
     );
-  }
-
-  @Override
-  protected State createState() {
-    return new State();
-  }
-
-  public static class State extends Entity.State<State> {
-    int colorIndex = 0;
-
-    @Override
-    public void copy(State state) {
-      colorIndex = state.colorIndex;
-    }
   }
 }

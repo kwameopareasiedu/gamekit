@@ -15,6 +15,7 @@ public class Animation {
   private final RepeatMode repeatMode;
   private final AnimationCurve curve;
   private StateListener stateListener;
+  private ValueListener valueListener;
   private State state;
   private double rate;
   private double value;
@@ -50,7 +51,13 @@ public class Animation {
     return this;
   }
 
-  /** Starts this animation and changes its state to {@link State#RUNNING} */
+  /** Sets the value listener and returns this animation */
+  public Animation setValueListener(ValueListener listener) {
+    this.valueListener = listener;
+    return this;
+  }
+
+  /** Starts / Restarts this animation and changes its state to {@link State#RUNNING} */
   public void start() {
     if (state == State.IDLE)
       Application.getInstance().scheduleAnimation(this);
@@ -60,6 +67,9 @@ public class Animation {
 
     if (stateListener != null)
       stateListener.onStateChanged(state);
+
+    if (valueListener != null)
+      valueListener.onValueChanged(value);
   }
 
   /**
@@ -92,6 +102,9 @@ public class Animation {
   public void update() {
     if (state == State.RUNNING) {
       value = clamp(value + 0.001 * rate * Application.FRAME_TIME_MS, 0, 1);
+
+      if (valueListener != null)
+        valueListener.onValueChanged(getValue());
 
       if ((value >= 1 && rate > 0) || (value <= 0 && rate < 0)) {
         switch (repeatMode) {
@@ -132,5 +145,11 @@ public class Animation {
   public interface StateListener {
     /** Called with the new {@link State} of the animation */
     void onStateChanged(State state);
+  }
+
+  /** Callback interface for {@link Animation} value changes */
+  public interface ValueListener {
+    /** Called with the new value of the animation */
+    void onValueChanged(double value);
   }
 }

@@ -1,7 +1,6 @@
 package demos;
 
 import dev.gamekit.core.Application;
-import dev.gamekit.core.Entity.EmptyState;
 import dev.gamekit.core.IO;
 import dev.gamekit.core.Scene;
 import dev.gamekit.settings.*;
@@ -17,10 +16,10 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
-public class Demo4UserInterface extends Scene<EmptyState> {
-  BufferedImage backdrop = IO.getResourceImage("planetfall-artwork.jpg");
-  BufferedImage icon = IO.getResourceImage("planetfall-logo.png");
-  BufferedImage scrim = IO.getResourceImage("transparent-black.png");
+public class Demo4UserInterface extends Scene {
+  private static final BufferedImage BACKDROP = IO.getResourceImage("planetfall-artwork.jpg");
+  private static final BufferedImage LOGO = IO.getResourceImage("planetfall-logo.png");
+  private static final BufferedImage SCRIM = IO.getResourceImage("transparent-black.png");
 
   public Demo4UserInterface() {
     super("Main Scene");
@@ -45,11 +44,9 @@ public class Demo4UserInterface extends Scene<EmptyState> {
   }
 
   @Override
-  public Widget createUI(EmptyState state) {
-    Widget.DEBUG_DRAW = true;
-
+  public Widget createUI() {
     return Stack.create(
-      Image.create(backdrop),
+      Image.create(BACKDROP),
 
       Align.create(
         Align.options().horizontalAlignment(Alignment.START).verticalAlignment(Alignment.START),
@@ -57,7 +54,7 @@ public class Demo4UserInterface extends Scene<EmptyState> {
           Padding.options().padding(24, 0),
           Sized.create(
             Sized.options().width(480).height(480),
-            Image.create(icon)
+            Image.create(LOGO)
           )
         )
       ),
@@ -94,7 +91,7 @@ public class Demo4UserInterface extends Scene<EmptyState> {
         Align.options().verticalAlignment(Alignment.START),
         Sized.create(
           Sized.options().fractionalWidth(1).fractionalHeight(0.15),
-          Image.create(scrim)
+          Image.create(SCRIM)
         )
       ),
 
@@ -105,7 +102,7 @@ public class Demo4UserInterface extends Scene<EmptyState> {
           Stack.create(
             Sized.create(
               Sized.options().fractionalWidth(1).fractionalHeight(1),
-              Image.create(scrim)
+              Image.create(SCRIM)
             ),
             Sized.create(
               Sized.options().fractionalWidth(1).fractionalHeight(1),
@@ -140,11 +137,6 @@ public class Demo4UserInterface extends Scene<EmptyState> {
         )
       )
     );
-  }
-
-  @Override
-  protected EmptyState createState() {
-    return new EmptyState();
   }
 
   static class MainMenuButton extends Compose {

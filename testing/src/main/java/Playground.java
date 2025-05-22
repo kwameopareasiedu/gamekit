@@ -19,12 +19,21 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
-public class Playground extends Scene<Playground.State> {
+public class Playground extends Scene {
   private static final Logger LOGGER = LogManager.getLogger();
   private static final BufferedImage SPEAKER_IMG = IO.getResourceImage("speaker.png");
 
+  private double pan = 0;
+  private final int halfWindowWidth;
+  private final Vector listenerPos;
+  private final Position prevMousePos;
+
   public Playground() {
     super("Main Scene");
+
+    halfWindowWidth = Window.getInstance().getFrameWidth() / 2;
+    listenerPos = new Vector(0, 0);
+    prevMousePos = new Position(0, 0);
 
     Audio.preload("alert",
       new AudioClip2D("cybertruck.wav", AudioGroup.MUSIC, 0.5)
@@ -46,49 +55,41 @@ public class Playground extends Scene<Playground.State> {
   }
 
   @Override
-  protected State createState() {
-    return new State();
-  }
-
-  @Override
-  protected void start(State state) {
+  protected void start() {
     Audio.<AudioClip3D>get("waterflow").setPosition(0, 0);
-    //    Audio.get("waterflow").play(true);
+    Audio.get("waterflow").play(true);
   }
 
   @Override
-  protected void update(State state) {
+  protected void update() {
     if (Input.isKeyDown(Input.KEY_SPACE)) {
       Audio.get("alert").play();
     }
 
     Position center = Window.getInstance().getCenter();
     Position mousePos = Input.getMousePosition();
-    state.listenerPos.set(
+    listenerPos.set(
       0.1 * (mousePos.x - center.x),
       0.1 * (center.y - mousePos.y)
     );
 
-    AudioListener.setPosition(state.listenerPos);
+    AudioListener.setPosition(listenerPos);
 
-    if (!Objects.equals(state.prevMousePos, mousePos)) {
-      state.pan = (double) (mousePos.x - state.halfWindowWidth) / state.halfWindowWidth;
-      state.prevMousePos.set(mousePos);
+    if (!Objects.equals(prevMousePos, mousePos)) {
+      pan = (double) (mousePos.x - halfWindowWidth) / halfWindowWidth;
+      prevMousePos.set(mousePos);
       updateUI();
     }
-
-    //    Audio.setPan("alert", (float) pan);
-
   }
 
   @Override
-  protected void render(State state) {
+  protected void render() {
     Renderer.setBackground(Color.DARK_GRAY);
     Renderer.clear();
   }
 
   @Override
-  public Widget createUI(State state) {
+  public Widget createUI() {
     return Column.create(
       Column.options()
         .mainAxisAlignment(MainAxisAlignment.CENTER)
@@ -108,14 +109,14 @@ public class Playground extends Scene<Playground.State> {
           .crossAxisAlignment(CrossAxisAlignment.CENTER)
           .gapSize(8),
         Opacity.create(
-          Opacity.options().opacity(state.pan < 0 ? 1 : 1 - state.pan),
+          Opacity.options().opacity(pan < 0 ? 1 : 1 - pan),
           Scaled.create(
             Scaled.options().scale(0.5),
             Image.create(SPEAKER_IMG)
           )
         ),
         Opacity.create(
-          Opacity.options().opacity(state.pan > 0 ? 1 : 1 + state.pan),
+          Opacity.options().opacity(pan > 0 ? 1 : 1 + pan),
           Scaled.create(
             Scaled.options().scale(0.5),
             Image.create(SPEAKER_IMG)
@@ -123,26 +124,5 @@ public class Playground extends Scene<Playground.State> {
         )
       )
     );
-  }
-
-  public static class State extends Scene.State<State> {
-    double pan = 0;
-    int halfWindowWidth = 0;
-    final Vector listenerPos;
-    final Position prevMousePos;
-
-    private State() {
-      halfWindowWidth = Window.getInstance().getFrameWidth() / 2;
-      listenerPos = new Vector(0, 0);
-      prevMousePos = new Position(0, 0);
-    }
-
-    @Override
-    public void copy(State state) {
-      pan = state.pan;
-      halfWindowWidth = state.halfWindowWidth;
-      listenerPos.set(state.listenerPos);
-      prevMousePos.set(state.prevMousePos);
-    }
   }
 }

@@ -1,7 +1,6 @@
 package demos;
 
 import dev.gamekit.core.Application;
-import dev.gamekit.core.Entity.EmptyState;
 import dev.gamekit.core.Renderer;
 import dev.gamekit.core.Scene;
 
@@ -12,12 +11,12 @@ import java.awt.*;
  * following actions:
  * <ul>
  *   <li>Creates an {@link Application application}</li>
- *   <li>Overrides the {@link Scene#render(Scene.State)} method to draw</li>
+ *   <li>Overrides the {@link Scene#render()} method to draw</li>
  *   <li>Uses the {@link Renderer} to clear the screen to dark gray</li>
  *   <li>Uses the {@link Renderer} to draw a red box</li>
  * </ul>
  */
-public class Demo2Renderer extends Scene<EmptyState> {
+public class Demo2Renderer extends Scene {
   public Demo2Renderer() {
     super("Main Scene");
   }
@@ -29,17 +28,12 @@ public class Demo2Renderer extends Scene<EmptyState> {
   }
 
   @Override
-  public void render(EmptyState state) {
+  public void render() {
     // Clear the screen with dark gray
     Renderer.setColor(Color.DARK_GRAY);
     Renderer.clear();
     // Draw a red box
     Renderer.setColor(Color.RED);
     Renderer.fillRect(0, 0, 100, 100);
-  }
-
-  @Override
-  protected EmptyState createState() {
-    return new EmptyState();
   }
 }

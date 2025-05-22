@@ -19,11 +19,16 @@ import java.awt.*;
 
 import static dev.gamekit.utils.Math.toInt;
 
-public class Animations extends Scene<Animations.State> {
+public class Animations extends Scene {
 
   private final Animation bounceAnimation = new Animation(
     4000, Animation.RepeatMode.ALTERNATE, AnimationCurve.EASE_IN_OUT_BOUNCE
-  );
+  ).setValueListener((value) -> {
+    animationValue = value;
+    updateUI();
+  });
+
+  double animationValue = 0;
 
   public Animations() {
     super("Animation Testing");
@@ -41,50 +46,30 @@ public class Animations extends Scene<Animations.State> {
   }
 
   @Override
-  public void start(State state) {
+  public void start() {
     bounceAnimation.start();
   }
 
   @Override
-  protected void update(State state) {
-    state.animationValue = bounceAnimation.getValue();
-    updateUI();
-  }
-
-  @Override
-  public void render(State state) {
+  public void render() {
     // Clear the screen with black
     Renderer.setColor(Color.BLACK);
     Renderer.clear();
 
     Renderer.setColor(Color.CYAN);
-    Renderer.fillCircle(0, toInt(-200 * state.animationValue) + 150, 50);
+    Renderer.fillCircle(0, toInt(-200 * animationValue) + 150, 50);
   }
 
   @Override
-  protected State createState() {
-    return new State();
-  }
-
-  @Override
-  public Widget createUI(State state) {
+  public Widget createUI() {
     return Align.create(
       Align.options().horizontalAlignment(Alignment.START),
       Padding.create(
         Padding.options().padding(new Spacing(16, 48)),
         Text.create(
-          String.format("Value: %f", state.animationValue)
+          String.format("Value: %f", animationValue)
         )
       )
     );
-  }
-
-  public static class State extends Scene.State<State> {
-    double animationValue = 0;
-
-    @Override
-    public void copy(State state) {
-      animationValue = state.animationValue;
-    }
   }
 }

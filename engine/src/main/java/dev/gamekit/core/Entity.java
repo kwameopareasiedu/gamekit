@@ -11,23 +11,18 @@ import java.util.ArrayList;
  * Like {@link Scene}, {@link Entity} has lifecycle methods which are called by the engine to
  * set up, update, render and dispose.
  */
-public abstract class Entity<T extends Entity.State<T>> {
+public abstract class Entity {
   protected final Logger logger = LogManager.getLogger(getClass());
-  protected final ArrayList<Entity<?>> children;
-  protected Entity<?> parent;
-
+  protected final ArrayList<Entity> children;
   protected final String name;
-
-  protected T updateState;
-  protected T renderState;
-  protected T bufferState;
+  protected Entity parent;
 
   public Entity(String name) {
     this.name = name;
     children = new ArrayList<>();
   }
 
-  public void addChild(Entity<?> child) {
+  public void addChild(Entity child) {
     if (!children.contains(child)) {
       logger.debug("Adding {} to {}", child.name, name);
 
@@ -39,7 +34,7 @@ public abstract class Entity<T extends Entity.State<T>> {
     }
   }
 
-  public void removeChild(Entity<?> child) {
+  public void removeChild(Entity child) {
     if (children.contains(child)) {
       logger.debug("Removing {} from {}", child.name, name);
 
@@ -52,51 +47,36 @@ public abstract class Entity<T extends Entity.State<T>> {
   }
 
   /** Called to set up the entity */
-  protected void start(T state) { }
+  protected void start() { }
 
   /** Called to update the entity */
-  protected void update(T state) { }
+  protected void update() { }
 
   /** Called to render the entity */
-  protected void render(T state) { }
+  protected void render() { }
 
   /** Called to dispose the entity */
   protected void dispose() { }
 
-  /** Called to create the {@link State} of the entity */
-  protected abstract T createState();
-
-  void setParent(Entity<?> parent) {
+  void setParent(Entity parent) {
     this.parent = parent;
   }
 
   /** Called <b>once</b> by the parent {@link Entity} to initialize the entity */
   void _start() {
-    updateState = createState();
-    renderState = createState();
-    bufferState = createState();
-
-    if (updateState == null) {
-      throw new RuntimeException(
-        "Scene.createState() must return a non-null state object"
-      );
-    }
-
-    start(updateState);
+    start();
   }
 
   /** Called by the parent {@link Entity} to update the entity */
   void _update() {
-    update(updateState);
+    update();
     children.forEach(Entity::_update);
-    swapUpdateState();
   }
 
   /** Called by the parent {@link Entity} to render the entity */
   void _render() {
-    render(renderState);
+    render();
     children.forEach(Entity::_render);
-    swapRenderState();
   }
 
   /** Called <b>once</b> by the parent {@link Entity} to dispose the entity */
@@ -104,53 +84,5 @@ public abstract class Entity<T extends Entity.State<T>> {
     dispose();
     children.forEach(Entity::_dispose);
     parent = null;
-  }
-
-  private void swapUpdateState() {
-    synchronized (this) {
-      T tempState = updateState;
-      updateState = bufferState;
-      bufferState = tempState;
-
-      updateState.copy(bufferState);
-    }
-  }
-
-  private void swapRenderState() {
-    synchronized (this) {
-      T tempState = renderState;
-      renderState = bufferState;
-      bufferState = tempState;
-
-      renderState.copy(updateState);
-    }
-  }
-
-  /**
-   * {@link State} is a container for {@link Entity} related data that would have otherwise been
-   * declared as instance variables in the entity. This forms a foundation for true update/render
-   * multi-threading.
-   * <p>
-   * GameKit uses a triple buffering approach for multi-threading which doesn't support the use
-   * of shared instance variables on an object. Instead, it creates three (3) state objects and
-   * shares them between {@link Entity#update(State)} and {@link Entity#render(State)} running on
-   * separate threads.
-   * <p>
-   * During update, the engine passes a state instance to {@link Entity#update(State)}. Reads and
-   * writes that would have otherwise involved instance variables should be done on the supplied
-   * state instance.
-   * <p>
-   * During render, the updated state is passed to {@link Entity#render(State)}. The values of the
-   * updated state should be used for rendering.
-   * @see <a href="https://developer.arm.com/documentation/ka005284/latest/">Triple Buffering</a>
-   */
-  public static abstract class State<T extends State<T>> {
-    /** Called to copy {@code state} to this {@link State} */
-    public abstract void copy(T state);
-  }
-
-  public static final class EmptyState extends State<EmptyState> {
-    @Override
-    public void copy(EmptyState state) { }
   }
 }

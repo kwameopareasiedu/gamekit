@@ -3,8 +3,6 @@ package demos;
 import dev.gamekit.core.Application;
 import dev.gamekit.core.Scene;
 
-import static dev.gamekit.core.Entity.EmptyState;
-
 /**
  * This demo shows how GameKit is used its simplest form.
  * <p>
@@ -15,7 +13,7 @@ import static dev.gamekit.core.Entity.EmptyState;
  *   <li>Launches the application</li>
  * </ul>
  */
-public class Demo1BasicWindow extends Scene<EmptyState> {
+public class Demo1BasicWindow extends Scene {
   public Demo1BasicWindow() {
     super("Main Scene");
   }
@@ -24,10 +22,5 @@ public class Demo1BasicWindow extends Scene<EmptyState> {
     Application game = new Application("Demo 1 - Basic Window") { };
     game.loadScene(new Demo1BasicWindow());
     game.run();
-  }
-
-  @Override
-  protected EmptyState createState() {
-    return new EmptyState();
   }
 }

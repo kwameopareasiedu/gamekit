@@ -22,11 +22,11 @@ import java.util.List;
 import java.util.Objects;
 
 /** {@link UI} manages the user interface within a {@link Scene} */
-public final class UI<T extends Entity.State<T>> {
+public final class UI {
   private static final Logger LOGGER = LogManager.getLogger(UI.class);
-  private static UI<?> instance;
+  private static UI instance;
 
-  private final Scene<T> scene;
+  private final Scene scene;
   private final Constraints windowConstraints;
   private final List<Widget> currentHitTestList;
   private final List<Widget> previousHitTestList;
@@ -46,9 +46,9 @@ public final class UI<T extends Entity.State<T>> {
     return Window.getInstance().getUiGraphics().getFontMetrics(font);
   }
 
-  public static UI<?> getInstance() { return instance; }
+  public static UI getInstance() { return instance; }
 
-  public UI(Scene<T> scene) {
+  public UI(Scene scene) {
     Settings settings = Application.getInstance().getSettings();
     Window win = Window.getInstance();
     int dw = win.getDisplayWidth();
@@ -80,7 +80,6 @@ public final class UI<T extends Entity.State<T>> {
     if (this.tree != null) {
       this.tree.layout(windowConstraints);
       this.tree.postLayout();
-      Application.getInstance().scheduleTask(this::triggerRender);
     }
   }
 
@@ -96,10 +95,10 @@ public final class UI<T extends Entity.State<T>> {
    * Called to update updates the UI state. This involves recomputing layout, generating input
    * events and dispatching them
    */
-  void update(T updateState) {
+  void update() {
     if (tree != null && needsLayout) {
       LOGGER.debug("Laying out UI");
-      updateTree(updateState);
+      updateTree();
     }
 
     generateInputEvents();
@@ -136,13 +135,13 @@ public final class UI<T extends Entity.State<T>> {
    * This "diffing" algorithm involves generating a new widget tree with the new state,
    * comparing it to the current widget tree and updating widgets whose states have changed.
    */
-  private void updateTree(T updateState) {
+  private void updateTree() {
     List<Widget> currentWidgetQueue = new ArrayList<>();
     List<Widget> newWidgetQueue = new ArrayList<>();
     boolean treeUpdated = false;
 
     currentWidgetQueue.add(tree);
-    newWidgetQueue.add(scene.createUI(updateState));
+    newWidgetQueue.add(scene.createUI());
 
     while (!currentWidgetQueue.isEmpty() && !newWidgetQueue.isEmpty()) {
       Widget treeWidget = currentWidgetQueue.remove(0);
