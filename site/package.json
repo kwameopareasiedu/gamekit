@@ -1,0 +1,22 @@
+{
+  "name": "gamekit-site",
+  "version": "1.0.0",
+  "description": "GameKit site project",
+  "private": true,
+  "author": "Kwame Opare Asiedu",
+  "license": "MIT",
+  "workspaces": [
+    "apps/*"
+  ],
+  "packageManager": "yarn@1.22.22",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "deploy": "yarn build && firebase use default && firebase deploy --only hosting"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "prettier": "^3.5.3",
+    "turbo": "^2.5.3"
+  }
+}

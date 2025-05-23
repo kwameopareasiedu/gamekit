@@ -1,0 +1,12 @@
+{
+  "name": "docs",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Kwame Opare Asiedu",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "dev": "mkdocs serve",
+    "build": "mkdocs build"
+  }
+}

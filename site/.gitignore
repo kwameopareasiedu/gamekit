@@ -1,4 +1,5 @@
 node_modules
 .firebase
 .idea
+.turbo
 dist
