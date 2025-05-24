@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+.container {
+  @apply max-w-[920px];
+}
+
+.link {
+  @apply relative px-6 py-2.5 rounded-full bg-black text-white shadow-[0_4px_2px_0_#ffffff30];
+}
+
+section {
+  @apply relative max-w-[520px] mx-auto space-y-4 before:block before:content-[attr(data-label)] before:text-gray-400 before:py-2;
+  @apply md:before:absolute md:before:top-0 md:before:w-32 md:before:py-0 md:before:-ml-48 md:before:text-right;
+
+  a.showcase-item {
+    @apply relative inline-block w-56 aspect-video rounded-lg overflow-hidden;
+
+    div.img {
+      @apply w-full h-full;
+
+      img {
+        @apply w-full h-full object-cover;
+      }
+    }
+
+    p {
+      @apply absolute text-sm text-center bottom-0 left-0 w-full bg-gradient-to-b from-transparent to-black pt-6 pb-2;
+    }
+  }
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  @apply h-1.5;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-black rounded-lg;
+}
