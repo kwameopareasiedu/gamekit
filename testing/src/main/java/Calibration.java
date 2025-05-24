@@ -1,5 +1,3 @@
-package demos;
-
 import dev.gamekit.core.*;
 import dev.gamekit.settings.Resolution;
 import dev.gamekit.settings.Settings;

@@ -1,5 +1,3 @@
-package demos;
-
 import dev.gamekit.core.Application;
 import dev.gamekit.core.Renderer;
 import dev.gamekit.core.Scene;
