@@ -3,7 +3,7 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["apps/docs/dist/**"]
+      "outputs": ["apps/docs/dist/**", "apps/landing/dist/**"]
     },
     "dev": {
       "persistent": true,

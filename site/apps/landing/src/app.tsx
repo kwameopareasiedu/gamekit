@@ -31,7 +31,7 @@ export function App() {
 
         <div className="container mx-auto">
           <p className="text-center text-sm tracking-[0.15em]">Introducing</p>
-          <h1 className="text-center text-6xl py-4 font-bold">GameKit</h1>
+          <h1 className="text-center text-7xl py-4 font-bold">GameKit</h1>
 
           <div className="flex items-center justify-center gap-2">
             <a href="https://docs.gamekit.opare.dev" className="link" target="_blank">
