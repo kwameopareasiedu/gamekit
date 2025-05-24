@@ -38,7 +38,10 @@ export function App() {
               Get Started
             </a>
 
-            <a href="" className="link">
+            <a
+              href="https://github.com/kwameopareasiedu/gamekit/tree/master/samples/src/main/java"
+              className="link"
+              target="_blank">
               Samples
             </a>
           </div>
