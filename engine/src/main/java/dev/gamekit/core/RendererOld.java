@@ -12,7 +12,7 @@ public final class Renderer {
   private static final GraphicsState DEFAULT_STATE = new GraphicsState();
   private static final GraphicsState CURRENT_STATE = new GraphicsState();
 
-  private Renderer() { }
+  Renderer() { }
 
   public static void setBackground(Color color) { CURRENT_STATE.bgColor = color; }
 
