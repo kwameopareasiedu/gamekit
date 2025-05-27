@@ -43,7 +43,8 @@ public final class UI {
 
   /** Return the {@link FontMetrics} for a given font */
   public static FontMetrics getFontMetrics(Font font) {
-    return Window.getInstance().getUiGraphics().getFontMetrics(font);
+//    return Window.getInstance().getUiGraphics().getFontMetrics(font);
+    return null;
   }
 
   public static UI getInstance() { return instance; }
@@ -107,26 +108,26 @@ public final class UI {
 
   /** Called to render the {@link Widget} tree to the {@link Window} UI layer */
   void render() {
-    if (tree == null || !needsRender)
-      return;
-
-    LOGGER.debug("Rendering UI");
-
-    Window win = Window.getInstance();
-    Graphics2D uiGraphics = win.getUiGraphics();
-    int displayWidth = win.getDisplayWidth();
-    int displayHeight = win.getDisplayHeight();
-
-    canvasGraphics.setBackground(Constants.TRANSPARENT_COLOR);
-    canvasGraphics.clearRect(0, 0, displayWidth, displayHeight);
-
-    tree.render(canvasGraphics);
-
-    uiGraphics.setBackground(Constants.TRANSPARENT_COLOR);
-    uiGraphics.clearRect(0, 0, displayWidth, displayHeight);
-    uiGraphics.drawImage(canvasImage, 0, 0, displayWidth, displayHeight, null);
-
-    needsRender = false;
+//    if (tree == null || !needsRender)
+//      return;
+//
+//    LOGGER.debug("Rendering UI");
+//
+//    Window win = Window.getInstance();
+//    Graphics2D uiGraphics = win.getUiGraphics();
+//    int displayWidth = win.getDisplayWidth();
+//    int displayHeight = win.getDisplayHeight();
+//
+//    canvasGraphics.setBackground(Constants.TRANSPARENT_COLOR);
+//    canvasGraphics.clearRect(0, 0, displayWidth, displayHeight);
+//
+//    tree.render(canvasGraphics);
+//
+//    uiGraphics.setBackground(Constants.TRANSPARENT_COLOR);
+//    uiGraphics.clearRect(0, 0, displayWidth, displayHeight);
+//    uiGraphics.drawImage(canvasImage, 0, 0, displayWidth, displayHeight, null);
+//
+//    needsRender = false;
   }
 
   /**

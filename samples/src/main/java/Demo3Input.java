@@ -1,6 +1,6 @@
 import dev.gamekit.core.Application;
 import dev.gamekit.core.Input;
-import dev.gamekit.core.Renderer;
+import dev.gamekit.core.RendererOld;
 import dev.gamekit.core.Scene;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.widgets.Align;
@@ -19,7 +19,7 @@ import static dev.gamekit.utils.Math.cycle;
  *   <li>Creates an {@link Application application}</li>
  *   <li>Overrides the {@link Scene#render()}} method to draw</li>
  *   <li>Detects mouse input using {@link Input} to change the color</li>
- *   <li>Uses the {@link Renderer} to draw box with the current color</li>
+ *   <li>Uses the {@link RendererOld} to draw box with the current color</li>
  * </ul>
  */
 public class Demo3Input extends Scene {
@@ -52,11 +52,11 @@ public class Demo3Input extends Scene {
   @Override
   public void render() {
     // Clear the screen with dark gray
-    Renderer.setColor(Color.DARK_GRAY);
-    Renderer.clear();
+    RendererOld.setColor(Color.DARK_GRAY);
+    RendererOld.clear();
     // Draw a red box
-    Renderer.setColor(COLORS[colorIndex]);
-    Renderer.fillRect(0, 0, 100, 100);
+    RendererOld.setColor(COLORS[colorIndex]);
+    RendererOld.fillRect(0, 0, 100, 100);
   }
 
   @Override

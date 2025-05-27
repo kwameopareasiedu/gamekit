@@ -7,12 +7,15 @@ import java.awt.image.BufferedImage;
 
 import static dev.gamekit.utils.Math.degToRad;
 
-/** {@link Renderer} provides draw methods to draw on the current {@link Window} */
-public final class Renderer {
+/**
+ * {@link RendererOld} provides draw methods to draw on the current {@link Window}
+ * @deprecated Replace with entity renderer
+ */
+public final class RendererOld {
   private static final GraphicsState DEFAULT_STATE = new GraphicsState();
   private static final GraphicsState CURRENT_STATE = new GraphicsState();
 
-  Renderer() { }
+  RendererOld() { }
 
   public static void setBackground(Color color) { CURRENT_STATE.bgColor = color; }
 
@@ -124,7 +127,7 @@ public final class Renderer {
     int x, int y, double deg,
     Runnable action
   ) {
-    Graphics2D g = Window.getInstance().getSceneGraphics();
+    Graphics2D g = Window.getInstance().getDisplayGraphics();
     double rad = degToRad(deg);
 
     g.translate(x, -y);
@@ -185,7 +188,7 @@ public final class Renderer {
   /** Applies the current graphics state to the current graphics object */
   private static Graphics2D applyGraphicsState() {
     Bounds rb = Camera.getRenderBounds();
-    Graphics2D g = Window.getInstance().getSceneGraphics();
+    Graphics2D g = Window.getInstance().getDisplayGraphics();
     g.setClip((int) rb.x, (int) rb.y, (int) rb.width, (int) rb.height);
     CURRENT_STATE.apply(g);
     return g;

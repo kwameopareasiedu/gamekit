@@ -23,10 +23,10 @@ public final class Window {
   private final JFrame frame;
   private BufferedImage renderBuffer;
   private Graphics2D renderGraphics;
-  private BufferedImage sceneBuffer;
-  private Graphics2D sceneGraphics;
-  private BufferedImage uiBuffer;
-  private Graphics2D uiGraphics;
+  private BufferedImage displayBuffer;
+  private Graphics2D displayGraphics;
+  //  private BufferedImage uiBuffer;
+  //  private Graphics2D uiGraphics;
 
   Window() {
     Window.instance = this;
@@ -103,9 +103,9 @@ public final class Window {
 
   JFrame getFrame() { return frame; }
 
-  Graphics2D getSceneGraphics() { return sceneGraphics; }
+  Graphics2D getDisplayGraphics() { return displayGraphics; }
 
-  Graphics2D getUiGraphics() { return uiGraphics; }
+  //  Graphics2D getUiGraphics() { return uiGraphics; }
 
   void render() {
     Settings settings = Application.getInstance().getSettings();
@@ -119,17 +119,17 @@ public final class Window {
       int dy2 = dy1 + scaledHeight;
 
       renderGraphics.drawImage(
-        sceneBuffer, dx1, dy1, dx2, dy2,
+        displayBuffer, dx1, dy1, dx2, dy2,
         0, 0, displaySize.width, displaySize.height, null
       );
 
-      renderGraphics.drawImage(
-        uiBuffer, dx1, dy1, dx2, dy2,
-        0, 0, displaySize.width, displaySize.height, null
-      );
+      //      renderGraphics.drawImage(
+      //        uiBuffer, dx1, dy1, dx2, dy2,
+      //        0, 0, displaySize.width, displaySize.height, null
+      //      );
     } else {
-      renderGraphics.drawImage(sceneBuffer, null, 0, 0);
-      renderGraphics.drawImage(uiBuffer, null, 0, 0);
+      renderGraphics.drawImage(displayBuffer, null, 0, 0);
+      //      renderGraphics.drawImage(uiBuffer, null, 0, 0);
     }
 
     Graphics2D frameGraphics = (Graphics2D) frame.getGraphics();
@@ -141,21 +141,21 @@ public final class Window {
     int displayWidth = displaySize.width;
     int displayHeight = displaySize.height;
 
-    sceneBuffer = new BufferedImage(displayWidth, displayHeight, BufferedImage.TYPE_INT_ARGB);
-    sceneGraphics = sceneBuffer.createGraphics();
-    settings.antialiasing.apply(sceneGraphics);
-    settings.alphaInterpolation.apply(sceneGraphics);
-    settings.imageInterpolation.apply(sceneGraphics);
-    settings.renderingStrategy.apply(sceneGraphics);
-    settings.dithering.apply(sceneGraphics);
+    displayBuffer = new BufferedImage(displayWidth, displayHeight, BufferedImage.TYPE_INT_ARGB);
+    displayGraphics = displayBuffer.createGraphics();
+    settings.antialiasing.apply(displayGraphics);
+    settings.alphaInterpolation.apply(displayGraphics);
+    settings.imageInterpolation.apply(displayGraphics);
+    settings.renderingStrategy.apply(displayGraphics);
+    settings.dithering.apply(displayGraphics);
 
-    uiBuffer = new BufferedImage(displayWidth, displayHeight, BufferedImage.TYPE_INT_ARGB);
-    uiGraphics = uiBuffer.createGraphics();
-    settings.antialiasing.apply(uiGraphics);
-    settings.alphaInterpolation.apply(uiGraphics);
-    settings.imageInterpolation.apply(uiGraphics);
-    settings.renderingStrategy.apply(uiGraphics);
-    settings.dithering.apply(uiGraphics);
+    //    uiBuffer = new BufferedImage(displayWidth, displayHeight, BufferedImage.TYPE_INT_ARGB);
+    //    uiGraphics = uiBuffer.createGraphics();
+    //    settings.antialiasing.apply(uiGraphics);
+    //    settings.alphaInterpolation.apply(uiGraphics);
+    //    settings.imageInterpolation.apply(uiGraphics);
+    //    settings.renderingStrategy.apply(uiGraphics);
+    //    settings.dithering.apply(uiGraphics);
 
     int renderWidth = settings.fullScreen ? Resolution.NATIVE.width : displaySize.width;
     int renderHeight = settings.fullScreen ? Resolution.NATIVE.height : displaySize.height;

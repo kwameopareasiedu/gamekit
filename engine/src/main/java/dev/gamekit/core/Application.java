@@ -25,6 +25,7 @@ import java.util.List;
 @SuppressWarnings({ "BusyWait", "SynchronizeOnNonFinalField" })
 public abstract class Application {
   public static final long FRAME_TIME_MS = 1000 / 240;
+  public static final long RENDER_TIME_MS = 1000 / 60;
   private static Application instance;
 
   protected final Logger logger = LogManager.getLogger(getClass());
@@ -35,6 +36,7 @@ public abstract class Application {
   private final List<Timeout> newTimeouts;
   private final List<Animation> animations;
   private final WorkerThread audioThread;
+  private final WorkerThread renderThread;
   private boolean isRunning;
   private Scene currentScene;
   private Scene nextScene;
@@ -44,17 +46,17 @@ public abstract class Application {
   }
 
   public Application(Settings settings) {
-    Application.instance = this;
-
     logger.debug("Created application");
     logger.debug(settings);
 
+    Application.instance = this;
     this.settings = settings;
     this.window = new Window();
     this.timeouts = new ArrayList<>();
     this.newTimeouts = new ArrayList<>();
     this.animations = new ArrayList<>();
     this.audioThread = new WorkerThread("audio", FRAME_TIME_MS, Audio::update);
+    this.renderThread = new WorkerThread("render", RENDER_TIME_MS, this::draw);
     this.isRunning = true;
   }
 
@@ -162,6 +164,7 @@ public abstract class Application {
 
     window.getFrame().setVisible(true);
     audioThread.start();
+    renderThread.start();
   }
 
   /** Called in each frame to update the current scene */
@@ -181,15 +184,20 @@ public abstract class Application {
    * current scene
    */
   private void render() {
+    if (currentScene != null)
+      currentScene._render();
+  }
+
+  private void draw() {
     if (currentScene != null) {
       Camera.update();
 
       synchronized (currentScene) {
-        currentScene._render();
+        currentScene._draw(window.getDisplayGraphics());
       }
-    }
 
-    window.render();
+      window.render();
+    }
   }
 
   /** Runs cleanup code at the end of a frame */
@@ -227,6 +235,9 @@ public abstract class Application {
 
     audioThread.interrupt();
     audioThread.join(1000);
+
+    renderThread.interrupt();
+    renderThread.join(1000);
 
     Audio.dispose();
     IO.dispose();

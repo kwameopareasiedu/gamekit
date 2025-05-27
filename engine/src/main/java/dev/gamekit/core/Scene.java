@@ -18,13 +18,14 @@ import org.apache.logging.log4j.Logger;
  * A scene also supports user interface rendering using {@link Widget} components
  */
 public abstract class Scene extends Entity {
-  protected final Logger logger = LogManager.getLogger(getClass());
+  protected final Logger logger;
 
   private final UI ui;
 
   public Scene(String name) {
     super(name);
-    this.ui = new UI(this);
+    logger = LogManager.getLogger(getClass());
+    ui = new UI(this);
   }
 
   /** Called to create the UI {@link Widget} tree of the scene */
