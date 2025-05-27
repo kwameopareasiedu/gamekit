@@ -1,4 +1,4 @@
-package dev.gamekit.rendering;
+package dev.gamekit.graphics;
 
 /** {@link DrawRect} renders a <b>center-origin</b> rect to the window */
 public class DrawRect extends DrawRoundRect {

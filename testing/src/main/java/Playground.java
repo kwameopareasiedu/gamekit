@@ -66,11 +66,11 @@ public class Playground extends Scene {
       Audio.get("alert").play();
     }
 
-    Position center = Window.getInstance().getCenter();
+    Window win = Window.getInstance();
     Position mousePos = Input.getMousePosition();
     listenerPos.set(
-      0.1 * (mousePos.x - center.x),
-      0.1 * (center.y - mousePos.y)
+      0.1 * (mousePos.x - win.getDisplayCenterX()),
+      0.1 * (win.getDisplayCenterY() - mousePos.y)
     );
 
     AudioListener.setPosition(listenerPos);
@@ -91,41 +91,41 @@ public class Playground extends Scene {
 //    RendererOld.clear();
   }
 
-//  @Override
-//  public Widget createUI() {
-//    return Column.create(
-//      Column.options()
-//        .mainAxisAlignment(MainAxisAlignment.CENTER)
-//        .crossAxisAlignment(CrossAxisAlignment.STRETCH)
-//        .gapSize(24),
-//      Text.create(
-//        Text.options().alignment(Alignment.CENTER),
-//        "Press the Space Bar to play/restart the audio"
-//      ),
-//      Text.create(
-//        Text.options().alignment(Alignment.CENTER),
-//        "Move the mouse from left to right to pan the audio"
-//      ),
-//      Row.create(
-//        Row.options()
-//          .mainAxisAlignment(MainAxisAlignment.CENTER)
-//          .crossAxisAlignment(CrossAxisAlignment.CENTER)
-//          .gapSize(8),
-//        Opacity.create(
-//          Opacity.options().opacity(pan < 0 ? 1 : 1 - pan),
-//          Scaled.create(
-//            Scaled.options().scale(0.5),
-//            Image.create(SPEAKER_IMG)
-//          )
-//        ),
-//        Opacity.create(
-//          Opacity.options().opacity(pan > 0 ? 1 : 1 + pan),
-//          Scaled.create(
-//            Scaled.options().scale(0.5),
-//            Image.create(SPEAKER_IMG)
-//          )
-//        )
-//      )
-//    );
-//  }
+  @Override
+  public Widget createUI() {
+    return Column.create(
+      Column.options()
+        .mainAxisAlignment(MainAxisAlignment.CENTER)
+        .crossAxisAlignment(CrossAxisAlignment.STRETCH)
+        .gapSize(24),
+      Text.create(
+        Text.options().alignment(Alignment.CENTER),
+        "Press the Space Bar to play/restart the audio"
+      ),
+      Text.create(
+        Text.options().alignment(Alignment.CENTER),
+        "Move the mouse from left to right to pan the audio"
+      ),
+      Row.create(
+        Row.options()
+          .mainAxisAlignment(MainAxisAlignment.CENTER)
+          .crossAxisAlignment(CrossAxisAlignment.CENTER)
+          .gapSize(8),
+        Opacity.create(
+          Opacity.options().opacity(pan < 0 ? 1 : 1 - pan),
+          Scaled.create(
+            Scaled.options().scale(0.5),
+            Image.create(SPEAKER_IMG)
+          )
+        ),
+        Opacity.create(
+          Opacity.options().opacity(pan > 0 ? 1 : 1 + pan),
+          Scaled.create(
+            Scaled.options().scale(0.5),
+            Image.create(SPEAKER_IMG)
+          )
+        )
+      )
+    );
+  }
 }

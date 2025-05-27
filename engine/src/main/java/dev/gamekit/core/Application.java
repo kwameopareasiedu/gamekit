@@ -25,7 +25,7 @@ import java.util.List;
 @SuppressWarnings({ "BusyWait", "SynchronizeOnNonFinalField" })
 public abstract class Application {
   public static final long FRAME_TIME_MS = 1000 / 240;
-  public static final long RENDER_TIME_MS = 1000 / 60;
+  public static final long RENDER_TIME_MS = 1000 / 90;
   private static Application instance;
 
   protected final Logger logger = LogManager.getLogger(getClass());
@@ -172,8 +172,9 @@ public abstract class Application {
     animations.forEach(Animation::update);
     timeouts.forEach(Timeout::update);
 
-    if (currentScene != null)
+    if (currentScene != null) {
       currentScene._update();
+    }
 
     animations.removeIf(Animation::isEnded);
     timeouts.removeIf(Timeout::isCompleted);
@@ -190,13 +191,13 @@ public abstract class Application {
 
   private void draw() {
     if (currentScene != null) {
-      Camera.update();
+      Camera.apply();
 
       synchronized (currentScene) {
         currentScene._draw(window.getDisplayGraphics());
       }
 
-      window.render();
+      window.draw();
     }
   }
 
@@ -221,8 +222,6 @@ public abstract class Application {
       currentScene = nextScene;
       currentScene._start();
       nextScene = null;
-
-      window.createRenderBuffers();
     }
   }
 

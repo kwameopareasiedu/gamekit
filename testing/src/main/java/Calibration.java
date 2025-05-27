@@ -55,51 +55,35 @@ public class Calibration extends Scene {
 
   @Override
   public void render(Renderer renderer) {
-    RendererOld.setColor(Color.DARK_GRAY);
-    RendererOld.clear();
+    renderer.clear(Color.DARK_GRAY);
+    renderer.drawRect(x, y, Resolution.SVGA.width, Resolution.SVGA.height).withColor(Color.CYAN);
 
-    RendererOld.setColor(Color.CYAN);
-    RendererOld.drawRect(x, y, Resolution.SVGA.width, Resolution.SVGA.height);
-
-    RendererOld.setColor(Color.BLUE);
-    RendererOld.drawLineH(-WORLD_WIDTH / 2, WORLD_WIDTH / 2, 0);
-    RendererOld.setColor(Color.BLUE);
-    RendererOld.drawLineV(0, -WORLD_HEIGHT / 2, WORLD_HEIGHT / 2);
+    renderer.drawHorizontalLine(-WORLD_WIDTH / 2, WORLD_WIDTH / 2, 0).withColor(Color.BLUE);
+    renderer.drawVerticalLine(0, -WORLD_HEIGHT / 2, WORLD_HEIGHT / 2).withColor(Color.BLUE);
 
     // Top right quadrant
-    RendererOld.setColor(Color.RED);
-    RendererOld.fillRect(100, 100, 20, 20);
-    RendererOld.setColor(Color.RED);
-    RendererOld.drawRect(100, 100, 30, 30);
+    renderer.fillRect(100, 100, 20, 20).withColor(Color.RED);
+    renderer.drawRect(100, 100, 30, 30).withColor(Color.RED);
 
     // Top left quadrant
-    RendererOld.setColor(Color.YELLOW);
-    RendererOld.fillOval(-100, 100, 20, 30);
-    RendererOld.setColor(Color.YELLOW);
-    RendererOld.drawOval(-100, 100, 30, 40);
+    renderer.fillOval(-100, 100, 20, 30).withColor(Color.YELLOW);
+    renderer.drawOval(-100, 100, 30, 40).withColor(Color.YELLOW);
 
     // Bottom left quadrant
-    RendererOld.setColor(Color.GREEN);
-    RendererOld.fillRoundRect(-100, -100, 50, 50, 10, 10);
-    RendererOld.setColor(Color.GREEN);
-    RendererOld.drawRoundRect(-100, -100, 60, 60, 10, 10);
+    renderer.fillRoundRect(-100, -100, 50, 50, 10, 10).withColor(Color.GREEN);
+    renderer.drawRoundRect(-100, -100, 60, 60, 10, 10).withColor(Color.GREEN);
 
     // Bottom right quadrant
-    RendererOld.setColor(Color.BLUE);
-    RendererOld.fillCircle(100, -100, 20);
-    RendererOld.setColor(Color.BLUE);
-    RendererOld.drawCircle(100, -100, 25);
+    renderer.fillCircle(100, -100, 20).withColor(Color.BLUE);
+    renderer.drawCircle(100, -100, 25).withColor(Color.BLUE);
 
     for (int i = 0; i <= WORLD_WIDTH / 2; i += 50) {
-      RendererOld.setColor(Color.CYAN);
-      RendererOld.drawLineH(0, 10, i);
-      RendererOld.setColor(Color.CYAN);
-      RendererOld.drawLineV(i, 0, -10);
+      renderer.drawHorizontalLine(0, 10, i).withColor(Color.CYAN);
+      renderer.drawVerticalLine(i, 0, -10).withColor(Color.CYAN);
     }
 
-    RendererOld.setColor(Color.MAGENTA);
-    RendererOld.drawRect(0, 0, 10, 10);
+    renderer.drawRect(0, 0, 10, 10).withColor(Color.MAGENTA);
 
-    RendererOld.drawImage(SPRITE, x, y, 10, 10);
+    renderer.drawImage(SPRITE, x, y, 10, 10);
   }
 }

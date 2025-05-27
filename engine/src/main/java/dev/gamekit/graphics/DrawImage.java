@@ -1,4 +1,4 @@
-package dev.gamekit.rendering;
+package dev.gamekit.graphics;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

@@ -2,7 +2,6 @@ import dev.gamekit.animation.Animation;
 import dev.gamekit.animation.AnimationCurve;
 import dev.gamekit.core.Application;
 import dev.gamekit.core.Renderer;
-import dev.gamekit.core.RendererOld;
 import dev.gamekit.core.Scene;
 import dev.gamekit.settings.Resolution;
 import dev.gamekit.settings.Settings;
@@ -52,11 +51,9 @@ public class Animations extends Scene {
   @Override
   public void render(Renderer renderer) {
     // Clear the screen with black
-    RendererOld.setColor(Color.BLACK);
-    RendererOld.clear();
+    renderer.clear(Color.BLACK);
 
-    RendererOld.setColor(Color.CYAN);
-    RendererOld.fillCircle(0, toInt(-200 * animationValue) + 150, 50);
+    renderer.fillCircle(0, toInt(-200 * animationValue) + 150, 50).withColor(Color.CYAN);
   }
 
   @Override

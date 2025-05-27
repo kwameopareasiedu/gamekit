@@ -1,4 +1,4 @@
-package dev.gamekit.rendering;
+package dev.gamekit.graphics;
 
 import dev.gamekit.core.Camera;
 import dev.gamekit.utils.Bounds;

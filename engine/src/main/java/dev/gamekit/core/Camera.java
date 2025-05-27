@@ -25,11 +25,12 @@ public final class Camera {
   /** Returns the visible render bounds based on the camera's parameters */
   public static Bounds getRenderBounds() {
     Window window = Window.getInstance();
-    Position center = window.getCenter();
+    int centerX = window.getDisplayCenterX();
+    int centerY = window.getDisplayCenterY();
 
     BOUNDS_CACHE.set(
-      (int) ((Camera.x - center.x) * invZoom),
-      (int) ((Camera.y - center.y) * invZoom),
+      (int) ((Camera.x - centerX) * invZoom),
+      (int) ((Camera.y - centerY) * invZoom),
       (int) (window.getDisplayWidth() * invZoom),
       (int) (window.getDisplayHeight() * invZoom)
     );
@@ -40,9 +41,10 @@ public final class Camera {
   /** Transforms a screen-space point (sx,sy) into world-space position */
   public static Position screenToWorldPosition(double sx, double sy) {
     Window window = Window.getInstance();
-    Position center = window.getCenter();
-    int wx = (int) (invZoom * (center.x - sx - Camera.x));
-    int wy = (int) (invZoom * (center.y - sy - Camera.y));
+    int centerX = window.getDisplayCenterX();
+    int centerY = window.getDisplayCenterY();
+    int wx = (int) (invZoom * (centerX - sx - Camera.x));
+    int wy = (int) (invZoom * (centerY - sy - Camera.y));
     POSITION_CACHE.set(-wx, wy);
     return POSITION_CACHE;
   }
@@ -64,10 +66,11 @@ public final class Camera {
   public static double getY() { return y; }
 
   /** Applies the camera's position and zoom to the current window's transform matrix */
-  static void update() {
+  static void apply() {
     Window window = Window.getInstance();
-    Position center = window.getCenter();
-    TRANSFORM.setTransform(zoom, 0, 0, zoom, center.x - x, center.y - y);
+    int centerX = window.getDisplayCenterX();
+    int centerY = window.getDisplayCenterY();
+    TRANSFORM.setTransform(zoom, 0, 0, zoom, centerX - x, centerY - y);
     window.getDisplayGraphics().setTransform(TRANSFORM);
   }
 }
