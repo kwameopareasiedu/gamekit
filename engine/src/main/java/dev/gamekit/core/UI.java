@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Objects;
 
 /** {@link UI} manages the user interface within a {@link Scene} */
-@SuppressWarnings("SynchronizeOnNonFinalField")
 public final class UI {
   private static final Logger LOGGER = LogManager.getLogger(UI.class);
   private static UI instance;
