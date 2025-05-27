@@ -7,7 +7,6 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 /** {@link Renderer} provides draw methods to draw on the current {@link Window} */
-@SuppressWarnings("SynchronizeOnNonFinalField")
 public final class Renderer {
   private ArrayList<DrawCall> frontBuffer;
   private ArrayList<DrawCall> backBuffer;
@@ -106,32 +105,28 @@ public final class Renderer {
   }
 
   /** Draws a scaled <b>center-origin</b> {@link BufferedImage} at (x, y) with width and height */
-  public void drawImage(BufferedImage img, int x, int y, int width, int height) {
-    frontBuffer.add(new DrawImage(img, x, y, width, height));
+  public DrawImage drawImage(BufferedImage img, int x, int y, int width, int height) {
+    DrawImage call = new DrawImage(img, x, y, width, height);
+    frontBuffer.add(call);
+    return call;
   }
 
-  void apply(Graphics2D g) {
-    synchronized (backBuffer) {
-      for (DrawCall call : backBuffer)
-        call.apply(g);
-    }
+  void draw(Graphics2D g) {
+    for (DrawCall call : backBuffer)
+      call.apply(g);
   }
 
   void swapFrontBuffer() {
-    synchronized (freeBuffer) {
-      ArrayList<DrawCall> tempBuffer = frontBuffer;
-      frontBuffer = freeBuffer;
-      freeBuffer = tempBuffer;
-      frontBuffer.clear();
-    }
+    ArrayList<DrawCall> tempBuffer = frontBuffer;
+    frontBuffer = freeBuffer;
+    freeBuffer = tempBuffer;
+    frontBuffer.clear();
   }
 
   void swapBackBuffer() {
-    synchronized (freeBuffer) {
-      ArrayList<DrawCall> tempBuffer = backBuffer;
-      backBuffer = freeBuffer;
-      freeBuffer = tempBuffer;
-      freeBuffer.clear();
-    }
+    ArrayList<DrawCall> tempBuffer = backBuffer;
+    backBuffer = freeBuffer;
+    freeBuffer = tempBuffer;
+    freeBuffer.clear();
   }
 }

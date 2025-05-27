@@ -103,10 +103,7 @@ public final class UI {
   void update() {
     if (tree != null && needsLayout) {
       LOGGER.debug("Laying out UI");
-
-      synchronized (tree) {
-        updateTree();
-      }
+      updateTree();
     }
 
     generateInputEvents();
@@ -117,10 +114,7 @@ public final class UI {
   void draw() {
     if (tree != null && needsRender) {
       LOGGER.debug("Rendering UI");
-
-      synchronized (tree) {
-        drawTree();
-      }
+      drawTree();
     }
   }
 

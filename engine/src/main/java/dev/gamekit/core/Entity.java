@@ -90,7 +90,8 @@ public abstract class Entity {
    * object
    */
   void _draw(Graphics2D g) {
-    renderer.apply(g);
+    renderer.draw(g);
+    children.forEach((e) -> e._draw(g));
     renderer.swapBackBuffer();
   }
 
