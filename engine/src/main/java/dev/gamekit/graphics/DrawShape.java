@@ -31,6 +31,8 @@ public abstract class DrawShape extends DrawCall {
 
   @Override
   protected final void setup(Graphics2D g) {
+    super.setup(g);
+
     prevStroke = g.getStroke();
     prevPaint = g.getPaint();
     prevColor = g.getColor();
@@ -46,6 +48,8 @@ public abstract class DrawShape extends DrawCall {
 
   @Override
   protected final void cleanup(Graphics2D g) {
+    super.cleanup(g);
+
     g.setStroke(prevStroke);
     g.setPaint(prevPaint);
     g.setColor(prevColor);
