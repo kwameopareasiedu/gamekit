@@ -26,12 +26,8 @@ public class RenderRoundRect extends ShapeRenderCall {
     this.filled = filled;
   }
 
-  public RenderRoundRect(int x, int y, int width, int arcWidth, int arcHeight, int height) {
-    this(x, y, width, height, arcWidth, arcHeight, false);
-  }
-
   @Override
-  protected void performRender(Graphics2D g) {
+  protected void render(Graphics2D g) {
     int x0 = x - width / 2, y0 = y + height / 2;
     if (filled) g.fillRoundRect(x0, -y0, width, height, arcWidth, arcHeight);
     else g.drawRoundRect(x0, -y0, width, height, arcWidth, arcHeight);

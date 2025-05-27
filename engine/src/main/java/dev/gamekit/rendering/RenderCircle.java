@@ -5,11 +5,7 @@ package dev.gamekit.rendering;
  * window
  */
 public class RenderCircle extends RenderOval {
-  public RenderCircle(int x, int y, int radius, boolean filled) {
-    super(x, y, radius, radius, filled);
-  }
-
-  public RenderCircle(int x, int y, int radius) {
-    super(x, y, radius, radius, false);
+  public RenderCircle(int x, int y, int diameter, boolean filled) {
+    super(x, y, diameter, diameter, filled);
   }
 }

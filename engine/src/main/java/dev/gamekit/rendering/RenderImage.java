@@ -19,7 +19,7 @@ public class RenderImage extends RenderCall {
   }
 
   @Override
-  protected void performRender(Graphics2D g) {
+  protected void render(Graphics2D g) {
     int x0 = x - width / 2, y0 = y + height / 2;
     int x1 = x0 + width, y1 = y0 - height;
     g.drawImage(image, x0, -y0, x1, -y1, 0, 0, image.getWidth(), image.getHeight(), null);

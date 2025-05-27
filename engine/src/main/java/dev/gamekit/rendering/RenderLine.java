@@ -14,7 +14,7 @@ public class RenderLine extends ShapeRenderCall {
   }
 
   @Override
-  protected void performRender(Graphics2D g) {
+  protected void render(Graphics2D g) {
     g.drawLine(x1, -y1, x2, -y2);
   }
 }

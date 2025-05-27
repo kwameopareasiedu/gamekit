@@ -17,12 +17,8 @@ public class RenderOval extends ShapeRenderCall {
     this.filled = filled;
   }
 
-  public RenderOval(int x, int y, int width, int height) {
-    this(x, y, width, height, false);
-  }
-
   @Override
-  protected void performRender(Graphics2D g) {
+  protected void render(Graphics2D g) {
     int x0 = x - width / 2, y0 = y + height / 2;
     if (filled) g.fillOval(x0, -y0, width, height);
     else g.drawOval(x0, -y0, width, height);

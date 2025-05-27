@@ -7,15 +7,15 @@ import java.awt.*;
  * window using its {@link Graphics2D} object.
  */
 public abstract class RenderCall {
-  public final void render(Graphics2D g) {
-    preRender(g);
-    performRender(g);
-    postRender(g);
+  public final void apply(Graphics2D g) {
+    setup(g);
+    render(g);
+    cleanup(g);
   }
 
-  protected void preRender(Graphics2D g) { }
+  protected void setup(Graphics2D g) { }
 
-  protected abstract void performRender(Graphics2D g);
+  protected abstract void render(Graphics2D g);
 
-  protected void postRender(Graphics2D g) { }
+  protected void cleanup(Graphics2D g) { }
 }
