@@ -5,16 +5,16 @@ import dev.gamekit.utils.Bounds;
 
 import java.awt.*;
 
-/** {@link RenderClear} is a render call to clear the visible bounds of the window */
-public class RenderClear extends RenderCall {
+/** {@link ClearCall} clears the visible bounds of the window */
+public class ClearCall extends DrawCall {
   private final Color color;
 
-  public RenderClear(Color color) {
+  public ClearCall(Color color) {
     this.color = color;
   }
 
   @Override
-  protected void render(Graphics2D g) {
+  protected void draw(Graphics2D g) {
     Bounds rb = Camera.getRenderBounds();
     Color prevColor = g.getBackground();
 
