@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 /** {@link Renderer} provides draw methods to draw on the current {@link Window} */
+@SuppressWarnings("SynchronizeOnNonFinalField")
 public final class Renderer {
   private ArrayList<DrawCall> frontBuffer;
   private ArrayList<DrawCall> backBuffer;
@@ -112,21 +113,27 @@ public final class Renderer {
   }
 
   void draw(Graphics2D g) {
-    for (DrawCall call : backBuffer)
-      call.apply(g);
+    synchronized (backBuffer) {
+      for (DrawCall call : backBuffer)
+        call.apply(g);
+    }
   }
 
   void swapFrontBuffer() {
-    ArrayList<DrawCall> tempBuffer = frontBuffer;
-    frontBuffer = freeBuffer;
-    freeBuffer = tempBuffer;
-    frontBuffer.clear();
+    synchronized (freeBuffer) {
+      ArrayList<DrawCall> tempBuffer = frontBuffer;
+      frontBuffer = freeBuffer;
+      freeBuffer = tempBuffer;
+      frontBuffer.clear();
+    }
   }
 
   void swapBackBuffer() {
-    ArrayList<DrawCall> tempBuffer = backBuffer;
-    backBuffer = freeBuffer;
-    freeBuffer = tempBuffer;
-    freeBuffer.clear();
+    synchronized (freeBuffer) {
+      ArrayList<DrawCall> tempBuffer = backBuffer;
+      backBuffer = freeBuffer;
+      freeBuffer = tempBuffer;
+      freeBuffer.clear();
+    }
   }
 }
