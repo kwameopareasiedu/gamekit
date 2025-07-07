@@ -76,13 +76,18 @@ public abstract class Entity {
   void _update() {
     update();
     children.forEach(Entity::_update);
+
+    if (renderer.committed && renderer.completed)
+      renderer.reset();
   }
 
   /** Called by the parent {@link Entity} to render the entity */
   void _render() {
-    render(renderer);
-    children.forEach(Entity::_render);
-    renderer.swapFrontBuffer();
+    if (!renderer.committed) {
+      render(renderer);
+      children.forEach(Entity::_render);
+      renderer.committed = true;
+    }
   }
 
   /**
@@ -90,9 +95,11 @@ public abstract class Entity {
    * object
    */
   void _draw(Graphics2D g) {
-    renderer.draw(g);
-    children.forEach((e) -> e._draw(g));
-    renderer.swapBackBuffer();
+    if (renderer.committed && !renderer.completed) {
+      renderer.draw(g);
+      children.forEach((e) -> e._draw(g));
+      renderer.completed = true;
+    }
   }
 
   /** Called <b>once</b> by the parent {@link Entity} to dispose the entity */

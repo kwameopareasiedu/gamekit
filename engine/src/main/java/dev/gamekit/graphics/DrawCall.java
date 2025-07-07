@@ -16,11 +16,11 @@ public abstract class DrawCall {
     cleanup(g);
   }
 
-  @SuppressWarnings("unchecked")
   public <T extends DrawCall> T withRotation(int x, int y, double deg) {
     rotationX = x;
     rotationY = y;
     rotationRadian = degToRad(deg);
+    //noinspection unchecked
     return (T) this;
   }
 

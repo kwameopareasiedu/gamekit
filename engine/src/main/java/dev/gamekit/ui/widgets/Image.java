@@ -16,7 +16,7 @@ public class Image extends Leaf {
 
   public Image(ImageOptions options, BufferedImage image) {
     if (image == null)
-      throw new NullPointerException("Image cannot be null");
+      throw new IllegalArgumentException("Image cannot be null");
 
     this.image = image;
     this.fit = options.fit;

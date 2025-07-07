@@ -25,7 +25,7 @@ import java.util.List;
 @SuppressWarnings({ "BusyWait", "SynchronizeOnNonFinalField" })
 public abstract class Application {
   public static final long FRAME_TIME_MS = 1000 / 240;
-  public static final long RENDER_TIME_MS = 1000 / 120;
+  public static final long RENDER_TIME_MS = 1000 / 60;
   private static Application instance;
 
   protected final Logger logger = LogManager.getLogger(getClass());
@@ -36,7 +36,7 @@ public abstract class Application {
   private final List<Timeout> newTimeouts;
   private final List<Animation> animations;
   private final WorkerThread audioThread;
-  private final WorkerThread renderThread;
+  private final WorkerThread drawThread;
   private boolean isRunning;
   private Scene currentScene;
   private Scene nextScene;
@@ -56,7 +56,7 @@ public abstract class Application {
     this.newTimeouts = new ArrayList<>();
     this.animations = new ArrayList<>();
     this.audioThread = new WorkerThread("audio", FRAME_TIME_MS, Audio::update);
-    this.renderThread = new WorkerThread("render", RENDER_TIME_MS, this::draw);
+    this.drawThread = new WorkerThread("draw", RENDER_TIME_MS, this::draw);
     this.isRunning = true;
   }
 
@@ -68,7 +68,7 @@ public abstract class Application {
   public void loadScene(Scene scene) {
     if (scene == null) {
       logger.fatal("Unable to load a null scene");
-      throw new NullPointerException("Unable to load a null scene");
+      throw new IllegalArgumentException("Unable to load a null scene");
     }
 
     logger.debug("Loaded scene: {}", scene.name);
@@ -87,7 +87,8 @@ public abstract class Application {
    */
   public void scheduleTask(Task task, long timeoutMs) {
     if (timeoutMs < 0)
-      throw new RuntimeException("Timeout cannot be negative");
+      throw new IllegalArgumentException("Timeout cannot be negative");
+
     newTimeouts.add(new Timeout(timeoutMs, task));
   }
 
@@ -164,7 +165,7 @@ public abstract class Application {
 
     window.getFrame().setVisible(true);
     audioThread.start();
-    renderThread.start();
+    drawThread.start();
   }
 
   /** Called in each frame to update the current scene */
@@ -180,15 +181,16 @@ public abstract class Application {
     timeouts.removeIf(Timeout::isCompleted);
   }
 
-  /**
-   * Applies the camera's transformation on the {@link Window} scene buffer and renders the
-   * current scene
-   */
+  /** Called in each frame to render the current scene */
   private void render() {
     if (currentScene != null)
       currentScene._render();
   }
 
+  /**
+   * Applies the camera's transformation on the {@link Window} scene buffer and draws the current
+   * scene to the {@link Window}
+   */
   private void draw() {
     if (currentScene != null) {
       Camera.apply();
@@ -235,8 +237,8 @@ public abstract class Application {
     audioThread.interrupt();
     audioThread.join(1000);
 
-    renderThread.interrupt();
-    renderThread.join(1000);
+    drawThread.interrupt();
+    drawThread.join(1000);
 
     Audio.dispose();
     IO.dispose();
