@@ -3,23 +3,28 @@ package dev.gamekit.core;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 /**
- * {@link Entity} represent game objects in a {@link Scene}.
+ * {@link Entity} represents objects that exist in the game world. An entity can also contain and
+ * manage the lifecycles of children entities.
  * <p>
- * Like {@link Scene}, {@link Entity} has lifecycle methods which are called by the engine to
- * set up, update, render and dispose.
+ * An {@link Entity} has lifecycle methods which are called by the engine to set up, update,
+ * render and dispose themselves.
  */
 public abstract class Entity {
+  protected final String name;
   protected final Logger logger = LogManager.getLogger(getClass());
   protected final ArrayList<Entity> children;
-  protected final String name;
   protected Entity parent;
+
+  final Renderer renderer;
 
   public Entity(String name) {
     this.name = name;
     children = new ArrayList<>();
+    renderer = new Renderer();
   }
 
   public void addChild(Entity child) {
@@ -53,7 +58,7 @@ public abstract class Entity {
   protected void update() { }
 
   /** Called to render the entity */
-  protected void render() { }
+  protected void render(Renderer renderer) { }
 
   /** Called to dispose the entity */
   protected void dispose() { }
@@ -71,18 +76,36 @@ public abstract class Entity {
   void _update() {
     update();
     children.forEach(Entity::_update);
+
+    if (renderer.committed && renderer.completed)
+      renderer.reset();
   }
 
   /** Called by the parent {@link Entity} to render the entity */
   void _render() {
-    render();
-    children.forEach(Entity::_render);
+    if (!renderer.committed) {
+      render(renderer);
+      children.forEach(Entity::_render);
+      renderer.committed = true;
+    }
+  }
+
+  /**
+   * Called by the parent {@link Entity} to apply the render calls to a {@link Graphics2D}
+   * object
+   */
+  void _draw(Graphics2D g) {
+    if (renderer.committed && !renderer.completed) {
+      renderer.draw(g);
+      children.forEach((e) -> e._draw(g));
+      renderer.completed = true;
+    }
   }
 
   /** Called <b>once</b> by the parent {@link Entity} to dispose the entity */
   void _dispose() {
-    dispose();
     children.forEach(Entity::_dispose);
+    dispose();
     parent = null;
   }
 }

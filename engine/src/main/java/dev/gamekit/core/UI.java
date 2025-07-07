@@ -46,7 +46,9 @@ public final class UI {
     return Window.getInstance().getUiGraphics().getFontMetrics(font);
   }
 
-  public static UI getInstance() { return instance; }
+  public static UI getInstance() {
+    return instance;
+  }
 
   public UI(Scene scene) {
     Settings settings = Application.getInstance().getSettings();
@@ -73,22 +75,25 @@ public final class UI {
     UI.instance = this;
   }
 
+  public void triggerRender() {
+    needsRender = true;
+  }
+
   /** Set the initial widget tree */
   void setWidgetTree(Widget tree) {
     this.tree = tree;
 
     if (this.tree != null) {
-      this.tree.layout(windowConstraints);
-      this.tree.postLayout();
+      Application.getInstance().scheduleTask(() -> {
+        this.tree.layout(windowConstraints);
+        this.tree.postLayout();
+        triggerRender();
+      });
     }
   }
 
   void triggerUpdate() {
     needsLayout = true;
-  }
-
-  public void triggerRender() {
-    needsRender = true;
   }
 
   /**
@@ -105,28 +110,12 @@ public final class UI {
     dispatchInputEvents();
   }
 
-  /** Called to render the {@link Widget} tree to the {@link Window} UI layer */
-  void render() {
-    if (tree == null || !needsRender)
-      return;
-
-    LOGGER.debug("Rendering UI");
-
-    Window win = Window.getInstance();
-    Graphics2D uiGraphics = win.getUiGraphics();
-    int displayWidth = win.getDisplayWidth();
-    int displayHeight = win.getDisplayHeight();
-
-    canvasGraphics.setBackground(Constants.TRANSPARENT_COLOR);
-    canvasGraphics.clearRect(0, 0, displayWidth, displayHeight);
-
-    tree.render(canvasGraphics);
-
-    uiGraphics.setBackground(Constants.TRANSPARENT_COLOR);
-    uiGraphics.clearRect(0, 0, displayWidth, displayHeight);
-    uiGraphics.drawImage(canvasImage, 0, 0, displayWidth, displayHeight, null);
-
-    needsRender = false;
+  /** Called to draw the {@link Widget} tree to the {@link Window} UI layer */
+  void draw() {
+    if (tree != null && needsRender) {
+      LOGGER.debug("Rendering UI");
+      drawTree();
+    }
   }
 
   /**
@@ -360,6 +349,25 @@ public final class UI {
     previousHitTestList.clear();
     previousHitTestList.addAll(currentHitTestList);
     lastActiveWidget = null;
+  }
+
+  /** Draws the widget tree to the {@link Window} UI buffer */
+  private void drawTree() {
+    Window win = Window.getInstance();
+    Graphics2D uiGraphics = win.getUiGraphics();
+    int displayWidth = win.getDisplayWidth();
+    int displayHeight = win.getDisplayHeight();
+
+    canvasGraphics.setBackground(Constants.TRANSPARENT_COLOR);
+    canvasGraphics.clearRect(0, 0, displayWidth, displayHeight);
+
+    tree.render(canvasGraphics);
+
+    uiGraphics.setBackground(Constants.TRANSPARENT_COLOR);
+    uiGraphics.clearRect(0, 0, displayWidth, displayHeight);
+    uiGraphics.drawImage(canvasImage, 0, 0, displayWidth, displayHeight, null);
+
+    needsRender = false;
   }
 
   private void traverseTree(

@@ -1,4 +1,4 @@
-# ChangeLog
+# Change Log
 
 ## UNRELEASED
 
@@ -14,6 +14,22 @@
 ### Deprecated
 
 ### Removed
+
+## 0.4.0-SNAPSHOT-3
+
+### Added
+
+- Separated audio processing and rendering into separate threads
+
+### Changed
+
+- Changed signature of `Entity.render` from `public void render()` to `public void render
+  (dev.gamekit.core.Renderer renderer)`
+
+### Removed
+
+- Removed static Renderer class. Calls to static `Renderer` methods should be replaced with
+  calls to renderer object now supplied to the `Scene.render` or `Entity.render` methods.
 
 ## 0.4.0-SNAPSHOT-2
 

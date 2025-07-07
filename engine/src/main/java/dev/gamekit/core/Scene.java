@@ -4,27 +4,22 @@ import dev.gamekit.ui.widgets.Widget;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.awt.*;
+
 /**
  * {@link Scene} represents a logical part of your game. This can be a main menu, or a level
- * within your game.
- * <p>
- * For simple games, the scene's {@link #start()}, {@link #update()} and {@link #render()}
- * methods are enough to set up, update and render the state of the level.
- * <p>
- * For more complex use cases, a {@link Scene} can contain multiple game objects called
- * {@link Entity} which interact with each other. Each {@link Entity} has its own lifecycle methods
- * which can be used to model complex relationships
- * <p>
- * A scene also supports user interface rendering using {@link Widget} components
+ * within your game. Internally, a scene is a special kind of {@link Entity} which can also render
+ * UI elements to the window
  */
 public abstract class Scene extends Entity {
-  protected final Logger logger = LogManager.getLogger(getClass());
+  protected final Logger logger;
 
   private final UI ui;
 
   public Scene(String name) {
     super(name);
-    this.ui = new UI(this);
+    logger = LogManager.getLogger(getClass());
+    ui = new UI(this);
   }
 
   /** Called to create the UI {@link Widget} tree of the scene */
@@ -54,9 +49,9 @@ public abstract class Scene extends Entity {
 
   /** Called by {@link Application} to render the scene */
   @Override
-  void _render() {
-    super._render();
-    ui.render();
+  void _draw(Graphics2D g) {
+    super._draw(g);
+    ui.draw();
   }
 
   /** Called <b>once</b> by {@link Application} to dispose the scene */

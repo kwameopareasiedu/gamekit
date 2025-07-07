@@ -66,11 +66,11 @@ public class Playground extends Scene {
       Audio.get("alert").play();
     }
 
-    Position center = Window.getInstance().getCenter();
+    Window win = Window.getInstance();
     Position mousePos = Input.getMousePosition();
     listenerPos.set(
-      0.1 * (mousePos.x - center.x),
-      0.1 * (center.y - mousePos.y)
+      0.1 * (mousePos.x - win.getDisplayCenterX()),
+      0.1 * (win.getDisplayCenterY() - mousePos.y)
     );
 
     AudioListener.setPosition(listenerPos);
@@ -83,9 +83,12 @@ public class Playground extends Scene {
   }
 
   @Override
-  protected void render() {
-    Renderer.setBackground(Color.DARK_GRAY);
-    Renderer.clear();
+  protected void render(Renderer renderer) {
+    renderer.clear(Color.DARK_GRAY);
+    renderer.fillRect(0, 0, 64, 64).withColor(Color.CYAN);
+    renderer.drawCircle(0, -100, 45).withColor(Color.BLUE);
+//    RendererOld.setBackground(Color.DARK_GRAY);
+//    RendererOld.clear();
   }
 
   @Override
