@@ -17,6 +17,10 @@
 
 ## 0.4.0-SNAPSHOT-4
 
+### Added
+
+- Separated audio processing and rendering into separate threads
+
 ### Changed
 
 - Renamed `Prop` class to `Entity`
