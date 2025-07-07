@@ -84,10 +84,11 @@ public final class UI {
     this.tree = tree;
 
     if (this.tree != null) {
-      this.tree.layout(windowConstraints);
-      this.tree.postLayout();
-
-      Application.getInstance().scheduleTask(this::triggerRender);
+      Application.getInstance().scheduleTask(() -> {
+        this.tree.layout(windowConstraints);
+        this.tree.postLayout();
+        triggerRender();
+      });
     }
   }
 
