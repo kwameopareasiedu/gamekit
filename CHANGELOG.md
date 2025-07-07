@@ -15,7 +15,7 @@
 
 ### Removed
 
-## 0.4.0-SNAPSHOT-4
+## 0.4.0-SNAPSHOT-3
 
 ### Added
 
@@ -23,7 +23,6 @@
 
 ### Changed
 
-- Renamed `Prop` class to `Entity`
 - Changed signature of `Entity.render` from `public void render()` to `public void render
   (dev.gamekit.core.Renderer renderer)`
 
@@ -31,6 +30,12 @@
 
 - Removed static Renderer class. Calls to static `Renderer` methods should be replaced with
   calls to renderer object now supplied to the `Scene.render` or `Entity.render` methods.
+
+## 0.4.0-SNAPSHOT-2
+
+### Changed
+
+- Renamed `Prop` class to `Entity`
 
 ## 0.4.0-SNAPSHOT-1
 
