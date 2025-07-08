@@ -61,7 +61,7 @@ Each scene can also render a user interface (UI) which is a collection of `Widge
 
 - `start()` is called **once** when `Application` loads the scene
 - `update()` is called every frame to update the state of the scene
-- `render()` is called every frame after `onUpdate()` to draw the state of the scene to `Window`
+- `render(Renderer)` is called every frame after `onUpdate()` to draw the state of the scene to `Window`
 - `dispose()` is called **once** when the scene is about to be unloaded during a scene switch
 - `createUI()` is called when the scene creates/recreates the user interface
 
@@ -119,11 +119,16 @@ improving your game's performance.
 
 So `Application` manages your game and `Window` manages the view frame, but how do we get stuff drawn unto the screen?
 
-That's where `Renderer` comes in. It's a static utility class containing all the supported draw functions of the engine.
-This includes drawing lines, arcs, curves, shapes (rects, ovals) and images.
+That's where `Renderer` comes in. Each entity/scene is passed a renderer instance containing all the supported draw 
+functions of the engine. This includes drawing lines, arcs, curves, shapes (rects, ovals) and images.
 
-Before calling a draw function, you can set attributes like, color, stroke, paint to be applied. These are reset after
-the draw function is done.
+The renderer also allows you can set attributes like color, stroke and paint of a draw function. E.g.
+
+```java
+public void (Renderer renderer) {
+  renderer.fillRect(0, 0, 10, 10).withColor(Color.RED);
+}
+```
 
 ## Camera
 
