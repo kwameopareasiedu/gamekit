@@ -125,7 +125,8 @@ functions of the engine. This includes drawing lines, arcs, curves, shapes (rect
 The renderer also allows you can set attributes like color, stroke and paint of a draw function. E.g.
 
 ```java
-public void (Renderer renderer) {
+@Override
+public void render (Renderer renderer) {
   renderer.fillRect(0, 0, 10, 10).withColor(Color.RED);
 }
 ```
