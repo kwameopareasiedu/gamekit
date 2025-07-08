@@ -15,6 +15,13 @@
 
 ### Removed
 
+## 0.4.0-SNAPSHOT-4
+
+### Changed
+
+- Fixed bug causing UI not to render completely when an update is triggered
+- Fixed bug causing screen flickering during draw thread invocation
+
 ## 0.4.0-SNAPSHOT-3
 
 ### Added

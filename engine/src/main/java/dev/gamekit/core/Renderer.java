@@ -124,7 +124,6 @@ public final class Renderer {
       call.apply(g);
 
     buffer.clear();
-    completed = true;
   }
 
   void reset() {

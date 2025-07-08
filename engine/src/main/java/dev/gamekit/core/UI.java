@@ -23,6 +23,7 @@ import java.util.Objects;
 
 /** {@link UI} manages the user interface within a {@link Scene} */
 public final class UI {
+  private static final int MAX_RENDERS_PER_TRIGGER = 12;
   private static final Logger LOGGER = LogManager.getLogger(UI.class);
   private static UI instance;
 
@@ -39,7 +40,7 @@ public final class UI {
   private Widget activeWidget;
   private Widget lastActiveWidget;
   private boolean needsLayout = false;
-  private boolean needsRender = true;
+  private int renderCount;
 
   /** Return the {@link FontMetrics} for a given font */
   public static FontMetrics getFontMetrics(Font font) {
@@ -64,6 +65,7 @@ public final class UI {
     this.mousePosition = new Position();
     this.canvasImage = new BufferedImage(dw, dh, BufferedImage.TYPE_INT_ARGB);
     this.canvasGraphics = canvasImage.createGraphics();
+    this.renderCount = MAX_RENDERS_PER_TRIGGER;
 
     settings.antialiasing.apply(canvasGraphics);
     settings.textAntialiasing.apply(canvasGraphics);
@@ -76,7 +78,7 @@ public final class UI {
   }
 
   public void triggerRender() {
-    needsRender = true;
+    this.renderCount = MAX_RENDERS_PER_TRIGGER;
   }
 
   /** Set the initial widget tree */
@@ -84,11 +86,9 @@ public final class UI {
     this.tree = tree;
 
     if (this.tree != null) {
-      Application.getInstance().scheduleTask(() -> {
-        this.tree.layout(windowConstraints);
-        this.tree.postLayout();
-        triggerRender();
-      });
+      this.tree.layout(windowConstraints);
+      this.tree.postLayout();
+      triggerRender();
     }
   }
 
@@ -112,8 +112,9 @@ public final class UI {
 
   /** Called to draw the {@link Widget} tree to the {@link Window} UI layer */
   void draw() {
-    if (tree != null && needsRender) {
+    if (tree != null && renderCount > 0) {
       LOGGER.debug("Rendering UI");
+      renderCount--;
       drawTree();
     }
   }
@@ -173,9 +174,9 @@ public final class UI {
     if (treeUpdated) {
       tree.layout(windowConstraints);
       tree.postLayout();
+      triggerRender();
     }
 
-    needsRender = treeUpdated;
     currentWidgetQueue.clear();
     newWidgetQueue.clear();
     needsLayout = false;
@@ -367,7 +368,7 @@ public final class UI {
     uiGraphics.clearRect(0, 0, displayWidth, displayHeight);
     uiGraphics.drawImage(canvasImage, 0, 0, displayWidth, displayHeight, null);
 
-    needsRender = false;
+    renderCount--;
   }
 
   private void traverseTree(
