@@ -119,7 +119,7 @@ public final class Window {
 
   Graphics2D getUiGraphics() { return uiGraphics; }
 
-  void draw() {
+  void refresh() {
     Settings settings = Application.getInstance().getSettings();
 
     if (settings.fullScreen) {

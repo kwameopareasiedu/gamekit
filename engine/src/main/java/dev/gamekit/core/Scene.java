@@ -45,12 +45,24 @@ public abstract class Scene extends Entity {
   void _update() {
     super._update();
     ui.update();
+
+    if (Renderer.isCompleted())
+      Renderer.reset();
   }
 
-  /** Called by {@link Application} to render the scene */
   @Override
-  void _draw(Graphics2D g) {
-    super._draw(g);
+  void _render() {
+    if (!Renderer.isCommitted()) {
+      super._render();
+      Renderer.commit();
+    }
+  }
+
+  /** Called by {@link Application} to draw the scene to the {@link Window} */
+  void _draw() {
+    if (Renderer.isCommitted() && !Renderer.isCompleted())
+      Renderer.draw(Window.getInstance().getDisplayGraphics());
+
     ui.draw();
   }
 

@@ -3,7 +3,6 @@ package dev.gamekit.core;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 /**
@@ -19,12 +18,9 @@ public abstract class Entity {
   protected final ArrayList<Entity> children;
   protected Entity parent;
 
-  final Renderer renderer;
-
   public Entity(String name) {
     this.name = name;
     children = new ArrayList<>();
-    renderer = new Renderer();
   }
 
   public void addChild(Entity child) {
@@ -58,7 +54,7 @@ public abstract class Entity {
   protected void update() { }
 
   /** Called to render the entity */
-  protected void render(Renderer renderer) { }
+  protected void render() { }
 
   /** Called to dispose the entity */
   protected void dispose() { }
@@ -76,30 +72,12 @@ public abstract class Entity {
   void _update() {
     update();
     children.forEach(Entity::_update);
-
-    if (renderer.committed && renderer.completed)
-      renderer.reset();
   }
 
   /** Called by the parent {@link Entity} to render the entity */
   void _render() {
-    if (!renderer.committed) {
-      render(renderer);
-      children.forEach(Entity::_render);
-      renderer.committed = true;
-    }
-  }
-
-  /**
-   * Called by the parent {@link Entity} to apply the render calls to a {@link Graphics2D}
-   * object
-   */
-  void _draw(Graphics2D g) {
-    if (renderer.committed && !renderer.completed) {
-      renderer.draw(g);
-      children.forEach((e) -> e._draw(g));
-      renderer.completed = true;
-    }
+    render();
+    children.forEach(Entity::_render);
   }
 
   /** Called <b>once</b> by the parent {@link Entity} to dispose the entity */

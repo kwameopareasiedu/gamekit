@@ -1,15 +1,15 @@
 import dev.gamekit.audio.*;
 import dev.gamekit.audio.shapes.AudioShapeCircle;
-import dev.gamekit.core.Window;
 import dev.gamekit.core.*;
+import dev.gamekit.core.Window;
 import dev.gamekit.settings.Resolution;
 import dev.gamekit.settings.Settings;
 import dev.gamekit.settings.WindowMode;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.enums.MainAxisAlignment;
-import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.ui.widgets.*;
+import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.utils.Position;
 import dev.gamekit.utils.Vector;
 import org.apache.logging.log4j.LogManager;
@@ -83,12 +83,12 @@ public class Playground extends Scene {
   }
 
   @Override
-  protected void render(Renderer renderer) {
-    renderer.clear(Color.DARK_GRAY);
-    renderer.fillRect(0, 0, 64, 64).withColor(Color.CYAN);
-    renderer.drawCircle(0, -100, 45).withColor(Color.BLUE);
-//    RendererOld.setBackground(Color.DARK_GRAY);
-//    RendererOld.clear();
+  protected void render() {
+    Renderer.clear(Color.DARK_GRAY);
+    Renderer.fillRect(0, 0, 64, 64).withColor(Color.CYAN);
+    Renderer.drawCircle(0, -100, 45).withColor(Color.BLUE);
+    //    RendererOld.setBackground(Color.DARK_GRAY);
+    //    RendererOld.clear();
   }
 
   @Override

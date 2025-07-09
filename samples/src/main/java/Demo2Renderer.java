@@ -9,7 +9,7 @@ import java.awt.*;
  * following actions:
  * <ul>
  *   <li>Creates an {@link Application application}</li>
- *   <li>Overrides the {@link Scene#render(Renderer)} method to draw</li>
+ *   <li>Overrides the {@link Scene#render()} method to draw</li>
  *   <li>Uses the {@link Renderer} to clear the screen to dark gray</li>
  *   <li>Uses the {@link Renderer} to draw a red box</li>
  * </ul>
@@ -26,10 +26,10 @@ public class Demo2Renderer extends Scene {
   }
 
   @Override
-  public void render(Renderer renderer) {
+  public void render() {
     // Clear the screen with dark gray
-    renderer.clear(Color.DARK_GRAY);
+    Renderer.clear(Color.DARK_GRAY);
     // Draw a red box
-    renderer.fillRect(0, 0, 100, 100).withColor(Color.RED);
+    Renderer.fillRect(0, 0, 100, 100).withColor(Color.RED);
   }
 }

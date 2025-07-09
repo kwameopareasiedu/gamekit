@@ -11,122 +11,136 @@ import java.util.ArrayList;
  * thread to draw on the current {@link Window}
  */
 public final class Renderer {
-  private final ArrayList<DrawCall> buffer;
+  private static final ArrayList<DrawCall> BUFFER;
+  private static boolean committed;
+  private static boolean completed;
 
-  boolean committed;
-  boolean completed;
-
-  Renderer() {
-    buffer = new ArrayList<>();
+  static {
+    BUFFER = new ArrayList<>();
     committed = completed = false;
   }
 
+  private Renderer() { }
+
   /** Clears the view area contents with a specified color */
-  public void clear(Color color) {
-    buffer.add(new ClearCall(color));
+  public static void clear(Color color) {
+    BUFFER.add(new ClearCall(color));
   }
 
   /** Draws a line from {@code (x1, y1)} to {@code (x2, y2)} */
-  public DrawLine drawLine(int x1, int y1, int x2, int y2) {
+  public static DrawLine drawLine(int x1, int y1, int x2, int y2) {
     DrawLine call = new DrawLine(x1, y1, x2, y2);
-    buffer.add(call);
+    BUFFER.add(call);
     return call;
   }
 
   /** Draws a vertical line from {@code (x, y1)} to {@code (x, y2)} */
-  public DrawLine drawVerticalLine(int x, int y1, int y2) {
+  public static DrawLine drawVerticalLine(int x, int y1, int y2) {
     DrawLine call = new DrawLine(x, y1, x, y2);
-    buffer.add(call);
+    BUFFER.add(call);
     return call;
   }
 
   /** Draws a horizontal line from {@code (x1, y)} to {@code (x2, y)} */
-  public DrawLine drawHorizontalLine(int x1, int x2, int y) {
+  public static DrawLine drawHorizontalLine(int x1, int x2, int y) {
     DrawLine call = new DrawLine(x1, y, x2, y);
-    buffer.add(call);
+    BUFFER.add(call);
     return call;
   }
 
   /** Fills a <b>center-origin</b> rect at (x, y) with width and height */
-  public DrawRect fillRect(int x, int y, int width, int height) {
+  public static DrawRect fillRect(int x, int y, int width, int height) {
     DrawRect call = new DrawRect(x, y, width, height, true);
-    buffer.add(call);
+    BUFFER.add(call);
     return call;
   }
 
   /** Draws a <b>center-origin</b> rect at (x, y) with width and height */
-  public DrawRect drawRect(int x, int y, int width, int height) {
+  public static DrawRect drawRect(int x, int y, int width, int height) {
     DrawRect call = new DrawRect(x, y, width, height, false);
-    buffer.add(call);
+    BUFFER.add(call);
     return call;
   }
 
   /**
    * Fills a <b>center-origin</b> rounded rect at (x, y) with width, height, arc width and height
    */
-  public DrawRoundRect fillRoundRect(
+  public static DrawRoundRect fillRoundRect(
     int x, int y, int width, int height, int arcWidth, int arcHeight
   ) {
     DrawRoundRect call = new DrawRoundRect(x, y, width, height, arcWidth, arcHeight, true);
-    buffer.add(call);
+    BUFFER.add(call);
     return call;
   }
 
   /**
    * Draws a <b>center-origin</b> rounded rect at (x, y) with width, height, arc width and height
    */
-  public DrawRoundRect drawRoundRect(
+  public static DrawRoundRect drawRoundRect(
     int x, int y, int width, int height, int arcWidth, int arcHeight
   ) {
     DrawRoundRect call = new DrawRoundRect(x, y, width, height, arcWidth, arcHeight, false);
-    buffer.add(call);
+    BUFFER.add(call);
     return call;
   }
 
   /** Fills a <b>center-origin</b> oval at (x, y) with width and height */
-  public DrawOval fillOval(int x, int y, int width, int height) {
+  public static DrawOval fillOval(int x, int y, int width, int height) {
     DrawOval call = new DrawOval(x, y, width, height, true);
-    buffer.add(call);
+    BUFFER.add(call);
     return call;
   }
 
   /** Draws a <b>center-origin</b> oval at (x, y) with width and height */
-  public DrawOval drawOval(int x, int y, int width, int height) {
+  public static DrawOval drawOval(int x, int y, int width, int height) {
     DrawOval call = new DrawOval(x, y, width, height, false);
-    buffer.add(call);
+    BUFFER.add(call);
     return call;
   }
 
   /** Fills a <b>center-origin</b> circle at (x, y) with radius */
-  public DrawCircle fillCircle(int x, int y, int radius) {
+  public static DrawCircle fillCircle(int x, int y, int radius) {
     DrawCircle call = new DrawCircle(x, y, 2 * radius, true);
-    buffer.add(call);
+    BUFFER.add(call);
     return call;
   }
 
   /** Draws a <b>center-origin</b> circle at (x, y) with radius */
-  public DrawCircle drawCircle(int x, int y, int radius) {
+  public static DrawCircle drawCircle(int x, int y, int radius) {
     DrawCircle call = new DrawCircle(x, y, 2 * radius, false);
-    buffer.add(call);
+    BUFFER.add(call);
     return call;
   }
 
   /** Draws a scaled <b>center-origin</b> {@link BufferedImage} at (x, y) with width and height */
-  public DrawImage drawImage(BufferedImage img, int x, int y, int width, int height) {
+  public static DrawImage drawImage(BufferedImage img, int x, int y, int width, int height) {
     DrawImage call = new DrawImage(img, x, y, width, height);
-    buffer.add(call);
+    BUFFER.add(call);
     return call;
   }
 
-  /** Applies accumulated draw calls to the provided {@link Graphics2D} object */
-  void draw(Graphics2D g) {
-    for (DrawCall call : buffer)
-      call.apply(g);
-
-    buffer.clear();
+  static boolean isCommitted() {
+    return committed;
   }
 
-  void reset() {
+  static boolean isCompleted() {
+    return committed && completed;
+  }
+
+  static void commit() {
+    committed = true;
+  }
+
+  /** Applies accumulated draw calls to the provided {@link Graphics2D} object */
+  static void draw(Graphics2D g) {
+    for (DrawCall call : BUFFER)
+      call.apply(g);
+
+    completed = true;
+  }
+
+  static void reset() {
+    BUFFER.clear();
     committed = completed = false;
   }
 }

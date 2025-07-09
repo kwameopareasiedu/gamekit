@@ -22,7 +22,7 @@
     <dependency>
       <groupId>dev.gamekit</groupId>
       <artifactId>engine</artifactId>
-      <version>0.4.0-SNAPSHOT-4</version>
+      <version>0.4.0-SNAPSHOT-5</version>
     </dependency>
   </dependencies>
 

@@ -1,11 +1,16 @@
 # Change Log
 
-## UNRELEASED
+## Road Map
 
-### TODO
-
+- Add more UI widgets (Input, Checkbox, Slider)
 - Implement spanning for text widget which is the ability to use different text attributes for
   the same text widget
+- Add theming capability to UI widgets
+- Integrate physics engine
+- Implement dynamic lighting
+- Add network multiplayer capabilities
+
+## UNRELEASED
 
 ### Added
 

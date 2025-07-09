@@ -49,11 +49,9 @@ public class Animations extends Scene {
   }
 
   @Override
-  public void render(Renderer renderer) {
-    // Clear the screen with black
-    renderer.clear(Color.BLACK);
-
-    renderer.fillCircle(0, toInt(-200 * animationValue) + 150, 50).withColor(Color.CYAN);
+  public void render() {
+    Renderer.clear(Color.BLACK);
+    Renderer.fillCircle(0, toInt(-200 * animationValue) + 150, 50).withColor(Color.CYAN);
   }
 
   @Override

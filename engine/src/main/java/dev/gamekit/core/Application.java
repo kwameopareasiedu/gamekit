@@ -193,13 +193,13 @@ public abstract class Application {
    */
   private void draw() {
     if (currentScene != null) {
-      Camera.apply();
+      Camera.applyTransformation();
 
       synchronized (currentScene) {
-        currentScene._draw(window.getDisplayGraphics());
+        currentScene._draw();
       }
 
-      window.draw();
+      window.refresh();
     }
   }
 
