@@ -1,15 +1,15 @@
 import dev.gamekit.audio.*;
 import dev.gamekit.audio.shapes.AudioShapeCircle;
-import dev.gamekit.core.Window;
 import dev.gamekit.core.*;
+import dev.gamekit.core.Window;
 import dev.gamekit.settings.Resolution;
 import dev.gamekit.settings.Settings;
 import dev.gamekit.settings.WindowMode;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.enums.MainAxisAlignment;
-import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.ui.widgets.*;
+import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.utils.Position;
 import dev.gamekit.utils.Vector;
 import org.apache.logging.log4j.LogManager;
@@ -66,11 +66,11 @@ public class Playground extends Scene {
       Audio.get("alert").play();
     }
 
-    Position center = Window.getInstance().getCenter();
+    Window win = Window.getInstance();
     Position mousePos = Input.getMousePosition();
     listenerPos.set(
-      0.1 * (mousePos.x - center.x),
-      0.1 * (center.y - mousePos.y)
+      0.1 * (mousePos.x - win.getDisplayCenterX()),
+      0.1 * (win.getDisplayCenterY() - mousePos.y)
     );
 
     AudioListener.setPosition(listenerPos);
@@ -84,8 +84,11 @@ public class Playground extends Scene {
 
   @Override
   protected void render() {
-    Renderer.setBackground(Color.DARK_GRAY);
-    Renderer.clear();
+    Renderer.clear(Color.DARK_GRAY);
+    Renderer.fillRect(0, 0, 64, 64).withColor(Color.CYAN);
+    Renderer.drawCircle(0, -100, 45).withColor(Color.BLUE);
+    //    RendererOld.setBackground(Color.DARK_GRAY);
+    //    RendererOld.clear();
   }
 
   @Override

@@ -28,10 +28,8 @@ public class Demo2Renderer extends Scene {
   @Override
   public void render() {
     // Clear the screen with dark gray
-    Renderer.setColor(Color.DARK_GRAY);
-    Renderer.clear();
+    Renderer.clear(Color.DARK_GRAY);
     // Draw a red box
-    Renderer.setColor(Color.RED);
-    Renderer.fillRect(0, 0, 100, 100);
+    Renderer.fillRect(0, 0, 100, 100).withColor(Color.RED);
   }
 }

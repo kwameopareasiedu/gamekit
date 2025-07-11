@@ -59,11 +59,9 @@ public class HelloGameKit extends Scene {
   @Override
   public void render() {
     // Clear the screen with black
-    Renderer.setColor(Color.BLACK);
-    Renderer.clear();
-    // Draw a red square
-    Renderer.setColor(Color.RED);
-    Renderer.fillRect(0, 0, 200, 200);
+    Renderer.clear(Color.BLACK);
+    // Draw a red box
+    Renderer.fillRect(0, 0, 200, 200).withColor(Color.RED);
   }
 }
 ```

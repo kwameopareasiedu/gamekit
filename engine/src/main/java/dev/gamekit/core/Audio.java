@@ -13,7 +13,7 @@ public final class Audio {
   /** Loads an {@link AudioClip} into memory with a unique key */
   public static void preload(Object key, AudioClip audioClip) {
     if (audioClip == null)
-      throw new NullPointerException("Audio clip cannot be null");
+      throw new IllegalArgumentException("Audio clip cannot be null");
 
     if (CLIP_CACHE.containsKey(key))
       throw new RuntimeException(

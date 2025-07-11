@@ -44,7 +44,7 @@ public class Demo3Input extends Scene {
 
   @Override
   protected void update() {
-    if (Input.isButtonDown(Input.BUTTON_LMB)) {
+    if (Input.isButtonDown(Input.BUTTON_LMB) || Input.isKeyPressed(Input.KEY_SPACE)) {
       colorIndex = cycle(colorIndex + 1, 0, COLORS.length - 1);
     }
   }
@@ -52,11 +52,9 @@ public class Demo3Input extends Scene {
   @Override
   public void render() {
     // Clear the screen with dark gray
-    Renderer.setColor(Color.DARK_GRAY);
-    Renderer.clear();
+    Renderer.clear(Color.BLACK);
     // Draw a red box
-    Renderer.setColor(COLORS[colorIndex]);
-    Renderer.fillRect(0, 0, 100, 100);
+    Renderer.fillRect(0, 0, 100, 100).withColor(COLORS[colorIndex]);
   }
 
   @Override
@@ -67,7 +65,7 @@ public class Demo3Input extends Scene {
         Padding.options().padding(48),
         Text.create(
           Text.options().alignment(Alignment.CENTER),
-          "Left Mouse Button to change color"
+          "Click the Left Mouse Button or press the Space Bar to change color"
         )
       )
     );

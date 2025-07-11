@@ -1,11 +1,16 @@
-# ChangeLog
+# Change Log
 
-## UNRELEASED
+## Road Map
 
-### TODO
-
+- Add more UI widgets (Input, Checkbox, Slider)
 - Implement spanning for text widget which is the ability to use different text attributes for
   the same text widget
+- Add theming capability to UI widgets
+- Integrate physics engine
+- Implement dynamic lighting
+- Add network multiplayer capabilities
+
+## UNRELEASED
 
 ### Added
 
@@ -14,6 +19,29 @@
 ### Deprecated
 
 ### Removed
+
+## 0.4.0-SNAPSHOT-4
+
+### Changed
+
+- Fixed bug causing UI not to render completely when an update is triggered
+- Fixed bug causing screen flickering during draw thread invocation
+
+## 0.4.0-SNAPSHOT-3
+
+### Added
+
+- Separated audio processing and rendering into separate threads
+
+### Changed
+
+- Changed signature of `Entity.render` from `public void render()` to `public void render
+  (dev.gamekit.core.Renderer renderer)`
+
+### Removed
+
+- Removed static Renderer class. Calls to static `Renderer` methods should be replaced with
+  calls to renderer object now supplied to the `Scene.render` or `Entity.render` methods.
 
 ## 0.4.0-SNAPSHOT-2
 

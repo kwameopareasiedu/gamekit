@@ -6,15 +6,16 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 
 /**
- * {@link Entity} represent game objects in a {@link Scene}.
+ * {@link Entity} represents objects that exist in the game world. An entity can also contain and
+ * manage the lifecycles of children entities.
  * <p>
- * Like {@link Scene}, {@link Entity} has lifecycle methods which are called by the engine to
- * set up, update, render and dispose.
+ * An {@link Entity} has lifecycle methods which are called by the engine to set up, update,
+ * render and dispose themselves.
  */
 public abstract class Entity {
+  protected final String name;
   protected final Logger logger = LogManager.getLogger(getClass());
   protected final ArrayList<Entity> children;
-  protected final String name;
   protected Entity parent;
 
   public Entity(String name) {
@@ -81,8 +82,8 @@ public abstract class Entity {
 
   /** Called <b>once</b> by the parent {@link Entity} to dispose the entity */
   void _dispose() {
-    dispose();
     children.forEach(Entity::_dispose);
+    dispose();
     parent = null;
   }
 }
