@@ -20,6 +20,13 @@
 
 ### Removed
 
+## 0.4.0-SNAPSHOT-5
+
+### Changed
+
+- Changed signature of `Entity.render` from `void render(Renderer renderer)` to `void render()`
+- Updated `Renderer`, changing all instance methods to static methods
+
 ## 0.4.0-SNAPSHOT-4
 
 ### Changed
