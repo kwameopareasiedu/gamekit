@@ -2,6 +2,7 @@ import dev.gamekit.core.*;
 import dev.gamekit.settings.Resolution;
 import dev.gamekit.settings.Settings;
 import dev.gamekit.settings.WindowMode;
+import dev.gamekit.utils.Constants;
 import dev.gamekit.utils.Position;
 
 import java.awt.*;
@@ -13,7 +14,7 @@ public class Calibration extends Scene {
   private static final int WORLD_WIDTH = 2400;
   private static final int WORLD_HEIGHT = 1400;
   private static final BufferedImage SPRITE = IO.getResourceImage("zainar.png");
-  private static final double INTERVAL = Application.FRAME_TIME_MS / 1000.0;
+  private static final double INTERVAL = Constants.FRAME_TIME_MS / 1000.0;
   private static final double FREQ = 0.5;
 
   private double time;

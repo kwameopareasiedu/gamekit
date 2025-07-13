@@ -89,11 +89,7 @@ public class Physical extends Trait {
 
     if (transformTrait != null) {
       Vector2 center = body.getWorldCenter();
-
-      transformTrait.setPosition(
-        center.x * Constants.PIXELS_PER_METER,
-        center.y * Constants.PIXELS_PER_METER
-      );
+      transformTrait.setPosition(center.x, center.y);
     }
   }
 

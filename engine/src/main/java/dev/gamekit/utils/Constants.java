@@ -9,7 +9,7 @@ import java.lang.Math;
 /** Constants store for engine */
 public final class Constants {
   public static final long FRAME_TIME_MS = 1000 / 240;
-  public static final long RENDER_TIME_MS = 1000 / 60;
+  public static final long RENDER_TIME_MS = 1000 / 120;
   public static final int PIXELS_PER_METER = 128;
 
   public static final Font DEFAULT_FONT = IO.getResourceFont("font-default.ttf");
