@@ -2,6 +2,7 @@ package dev.gamekit.core;
 
 import dev.gamekit.animation.Animation;
 import dev.gamekit.settings.Settings;
+import dev.gamekit.utils.Constants;
 import dev.gamekit.utils.Task;
 import dev.gamekit.utils.Timeout;
 import org.apache.logging.log4j.LogManager;
@@ -24,8 +25,6 @@ import java.util.List;
  */
 @SuppressWarnings({ "BusyWait", "SynchronizeOnNonFinalField" })
 public abstract class Application {
-  public static final long FRAME_TIME_MS = 1000 / 240;
-  public static final long RENDER_TIME_MS = 1000 / 60;
   private static Application instance;
 
   protected final Logger logger = LogManager.getLogger(getClass());
@@ -55,8 +54,8 @@ public abstract class Application {
     this.timeouts = new ArrayList<>();
     this.newTimeouts = new ArrayList<>();
     this.animations = new ArrayList<>();
-    this.audioThread = new WorkerThread("audio", FRAME_TIME_MS, Audio::update);
-    this.drawThread = new WorkerThread("draw", RENDER_TIME_MS, this::draw);
+    this.audioThread = new WorkerThread("audio", Constants.FRAME_TIME_MS, Audio::update);
+    this.drawThread = new WorkerThread("draw", Constants.RENDER_TIME_MS, this::draw);
     this.isRunning = true;
   }
 
@@ -125,8 +124,8 @@ public abstract class Application {
         lastFrameTime = currentFrameTime;
         frameTimeAccumulator += timeDiff;
 
-        while (frameTimeAccumulator >= FRAME_TIME_MS) {
-          frameTimeAccumulator -= FRAME_TIME_MS;
+        while (frameTimeAccumulator >= Constants.FRAME_TIME_MS) {
+          frameTimeAccumulator -= Constants.FRAME_TIME_MS;
           Input.freeze();
           update();
           Input.reset();
@@ -170,6 +169,7 @@ public abstract class Application {
 
   /** Called in each frame to update the current scene */
   private void update() {
+    Physics.update();
     animations.forEach(Animation::update);
     timeouts.forEach(Timeout::update);
 

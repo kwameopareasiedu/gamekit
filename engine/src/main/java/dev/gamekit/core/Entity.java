@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * {@link Entity} represents objects that exist in the game world. An entity can also contain and
@@ -16,14 +17,19 @@ public abstract class Entity {
   protected final String name;
   protected final Logger logger = LogManager.getLogger(getClass());
   protected final ArrayList<Entity> children;
+  protected final ArrayList<Trait> traits;
   protected Entity parent;
 
   public Entity(String name) {
     this.name = name;
     children = new ArrayList<>();
+    traits = new ArrayList<>();
   }
 
   public void addChild(Entity child) {
+    if (child.parent != null)
+      throw new IllegalStateException("Child already has parent");
+
     if (!children.contains(child)) {
       logger.debug("Adding {} to {}", child.name, name);
 
@@ -47,6 +53,11 @@ public abstract class Entity {
     }
   }
 
+  /** Called during {@link #start()} to get the traits of the entity */
+  protected List<Trait> setTraits() {
+    return null;
+  }
+
   /** Called to set up the entity */
   protected void start() { }
 
@@ -65,17 +76,31 @@ public abstract class Entity {
 
   /** Called <b>once</b> by the parent {@link Entity} to initialize the entity */
   void _start() {
+    List<Trait> traits = setTraits();
+
+    if (traits != null) {
+      for (Trait trait : traits) {
+        if (this.traits.stream().anyMatch(t -> t.getClass().isInstance(trait)))
+          throw new IllegalArgumentException("Entity cannot have more than one type of a Trait");
+
+        this.traits.add(trait);
+        trait._start(this);
+      }
+    }
+
     start();
   }
 
   /** Called by the parent {@link Entity} to update the entity */
   void _update() {
+    traits.forEach(Trait::_update);
     update();
     children.forEach(Entity::_update);
   }
 
   /** Called by the parent {@link Entity} to render the entity */
   void _render() {
+    traits.forEach(Trait::_render);
     render();
     children.forEach(Entity::_render);
   }
@@ -83,6 +108,7 @@ public abstract class Entity {
   /** Called <b>once</b> by the parent {@link Entity} to dispose the entity */
   void _dispose() {
     children.forEach(Entity::_dispose);
+    traits.forEach(Trait::_dispose);
     dispose();
     parent = null;
   }

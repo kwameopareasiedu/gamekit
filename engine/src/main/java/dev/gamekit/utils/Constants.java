@@ -8,6 +8,10 @@ import java.lang.Math;
 
 /** Constants store for engine */
 public final class Constants {
+  public static final long FRAME_TIME_MS = 1000 / 240;
+  public static final long RENDER_TIME_MS = 1000 / 60;
+  public static final int PIXELS_PER_METER = 128;
+
   public static final Font DEFAULT_FONT = IO.getResourceFont("font-default.ttf");
   public static final Color TRANSPARENT_COLOR = new Color(0x0000000, true);
   public static final BufferedImage DEFAULT_BUTTON_BG = IO.getResourceImage("btn-default.png");
