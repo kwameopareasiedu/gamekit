@@ -33,6 +33,11 @@ public class Physical extends Trait {
     body.setGravityScale(scale);
   }
 
+  public void setWorldPosition(double x, double y) {
+    Vector2 center = body.getWorldCenter();
+    body.translate(center.multiply(-1).add(x, y));
+  }
+
   public BodyFixture addCircleFixture(double radius) {
     Circle circle = new Circle(radius);
     BodyFixture fx = new BodyFixture(circle);
@@ -56,6 +61,22 @@ public class Physical extends Trait {
   }
 
   @Override
+  protected void update() {
+    super.update();
+
+    Transform transformTrait = entity.findTrait(Transform.class);
+
+    if (transformTrait != null) {
+      Vector2 center = body.getWorldCenter();
+
+      transformTrait.setPosition(
+        center.x * Constants.PIXELS_PER_METER,
+        center.y * Constants.PIXELS_PER_METER
+      );
+    }
+  }
+
+  @Override
   protected void render() {
     super.render();
 
@@ -68,7 +89,7 @@ public class Physical extends Trait {
         Convex shape = fx.getShape();
 
         if (shape instanceof Circle circle) {
-          Renderer.fillCircle(
+          Renderer.drawCircle(
             scaledCenterX, scaledCenterY,
             (int) (circle.getRadius() * Constants.PIXELS_PER_METER)
           ).withColor(Color.CYAN);

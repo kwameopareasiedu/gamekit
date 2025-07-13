@@ -1,5 +1,6 @@
 package dev.gamekit.core;
 
+import dev.gamekit.traits.Transform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,6 +25,11 @@ public abstract class Entity {
     this.name = name;
     children = new ArrayList<>();
     traits = new ArrayList<>();
+    traits.add(new Transform());
+  }
+
+  public Entity getParent() {
+    return parent;
   }
 
   public void addChild(Entity child) {
@@ -51,6 +57,17 @@ public abstract class Entity {
         child._dispose();
       });
     }
+  }
+
+  /** Returns a {@link Trait} of the specified class else {@code null} */
+  public <T extends Trait> T findTrait(Class<T> clazz) {
+    for (Trait trait : traits) {
+      if (clazz.isInstance(trait))
+        //noinspection unchecked
+        return (T) trait;
+    }
+
+    return null;
   }
 
   /** Called during {@link #start()} to get the traits of the entity */
@@ -84,8 +101,10 @@ public abstract class Entity {
           throw new IllegalArgumentException("Entity cannot have more than one type of a Trait");
 
         this.traits.add(trait);
-        trait._start(this);
       }
+
+      for (Trait trait : this.traits)
+        trait._start(this);
     }
 
     start();
