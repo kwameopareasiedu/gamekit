@@ -33,6 +33,8 @@ public class Transform extends Trait {
         double entityParentTransformX = entityParentTransform.getX();
         double entityParentTransformY = entityParentTransform.getY();
         localPosition.set(x - entityParentTransformX, y - entityParentTransformY);
+      } else {
+        localPosition.set(x, y);
       }
     } else {
       localPosition.set(x, y);

@@ -4,6 +4,8 @@ import dev.gamekit.ui.widgets.Widget;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.List;
+
 /**
  * {@link Scene} represents a logical part of your game. This can be a main menu, or a level
  * within your game.
@@ -30,6 +32,11 @@ public abstract class Scene extends Entity {
   /** Trigger a widget tree update. You would use this when some UI variables have changed */
   protected final void updateUI() {
     ui.triggerUpdate();
+  }
+
+  @Override
+  protected final List<Trait> getTraits() {
+    return null;
   }
 
   /** Called <b>once</b> by {@link Application} to initialize the scene */

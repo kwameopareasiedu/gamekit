@@ -71,7 +71,7 @@ public abstract class Entity {
   }
 
   /** Called during {@link #start()} to get the traits of the entity */
-  protected List<Trait> setTraits() {
+  protected List<Trait> getTraits() {
     return null;
   }
 
@@ -93,7 +93,7 @@ public abstract class Entity {
 
   /** Called <b>once</b> by the parent {@link Entity} to initialize the entity */
   void _start() {
-    List<Trait> traits = setTraits();
+    List<Trait> traits = getTraits();
 
     if (traits != null) {
       for (Trait trait : traits) {
@@ -127,8 +127,8 @@ public abstract class Entity {
   /** Called <b>once</b> by the parent {@link Entity} to dispose the entity */
   void _dispose() {
     children.forEach(Entity::_dispose);
-    traits.forEach(Trait::_dispose);
     dispose();
+    traits.forEach(Trait::_dispose);
     parent = null;
   }
 }

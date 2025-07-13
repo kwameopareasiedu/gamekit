@@ -5,12 +5,15 @@ import dev.gamekit.core.Physics;
 import dev.gamekit.core.Renderer;
 import dev.gamekit.core.Trait;
 import dev.gamekit.utils.Constants;
+import dev.gamekit.utils.Vector;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.geometry.*;
 import org.dyn4j.geometry.Rectangle;
 
 import java.awt.*;
+
+import static dev.gamekit.utils.Math.toInt;
 
 /** The {@link Physical} {@link Trait trait} adds physics-based motion to an entity */
 public class Physical extends Trait {
@@ -23,10 +26,14 @@ public class Physical extends Trait {
     body.setMassType(MassType.INFINITE);
   }
 
-  public Physical(MassType massType, Vector2 massCenter, double mass, double inertia) {
+  public Physical(MassType massType, Vector massCenter, double mass, double inertia) {
     body = new Body();
     body.setMassType(massType);
-    body.setMass(new Mass(massCenter, mass, inertia));
+    body.setMass(new Mass(new Vector2(massCenter.x, massCenter.y), mass, inertia));
+  }
+
+  public void setCustomData(Object data) {
+    body.setUserData(data);
   }
 
   public void setGravityScale(double scale) {
@@ -38,20 +45,34 @@ public class Physical extends Trait {
     body.translate(center.multiply(-1).add(x, y));
   }
 
-  public BodyFixture addCircleFixture(double radius) {
+  public void addCircleFixture(double radius, BodyFixtureTuner tuner) {
     Circle circle = new Circle(radius);
     BodyFixture fx = new BodyFixture(circle);
+    tuner.tuneFixture(fx);
     body.addFixture(fx);
-    body.updateMass();
-    return fx;
   }
 
-  public BodyFixture addRectFixture(double width, double height) {
+  public void addCircleFixture(double radius) {
+    addCircleFixture(radius, fx -> { });
+  }
+
+  public void addRectFixture(double width, double height, BodyFixtureTuner tuner) {
     Rectangle rect = new Rectangle(width, height);
     BodyFixture fx = new BodyFixture(rect);
+    tuner.tuneFixture(fx);
     body.addFixture(fx);
-    body.updateMass();
-    return fx;
+  }
+
+  public void addRectFixture(double width, double height) {
+    addRectFixture(width, height, fx -> { });
+  }
+
+  public void applyImpulse(Vector vector) {
+    body.applyImpulse(new Vector2(vector.x, vector.y));
+  }
+
+  public void addCollisionListener(Physics.CollisionListener listener) {
+    Physics.addCollisionListener(body, listener);
   }
 
   @Override
@@ -81,24 +102,21 @@ public class Physical extends Trait {
     super.render();
 
     if (DEBUG_DRAW) {
-      Vector2 center = body.getWorldCenter();
-      int scaledCenterX = (int) (center.x * Constants.PIXELS_PER_METER);
-      int scaledCenterY = (int) (center.y * Constants.PIXELS_PER_METER);
+      Vector2 bodyCenter = body.getWorldCenter();
 
       for (BodyFixture fx : body.getFixtures()) {
         Convex shape = fx.getShape();
+        Vector2 shapeCenter = shape.getCenter();
+        int shapeCenterX = toInt((bodyCenter.x + shapeCenter.x) * Constants.PIXELS_PER_METER);
+        int shapeCenterY = toInt((bodyCenter.y + shapeCenter.y) * Constants.PIXELS_PER_METER);
 
         if (shape instanceof Circle circle) {
-          Renderer.drawCircle(
-            scaledCenterX, scaledCenterY,
-            (int) (circle.getRadius() * Constants.PIXELS_PER_METER)
-          ).withColor(Color.CYAN);
+          int radius = toInt(circle.getRadius() * Constants.PIXELS_PER_METER);
+          Renderer.drawCircle(shapeCenterX, shapeCenterY, radius).withColor(Color.CYAN);
         } else if (shape instanceof Rectangle rect) {
-          Renderer.drawRect(
-            scaledCenterX, scaledCenterY,
-            (int) (rect.getWidth() * Constants.PIXELS_PER_METER),
-            (int) (rect.getHeight() * Constants.PIXELS_PER_METER)
-          ).withColor(Color.CYAN);
+          int width = toInt(rect.getWidth() * Constants.PIXELS_PER_METER);
+          int height = toInt(rect.getHeight() * Constants.PIXELS_PER_METER);
+          Renderer.drawRect(shapeCenterX, shapeCenterY, width, height).withColor(Color.CYAN);
         }
       }
     }
@@ -111,5 +129,11 @@ public class Physical extends Trait {
     Application.getInstance().scheduleTask(() -> {
       Physics.removeBody(body);
     });
+  }
+
+  /** Interface for an object which tunes a {@link BodyFixture} */
+  public interface BodyFixtureTuner {
+    /** Called with the new {@link BodyFixture} for tuning before adding to a {@link Body} */
+    void tuneFixture(BodyFixture fixture);
   }
 }
