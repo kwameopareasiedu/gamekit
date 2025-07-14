@@ -20,6 +20,24 @@
 
 ### Removed
 
+## 0.5.0-SNAPSHOT-1
+
+### Added
+
+- Added abstract `Trait` which is the base class for all entity traits
+- Added `Transform` which is a `Trait` that contains position, rotation and scale parameters
+- Added `Physical` which is a `Trait` that adds physics-based motion to an entity
+- Added `Physics` class which manages the physics world updates and collision processing
+- Added traits processing to `Entity` class
+- Added `public <T extends Trait> findTrait(Class<T> clazz)` to `Entity` class which finds a 
+  specific trait on and `Entity`
+
+### Changed
+
+### Deprecated
+
+### Removed
+
 ## 0.4.0-SNAPSHOT-5
 
 ### Changed
