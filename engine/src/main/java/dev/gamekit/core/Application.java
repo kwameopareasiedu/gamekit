@@ -161,7 +161,7 @@ public abstract class Application {
       }
     });
 
-    window.getFrame().setVisible(true);
+    window.show();
     audioThread.start();
     drawThread.start();
   }
@@ -172,9 +172,8 @@ public abstract class Application {
     animations.forEach(Animation::update);
     timeouts.forEach(Timeout::update);
 
-    if (currentScene != null) {
+    if (currentScene != null)
       currentScene._update();
-    }
 
     animations.removeIf(Animation::isEnded);
     timeouts.removeIf(Timeout::isCompleted);
@@ -217,9 +216,11 @@ public abstract class Application {
       if (currentScene != null) {
         synchronized (currentScene) {
           currentScene._dispose();
+          UI.getInstance().clear();
         }
       }
 
+      Camera.reset();
       currentScene = nextScene;
       currentScene._start();
       nextScene = null;

@@ -73,7 +73,7 @@ public class Column extends Flex {
           computedBounds.width / 2 - child.computedBounds.width / 2
         );
         case END -> child.computedBounds.setX(
-          computedBounds.height - child.computedBounds.width
+          computedBounds.width - child.computedBounds.width
         );
         case STRETCH -> {
           Constraints c = new Constraints(

@@ -2,7 +2,7 @@ import dev.gamekit.core.*;
 import dev.gamekit.settings.Resolution;
 import dev.gamekit.settings.Settings;
 import dev.gamekit.settings.WindowMode;
-import dev.gamekit.utils.Constants;
+import dev.gamekit.core.Constants;
 import dev.gamekit.utils.Position;
 
 import java.awt.*;
@@ -57,7 +57,7 @@ public class Calibration extends Scene {
   @Override
   public void render() {
     Renderer.clear(Color.DARK_GRAY);
-    Renderer.drawRect(x, y, Resolution.SVGA.width, Resolution.SVGA.height).withColor(Color.CYAN);
+    Renderer.drawRect(x, y, Resolution.SVGA.width(), Resolution.SVGA.height()).withColor(Color.CYAN);
 
     Renderer.drawHorizontalLine(-WORLD_WIDTH / 2, WORLD_WIDTH / 2, 0).withColor(Color.BLUE);
     Renderer.drawVerticalLine(0, -WORLD_HEIGHT / 2, WORLD_HEIGHT / 2).withColor(Color.BLUE);

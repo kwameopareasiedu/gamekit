@@ -14,6 +14,7 @@ import static dev.gamekit.utils.Math.clamp;
  * Input includes static constants which map to Java's {@link KeyEvent} constants so they can be
  * used interchangeably.
  */
+@SuppressWarnings("unused")
 public final class Input implements KeyListener, MouseListener, MouseMotionListener {
   public static final int KEY_ENTER = KeyEvent.VK_ENTER;
   public static final int KEY_BACK_SPACE = KeyEvent.VK_BACK_SPACE;
@@ -264,13 +265,13 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   }
 
   public synchronized static Position getMousePosition() {
-    Window win = Window.getInstance();
-    double scaleRatio = win.getDisplayScaleRatio();
-    double windowWidth = win.getFrameWidth();
-    double windowHeight = win.getFrameHeight();
-    double displayWidth = win.getDisplayWidth();
-    double displayHeight = win.getDisplayHeight();
-    double inverseScaleRatio = win.getInverseDisplayScaleRatio();
+    Window.Info info = Window.getInfo();
+    double scaleRatio = info.displayScaleRatio();
+    double windowWidth = info.frameWidth();
+    double windowHeight = info.frameHeight();
+    double displayWidth = info.displayWidth();
+    double displayHeight = info.displayHeight();
+    double inverseScaleRatio = info.inverseDisplayScaleRatio();
 
     double scaledDisplayWidth = displayWidth * scaleRatio;
     double scaledDisplayHeight = displayHeight * scaleRatio;

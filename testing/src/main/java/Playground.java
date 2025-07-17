@@ -31,7 +31,7 @@ public class Playground extends Scene {
   public Playground() {
     super("Main Scene");
 
-    halfWindowWidth = Window.getInstance().getFrameWidth() / 2;
+    halfWindowWidth = Window.getInfo().frameWidth() / 2;
     listenerPos = new Vector(0, 0);
     prevMousePos = new Position(0, 0);
 
@@ -56,8 +56,8 @@ public class Playground extends Scene {
 
   @Override
   protected void start() {
-    Audio.<AudioClip3D>get("waterflow").setPosition(0, 0);
-    Audio.get("waterflow").play(true);
+//    Audio.<AudioClip3D>get("waterflow").setPosition(0, 0);
+//    Audio.get("waterflow").play(true);
   }
 
   @Override
@@ -66,11 +66,11 @@ public class Playground extends Scene {
       Audio.get("alert").play();
     }
 
-    Window win = Window.getInstance();
+    Window.Info windowInfo = Window.getInfo();
     Position mousePos = Input.getMousePosition();
     listenerPos.set(
-      0.1 * (mousePos.x - win.getDisplayCenterX()),
-      0.1 * (win.getDisplayCenterY() - mousePos.y)
+      0.1 * (mousePos.x - windowInfo.displayCenterX()),
+      0.1 * (windowInfo.displayCenterY() - mousePos.y)
     );
 
     AudioListener.setPosition(listenerPos);
@@ -94,34 +94,34 @@ public class Playground extends Scene {
   @Override
   public Widget createUI() {
     return Column.create(
-      Column.options()
+      Column.config()
         .mainAxisAlignment(MainAxisAlignment.CENTER)
         .crossAxisAlignment(CrossAxisAlignment.STRETCH)
         .gapSize(24),
       Text.create(
-        Text.options().alignment(Alignment.CENTER),
+        Text.config().alignment(Alignment.CENTER),
         "Press the Space Bar to play/restart the audio"
       ),
       Text.create(
-        Text.options().alignment(Alignment.CENTER),
+        Text.config().alignment(Alignment.CENTER),
         "Move the mouse from left to right to pan the audio"
       ),
       Row.create(
-        Row.options()
+        Row.config()
           .mainAxisAlignment(MainAxisAlignment.CENTER)
           .crossAxisAlignment(CrossAxisAlignment.CENTER)
           .gapSize(8),
         Opacity.create(
-          Opacity.options().opacity(pan < 0 ? 1 : 1 - pan),
+          Opacity.config().opacity(pan < 0 ? 1 : 1 - pan),
           Scaled.create(
-            Scaled.options().scale(0.5),
+            Scaled.config().scale(0.5),
             Image.create(SPEAKER_IMG)
           )
         ),
         Opacity.create(
-          Opacity.options().opacity(pan > 0 ? 1 : 1 + pan),
+          Opacity.config().opacity(pan > 0 ? 1 : 1 + pan),
           Scaled.create(
-            Scaled.options().scale(0.5),
+            Scaled.config().scale(0.5),
             Image.create(SPEAKER_IMG)
           )
         )

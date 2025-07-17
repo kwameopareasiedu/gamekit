@@ -57,9 +57,9 @@ public class Animations extends Scene {
   @Override
   public Widget createUI() {
     return Align.create(
-      Align.options().horizontalAlignment(Alignment.START),
+      Align.config().horizontalAlignment(Alignment.START),
       Padding.create(
-        Padding.options().padding(new Spacing(16, 48)),
+        Padding.config().padding(new Spacing(16, 48)),
         Text.create(
           String.format("Value: %f", animationValue)
         )

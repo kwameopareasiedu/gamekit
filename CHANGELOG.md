@@ -29,14 +29,22 @@
 - Added `Physical` which is a `Trait` that adds physics-based motion to an entity
 - Added `Physics` class which manages the physics world updates and collision processing
 - Added traits processing to `Entity` class
-- Added `public <T extends Trait> findTrait(Class<T> clazz)` to `Entity` class which finds a 
+- Added `public <T extends Trait> findTrait(Class<T> clazz)` to `Entity` class which finds a
   specific trait on and `Entity`
 - Added `public void mounted()` lifecycle method to `Widget` class
 - Added `Theme` widget which is a `SingleChildParent` which theme variables to its child tree
 - Updated `Text` widget to utilize nearest available `Theme` in ancestry
 - Updated `Button` widget to utilize nearest available `Theme` in ancestry
+- Changed `Resolution` enum to a record class
+- Added `static Resolution create(int width, int height)` to the `Resolution` record class
+- Added `public static getInfo()` to `Window` class to return `Window.Info` instance
+- Added public constructor to `Resolution` class to allow for custom resolutions
 
 ### Changed
+
+- Updated `public static [WidgetName]Options options()` method in all widget classes to
+  `public static Config config()`
+- Changed `static Window getInstance()` in `Window` class from public to package-private
 
 ### Deprecated
 
