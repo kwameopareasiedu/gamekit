@@ -47,85 +47,88 @@ public class Demo4UserInterface extends Scene {
       Image.create(BACKDROP),
 
       Align.create(
-        Align.options().horizontalAlignment(Alignment.START).verticalAlignment(Alignment.START),
+        Align.config().horizontalAlignment(Alignment.START).verticalAlignment(Alignment.START),
         Padding.create(
-          Padding.options().padding(24, 0),
+          Padding.config().padding(24, 0),
           Sized.create(
-            Sized.options().width(480).height(480),
+            Sized.config().width(480).height(480),
             Image.create(LOGO)
           )
         )
       ),
 
       Align.create(
-        Align.options().horizontalAlignment(Alignment.START).verticalAlignment(Alignment.CENTER),
+        Align.config().horizontalAlignment(Alignment.START).verticalAlignment(Alignment.CENTER),
         Padding.create(
-          Padding.options().padding(256, 8, 16, 96),
-          Column.create(
-            Column.options()
-              .mainAxisAlignment(MainAxisAlignment.START)
-              .crossAxisAlignment(CrossAxisAlignment.STRETCH)
-              .gapSize(24),
-            MainMenuButton.create("Tutorial", e -> System.out.println("0: " + e.type)),
-            MainMenuButton.create("New Planet", e -> System.out.println("1: " + e.type)),
-            MainMenuButton.create("New Campaign", null),
-            MainMenuButton.create("Load Game", null),
-            MainMenuButton.create("Online Multiplayer", null),
+          Padding.config().padding(256, 8, 16, 96),
+          Theme.create(
+            Theme.config().textFontSize(10).textFontStyle(Font.BOLD).textFontStyle(Font.ITALIC),
             Column.create(
-              Column.options()
+              Column.config()
                 .mainAxisAlignment(MainAxisAlignment.START)
-                .crossAxisAlignment(CrossAxisAlignment.START)
-                .gapSize(12),
-              SubMenuButton.create("Commander Customization"),
-              SubMenuButton.create("Options"),
-              SubMenuButton.create("Credits"),
-              SubMenuButton.create("Exit Game")
+                .crossAxisAlignment(CrossAxisAlignment.STRETCH)
+                .gapSize(24),
+              MainMenuButton.create("Tutorial", e -> System.out.println("0: " + e.type)),
+              MainMenuButton.create("New Planet", e -> System.out.println("1: " + e.type)),
+              MainMenuButton.create("New Campaign", null),
+              MainMenuButton.create("Load Game", null),
+              MainMenuButton.create("Online Multiplayer", null),
+              Column.create(
+                Column.config()
+                  .mainAxisAlignment(MainAxisAlignment.START)
+                  .crossAxisAlignment(CrossAxisAlignment.START)
+                  .gapSize(12),
+                SubMenuButton.create("Commander Customization"),
+                SubMenuButton.create("Options"),
+                SubMenuButton.create("Credits"),
+                SubMenuButton.create("Exit Game")
+              )
             )
           )
         )
       ),
 
       Align.create(
-        Align.options().verticalAlignment(Alignment.START),
+        Align.config().verticalAlignment(Alignment.START),
         Sized.create(
-          Sized.options().fractionalWidth(1).fractionalHeight(0.15),
+          Sized.config().fractionalWidth(1).fractionalHeight(0.15),
           Image.create(SCRIM)
         )
       ),
 
       Align.create(
-        Align.options().verticalAlignment(Alignment.END),
+        Align.config().verticalAlignment(Alignment.END),
         Sized.create(
-          Sized.options().fractionalWidth(1).fractionalHeight(0.15),
+          Sized.config().fractionalWidth(1).fractionalHeight(0.15),
           Stack.create(
             Sized.create(
-              Sized.options().fractionalWidth(1).fractionalHeight(1),
+              Sized.config().fractionalWidth(1).fractionalHeight(1),
               Image.create(SCRIM)
             ),
             Sized.create(
-              Sized.options().fractionalWidth(1).fractionalHeight(1),
+              Sized.config().fractionalWidth(1).fractionalHeight(1),
               Row.create(
-                Row.options()
+                Row.config()
                   .mainAxisAlignment(MainAxisAlignment.END)
                   .crossAxisAlignment(CrossAxisAlignment.CENTER)
                   .gapSize(24),
                 Sized.create(
-                  Sized.options().width(48).height(48),
+                  Sized.config().width(48).height(48),
                   Colored.create(
-                    Colored.options().color(Color.RED).borderRadius(4)
+                    Colored.config().color(Color.RED).borderRadius(4)
                   )
                 ),
                 Button.create(
-                  Button.options().ninePatch(12, 12, 18, 12),
+                  Button.config().ninePatch(12, 12, 18, 12),
                   Text.create(
-                    Text.options().fontSize(12).fontStyle(Font.BOLD),
+                    Text.config().fontSize(12).fontStyle(Font.BOLD),
                     "Create Account"
                   )
                 ),
                 Button.create(
-                  Button.options().ninePatch(12, 12, 18, 12),
+                  Button.config().ninePatch(12, 12, 18, 12),
                   Text.create(
-                    Text.options().fontSize(12).fontStyle(Font.BOLD),
+                    Text.config().fontSize(12).fontStyle(Font.BOLD),
                     "Login"
                   )
                 )
@@ -143,11 +146,11 @@ public class Demo4UserInterface extends Scene {
     public MainMenuButton(String text, MouseEvent.Listener mouseListener) {
       super(
         Button.create(
-          Button.options().ninePatch(12, 12, 16, 12).mouseListener(mouseListener),
+          Button.config().ninePatch(12, 12, 16, 12).mouseListener(mouseListener),
           Padding.create(
-            Padding.options().padding(12, 12, 16, 12),
+            Padding.config().padding(12, 12, 16, 12),
             Text.create(
-              Text.options().fontSize(20).fontStyle(Font.BOLD),
+              Text.config().fontSize(20).fontStyle(Font.BOLD),
               text
             )
           )
@@ -179,11 +182,11 @@ public class Demo4UserInterface extends Scene {
     public SubMenuButton(String text) {
       super(
         Button.create(
-          Button.options().ninePatch(6, 6, 8, 6),
+          Button.config().ninePatch(6, 6, 8, 6),
           Padding.create(
-            Padding.options().padding(6, 6, 8, 6),
+            Padding.config().padding(6, 6, 8, 6),
             Text.create(
-              Text.options().fontSize(12).fontStyle(Font.BOLD),
+              Text.config(),
               text
             )
           )
