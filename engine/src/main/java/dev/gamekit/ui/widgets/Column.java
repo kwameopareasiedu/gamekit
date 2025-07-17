@@ -5,23 +5,20 @@ import dev.gamekit.ui.enums.MainAxisAlignment;
 
 /** A {@link Flex} which arranges its children vertically */
 public class Column extends Flex {
-  public Column(ColumnOptions<? extends ColumnOptions<?>> options, Widget... children) {
-    super(options, children);
+  public Column(Config<? extends Config<?>> config, Widget... children) {
+    super(config, children);
   }
 
-  public static Column create(
-    ColumnOptions<? extends ColumnOptions<?>> options,
-    Widget... children
-  ) {
-    return new Column(options, children);
+  public static Column create(Config<? extends Config<?>> config, Widget... children) {
+    return new Column(config, children);
   }
 
   public static Column create(Widget... children) {
-    return new Column(new ColumnOptions<>(), children);
+    return new Column(new Config<>(), children);
   }
 
-  public static ColumnOptions<? extends ColumnOptions<?>> options() {
-    return new ColumnOptions<>();
+  public static Config<? extends Config<?>> config() {
+    return new Config<>();
   }
 
   @Override
@@ -99,5 +96,5 @@ public class Column extends Flex {
     return false;
   }
 
-  public static class ColumnOptions<T extends ColumnOptions<T>> extends FlexOptions<T> { }
+  public static class Config<T extends Config<T>> extends Flex.Config<T> { }
 }

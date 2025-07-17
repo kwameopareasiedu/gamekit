@@ -5,23 +5,33 @@ import dev.gamekit.ui.enums.Alignment;
 
 import java.util.Objects;
 
+import static dev.gamekit.utils.Misc.coalesce;
+
 /** A {@link SingleChildParent} which aligns its single child within itself */
 public class Align extends SingleChildParent {
-  protected final Alignment horizontalAlignment;
-  protected final Alignment verticalAlignment;
+  protected Alignment horizontalAlignment;
+  protected Alignment verticalAlignment;
 
-  public Align(AlignOptions options, Widget child) {
+  private final Config config;
+
+  public Align(Config config, Widget child) {
     super(child);
-    this.horizontalAlignment = options.horizontalAlignment;
-    this.verticalAlignment = options.verticalAlignment;
+    this.config = config;
   }
 
-  public static Align create(AlignOptions options, Widget child) {
-    return new Align(options, child);
+  public static Align create(Config config, Widget child) {
+    return new Align(config, child);
   }
 
-  public static AlignOptions options() {
-    return new AlignOptions();
+  public static Config config() {
+    return new Config();
+  }
+
+  @Override
+  protected void performMounted() {
+    this.horizontalAlignment = coalesce(config.horizontalAlignment, Alignment.START);
+    this.verticalAlignment = coalesce(config.verticalAlignment, Alignment.START);
+    super.performMounted();
   }
 
   @Override
@@ -68,16 +78,18 @@ public class Align extends SingleChildParent {
     return false;
   }
 
-  public static class AlignOptions {
-    Alignment horizontalAlignment = Alignment.START;
-    Alignment verticalAlignment = Alignment.START;
+  public static class Config {
+    Alignment horizontalAlignment;
+    Alignment verticalAlignment;
 
-    public AlignOptions horizontalAlignment(Alignment horizontalAlignment) {
+    Config() { }
+
+    public Config horizontalAlignment(Alignment horizontalAlignment) {
       this.horizontalAlignment = horizontalAlignment;
       return this;
     }
 
-    public AlignOptions verticalAlignment(Alignment verticalAlignment) {
+    public Config verticalAlignment(Alignment verticalAlignment) {
       this.verticalAlignment = verticalAlignment;
       return this;
     }

@@ -6,27 +6,35 @@ import java.awt.*;
 import java.util.Objects;
 
 import static dev.gamekit.utils.Math.clamp;
+import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link SingleChildParent} which renders its child with transparency */
 public class Opacity extends SingleChildParent {
-  protected final double opacity;
+  protected double opacity;
 
-  private final AlphaComposite composite;
+  private final Config config;
+  private AlphaComposite composite;
 
-  public Opacity(OpacityOptions options, Widget child) {
+  public Opacity(Config config, Widget child) {
     super(child);
-    this.opacity = clamp(options.opacity, 0, 1);
+    this.config = config;
+  }
+
+  public static Opacity create(Config config, Widget child) {
+    return new Opacity(config, child);
+  }
+
+  public static Config config() {
+    return new Config();
+  }
+
+  @Override
+  protected void performMounted() {
+    this.opacity = clamp(coalesce(config.opacity, 1.0), 0, 1);
     this.composite = AlphaComposite.getInstance(
       AlphaComposite.SRC_OVER, (float) this.opacity
     );
-  }
-
-  public static Opacity create(OpacityOptions options, Widget child) {
-    return new Opacity(options, child);
-  }
-
-  public static OpacityOptions options() {
-    return new OpacityOptions();
+    super.performMounted();
   }
 
   @Override
@@ -73,10 +81,12 @@ public class Opacity extends SingleChildParent {
     return false;
   }
 
-  public static class OpacityOptions {
-    double opacity = 1.0;
+  public static class Config {
+    Double opacity;
 
-    public OpacityOptions opacity(double opacity) {
+    Config() { }
+
+    public Config opacity(double opacity) {
       this.opacity = opacity;
       return this;
     }

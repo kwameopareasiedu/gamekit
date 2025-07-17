@@ -5,21 +5,31 @@ import dev.gamekit.ui.Spacing;
 
 import java.util.Objects;
 
+import static dev.gamekit.utils.Misc.coalesce;
+
 /** A {@link SingleChildParent} which adds padding around its single child */
 public class Padding extends SingleChildParent {
-  protected final Spacing padding;
+  protected Spacing padding;
 
-  public Padding(PaddingOptions options, Widget child) {
+  private final Config config;
+
+  public Padding(Config config, Widget child) {
     super(child);
-    this.padding = options.padding;
+    this.config = config;
   }
 
-  public static Padding create(PaddingOptions options, Widget child) {
-    return new Padding(options, child);
+  public static Padding create(Config config, Widget child) {
+    return new Padding(config, child);
   }
 
-  public static PaddingOptions options() {
-    return new PaddingOptions();
+  public static Config config() {
+    return new Config();
+  }
+
+  @Override
+  protected void performMounted() {
+    padding = coalesce(config.padding, new Spacing());
+    super.performMounted();
   }
 
   @Override
@@ -52,27 +62,27 @@ public class Padding extends SingleChildParent {
     return false;
   }
 
-  public static class PaddingOptions {
+  public static class Config {
     Spacing padding = new Spacing();
 
-    PaddingOptions() { }
+    Config() { }
 
-    public PaddingOptions padding(Spacing padding) {
+    public Config padding(Spacing padding) {
       this.padding = padding;
       return this;
     }
 
-    public PaddingOptions padding(int padding) {
+    public Config padding(int padding) {
       this.padding = new Spacing(padding);
       return this;
     }
 
-    public PaddingOptions padding(int horizontal, int vertical) {
+    public Config padding(int horizontal, int vertical) {
       this.padding = new Spacing(horizontal, vertical);
       return this;
     }
 
-    public PaddingOptions padding(int top, int right, int bottom, int left) {
+    public Config padding(int top, int right, int bottom, int left) {
       this.padding = new Spacing(top, right, bottom, left);
       return this;
     }

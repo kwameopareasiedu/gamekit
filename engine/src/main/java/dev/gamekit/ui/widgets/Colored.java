@@ -7,24 +7,28 @@ import java.util.Objects;
 
 /** A {@link Leaf} which renders a solid color background */
 public class Colored extends Leaf {
-  protected final Color color;
-  protected final int borderRadius;
+  protected Color color;
+  protected int borderRadius;
 
-  public Colored(ColoredOptions options) {
-    this.color = options.color;
-    this.borderRadius = options.borderRadius;
+  private final Config config;
+
+  public Colored(Config config) {
+    this.config = config;
   }
 
-  public static Colored create(ColoredOptions options) {
-    return new Colored(options);
+  public static Colored create(Config config) {
+    return new Colored(config);
   }
 
-  public static Colored create(Color color, int borderRadius) {
-    return new Colored(new ColoredOptions().color(color).borderRadius(borderRadius));
+  public static Config config() {
+    return new Config();
   }
 
-  public static ColoredOptions options() {
-    return new ColoredOptions();
+  @Override
+  protected void performMounted() {
+    super.performMounted();
+    this.color = config.color;
+    this.borderRadius = config.borderRadius;
   }
 
   @Override
@@ -60,16 +64,18 @@ public class Colored extends Leaf {
     return false;
   }
 
-  public static class ColoredOptions {
-    public Color color = Color.GRAY;
-    public int borderRadius = 0;
+  public static class Config {
+    Color color = Color.GRAY;
+    int borderRadius = 0;
 
-    public ColoredOptions color(Color color) {
+    Config() {}
+
+    public Config color(Color color) {
       this.color = color;
       return this;
     }
 
-    public ColoredOptions borderRadius(int borderRadius) {
+    public Config borderRadius(int borderRadius) {
       this.borderRadius = borderRadius;
       return this;
     }

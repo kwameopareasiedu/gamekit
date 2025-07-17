@@ -31,6 +31,10 @@
 - Added traits processing to `Entity` class
 - Added `public <T extends Trait> findTrait(Class<T> clazz)` to `Entity` class which finds a 
   specific trait on and `Entity`
+- Added `public void mounted()` lifecycle method to `Widget` class
+- Added `Theme` widget which is a `SingleChildParent` which theme variables to its child tree
+- Updated `Text` widget to utilize nearest available `Theme` in ancestry
+- Updated `Button` widget to utilize nearest available `Theme` in ancestry
 
 ### Changed
 

@@ -8,31 +8,42 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
+import static dev.gamekit.utils.Misc.coalesce;
+
 /** A {@link Leaf} which renders a {@link BufferedImage} to the screen */
 public class Image extends Leaf {
   protected final BufferedImage image;
-  protected final ImageFit fit;
-  protected final ImageInterpolation interpolation;
+  protected ImageFit fit;
+  protected ImageInterpolation interpolation;
 
-  public Image(ImageOptions options, BufferedImage image) {
+  private final Config config;
+
+  public Image(Config config, BufferedImage image) {
     if (image == null)
       throw new IllegalArgumentException("Image cannot be null");
 
+    this.config = config;
     this.image = image;
-    this.fit = options.fit;
-    this.interpolation = options.interpolation;
   }
 
-  public static Image create(ImageOptions options, BufferedImage image) {
-    return new Image(options, image);
+  public static Image create(Config config, BufferedImage image) {
+    return new Image(config, image);
   }
 
   public static Image create(BufferedImage image) {
-    return new Image(new ImageOptions(), image);
+    return new Image(new Config(), image);
   }
 
-  public static ImageOptions options() {
-    return new ImageOptions();
+  public static Config config() {
+    return new Config();
+  }
+
+  @Override
+  protected void performMounted() {
+    super.performMounted();
+
+    this.fit = coalesce(config.fit, ImageFit.FIT);
+    this.interpolation = coalesce(config.interpolation, ImageInterpolation.DEFAULT);
   }
 
   @Override
@@ -94,16 +105,18 @@ public class Image extends Leaf {
     return false;
   }
 
-  public static class ImageOptions {
-    public ImageFit fit = ImageFit.FIT;
-    public ImageInterpolation interpolation = ImageInterpolation.DEFAULT;
+  public static class Config {
+    ImageFit fit;
+    ImageInterpolation interpolation;
 
-    public ImageOptions fit(ImageFit fit) {
+    Config() { }
+
+    public Config fit(ImageFit fit) {
       this.fit = fit;
       return this;
     }
 
-    public ImageOptions interpolation(ImageInterpolation interpolation) {
+    public Config interpolation(ImageInterpolation interpolation) {
       this.interpolation = interpolation;
       return this;
     }

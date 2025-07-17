@@ -128,10 +128,12 @@ public final class UI {
   private void updateTree() {
     List<Widget> currentWidgetQueue = new ArrayList<>();
     List<Widget> newWidgetQueue = new ArrayList<>();
+    Widget newTree = scene.createUI();
     boolean treeUpdated = false;
 
     currentWidgetQueue.add(tree);
-    newWidgetQueue.add(scene.createUI());
+    newWidgetQueue.add(newTree);
+    newTree.mounted();
 
     while (!currentWidgetQueue.isEmpty() && !newWidgetQueue.isEmpty()) {
       Widget treeWidget = currentWidgetQueue.remove(0);
@@ -172,7 +174,6 @@ public final class UI {
     }
 
     if (treeUpdated) {
-      tree.mounted();
       tree.layout(windowConstraints);
       tree.postLayout();
       triggerRender();

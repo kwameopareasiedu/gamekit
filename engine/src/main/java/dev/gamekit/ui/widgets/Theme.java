@@ -1,60 +1,71 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.ui.Constraints;
+import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.enums.Alignment;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+import static dev.gamekit.utils.Misc.coalesce;
+
 /** A {@link SingleChildParent} which provides theme variables to its child tree */
 public class Theme extends SingleChildParent {
-  private static final Theme DEFAULT_THEME = create(options(), Empty.create());
+  private static final Theme DEFAULT_THEME = create(config(), Empty.create());
 
-  public final BufferedImage buttonDefaultBackground;
-  public final BufferedImage buttonHoverBackground;
-  public final BufferedImage buttonPressedBackground;
+  public Spacing buttonNinePatchBorder;
+  public BufferedImage buttonDefaultBackground;
+  public BufferedImage buttonHoverBackground;
+  public BufferedImage buttonPressedBackground;
+  public Font textFont;
+  public Integer textFontStyle;
+  public Integer textFontSize;
+  public Color textColor;
+  public Color textBackgroundColor;
+  public Alignment textAlignment;
+  public Alignment textVerticalAlignment;
+  public Boolean textShadowEnabled;
+  public Integer textShadowOffsetX;
+  public Integer textShadowOffsetY;
+  public Color textShadowColor;
 
-  public final Font textFont;
-  public final Integer textFontStyle;
-  public final Integer textFontSize;
-  public final Color textColor;
-  public final Color textBackgroundColor;
-  public final Alignment textAlignment;
-  public final Alignment textVerticalAlignment;
-  public final Boolean textShadowEnabled;
-  public final Integer textShadowOffsetX;
-  public final Integer textShadowOffsetY;
-  public final Color textShadowColor;
+  private final Config config;
 
-  public Theme(ThemeOptions options, Widget child) {
+  public Theme(Config config, Widget child) {
     super(child);
-    this.buttonDefaultBackground = options.buttonDefaultBackground;
-    this.buttonHoverBackground = options.buttonHoverBackground;
-    this.buttonPressedBackground = options.buttonPressedBackground;
-
-    this.textFont = options.textFont;
-    this.textFontStyle = options.textFontStyle;
-    this.textFontSize = options.textFontSize;
-    this.textColor = options.textColor;
-    this.textBackgroundColor = options.textBackgroundColor;
-    this.textAlignment = options.textAlignment;
-    this.textVerticalAlignment = options.textVerticalAlignment;
-    this.textShadowEnabled = options.textShadowEnabled;
-    this.textShadowOffsetX = options.textShadowOffsetX;
-    this.textShadowOffsetY = options.textShadowOffsetY;
-    this.textShadowColor = options.textShadowColor;
+    this.config = config;
   }
 
-  public static Theme create(ThemeOptions params, Widget child) {
+  public static Theme create(Config params, Widget child) {
     return new Theme(params, child);
   }
 
-  public static ThemeOptions options() {
-    return new ThemeOptions();
+  public static Config config() {
+    return new Config();
   }
 
   public static Theme getDefault() {
     return DEFAULT_THEME;
+  }
+
+  @Override
+  protected void performMounted() {
+    this.buttonNinePatchBorder = coalesce(config.buttonNinePatchBorder);
+    this.buttonDefaultBackground = coalesce(config.buttonDefaultBackground);
+    this.buttonHoverBackground = coalesce(config.buttonHoverBackground);
+    this.buttonPressedBackground = coalesce(config.buttonPressedBackground);
+    this.textFont = coalesce(config.textFont);
+    this.textFontStyle = coalesce(config.textFontStyle);
+    this.textFontSize = coalesce(config.textFontSize);
+    this.textColor = coalesce(config.textColor);
+    this.textBackgroundColor = coalesce(config.textBackgroundColor);
+    this.textAlignment = coalesce(config.textAlignment);
+    this.textVerticalAlignment = coalesce(config.textVerticalAlignment);
+    this.textShadowEnabled = coalesce(config.textShadowEnabled);
+    this.textShadowOffsetX = coalesce(config.textShadowOffsetX);
+    this.textShadowOffsetY = coalesce(config.textShadowOffsetY);
+    this.textShadowColor = coalesce(config.textShadowColor);
+    super.performMounted();
   }
 
   @Override
@@ -77,11 +88,11 @@ public class Theme extends SingleChildParent {
     return false;
   }
 
-  public static class ThemeOptions {
+  public static class Config {
+    Spacing buttonNinePatchBorder;
     BufferedImage buttonDefaultBackground;
     BufferedImage buttonHoverBackground;
     BufferedImage buttonPressedBackground;
-
     Font textFont;
     Integer textFontStyle;
     Integer textFontSize;
@@ -94,68 +105,90 @@ public class Theme extends SingleChildParent {
     Integer textShadowOffsetY;
     Color textShadowColor;
 
-    public ThemeOptions buttonDefaultBackground(BufferedImage buttonDefaultBackground) {
+    Config() { }
+
+    public Config ninePatch(Spacing border) {
+      this.buttonNinePatchBorder = border;
+      return this;
+    }
+
+    public Config ninePatch(int all) {
+      this.buttonNinePatchBorder = new Spacing(all);
+      return this;
+    }
+
+    public Config ninePatch(int horizontal, int vertical) {
+      this.buttonNinePatchBorder = new Spacing(horizontal, vertical);
+      return this;
+    }
+
+    public Config ninePatch(int top, int right, int bottom, int left) {
+      this.buttonNinePatchBorder = new Spacing(top, right, bottom, left);
+      return this;
+    }
+
+    public Config buttonDefaultBackground(BufferedImage buttonDefaultBackground) {
       this.buttonDefaultBackground = buttonDefaultBackground;
       return this;
     }
 
-    public ThemeOptions buttonHoverBackground(BufferedImage buttonHoverBackground) {
+    public Config buttonHoverBackground(BufferedImage buttonHoverBackground) {
       this.buttonHoverBackground = buttonHoverBackground;
       return this;
     }
 
-    public ThemeOptions buttonPressedBackground(BufferedImage buttonPressedBackground) {
+    public Config buttonPressedBackground(BufferedImage buttonPressedBackground) {
       this.buttonPressedBackground = buttonPressedBackground;
       return this;
     }
 
-    public ThemeOptions textFont(Font textFont) {
+    public Config textFont(Font textFont) {
       this.textFont = textFont;
       return this;
     }
 
-    public ThemeOptions textFontStyle(int textFontStyle) {
+    public Config textFontStyle(int textFontStyle) {
       this.textFontStyle = textFontStyle;
       return this;
     }
 
-    public ThemeOptions textFontSize(int textFontSize) {
+    public Config textFontSize(int textFontSize) {
       this.textFontSize = textFontSize;
       return this;
     }
 
-    public ThemeOptions textColor(Color textColor) {
+    public Config textColor(Color textColor) {
       this.textColor = textColor;
       return this;
     }
 
-    public ThemeOptions textBackgroundColor(Color textBackgroundColor) {
+    public Config textBackgroundColor(Color textBackgroundColor) {
       this.textBackgroundColor = textBackgroundColor;
       return this;
     }
 
-    public ThemeOptions textAlignment(Alignment textAlignment) {
+    public Config textAlignment(Alignment textAlignment) {
       this.textAlignment = textAlignment;
       return this;
     }
 
-    public ThemeOptions textVerticalAlignment(Alignment textVerticalAlignment) {
+    public Config textVerticalAlignment(Alignment textVerticalAlignment) {
       this.textVerticalAlignment = textVerticalAlignment;
       return this;
     }
 
-    public ThemeOptions textShadowEnabled(boolean textShadowEnabled) {
+    public Config textShadowEnabled(boolean textShadowEnabled) {
       this.textShadowEnabled = textShadowEnabled;
       return this;
     }
 
-    public ThemeOptions textShadowOffset(int textShadowOffsetX, int textShadowOffsetY) {
+    public Config textShadowOffset(int textShadowOffsetX, int textShadowOffsetY) {
       this.textShadowOffsetX = textShadowOffsetX;
       this.textShadowOffsetY = textShadowOffsetY;
       return this;
     }
 
-    public ThemeOptions textShadowColor(Color textShadowColor) {
+    public Config textShadowColor(Color textShadowColor) {
       this.textShadowColor = textShadowColor;
       return this;
     }
