@@ -1,9 +1,9 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.core.Constants;
 import dev.gamekit.core.UI;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.enums.Alignment;
-import dev.gamekit.utils.Constants;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -11,48 +11,45 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import static dev.gamekit.utils.Constants.DEFAULT_FONT;
+import static dev.gamekit.core.Constants.DEFAULT_FONT;
+import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link Leaf} which renders text to the screen */
 @SuppressWarnings("MagicConstant")
 public class Text extends Leaf {
-  protected final String text;
-  protected final Font font;
-  protected final int fontStyle;
-  protected final int fontSize;
-  protected final Color color;
-  protected final Color backgroundColor;
-  protected final Alignment alignment;
-  protected final Alignment verticalAlignment;
-  protected final boolean shadowEnabled;
-  protected final int shadowOffsetX;
-  protected final int shadowOffsetY;
-  protected final Color shadowColor;
+  private static final int DEFAULT_FONT_STYLE = Font.PLAIN;
+  private static final int DEFAULT_FONT_SIZE = 20;
+  private static final Color DEFAULT_COLOR = Color.WHITE;
+  private static final Color DEFAULT_BACKGROUND_COLOR = Constants.TRANSPARENT_COLOR;
+  private static final Alignment DEFAULT_ALIGNMENT = Alignment.START;
+  private static final Alignment DEFAULT_VERTICAL_ALIGNMENT = Alignment.START;
+  private static final boolean DEFAULT_SHADOW_ENABLED = false;
+  private static final int DEFAULT_SHADOW_OFFSET_X = 0;
+  private static final int DEFAULT_SHADOW_OFFSET_Y = 0;
+  private static final Color DEFAULT_SHADOW_COLOR = Color.WHITE;
 
-  private final Font renderFont;
-  private final FontMetrics fontMetrics;
+  protected final String text;
+  protected Font font;
+  protected int fontStyle;
+  protected int fontSize;
+  protected Color color;
+  protected Color backgroundColor;
+  protected Alignment alignment;
+  protected Alignment verticalAlignment;
+  protected boolean shadowEnabled;
+  protected int shadowOffsetX;
+  protected int shadowOffsetY;
+  protected Color shadowColor;
+
+  private final TextOptions options;
+  private Font renderFont;
+  private FontMetrics fontMetrics;
   private String[] textLines;
   private double[] textOffsets;
 
   public Text(TextOptions options, String text) {
+    this.options = options;
     this.text = text;
-    this.font = options.font;
-    this.fontStyle = options.fontStyle;
-    this.fontSize = options.fontSize;
-    this.color = options.color;
-    this.backgroundColor = options.backgroundColor;
-    this.alignment = options.alignment;
-    this.verticalAlignment = options.verticalAlignment;
-    this.shadowEnabled = options.shadowEnabled;
-    this.shadowOffsetX = options.shadowOffsetX;
-    this.shadowOffsetY = options.shadowOffsetY;
-    this.shadowColor = options.shadowColor;
-
-    renderFont = font != null
-      ? font.deriveFont(fontStyle, fontSize)
-      : DEFAULT_FONT.deriveFont(fontStyle, fontSize);
-    fontMetrics = UI.getFontMetrics(renderFont);
-    textLines = new String[0];
   }
 
   public static Text create(TextOptions params, String text) {
@@ -65,6 +62,29 @@ public class Text extends Leaf {
 
   public static TextOptions options() {
     return new TextOptions();
+  }
+
+  @Override
+  protected void performMounted() {
+    Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
+
+    font = coalesce(options.font, theme.textFont, DEFAULT_FONT);
+    fontStyle = coalesce(options.fontStyle, theme.textFontStyle, DEFAULT_FONT_STYLE);
+    fontSize = coalesce(options.fontSize, theme.textFontSize, DEFAULT_FONT_SIZE);
+    color = coalesce(options.color, theme.textColor, DEFAULT_COLOR);
+    backgroundColor = coalesce(options.backgroundColor, theme.textBackgroundColor, DEFAULT_BACKGROUND_COLOR);
+    alignment = coalesce(options.alignment, theme.textAlignment, DEFAULT_ALIGNMENT);
+    verticalAlignment = coalesce(options.verticalAlignment, theme.textVerticalAlignment, DEFAULT_VERTICAL_ALIGNMENT);
+    shadowEnabled = coalesce(options.shadowEnabled, theme.textShadowEnabled, DEFAULT_SHADOW_ENABLED);
+    shadowOffsetX = coalesce(options.shadowOffsetX, theme.textShadowOffsetX, DEFAULT_SHADOW_OFFSET_X);
+    shadowOffsetY = coalesce(options.shadowOffsetY, theme.textShadowOffsetY, DEFAULT_SHADOW_OFFSET_Y);
+    shadowColor = coalesce(options.shadowColor, theme.textShadowColor, DEFAULT_SHADOW_COLOR);
+
+    renderFont = font != null
+      ? font.deriveFont(fontStyle, fontSize)
+      : DEFAULT_FONT.deriveFont(fontStyle, fontSize);
+    fontMetrics = UI.getFontMetrics(renderFont);
+    textLines = new String[0];
   }
 
   @Override
@@ -214,17 +234,17 @@ public class Text extends Leaf {
   }
 
   public static class TextOptions {
-    Font font = DEFAULT_FONT;
-    int fontStyle = Font.PLAIN;
-    int fontSize = 20;
-    Color color = Color.WHITE;
-    Color backgroundColor = Constants.TRANSPARENT_COLOR;
-    Alignment alignment = Alignment.START;
-    Alignment verticalAlignment = Alignment.START;
-    boolean shadowEnabled = false;
-    int shadowOffsetX = 0;
-    int shadowOffsetY = 0;
-    Color shadowColor = Color.WHITE;
+    Font font;
+    Integer fontStyle;
+    Integer fontSize;
+    Color color;
+    Color backgroundColor;
+    Alignment alignment;
+    Alignment verticalAlignment;
+    Boolean shadowEnabled;
+    Integer shadowOffsetX;
+    Integer shadowOffsetY;
+    Color shadowColor;
 
     public TextOptions fontStyle(int fontStyle) {
       this.fontStyle = fontStyle;

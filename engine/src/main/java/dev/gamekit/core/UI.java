@@ -10,7 +10,6 @@ import dev.gamekit.ui.widgets.MultiChildParent;
 import dev.gamekit.ui.widgets.Parent;
 import dev.gamekit.ui.widgets.SingleChildParent;
 import dev.gamekit.ui.widgets.Widget;
-import dev.gamekit.utils.Constants;
 import dev.gamekit.utils.Position;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -78,7 +77,11 @@ public final class UI {
   }
 
   public void triggerRender() {
-    this.renderCount = MAX_RENDERS_PER_TRIGGER;
+    renderCount = MAX_RENDERS_PER_TRIGGER;
+  }
+
+  void triggerUpdate() {
+    needsLayout = true;
   }
 
   /** Set the initial widget tree */
@@ -86,14 +89,11 @@ public final class UI {
     this.tree = tree;
 
     if (this.tree != null) {
+      this.tree.mounted();
       this.tree.layout(windowConstraints);
       this.tree.postLayout();
       triggerRender();
     }
-  }
-
-  void triggerUpdate() {
-    needsLayout = true;
   }
 
   /**
@@ -172,6 +172,7 @@ public final class UI {
     }
 
     if (treeUpdated) {
+      tree.mounted();
       tree.layout(windowConstraints);
       tree.postLayout();
       triggerRender();

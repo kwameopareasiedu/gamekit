@@ -1,7 +1,7 @@
 package dev.gamekit.animation;
 
 import dev.gamekit.core.Application;
-import dev.gamekit.utils.Constants;
+import dev.gamekit.core.Constants;
 
 import static dev.gamekit.utils.Math.clamp;
 

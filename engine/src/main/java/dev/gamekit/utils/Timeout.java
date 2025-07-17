@@ -1,5 +1,7 @@
 package dev.gamekit.utils;
 
+import dev.gamekit.core.Constants;
+
 /** Timeout executes a specified {@link Task} after its duration has elapsed. */
 public class Timeout {
   boolean completed;

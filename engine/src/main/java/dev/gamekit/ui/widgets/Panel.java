@@ -3,7 +3,7 @@ package dev.gamekit.ui.widgets;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.mixins.NinePatch;
-import dev.gamekit.utils.Constants;
+import dev.gamekit.core.Constants;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

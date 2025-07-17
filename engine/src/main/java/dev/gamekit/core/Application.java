@@ -2,7 +2,6 @@ package dev.gamekit.core;
 
 import dev.gamekit.animation.Animation;
 import dev.gamekit.settings.Settings;
-import dev.gamekit.utils.Constants;
 import dev.gamekit.utils.Task;
 import dev.gamekit.utils.Timeout;
 import org.apache.logging.log4j.LogManager;

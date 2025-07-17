@@ -1,6 +1,5 @@
 package dev.gamekit.core;
 
-import dev.gamekit.utils.Constants;
 import dev.gamekit.utils.Task;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;

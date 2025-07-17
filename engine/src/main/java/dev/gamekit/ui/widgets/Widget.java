@@ -57,6 +57,20 @@ public abstract class Widget {
   public abstract boolean stateEquals(Widget widget);
 
   /**
+   * Called after the widget has been inserted into the widget tree and {@link #parent} is set.
+   * This is useful if the widget needs to access some ancestors for additional information.
+   * <p>
+   * Since this method is marked as {@code final}, subclasses should override the
+   * {@link #performMounted()} method instead to perform any post-mount operations
+   */
+  public final void mounted() {
+    performMounted();
+  }
+
+  /** Delegate method which runs post-mounted logic */
+  protected void performMounted() { /* No-op */ }
+
+  /**
    * Computes the layout for the widget
    * <p>
    * This is called by either the parent widget or window and receives the {@link Constraints}
@@ -104,6 +118,9 @@ public abstract class Widget {
    * <p>
    * This method is {@code final} and delegates the actual drawing to
    * {@link #performRender(Graphics2D)}.
+   * <p>
+   * Since this method is marked as {@code final}, subclasses should override the
+   * {@link #performRender(Graphics2D)} method instead to perform rendering
    */
   public final void render(Graphics2D canvasGraphics) {
     if (parent != null) {
@@ -146,6 +163,14 @@ public abstract class Widget {
    */
   protected abstract void performRender(Graphics2D g);
 
+  /** Determines if point (x, y) falls within the absolute bounds of this widget */
+  public boolean hitTest(double x, double y) {
+    double absoluteRight = absoluteBounds.x + absoluteBounds.width;
+    double absoluteBottom = absoluteBounds.y + absoluteBounds.height;
+    return absoluteBounds.x <= x && x <= absoluteRight &&
+      absoluteBounds.y <= y && y <= absoluteBottom;
+  }
+
   protected void computeAbsoluteBounds() {
     double absoluteX = computedBounds.x;
     double absoluteY = computedBounds.y;
@@ -164,11 +189,26 @@ public abstract class Widget {
     );
   }
 
-  /** Determines if point (x, y) falls within the absolute bounds of this widget */
-  public boolean hitTest(double x, double y) {
-    double absoluteRight = absoluteBounds.x + absoluteBounds.width;
-    double absoluteBottom = absoluteBounds.y + absoluteBounds.height;
-    return absoluteBounds.x <= x && x <= absoluteRight &&
-      absoluteBounds.y <= y && y <= absoluteBottom;
+  /**
+   * Looks up the ancestor of this widget for a {@link Widget} of the specified {@code type} and
+   * returns the first instance of said ancestor.
+   * <p>
+   * If no ancestor of the specified type is found, it returns {@code null}
+   */
+  public <T extends Widget> T getAncestorOfType(Class<T> type) {
+    if (this.parent == null)
+      return null;
+
+    Widget parent = this.parent;
+
+    while (parent != null) {
+      if (type.isInstance(parent))
+        //noinspection unchecked
+        return (T) parent;
+
+      parent = parent.parent;
+    }
+
+    return null;
   }
 }

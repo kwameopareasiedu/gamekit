@@ -4,7 +4,7 @@ import dev.gamekit.core.Application;
 import dev.gamekit.core.Physics;
 import dev.gamekit.core.Renderer;
 import dev.gamekit.core.Trait;
-import dev.gamekit.utils.Constants;
+import dev.gamekit.core.Constants;
 import dev.gamekit.utils.Vector;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;

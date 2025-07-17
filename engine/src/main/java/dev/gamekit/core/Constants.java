@@ -1,6 +1,4 @@
-package dev.gamekit.utils;
-
-import dev.gamekit.core.IO;
+package dev.gamekit.core;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

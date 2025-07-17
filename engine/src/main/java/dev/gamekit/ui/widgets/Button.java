@@ -5,7 +5,7 @@ import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.events.InputEventHandler;
 import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.mixins.NinePatch;
-import dev.gamekit.utils.Constants;
+import dev.gamekit.core.Constants;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
