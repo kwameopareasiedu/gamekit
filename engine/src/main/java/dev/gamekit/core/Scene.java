@@ -35,7 +35,7 @@ public abstract class Scene extends Entity {
   }
 
   @Override
-  protected final List<Trait> getTraits() {
+  protected final List<Component> getComponents() {
     return null;
   }
 

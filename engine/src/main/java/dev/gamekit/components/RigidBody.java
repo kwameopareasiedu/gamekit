@@ -1,10 +1,7 @@
-package dev.gamekit.traits;
+package dev.gamekit.components;
 
-import dev.gamekit.core.Application;
-import dev.gamekit.core.Physics;
-import dev.gamekit.core.Renderer;
-import dev.gamekit.core.Trait;
-import dev.gamekit.core.Constants;
+import dev.gamekit.core.*;
+import dev.gamekit.core.Component;
 import dev.gamekit.utils.Vector;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
@@ -15,18 +12,23 @@ import java.awt.*;
 
 import static dev.gamekit.utils.Math.toInt;
 
-/** The {@link Physical} {@link Trait trait} adds physics-based motion to an entity */
-public class Physical extends Trait {
+/**
+ * The {@link RigidBody} component enables physics-based motion for the entity.
+ * <p>
+ * During its {@link #update()} phase and after a physics simulation step is complete, this
+ * component will update the attached entity's {@link Transform} component's position and rotation
+ */
+public class RigidBody extends Component {
   public static boolean DEBUG_DRAW = false;
 
   private final Body body;
 
-  public Physical() {
+  public RigidBody() {
     body = new Body();
     body.setMassType(MassType.INFINITE);
   }
 
-  public Physical(MassType massType, Vector massCenter, double mass, double inertia) {
+  public RigidBody(MassType massType, Vector massCenter, double mass, double inertia) {
     body = new Body();
     body.setMassType(massType);
     body.setMass(new Mass(new Vector2(massCenter.x, massCenter.y), mass, inertia));
@@ -85,11 +87,11 @@ public class Physical extends Trait {
   protected void update() {
     super.update();
 
-    Transform transformTrait = entity.findTrait(Transform.class);
+    Transform transformComponent = entity.findComponent(Transform.class);
 
-    if (transformTrait != null) {
+    if (transformComponent != null) {
       Vector2 center = body.getWorldCenter();
-      transformTrait.setPosition(center.x, center.y);
+      transformComponent.setPosition(center.x, center.y);
     }
   }
 

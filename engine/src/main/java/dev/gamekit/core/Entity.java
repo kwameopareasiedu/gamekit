@@ -1,6 +1,6 @@
 package dev.gamekit.core;
 
-import dev.gamekit.traits.Transform;
+import dev.gamekit.components.Transform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,14 +18,14 @@ public abstract class Entity {
   protected final String name;
   protected final Logger logger = LogManager.getLogger(getClass());
   protected final ArrayList<Entity> children;
-  protected final ArrayList<Trait> traits;
+  protected final ArrayList<Component> components;
   protected Entity parent;
 
   public Entity(String name) {
     this.name = name;
     children = new ArrayList<>();
-    traits = new ArrayList<>();
-    traits.add(new Transform());
+    components = new ArrayList<>();
+    components.add(new Transform());
   }
 
   public Entity getParent() {
@@ -59,19 +59,19 @@ public abstract class Entity {
     }
   }
 
-  /** Returns a {@link Trait} of the specified class else {@code null} */
-  public <T extends Trait> T findTrait(Class<T> clazz) {
-    for (Trait trait : traits) {
-      if (clazz.isInstance(trait))
+  /** Returns a {@link Component} of the specified class else {@code null} */
+  public <T extends Component> T findComponent(Class<T> clazz) {
+    for (Component component : components) {
+      if (clazz.isInstance(component))
         //noinspection unchecked
-        return (T) trait;
+        return (T) component;
     }
 
     return null;
   }
 
-  /** Called during {@link #start()} to get the traits of the entity */
-  protected List<Trait> getTraits() {
+  /** Called during {@link #start()} to get the components of the entity */
+  protected List<Component> getComponents() {
     return null;
   }
 
@@ -93,18 +93,20 @@ public abstract class Entity {
 
   /** Called <b>once</b> by the parent {@link Entity} to initialize the entity */
   void _start() {
-    List<Trait> traits = getTraits();
+    List<Component> components = getComponents();
 
-    if (traits != null) {
-      for (Trait trait : traits) {
-        if (this.traits.stream().anyMatch(t -> t.getClass().isInstance(trait)))
-          throw new IllegalArgumentException("Entity cannot have more than one type of a Trait");
+    if (components != null) {
+      for (Component component : components) {
+        if (this.components.stream().anyMatch(c -> c.getClass().isInstance(component)))
+          throw new IllegalArgumentException(
+            "Entity cannot have more than one type of a Component"
+          );
 
-        this.traits.add(trait);
+        this.components.add(component);
       }
 
-      for (Trait trait : this.traits)
-        trait._start(this);
+      for (Component component : this.components)
+        component._start(this);
     }
 
     start();
@@ -112,14 +114,14 @@ public abstract class Entity {
 
   /** Called by the parent {@link Entity} to update the entity */
   void _update() {
-    traits.forEach(Trait::_update);
+    components.forEach(Component::_update);
     update();
     children.forEach(Entity::_update);
   }
 
   /** Called by the parent {@link Entity} to render the entity */
   void _render() {
-    traits.forEach(Trait::_render);
+    components.forEach(Component::_render);
     render();
     children.forEach(Entity::_render);
   }
@@ -128,7 +130,7 @@ public abstract class Entity {
   void _dispose() {
     children.forEach(Entity::_dispose);
     dispose();
-    traits.forEach(Trait::_dispose);
+    components.forEach(Component::_dispose);
     parent = null;
   }
 }

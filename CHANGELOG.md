@@ -5,8 +5,6 @@
 - Add more UI widgets (Input, Checkbox, Slider)
 - Implement spanning for text widget which is the ability to use different text attributes for
   the same text widget
-- Add theming capability to UI widgets
-- Integrate physics engine
 - Implement dynamic lighting
 - Add network multiplayer capabilities
 
@@ -24,15 +22,15 @@
 
 ### Added
 
-- Added abstract `Trait` which is the base class for all entity traits
-- Added `Transform` which is a `Trait` that contains position, rotation and scale parameters
-- Added `Physical` which is a `Trait` that adds physics-based motion to an entity
+- Added abstract `Component` which is the base class for all entity component
+- Added `Transform` which is a `Component` that contains position, rotation and scale parameters
+- Added `RigidBody` which is a `Component` that enables physics-based motion for an entity
 - Added `Physics` class which manages the physics world updates and collision processing
-- Added traits processing to `Entity` class
-- Added `public <T extends Trait> findTrait(Class<T> clazz)` to `Entity` class which finds a
-  specific trait on and `Entity`
+- Added component lifecycle processing to `Entity` class
+- Added `public <T extends Component> findComponent(Class<T> clazz)` to `Entity` class which finds 
+  a specific component on and `Entity`
 - Added `public void mounted()` lifecycle method to `Widget` class
-- Added `Theme` widget which is a `SingleChildParent` which theme variables to its child tree
+- Added `Theme` widget which is a `SingleChildParent` which theme variables to its descendants
 - Updated `Text` widget to utilize nearest available `Theme` in ancestry
 - Updated `Button` widget to utilize nearest available `Theme` in ancestry
 - Changed `Resolution` enum to a record class

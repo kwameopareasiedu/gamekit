@@ -4,10 +4,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * {@link Trait} represent predefined behaviors that can be attached to {@link Entity entities}.
- * These behaviors include, but are not limited to, physics, lighting and network components.
+ * While an {@link Entity} can have all functionality written entirely in its own class, it's
+ * usually a good idea to separate independent functionality from each other, and this is where
+ * components come in.
+ * <p>
+ * {@link Component} represents predefined behaviours that can then be attached to one or more
+ * {@link Entity entities}. These behaviors include, but are not limited to, physics, lighting
+ * and network components.
  */
-public abstract class Trait {
+public abstract class Component {
   protected final Logger logger = LogManager.getLogger(getClass());
 
   protected Entity entity;
