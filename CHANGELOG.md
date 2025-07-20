@@ -40,7 +40,7 @@
 
 ### Changed
 
-- Updated `public static [WidgetName]Options options()` method in all widget classes to
+- Updated `public static <_InsertWidgetName_>Options options()` method in all widget classes to
   `public static Config config()`
 - Changed `static Window getInstance()` in `Window` class from public to package-private
 

@@ -23,18 +23,24 @@ public class RigidBody extends Component {
 
   private final Body body;
 
+  /** Creates a {@link RigidBody} with infinite mass (I.e. static object) */
   public RigidBody() {
     body = new Body();
     body.setMassType(MassType.INFINITE);
   }
 
+  /** Creates a {@link RigidBody} with infinite mass (I.e. static object) */
   public RigidBody(MassType massType, Vector massCenter, double mass, double inertia) {
     body = new Body();
     body.setMassType(massType);
     body.setMass(new Mass(new Vector2(massCenter.x, massCenter.y), mass, inertia));
   }
 
-  public void setCustomData(Object data) {
+  /**
+   * Sets custom user data to this {@link RigidBody} which can be used to identify this
+   * {@link RigidBody} in collision listeners
+   */
+  public void setUserData(Object data) {
     body.setUserData(data);
   }
 
