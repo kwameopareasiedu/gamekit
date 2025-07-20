@@ -10,7 +10,7 @@ import org.dyn4j.geometry.Rectangle;
 
 import java.awt.*;
 
-import static dev.gamekit.utils.Math.toInt;
+import static dev.gamekit.utils.Math.*;
 
 /**
  * The {@link RigidBody} component enables physics-based motion for the entity.
@@ -38,41 +38,80 @@ public class RigidBody extends Component {
     body.setUserData(data);
   }
 
+  /**
+   * Sets the world gravity multiplier on this {@link RigidBody}
+   * @see org.dyn4j.dynamics.PhysicsBody#setGravityScale(double)
+   */
   public void setGravityScale(double scale) {
     body.setGravityScale(scale);
   }
 
-  public void setWorldPosition(double x, double y) {
-    Vector2 center = body.getWorldCenter();
-    body.translate(center.multiply(-1).add(x, y));
+  /** Sets the world position of this {@link RigidBody} */
+  public void setPosition(double x, double y) {
+    body.getTransform().setTranslation(x, y);
   }
 
-  public void addCircleFixture(double radius, BodyFixtureTuner tuner) {
+  /** Sets the global rotation of this {@link RigidBody} about its center */
+  public void setRotation(double deg) {
+    body.getTransform().setRotation(-degToRad(deg));
+  }
+
+  /** Sets the global rotation of this {@link RigidBody} about a point */
+  public void setRotation(double deg, Vector point) {
+    setRotation(0);
+    body.rotate(-degToRad(deg), point.x, point.y);
+  }
+
+  /**
+   * Creates a circle with the specified {@code radius} and attaches it to this
+   * {@link RigidBody} via a {@link BodyFixture}. After creation, the new {@link Circle} and
+   * {@link BodyFixture} are passed to the {@code tuner} for configuration before they are added
+   * to this {@link RigidBody}
+   */
+  public void addCircleFixture(double radius, FixtureTuner<Circle> tuner) {
     Circle circle = new Circle(radius);
     BodyFixture fx = new BodyFixture(circle);
-    tuner.tuneFixture(fx);
+    tuner.tuneFixture(fx, circle);
     body.addFixture(fx);
+    body.updateMass();
   }
 
-  public void addCircleFixture(double radius) {
-    addCircleFixture(radius, fx -> { });
-  }
-
-  public void addRectFixture(double width, double height, BodyFixtureTuner tuner) {
+  /**
+   * Creates a rectangle with the specified {@code width} and {@code height} and attaches it to
+   * this {@link RigidBody} via a {@link BodyFixture}.After creation, the new {@link Rectangle} and
+   * {@link BodyFixture} are passed to the {@code tuner} for configuration before they are added
+   * to this {@link RigidBody}
+   */
+  public void addRectFixture(double width, double height, FixtureTuner<Rectangle> tuner) {
     Rectangle rect = new Rectangle(width, height);
     BodyFixture fx = new BodyFixture(rect);
-    tuner.tuneFixture(fx);
+    tuner.tuneFixture(fx, rect);
     body.addFixture(fx);
+    body.updateMass();
   }
 
-  public void addRectFixture(double width, double height) {
-    addRectFixture(width, height, fx -> { });
+  /**
+   * Applies a linear impulse vector to this {@link RigidBody}
+   * @see org.dyn4j.dynamics.PhysicsBody#applyImpulse(Vector2)
+   */
+  public void applyImpulse(double x, double y) {
+    body.applyImpulse(new Vector2(x, y));
   }
 
-  public void applyImpulse(Vector vector) {
-    body.applyImpulse(new Vector2(vector.x, vector.y));
+  /**
+   * Applies a torque about the center of this {@link RigidBody}
+   * @see org.dyn4j.dynamics.PhysicsBody#applyTorque(double)
+   */
+  public void applyTorque(double torque) {
+    body.applyTorque(torque);
   }
 
+  /**
+   * Attaches a collision listener to this {@link RigidBody}. When this {@link RigidBody}
+   * collides with other rigid bodies, this listener is invoked with the details of the collision
+   * <p>
+   * <i>The listener is automatically removed when the host entity is disposed</i>
+   */
   public void addCollisionListener(Physics.CollisionListener listener) {
     Physics.addCollisionListener(body, listener);
   }
@@ -87,12 +126,10 @@ public class RigidBody extends Component {
   protected void update() {
     super.update();
 
-    Transform transformComponent = entity.findComponent(Transform.class);
-
-    if (transformComponent != null) {
-      Vector2 center = body.getWorldCenter();
-      transformComponent.setPosition(center.x, center.y);
-    }
+    Transform tx = entity.findComponent(Transform.class);
+    Vector2 center = body.getWorldCenter();
+    tx.setPosition(center.x, center.y);
+    tx.setRotation(radToDeg(body.getTransform().getRotationAngle()));
   }
 
   @Override
@@ -101,6 +138,9 @@ public class RigidBody extends Component {
 
     if (DEBUG_DRAW) {
       Vector2 bodyCenter = body.getWorldCenter();
+      int bodyCenterX = toInt(bodyCenter.x * Constants.PIXELS_PER_METER);
+      int bodyCenterY = toInt(bodyCenter.y * Constants.PIXELS_PER_METER);
+      double bodyRotation = radToDeg(-body.getTransform().getRotationAngle());
 
       for (BodyFixture fx : body.getFixtures()) {
         Convex shape = fx.getShape();
@@ -110,13 +150,23 @@ public class RigidBody extends Component {
 
         if (shape instanceof Circle circle) {
           int radius = toInt(circle.getRadius() * Constants.PIXELS_PER_METER);
-          Renderer.drawCircle(shapeCenterX, shapeCenterY, radius).withColor(Color.CYAN);
+
+          Renderer.drawCircle(shapeCenterX, shapeCenterY, radius)
+            .withColor(Color.CYAN).withRotation(bodyCenterX, bodyCenterY, bodyRotation);
+          Renderer.drawVerticalLine(shapeCenterX, shapeCenterY, shapeCenterY + radius)
+            .withRotation(bodyCenterX, bodyCenterY, bodyRotation);
         } else if (shape instanceof Rectangle rect) {
           int width = toInt(rect.getWidth() * Constants.PIXELS_PER_METER);
           int height = toInt(rect.getHeight() * Constants.PIXELS_PER_METER);
-          Renderer.drawRect(shapeCenterX, shapeCenterY, width, height).withColor(Color.CYAN);
+
+          Renderer.drawRect(shapeCenterX, shapeCenterY, width, height)
+            .withColor(Color.CYAN).withRotation(bodyCenterX, bodyCenterY, bodyRotation);
+          Renderer.drawVerticalLine(shapeCenterX, shapeCenterY, shapeCenterY + height / 2)
+            .withRotation(bodyCenterX, bodyCenterY, bodyRotation);
         }
       }
+
+      Renderer.fillCircle(bodyCenterX, bodyCenterY, 3).withColor(Color.RED);
     }
   }
 
@@ -130,8 +180,11 @@ public class RigidBody extends Component {
   }
 
   /** Interface for an object which tunes a {@link BodyFixture} */
-  public interface BodyFixtureTuner {
-    /** Called with the new {@link BodyFixture} for tuning before adding to a {@link Body} */
-    void tuneFixture(BodyFixture fixture);
+  public interface FixtureTuner<S extends Convex> {
+    /**
+     * Called with the new {@link BodyFixture} and {@link Convex Shape} before adding to a
+     * {@link Body}
+     */
+    void tuneFixture(BodyFixture fixture, S shape);
   }
 }

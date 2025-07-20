@@ -50,7 +50,7 @@ public class Button extends SingleChildParent implements NinePatch, InputEventHa
       coalesce(config.hoverBackground, theme.buttonHoverBackground, Constants.HOVER_BUTTON_BG);
     this.pressedBackground =
       coalesce(config.pressedBackground, theme.buttonPressedBackground, Constants.PRESSED_BUTTON_BG);
-    this.mouseListener = coalesce(config.mouseListener, e -> { });
+    this.mouseListener = coalesce(config.mouseListener, null);
 
     super.performMounted();
   }

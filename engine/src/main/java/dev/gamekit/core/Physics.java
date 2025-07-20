@@ -1,6 +1,5 @@
 package dev.gamekit.core;
 
-import dev.gamekit.utils.Task;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.world.ManifoldCollisionData;
@@ -56,17 +55,20 @@ public final class Physics {
     WORLD.addBody(body);
   }
 
-  /**
-   * Removes a {@link Body} from the physics world. This should be called in a scheduled task
-   * via {@link Application#scheduleTask(Task)} to ensure removal at the end of an update frame
-   */
+  /** Removes a {@link Body} from the physics world */
   public static void removeBody(Body body) {
     COLLISION_LISTENER_MAP.remove(body);
     WORLD.removeBody(body);
   }
 
+  /** Registers a collision listener for the specified {@link Body} */
   public static void addCollisionListener(Body body, CollisionListener listener) {
     COLLISION_LISTENER_MAP.put(body, listener);
+  }
+
+  /** Removes a collision listener for the specified {@link Body} */
+  public static void removeCollisionListener(Body body, CollisionListener listener) {
+    COLLISION_LISTENER_MAP.remove(body, listener);
   }
 
   /** Callback interface for physics world collisions */
