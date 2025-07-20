@@ -50,21 +50,23 @@ public class Theme extends SingleChildParent {
 
   @Override
   protected void performMounted() {
-    this.buttonNinePatchBorder = coalesce(config.buttonNinePatchBorder);
-    this.buttonDefaultBackground = coalesce(config.buttonDefaultBackground);
-    this.buttonHoverBackground = coalesce(config.buttonHoverBackground);
-    this.buttonPressedBackground = coalesce(config.buttonPressedBackground);
-    this.textFont = coalesce(config.textFont);
-    this.textFontStyle = coalesce(config.textFontStyle);
-    this.textFontSize = coalesce(config.textFontSize);
-    this.textColor = coalesce(config.textColor);
-    this.textBackgroundColor = coalesce(config.textBackgroundColor);
-    this.textAlignment = coalesce(config.textAlignment);
-    this.textVerticalAlignment = coalesce(config.textVerticalAlignment);
-    this.textShadowEnabled = coalesce(config.textShadowEnabled);
-    this.textShadowOffsetX = coalesce(config.textShadowOffsetX);
-    this.textShadowOffsetY = coalesce(config.textShadowOffsetY);
-    this.textShadowColor = coalesce(config.textShadowColor);
+    Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
+
+    this.buttonNinePatchBorder = coalesce(config.buttonNinePatchBorder, theme.buttonNinePatchBorder);
+    this.buttonDefaultBackground = coalesce(config.buttonDefaultBackground, theme.buttonDefaultBackground);
+    this.buttonHoverBackground = coalesce(config.buttonHoverBackground, theme.buttonHoverBackground);
+    this.buttonPressedBackground = coalesce(config.buttonPressedBackground, theme.buttonPressedBackground);
+    this.textFont = coalesce(config.textFont, theme.textFont);
+    this.textFontStyle = coalesce(config.textFontStyle, theme.textFontStyle);
+    this.textFontSize = coalesce(config.textFontSize, theme.textFontSize);
+    this.textColor = coalesce(config.textColor, theme.textColor);
+    this.textBackgroundColor = coalesce(config.textBackgroundColor, theme.textBackgroundColor);
+    this.textAlignment = coalesce(config.textAlignment, theme.textAlignment);
+    this.textVerticalAlignment = coalesce(config.textVerticalAlignment, theme.textVerticalAlignment);
+    this.textShadowEnabled = coalesce(config.textShadowEnabled, theme.textShadowEnabled);
+    this.textShadowOffsetX = coalesce(config.textShadowOffsetX, theme.textShadowOffsetX);
+    this.textShadowOffsetY = coalesce(config.textShadowOffsetY, theme.textShadowOffsetY);
+    this.textShadowColor = coalesce(config.textShadowColor, theme.textShadowColor);
     super.performMounted();
   }
 
