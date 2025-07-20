@@ -7,6 +7,8 @@
   the same text widget
 - Implement dynamic lighting
 - Add network multiplayer capabilities
+- Implement minimum size computation in widgets
+- Implement minimum size and height configuration in Sized widget
 
 ## UNRELEASED
 
@@ -37,6 +39,7 @@
 - Added `static Resolution create(int width, int height)` to the `Resolution` record class
 - Added `public static getInfo()` to `Window` class to return `Window.Info` instance
 - Added public constructor to `Resolution` class to allow for custom resolutions
+- Added `WindowMode.BORDERLESS` setting value
 
 ### Changed
 

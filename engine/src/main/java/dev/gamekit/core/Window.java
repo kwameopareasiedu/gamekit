@@ -64,6 +64,7 @@ public final class Window {
       frame.setMinimumSize(d);
       frame.setPreferredSize(d);
       frame.setResizable(false);
+      frame.setUndecorated(settings.undecroated);
       displayScaleRatio = 1;
     }
 
