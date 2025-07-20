@@ -56,17 +56,24 @@ public class RigidBody extends Component {
     body.getTransform().setRotation(-degToRad(deg));
   }
 
-  /** Sets the global rotation of this {@link RigidBody} about a point */
-  public void setRotation(double deg, Vector point) {
-    setRotation(0);
-    body.rotate(-degToRad(deg), point.x, point.y);
+  /**
+   * Sets the global rotation of this {@link RigidBody} about a point {@code (rx, ry)}
+   * <p>
+   * Rotating about a non-center point changes the position, so the starting position
+   * {@code (sx, sy)} is required
+   */
+  public void setRotation(double deg, double rx, double ry, double sx, double sy) {
+    body.getTransform().setRotation(0);
+    body.getTransform().setTranslation(sx, sy);
+    body.rotate(-degToRad(deg), rx, ry);
   }
 
   /**
    * Creates a circle with the specified {@code radius} and attaches it to this
-   * {@link RigidBody} via a {@link BodyFixture}. After creation, the new {@link Circle} and
-   * {@link BodyFixture} are passed to the {@code tuner} for configuration before they are added
-   * to this {@link RigidBody}
+   * {@link RigidBody} via a {@link BodyFixture}.
+   * <p>
+   * After creation, the new {@link Circle} and {@link BodyFixture} are passed to the
+   * {@code tuner} for configuration before they are added to this {@link RigidBody}
    */
   public void addCircleFixture(double radius, FixtureTuner<Circle> tuner) {
     Circle circle = new Circle(radius);
@@ -77,10 +84,20 @@ public class RigidBody extends Component {
   }
 
   /**
+   * Creates a circle with the specified {@code radius} and attaches it to this
+   * {@link RigidBody} via a {@link BodyFixture} without additional tuning
+   * @see #addCircleFixture(double, FixtureTuner)
+   */
+  public void addCircleFixture(double radius) {
+    addCircleFixture(radius, (fx, shape) -> { });
+  }
+
+  /**
    * Creates a rectangle with the specified {@code width} and {@code height} and attaches it to
-   * this {@link RigidBody} via a {@link BodyFixture}.After creation, the new {@link Rectangle} and
-   * {@link BodyFixture} are passed to the {@code tuner} for configuration before they are added
-   * to this {@link RigidBody}
+   * this {@link RigidBody} via a {@link BodyFixture}
+   * <p>
+   * After creation, the new {@link Rectangle} and {@link BodyFixture} are passed to the {@code
+   * tuner} for configuration before they are added to this {@link RigidBody}
    */
   public void addRectFixture(double width, double height, FixtureTuner<Rectangle> tuner) {
     Rectangle rect = new Rectangle(width, height);
@@ -88,6 +105,15 @@ public class RigidBody extends Component {
     tuner.tuneFixture(fx, rect);
     body.addFixture(fx);
     body.updateMass();
+  }
+
+  /**
+   * Creates a rectangle with the specified {@code width} and {@code height} and attaches it to
+   * this {@link RigidBody} via a {@link BodyFixture} without additional tuning
+   * @see #addRectFixture(double, double, FixtureTuner)
+   */
+  public void addRectFixture(double width, double height) {
+    addRectFixture(width, height, (fx, shape) -> { });
   }
 
   /**

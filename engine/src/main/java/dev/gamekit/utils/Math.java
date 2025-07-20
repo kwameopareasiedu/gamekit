@@ -2,6 +2,9 @@ package dev.gamekit.utils;
 
 /** Provides commonly used math utility methods */
 public final class Math {
+  private static final double DEGREES_TO_RADIANS = 0.017453292519943295;
+  private static final double RADIANS_TO_DEGREES = 57.29577951308232;
+
   private Math() { }
 
   public static int toInt(float number) {
@@ -31,12 +34,12 @@ public final class Math {
 
   /** Converts a rotation in degree to radian */
   public static double degToRad(double deg) {
-    return deg / 180 * java.lang.Math.PI;
+    return deg * DEGREES_TO_RADIANS;
   }
 
   /** Converts a rotation in radian to degree */
   public static double radToDeg(double rad) {
-    return (rad / (2 * java.lang.Math.PI)) * 360;
+    return rad * RADIANS_TO_DEGREES;
   }
 
   /** Linearly interpolates between two values using a specified rate */
