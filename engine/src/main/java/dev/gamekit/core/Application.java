@@ -69,8 +69,8 @@ public abstract class Application {
       throw new IllegalArgumentException("Unable to load a null scene");
     }
 
-    logger.debug("Loaded scene: {}", scene.name);
     this.nextScene = scene;
+    logger.debug("Primed next scene: {}", scene.name);
   }
 
   /** Schedule a task to be executed immediately after the end of the current frame. */
