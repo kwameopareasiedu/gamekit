@@ -26,7 +26,7 @@ public class Demo4UserInterface extends Scene {
   public static void main(String[] args) {
     Application game = new Application(
       new Settings(
-        "Demo 3 - Declarative UI",
+        "Demo 4 - Declarative UI",
         Resolution.NATIVE,
         WindowMode.FULLSCREEN,
         Antialiasing.OFF,
