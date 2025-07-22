@@ -28,10 +28,6 @@ public class Transform extends Component {
     return position.y;
   }
 
-  public double getRotation() {
-    return rotation;
-  }
-
   /**
    * Sets the position and computes the local position based on the host {@link Entity entity's}
    * parent (if any)
@@ -55,8 +51,13 @@ public class Transform extends Component {
     }
   }
 
-  /** Set the rotation in degrees */
-  public void setRotation(double rotation) {
-    this.rotation = rotation;
+  /** Returns the transform's rotation <b>in degrees</b> */
+  public double getRotation() {
+    return rotation;
+  }
+
+  /** Set the transform's rotation <b>in degrees</b> */
+  public void setRotation(double deg) {
+    this.rotation = deg;
   }
 }

@@ -45,6 +45,10 @@ public final class Physics {
 
   private Physics() { }
 
+  /**
+   * Performs a simulation step of the physics world
+   * @see org.dyn4j.world.AbstractPhysicsWorld#update(double)
+   */
   static void update() {
     double elapsedTime = Constants.FRAME_TIME_MS / 1000.0;
     WORLD.update(elapsedTime);

@@ -3,6 +3,9 @@ package dev.gamekit.ui.widgets;
 import dev.gamekit.core.Constants;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Spacing;
+import dev.gamekit.ui.events.InputEvent;
+import dev.gamekit.ui.events.InputEventHandler;
+import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.mixins.NinePatch;
 
 import java.awt.*;
@@ -15,7 +18,7 @@ import static dev.gamekit.utils.Misc.coalesce;
  * A {@link SingleChildParent} which uses the 9-patch algorithm to render a {@link BufferedImage}
  * as a background to its descendants
  */
-public class Panel extends SingleChildParent implements NinePatch {
+public class Panel extends SingleChildParent implements NinePatch, InputEventHandler {
   protected BufferedImage background;
   protected Spacing ninePatchBorder;
 
@@ -83,6 +86,22 @@ public class Panel extends SingleChildParent implements NinePatch {
     }
 
     return false;
+  }
+
+  @Override
+  public MouseEvent.Listener getMouseListener() {
+    return null;
+  }
+
+  @Override
+  public void setMouseEntered(boolean mouseEntered) {/* No-op */}
+
+  @Override
+  public void setMousePressed(boolean mouseEntered) {/* No-op */}
+
+  @Override
+  public void handleEvent(InputEvent event) {
+    event.setHandled();
   }
 
   public static class Config {

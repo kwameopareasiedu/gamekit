@@ -15,29 +15,47 @@ import org.apache.logging.log4j.Logger;
 public abstract class Component {
   protected final Logger logger = LogManager.getLogger(getClass());
 
+  /** The host {@link Entity entity} the component is attached to */
   protected Entity entity;
 
+  /**
+   * Called when attached to an {@link Entity} to set up the component
+   * <p>
+   * NB: <i>The value of {@link #entity} is set before this method is called and can safely be
+   * accessed here.</i>
+   */
   protected void start() { }
 
+  /** Called to update the component */
   protected void update() { }
 
+  /** Called to render the component */
   protected void render() { }
 
+  /**
+   * Called to dispose the component
+   * <p>
+   * NB: <i>The value of {@link #entity} can still be accessed here</i>
+   */
   protected void dispose() { }
 
+  /** Called <b>once</b> by the host {@link Entity} to initialize the component */
   void _start(Entity entity) {
     this.entity = entity;
     start();
   }
 
+  /** Called by the host {@link Entity} to update the component */
   void _update() {
     update();
   }
 
+  /** Called by the host {@link Entity} to render the component */
   void _render() {
     render();
   }
 
+  /** Called <b>once</b> by the host {@link Entity} to dispose the component */
   void _dispose() {
     dispose();
     entity = null;

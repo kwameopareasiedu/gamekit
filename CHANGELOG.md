@@ -2,13 +2,13 @@
 
 ## Road Map
 
-- Add more UI widgets (Input, Checkbox, Slider)
-- Implement spanning for text widget which is the ability to use different text attributes for
-  the same text widget
-- Implement dynamic lighting
-- Add network multiplayer capabilities
-- Implement minimum size computation in widgets
-- Implement minimum size and height configuration in Sized widget
+- More UI widgets (Input, Checkbox, Slider)
+- Text widget spanning to allow different text attributes for different segments of text
+- Dynamic lighting
+- Networked multiplayer
+- Minimum size computation in widgets
+- Sized widget minimum size configuration
+- Maven plugin for CLI tasks like packaging
 
 ## UNRELEASED
 

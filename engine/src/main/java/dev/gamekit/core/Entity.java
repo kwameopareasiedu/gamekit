@@ -129,8 +129,8 @@ public abstract class Entity {
   /** Called <b>once</b> by the parent {@link Entity} to dispose the entity */
   void _dispose() {
     children.forEach(Entity::_dispose);
-    dispose();
     components.forEach(Component::_dispose);
+    dispose();
     parent = null;
   }
 }
