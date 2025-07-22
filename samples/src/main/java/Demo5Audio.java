@@ -2,6 +2,7 @@ import dev.gamekit.audio.AudioAttenuation;
 import dev.gamekit.audio.AudioClip3D;
 import dev.gamekit.audio.AudioGroup;
 import dev.gamekit.audio.AudioListener;
+import dev.gamekit.audio.shapes.AudioShape;
 import dev.gamekit.audio.shapes.AudioShapeCircle;
 import dev.gamekit.core.*;
 import dev.gamekit.core.Window;
@@ -20,6 +21,18 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
+/**
+ * This demo shows how to work with audio in GameKit and performs the following actions:
+ * <ul>
+ *   <li>Creates an {@link Application application}</li>
+ *   <li>
+ *     Preloads a {@link AudioClip3D 3D audio clip} with a circle {@link AudioShape shape} and
+ *     linear {@link AudioAttenuation attenuation}
+ *   </li>
+ *   <li>Detects mouse input using {@link Input} to start/restart/stop the audio playback</li>
+ *   <li>Overrides the {@link Scene#createUI()}} method to construct a simple user interface</li>
+ * </ul>
+ */
 public class Demo5Audio extends Scene {
   private static final Logger LOGGER = LogManager.getLogger();
   private static final BufferedImage SPEAKER_IMG = IO.getResourceImage("speaker.png");
@@ -99,7 +112,7 @@ public class Demo5Audio extends Scene {
       Column.config()
         .mainAxisAlignment(MainAxisAlignment.CENTER)
         .crossAxisAlignment(CrossAxisAlignment.STRETCH)
-        .gapSize(24),
+        .gapSize(8),
       Text.create(
         Text.config().alignment(Alignment.CENTER),
         "Space Bar to play/restart the audio"

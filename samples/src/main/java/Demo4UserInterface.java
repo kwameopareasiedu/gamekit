@@ -1,6 +1,4 @@
-import dev.gamekit.core.Application;
-import dev.gamekit.core.IO;
-import dev.gamekit.core.Scene;
+import dev.gamekit.core.*;
 import dev.gamekit.settings.*;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
@@ -14,6 +12,13 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
+/**
+ * This demo shows how to build user interfaces and performs the following actions:
+ * <ul>
+ *   <li>Creates an {@link Application application}</li>
+ *   <li>Overrides the {@link Scene#createUI()}} method to construct the user interface</li>
+ * </ul>
+ */
 public class Demo4UserInterface extends Scene {
   private static final BufferedImage BACKDROP = IO.getResourceImage("planetfall-artwork.jpg");
   private static final BufferedImage LOGO = IO.getResourceImage("planetfall-logo.png");
