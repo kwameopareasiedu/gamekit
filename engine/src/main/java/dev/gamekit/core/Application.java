@@ -272,7 +272,8 @@ public abstract class Application {
           try { runnable.run(); } catch (Exception ignored) { }
         }
 
-        try { Thread.sleep(1); } catch (InterruptedException ignored) { }
+        try { Thread.sleep(1); } //
+        catch (InterruptedException ignored) { }
       }
     }
   }
