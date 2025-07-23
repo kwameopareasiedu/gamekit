@@ -3,5 +3,9 @@ site_dir: dist
 docs_dir: pages
 nav:
   - Home: index.md
-  - Engine: engine.md
+  - Tutorials: tutorials.md
 theme: mkdocs
+markdown_extensions:
+  - attr_list
+extra_css:
+  - css/custom.css

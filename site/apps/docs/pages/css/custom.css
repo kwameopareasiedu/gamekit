@@ -1,0 +1,28 @@
+table {
+  border: 1px solid #e3e3e3;
+
+  td,th {
+    padding: 8px!important;
+    border-bottom: 1px solid #f3f3f3;
+
+    &:not(:last-child) {
+      border-right: 1px solid #f3f3f3;
+    }
+  }
+}
+
+h1 {
+  font-weight: 700;
+}
+
+h2 {
+  font-weight: 700;
+
+  &:not(:first-child) {
+    margin-top: 28px;
+  }
+}
+
+h3 {
+  font-size: 24px;
+}

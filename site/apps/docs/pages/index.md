@@ -9,7 +9,7 @@ small to medium-sized games.
 
 ## Installation
 
-GameKit is distributed as a Maven dependency. Include it in your project add its dependency to your `pom.xml`
+GameKit is distributed as a **Maven** dependency. To include it in your project, add its dependency to your `pom.xml`
 
 ```xml
 <project>
@@ -31,7 +31,10 @@ GameKit is distributed as a Maven dependency. Include it in your project add its
 </project>
 ```
 
-## Hello GameKit
+Replace **`{VERSION}`** with the intended version. Find all
+versions on the [releases](https://github.com/kwameopareasiedu/gamekit/releases) page.
+
+## A Simple Sample
 
 It's very easy to get started with GameKit. The sample below launches a 1280x720 window with a red square drawn:
 
@@ -44,12 +47,12 @@ import java.awt.Color;
 
 public class HelloGameKit extends Scene {
   public HelloGameKit() {
-    super("Hello GameKit");
+    super("Simple Scene");
   }
 
   public static void main(String[] args) {
     // Create a new application
-    Application game = new Application("Hello GameKit") { };
+    Application game = new Application("A Simple Application") { };
     // Load an instance of our scene
     game.loadScene(new HelloGameKit());
     // Run the game application
@@ -60,12 +63,8 @@ public class HelloGameKit extends Scene {
   public void render() {
     // Clear the screen with black
     Renderer.clear(Color.BLACK);
-    // Draw a red box
+    // Draw a red-filled box
     Renderer.fillRect(0, 0, 200, 200).withColor(Color.RED);
   }
 }
 ```
-
-## Next Steps
-
-Now that you've got your feet wet, we'll dive more into the engine modules and features. 

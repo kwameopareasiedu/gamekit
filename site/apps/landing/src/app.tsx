@@ -1,5 +1,10 @@
 const showcaseItems: { name: string; src: string; href: string }[] = [
   {
+    name: "Circle Pong",
+    src: "/circle-pong.png",
+    href: "https://kwameopareasiedu.itch.io/circle-pong",
+  },
+  {
     name: "Industrio",
     src: "/industrio.png",
     href: "https://kwameopareasiedu.itch.io/industrio",
@@ -35,14 +40,14 @@ export function App() {
 
           <div className="flex items-center justify-center gap-2">
             <a href="https://docs.gamekit.opare.dev" className="link" target="_blank">
-              Get Started
+              Documentation
             </a>
 
             <a
               href="https://github.com/kwameopareasiedu/gamekit/tree/master/samples/src/main/java"
               className="link"
               target="_blank">
-              Samples
+              Code Samples
             </a>
           </div>
         </div>
