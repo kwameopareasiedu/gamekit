@@ -1,6 +1,6 @@
 package dev.gamekit.utils;
 
-import dev.gamekit.core.Application;
+import dev.gamekit.core.Constants;
 
 /** Timeout executes a specified {@link Task} after its duration has elapsed. */
 public class Timeout {
@@ -27,7 +27,7 @@ public class Timeout {
    */
   public void update() {
     if (!completed) {
-      durationMs = java.lang.Math.max(0, durationMs - Application.FRAME_TIME_MS);
+      durationMs = java.lang.Math.max(0, durationMs - Constants.FRAME_TIME_MS);
 
       if (durationMs == 0) {
         completed = true;

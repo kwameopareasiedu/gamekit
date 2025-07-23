@@ -1,6 +1,6 @@
 package dev.gamekit.animation;
 
-import static dev.gamekit.utils.Constants.*;
+import static dev.gamekit.core.Constants.*;
 
 /**
  * {@link AnimationCurve} transforms an {@link Animation} value from a (0 - 1) range to a point on

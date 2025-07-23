@@ -14,13 +14,11 @@ public final class Window {
   private static final Logger LOGGER = LogManager.getLogger(Window.class);
 
   private static Window instance;
+  private static Info info;
 
   private final int displayWidth;
   private final int displayHeight;
-  private final int displayCenterX;
-  private final int displayCenterY;
   private final double displayScaleRatio;
-  private final double inverseDisplayScaleRatio;
   private final JFrame frame;
   private final BufferedImage renderBuffer;
   private final Graphics2D renderGraphics;
@@ -36,11 +34,8 @@ public final class Window {
 
     Settings settings = Application.getInstance().getSettings();
 
-    displayWidth = settings.resolution.width;
-    displayHeight = settings.resolution.height;
-    displayCenterX = settings.resolution.width / 2;
-    displayCenterY = settings.resolution.height / 2;
-
+    displayWidth = settings.resolution.width();
+    displayHeight = settings.resolution.height();
     frame = new JFrame(settings.title);
 
     if (settings.fullScreen) {
@@ -51,23 +46,27 @@ public final class Window {
         .getDefaultScreenDevice()
         .setFullScreenWindow(frame);
 
-      displayScaleRatio = Math.min(
-        (double) Resolution.NATIVE.width / settings.resolution.width,
-        (double) Resolution.NATIVE.height / settings.resolution.height
-      );
-    } else {
       Dimension d = new Dimension(
-        settings.resolution.width,
-        settings.resolution.height
+        Resolution.NATIVE.width(),
+        Resolution.NATIVE.height()
       );
 
       frame.setMinimumSize(d);
       frame.setPreferredSize(d);
       frame.setResizable(false);
+
+      displayScaleRatio = Math.min(
+        (double) Resolution.NATIVE.width() / displayWidth,
+        (double) Resolution.NATIVE.height() / displayHeight
+      );
+    } else {
+      Dimension d = new Dimension(displayWidth, displayHeight);
+      frame.setMinimumSize(d);
+      frame.setPreferredSize(d);
+      frame.setResizable(false);
+      frame.setUndecorated(settings.undecroated);
       displayScaleRatio = 1;
     }
-
-    inverseDisplayScaleRatio = 1.0 / displayScaleRatio;
 
     displayBuffer = new BufferedImage(displayWidth, displayHeight, BufferedImage.TYPE_INT_ARGB);
     displayGraphics = displayBuffer.createGraphics();
@@ -85,39 +84,36 @@ public final class Window {
     settings.renderingStrategy.apply(uiGraphics);
     settings.dithering.apply(uiGraphics);
 
-    int renderWidth = settings.fullScreen ? Resolution.NATIVE.width : displayWidth;
-    int renderHeight = settings.fullScreen ? Resolution.NATIVE.height : displayHeight;
+    int renderWidth = settings.fullScreen ? Resolution.NATIVE.width() : displayWidth;
+    int renderHeight = settings.fullScreen ? Resolution.NATIVE.height() : displayHeight;
     renderBuffer = new BufferedImage(renderWidth, renderHeight, BufferedImage.TYPE_INT_ARGB);
     renderGraphics = renderBuffer.createGraphics();
 
     frame.getContentPane().setBackground(Color.BLACK);
     frame.setLocationRelativeTo(null);
     frame.pack();
+
+    info = new Info(
+      frame.getWidth(), frame.getHeight(),
+      displayWidth, displayHeight,
+      displayWidth / 2, displayHeight / 2,
+      displayScaleRatio, 1.0 / displayScaleRatio
+    );
+
+    LOGGER.debug(info);
   }
 
-  public static Window getInstance() { return instance; }
+  static Window getInstance() { return instance; }
 
-  public int getFrameWidth() { return frame.getWidth(); }
-
-  public int getFrameHeight() { return frame.getHeight(); }
-
-  public int getDisplayWidth() { return displayWidth; }
-
-  public int getDisplayHeight() { return displayHeight; }
-
-  public int getDisplayCenterX() { return displayCenterX; }
-
-  public int getDisplayCenterY() { return displayCenterY; }
-
-  public double getDisplayScaleRatio() { return displayScaleRatio; }
-
-  public double getInverseDisplayScaleRatio() { return inverseDisplayScaleRatio; }
+  public static Info getInfo() { return info; }
 
   JFrame getFrame() { return frame; }
 
   Graphics2D getDisplayGraphics() { return displayGraphics; }
 
   Graphics2D getUiGraphics() { return uiGraphics; }
+
+  void show() { frame.setVisible(true); }
 
   void refresh() {
     Settings settings = Application.getInstance().getSettings();
@@ -146,5 +142,30 @@ public final class Window {
 
     Graphics2D frameGraphics = (Graphics2D) frame.getGraphics();
     frameGraphics.drawImage(renderBuffer, null, 0, 0);
+  }
+
+  /** {@link Window.Info} holds the read-only parameters of the current {@link Window instance} */
+  public record Info(
+    int frameWidth,
+    int frameHeight,
+    int displayWidth,
+    int displayHeight,
+    int displayCenterX,
+    int displayCenterY,
+    double displayScaleRatio,
+    double inverseDisplayScaleRatio
+  ) {
+    @Override
+    public String toString() {
+      return String.format(
+        "%s[frameWidth=%d,frameHeight=%d,displayWidth=%d,displayHeight=%d" +
+          "centerX=%d,centerY=%d,scaleRatio=%.2f,inverseScaleRatio=%.2f]",
+        getClass().getName(),
+        frameWidth, frameHeight,
+        displayWidth, displayHeight,
+        displayCenterX, displayCenterY,
+        displayScaleRatio, inverseDisplayScaleRatio
+      );
+    }
   }
 }

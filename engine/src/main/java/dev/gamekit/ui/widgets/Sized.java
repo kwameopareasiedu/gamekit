@@ -5,31 +5,40 @@ import dev.gamekit.ui.Constraints;
 import java.util.Objects;
 
 import static dev.gamekit.utils.Math.clamp;
+import static dev.gamekit.utils.Misc.coalesce;
 
 /**
  * A {@link SingleChildParent} which enforces a size on its child. This can be a fixed size, the
  * child's intrinsic size or a fractional size relative to this {@link Sized}'s parent
  */
 public class Sized extends SingleChildParent {
-  protected final DimensionType widthType;
-  protected final DimensionType heightType;
-  protected final double width;
-  protected final double height;
+  protected DimensionType widthType;
+  protected DimensionType heightType;
+  protected double width;
+  protected double height;
 
-  public Sized(SizedOptions options, Widget child) {
+  private final Config config;
+
+  public Sized(Config config, Widget child) {
     super(child);
-    this.width = options.width;
-    this.height = options.height;
-    this.widthType = options.widthType;
-    this.heightType = options.heightType;
+    this.config = config;
   }
 
-  public static Sized create(SizedOptions options, Widget child) {
-    return new Sized(options, child);
+  public static Sized create(Config config, Widget child) {
+    return new Sized(config, child);
   }
 
-  public static SizedOptions options() {
-    return new SizedOptions();
+  public static Config config() {
+    return new Config();
+  }
+
+  @Override
+  protected void performMounted() {
+    this.width = coalesce(config.width, 64.0);
+    this.height = coalesce(config.height, 64.0);
+    this.widthType = coalesce(config.widthType, DimensionType.FIXED);
+    this.heightType = coalesce(config.heightType, DimensionType.FIXED);
+    super.performMounted();
   }
 
   @Override
@@ -100,43 +109,45 @@ public class Sized extends SingleChildParent {
     return false;
   }
 
-  public static class SizedOptions {
-    DimensionType widthType = DimensionType.FIXED;
-    DimensionType heightType = DimensionType.FIXED;
-    double width = 64;
-    double height = 64;
+  public static class Config {
+    DimensionType widthType;
+    DimensionType heightType;
+    Double width;
+    Double height;
 
-    public SizedOptions width(int width) {
+    Config() { }
+
+    public Config width(int width) {
       this.widthType = DimensionType.FIXED;
-      this.width = width;
+      this.width = (double) width;
       return this;
     }
 
-    public SizedOptions height(int height) {
+    public Config height(int height) {
       this.heightType = DimensionType.FIXED;
-      this.height = height;
+      this.height = (double) height;
       return this;
     }
 
-    public SizedOptions intrinsicWidth() {
+    public Config intrinsicWidth() {
       this.widthType = DimensionType.INTRINSIC;
-      this.width = 0;
+      this.width = (double) 0;
       return this;
     }
 
-    public SizedOptions intrinsicHeight() {
+    public Config intrinsicHeight() {
       this.heightType = DimensionType.INTRINSIC;
-      this.height = 0;
+      this.height = (double) 0;
       return this;
     }
 
-    public SizedOptions fractionalWidth(double width) {
+    public Config fractionalWidth(double width) {
       this.widthType = DimensionType.FRACTIONAL;
       this.width = clamp(width, 0, 1);
       return this;
     }
 
-    public SizedOptions fractionalHeight(double height) {
+    public Config fractionalHeight(double height) {
       this.heightType = DimensionType.FRACTIONAL;
       this.height = clamp(height, 0, 1);
       return this;

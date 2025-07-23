@@ -2,19 +2,50 @@
 
 ## Road Map
 
-- Add more UI widgets (Input, Checkbox, Slider)
-- Implement spanning for text widget which is the ability to use different text attributes for
-  the same text widget
-- Add theming capability to UI widgets
-- Integrate physics engine
-- Implement dynamic lighting
-- Add network multiplayer capabilities
+- More UI widgets (Input, Checkbox, Slider)
+- Text widget spanning to allow different text attributes for different segments of text
+- Dynamic lighting
+- Networked multiplayer
+- Minimum size computation in widgets
+- Sized widget minimum size configuration
+- Maven plugin for CLI tasks like packaging
 
 ## UNRELEASED
 
 ### Added
 
 ### Changed
+
+### Deprecated
+
+### Removed
+
+## 0.5.0-SNAPSHOT-1
+
+### Added
+
+- Added abstract `Component` which is the base class for all entity component
+- Added `Transform` which is a `Component` that contains position, rotation and scale parameters
+- Added `RigidBody` which is a `Component` that enables physics-based motion for an entity
+- Added `Physics` class which manages the physics world updates and collision processing
+- Added component lifecycle processing to `Entity` class
+- Added `public <T extends Component> findComponent(Class<T> clazz)` to `Entity` class which finds 
+  a specific component on and `Entity`
+- Added `public void mounted()` lifecycle method to `Widget` class
+- Added `Theme` widget which is a `SingleChildParent` which theme variables to its descendants
+- Updated `Text` widget to utilize nearest available `Theme` in ancestry
+- Updated `Button` widget to utilize nearest available `Theme` in ancestry
+- Changed `Resolution` enum to a record class
+- Added `static Resolution create(int width, int height)` to the `Resolution` record class
+- Added `public static getInfo()` to `Window` class to return `Window.Info` instance
+- Added public constructor to `Resolution` class to allow for custom resolutions
+- Added `WindowMode.BORDERLESS` setting value
+
+### Changed
+
+- Updated `public static <_InsertWidgetName_>Options options()` method in all widget classes to
+  `public static Config config()`
+- Changed `static Window getInstance()` in `Window` class from public to package-private
 
 ### Deprecated
 

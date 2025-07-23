@@ -4,21 +4,31 @@ import dev.gamekit.ui.Constraints;
 
 import java.util.Objects;
 
+import static dev.gamekit.utils.Misc.coalesce;
+
 /** A {@link SingleChildParent} which scales the computed size of its child */
 public class Scaled extends SingleChildParent {
-  protected final double scale;
+  protected double scale;
 
-  public Scaled(ScaledOptions options, Widget child) {
+  private final Config config;
+
+  public Scaled(Config config, Widget child) {
     super(child);
-    this.scale = Math.max(0, options.scale);
+    this.config = config;
   }
 
-  public static Scaled create(ScaledOptions options, Widget child) {
-    return new Scaled(options, child);
+  public static Scaled create(Config config, Widget child) {
+    return new Scaled(config, child);
   }
 
-  public static ScaledOptions options() {
-    return new ScaledOptions();
+  public static Config config() {
+    return new Config();
+  }
+
+  @Override
+  protected void performMounted() {
+    scale = Math.max(0, coalesce(config.scale, 1.0));
+    super.performMounted();
   }
 
   @Override
@@ -53,13 +63,16 @@ public class Scaled extends SingleChildParent {
     if (widget instanceof Scaled scaledWidget) {
       return Objects.equals(scale, scaledWidget.scale);
     }
+
     return false;
   }
 
-  public static class ScaledOptions {
-    double scale = 1.0;
+  public static class Config {
+    Double scale;
 
-    public ScaledOptions scale(double scale) {
+    Config() { }
+
+    public Config scale(double scale) {
       this.scale = scale;
       return this;
     }

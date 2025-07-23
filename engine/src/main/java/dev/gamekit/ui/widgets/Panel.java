@@ -1,34 +1,47 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.core.Constants;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Spacing;
+import dev.gamekit.ui.events.InputEvent;
+import dev.gamekit.ui.events.InputEventHandler;
+import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.mixins.NinePatch;
-import dev.gamekit.utils.Constants;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
+import static dev.gamekit.utils.Misc.coalesce;
+
 /**
  * A {@link SingleChildParent} which uses the 9-patch algorithm to render a {@link BufferedImage}
  * as a background to its descendants
  */
-public class Panel extends SingleChildParent implements NinePatch {
-  protected final BufferedImage background;
-  protected final Spacing ninePatchBorder;
+public class Panel extends SingleChildParent implements NinePatch, InputEventHandler {
+  protected BufferedImage background;
+  protected Spacing ninePatchBorder;
 
-  public Panel(PanelOptions options, Widget child) {
+  private final Config config;
+
+  public Panel(Config config, Widget child) {
     super(child);
-    this.background = options.background;
-    this.ninePatchBorder = options.ninePatchBorder;
+    this.config = config;
   }
 
-  public static Panel create(PanelOptions options, Widget child) {
-    return new Panel(options, child);
+  public static Panel create(Config config, Widget child) {
+    return new Panel(config, child);
   }
 
-  public static PanelOptions options() {
-    return new PanelOptions();
+  public static Config config() {
+    return new Config();
+  }
+
+  @Override
+  protected void performMounted() {
+    this.background = coalesce(config.background, Constants.DEFAULT_PANEL_BG);
+    this.ninePatchBorder = coalesce(config.ninePatchBorder, new Spacing());
+    super.performMounted();
   }
 
   @Override
@@ -75,31 +88,49 @@ public class Panel extends SingleChildParent implements NinePatch {
     return false;
   }
 
-  public static class PanelOptions {
-    public BufferedImage background = Constants.DEFAULT_PANEL_BG;
-    public Spacing ninePatchBorder = new Spacing();
+  @Override
+  public MouseEvent.Listener getMouseListener() {
+    return null;
+  }
 
-    public PanelOptions background(BufferedImage background) {
+  @Override
+  public void setMouseEntered(boolean mouseEntered) {/* No-op */}
+
+  @Override
+  public void setMousePressed(boolean mouseEntered) {/* No-op */}
+
+  @Override
+  public void handleEvent(InputEvent event) {
+    event.setHandled();
+  }
+
+  public static class Config {
+    public BufferedImage background;
+    public Spacing ninePatchBorder;
+
+    Config() { }
+
+    public Config background(BufferedImage background) {
       this.background = background;
       return this;
     }
 
-    public PanelOptions ninePatch(Spacing border) {
+    public Config ninePatch(Spacing border) {
       this.ninePatchBorder = border;
       return this;
     }
 
-    public PanelOptions ninePatch(int all) {
+    public Config ninePatch(int all) {
       this.ninePatchBorder = new Spacing(all);
       return this;
     }
 
-    public PanelOptions ninePatch(int horizontal, int vertical) {
+    public Config ninePatch(int horizontal, int vertical) {
       this.ninePatchBorder = new Spacing(horizontal, vertical);
       return this;
     }
 
-    public PanelOptions ninePatch(int top, int right, int bottom, int left) {
+    public Config ninePatch(int top, int right, int bottom, int left) {
       this.ninePatchBorder = new Spacing(top, right, bottom, left);
       return this;
     }

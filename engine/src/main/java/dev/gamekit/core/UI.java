@@ -10,7 +10,6 @@ import dev.gamekit.ui.widgets.MultiChildParent;
 import dev.gamekit.ui.widgets.Parent;
 import dev.gamekit.ui.widgets.SingleChildParent;
 import dev.gamekit.ui.widgets.Widget;
-import dev.gamekit.utils.Constants;
 import dev.gamekit.utils.Position;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -53,9 +52,9 @@ public final class UI {
 
   public UI(Scene scene) {
     Settings settings = Application.getInstance().getSettings();
-    Window win = Window.getInstance();
-    int dw = win.getDisplayWidth();
-    int dh = win.getDisplayHeight();
+    Window.Info windowInfo = Window.getInfo();
+    int dw = windowInfo.displayWidth();
+    int dh = windowInfo.displayHeight();
 
     this.scene = scene;
     this.windowConstraints = new Constraints(dw, dw, dh, dh);
@@ -78,7 +77,15 @@ public final class UI {
   }
 
   public void triggerRender() {
-    this.renderCount = MAX_RENDERS_PER_TRIGGER;
+    renderCount = MAX_RENDERS_PER_TRIGGER;
+  }
+
+  void triggerUpdate() {
+    needsLayout = true;
+  }
+
+  void clear() {
+    drawTree();
   }
 
   /** Set the initial widget tree */
@@ -86,14 +93,11 @@ public final class UI {
     this.tree = tree;
 
     if (this.tree != null) {
+      this.tree.mounted();
       this.tree.layout(windowConstraints);
       this.tree.postLayout();
       triggerRender();
     }
-  }
-
-  void triggerUpdate() {
-    needsLayout = true;
   }
 
   /**
@@ -128,10 +132,12 @@ public final class UI {
   private void updateTree() {
     List<Widget> currentWidgetQueue = new ArrayList<>();
     List<Widget> newWidgetQueue = new ArrayList<>();
+    Widget newTree = scene.createUI();
     boolean treeUpdated = false;
 
     currentWidgetQueue.add(tree);
-    newWidgetQueue.add(scene.createUI());
+    newWidgetQueue.add(newTree);
+    newTree.mounted();
 
     while (!currentWidgetQueue.isEmpty() && !newWidgetQueue.isEmpty()) {
       Widget treeWidget = currentWidgetQueue.remove(0);
@@ -355,14 +361,16 @@ public final class UI {
   /** Draws the widget tree to the {@link Window} UI buffer */
   private void drawTree() {
     Window win = Window.getInstance();
+    Window.Info windowInfo = Window.getInfo();
     Graphics2D uiGraphics = win.getUiGraphics();
-    int displayWidth = win.getDisplayWidth();
-    int displayHeight = win.getDisplayHeight();
+    int displayWidth = windowInfo.displayWidth();
+    int displayHeight = windowInfo.displayHeight();
 
     canvasGraphics.setBackground(Constants.TRANSPARENT_COLOR);
     canvasGraphics.clearRect(0, 0, displayWidth, displayHeight);
 
-    tree.render(canvasGraphics);
+    if (tree != null)
+      tree.render(canvasGraphics);
 
     uiGraphics.setBackground(Constants.TRANSPARENT_COLOR);
     uiGraphics.clearRect(0, 0, displayWidth, displayHeight);

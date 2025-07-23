@@ -24,15 +24,15 @@ public final class Camera {
 
   /** Returns the visible render bounds based on the camera's parameters */
   public static Bounds getRenderBounds() {
-    Window window = Window.getInstance();
-    int centerX = window.getDisplayCenterX();
-    int centerY = window.getDisplayCenterY();
+    Window.Info windowInfo = Window.getInfo();
+    int centerX = windowInfo.displayCenterX();
+    int centerY = windowInfo.displayCenterY();
 
     BOUNDS_CACHE.set(
       (int) ((Camera.x - centerX) * invZoom),
       (int) ((Camera.y - centerY) * invZoom),
-      (int) (window.getDisplayWidth() * invZoom),
-      (int) (window.getDisplayHeight() * invZoom)
+      (int) (windowInfo.displayWidth() * invZoom),
+      (int) (windowInfo.displayHeight() * invZoom)
     );
 
     return BOUNDS_CACHE;
@@ -40,9 +40,9 @@ public final class Camera {
 
   /** Transforms a screen-space point (sx,sy) into world-space position */
   public static Position screenToWorldPosition(double sx, double sy) {
-    Window window = Window.getInstance();
-    int centerX = window.getDisplayCenterX();
-    int centerY = window.getDisplayCenterY();
+    Window.Info windowInfo = Window.getInfo();
+    int centerX = windowInfo.displayCenterX();
+    int centerY = windowInfo.displayCenterY();
     int wx = (int) (invZoom * (centerX - sx - Camera.x));
     int wy = (int) (invZoom * (centerY - sy - Camera.y));
     POSITION_CACHE.set(-wx, wy);
@@ -68,9 +68,15 @@ public final class Camera {
   /** Applies the camera's position and zoom to the current window's transform matrix */
   static void applyTransformation() {
     Window window = Window.getInstance();
-    int centerX = window.getDisplayCenterX();
-    int centerY = window.getDisplayCenterY();
+    Window.Info windowInfo = Window.getInfo();
+    int centerX = windowInfo.displayCenterX();
+    int centerY = windowInfo.displayCenterY();
     TRANSFORM.setTransform(zoom, 0, 0, zoom, centerX - x, centerY - y);
     window.getDisplayGraphics().setTransform(TRANSFORM);
+  }
+
+  static void reset() {
+    x = y = 0;
+    zoom = 1;
   }
 }

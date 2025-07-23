@@ -24,8 +24,6 @@ import java.util.List;
  */
 @SuppressWarnings({ "BusyWait", "SynchronizeOnNonFinalField" })
 public abstract class Application {
-  public static final long FRAME_TIME_MS = 1000 / 240;
-  public static final long RENDER_TIME_MS = 1000 / 60;
   private static Application instance;
 
   protected final Logger logger = LogManager.getLogger(getClass());
@@ -55,8 +53,8 @@ public abstract class Application {
     this.timeouts = new ArrayList<>();
     this.newTimeouts = new ArrayList<>();
     this.animations = new ArrayList<>();
-    this.audioThread = new WorkerThread("audio", FRAME_TIME_MS, Audio::update);
-    this.drawThread = new WorkerThread("draw", RENDER_TIME_MS, this::draw);
+    this.audioThread = new WorkerThread("audio", Constants.FRAME_TIME_MS, Audio::update);
+    this.drawThread = new WorkerThread("draw", Constants.RENDER_TIME_MS, this::draw);
     this.isRunning = true;
   }
 
@@ -71,8 +69,8 @@ public abstract class Application {
       throw new IllegalArgumentException("Unable to load a null scene");
     }
 
-    logger.debug("Loaded scene: {}", scene.name);
     this.nextScene = scene;
+    logger.debug("Primed next scene: {}", scene.name);
   }
 
   /** Schedule a task to be executed immediately after the end of the current frame. */
@@ -125,8 +123,8 @@ public abstract class Application {
         lastFrameTime = currentFrameTime;
         frameTimeAccumulator += timeDiff;
 
-        while (frameTimeAccumulator >= FRAME_TIME_MS) {
-          frameTimeAccumulator -= FRAME_TIME_MS;
+        while (frameTimeAccumulator >= Constants.FRAME_TIME_MS) {
+          frameTimeAccumulator -= Constants.FRAME_TIME_MS;
           Input.freeze();
           update();
           Input.reset();
@@ -163,19 +161,19 @@ public abstract class Application {
       }
     });
 
-    window.getFrame().setVisible(true);
+    window.show();
     audioThread.start();
     drawThread.start();
   }
 
   /** Called in each frame to update the current scene */
   private void update() {
+    Physics.update();
     animations.forEach(Animation::update);
     timeouts.forEach(Timeout::update);
 
-    if (currentScene != null) {
+    if (currentScene != null)
       currentScene._update();
-    }
 
     animations.removeIf(Animation::isEnded);
     timeouts.removeIf(Timeout::isCompleted);
@@ -218,9 +216,11 @@ public abstract class Application {
       if (currentScene != null) {
         synchronized (currentScene) {
           currentScene._dispose();
+          UI.getInstance().clear();
         }
       }
 
+      Camera.reset();
       currentScene = nextScene;
       currentScene._start();
       nextScene = null;
@@ -272,7 +272,8 @@ public abstract class Application {
           try { runnable.run(); } catch (Exception ignored) { }
         }
 
-        try { Thread.sleep(1); } catch (InterruptedException ignored) { }
+        try { Thread.sleep(1); } //
+        catch (InterruptedException ignored) { }
       }
     }
   }

@@ -14,6 +14,11 @@ public abstract class SingleChildParent extends Parent {
   }
 
   @Override
+  protected void performMounted() {
+    child.mounted();
+  }
+
+  @Override
   protected void performPostLayout() {
     child.postLayout();
   }

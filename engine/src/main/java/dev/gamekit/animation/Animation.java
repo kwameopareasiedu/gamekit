@@ -1,6 +1,7 @@
 package dev.gamekit.animation;
 
 import dev.gamekit.core.Application;
+import dev.gamekit.core.Constants;
 
 import static dev.gamekit.utils.Math.clamp;
 
@@ -101,7 +102,7 @@ public class Animation {
   /** Called internally by the application game loop to update this animation */
   public void update() {
     if (state == State.RUNNING) {
-      value = clamp(value + 0.001 * rate * Application.FRAME_TIME_MS, 0, 1);
+      value = clamp(value + 0.001 * rate * Constants.FRAME_TIME_MS, 0, 1);
 
       if (valueListener != null)
         valueListener.onValueChanged(getValue());

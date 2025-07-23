@@ -19,6 +19,11 @@ public abstract class MultiChildParent extends Parent {
   }
 
   @Override
+  protected void performMounted() {
+    children.forEach(Widget::mounted);
+  }
+
+  @Override
   protected void performPostLayout() {
     children.forEach(Widget::postLayout);
   }
