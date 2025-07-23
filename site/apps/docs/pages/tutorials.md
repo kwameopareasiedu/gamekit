@@ -11,6 +11,8 @@ this engine, you must have the following installed and configured:
 2. A Java IDE (IntelliJ IDEA, _Eclipse_, _Netbeans_, _VSCode_, etc)
 3. Maven build tool and dependency manager (3.9.9+)
 
+Next, you need to create a Maven Java project and [add the GameKit engine to your dependencies](/#installation).
+
 ## The GameKit Application
 
 A GameKit application runs a game loop, manages a window and monitors the keyboard and mouse for user input.
