@@ -4,10 +4,11 @@
 
 - More UI widgets (Input, Checkbox, Slider)
 - Text widget spanning to allow different text attributes for different segments of text
-- Dynamic lighting
-- Networked multiplayer
 - Minimum size computation in widgets
 - Sized widget minimum size configuration
+- Dynamic lighting
+- Networked multiplayer
+- Save/Load system
 - Maven plugin for CLI tasks like packaging
 
 ## UNRELEASED

@@ -35,7 +35,7 @@ public final class UI {
   private final BufferedImage canvasImage;
   private final Graphics2D canvasGraphics;
   private Widget tree;
-  private Widget focusWidget;
+  private Widget hoverWidget;
   private Widget activeWidget;
   private Widget lastActiveWidget;
   private boolean needsLayout = false;
@@ -161,7 +161,7 @@ public final class UI {
           treeUpdated = true;
         }
 
-        if (treeWidget == focusWidget) focusWidget = newWidget;
+        if (treeWidget == hoverWidget) hoverWidget = newWidget;
         if (treeWidget == activeWidget) activeWidget = newWidget;
         if (treeWidget == lastActiveWidget) lastActiveWidget = newWidget;
       } else if (treeWidget instanceof SingleChildParent currentParent
@@ -198,15 +198,15 @@ public final class UI {
 
     Position mousePosition = Input.getMousePosition();
 
-    traverseTree(tree, TraverseDirection.DOWN, widget -> {
+    traverseTree(tree, TraverseDirection.IN, widget -> {
       if (widget instanceof InputEventHandler &&
         widget.hitTest(mousePosition.x, mousePosition.y)) {
         currentHitTestList.add(widget);
       }
     });
 
-    // Assign the last/uppermost widget as the focused widget
-    focusWidget = !currentHitTestList.isEmpty()
+    // Assign the last hit test widget as the hover widget
+    hoverWidget = !currentHitTestList.isEmpty()
       ? currentHitTestList.get(currentHitTestList.size() - 1)
       : null;
 
@@ -223,12 +223,15 @@ public final class UI {
     // in previousHitTestCheckList. In essence, this means there are new widgets under the mouse
     // cursor in the current frame that were not in the previous frame
     for (Widget widget : currentHitTestList) {
-      if (!previousHitTestList.contains(widget))
+      if (!previousHitTestList.contains(widget)) {
         eventStore.mouseEnterEvent = new MouseEvent(
           MouseEvent.Type.ENTER,
           mousePosition.x, mousePosition.y,
           Input.BUTTON_NONE
         );
+
+        break;
+      }
     }
 
     // Generate mouse down event if LMB has just been pressed
@@ -239,8 +242,10 @@ public final class UI {
         Input.BUTTON_LMB
       );
 
+      // Since the mouse is down, the hover widget becomes the active widget until the mouse is
+      // released (i.e. activeWidget == null)
       if (activeWidget == null)
-        activeWidget = focusWidget;
+        activeWidget = hoverWidget;
     }
 
     // Generate mouse press events if LMB is being pressed
@@ -261,7 +266,7 @@ public final class UI {
       );
 
       // Generate a mouse click event if LMB was released on the active widget
-      if (activeWidget == focusWidget) {
+      if (activeWidget == hoverWidget) {
         eventStore.mouseClickEvent = new MouseEvent(
           MouseEvent.Type.CLICK,
           mousePosition.x, mousePosition.y,
@@ -269,6 +274,8 @@ public final class UI {
         );
       }
 
+      // Since the mouse is released, there is no active widget, but we do need a reference to
+      // the last active widget for event dispatch purposes
       lastActiveWidget = activeWidget;
       activeWidget = null;
     }
@@ -277,12 +284,15 @@ public final class UI {
     // in currentHitTestCheckList. In essence, this means there are widgets not under the mouse
     // cursor in the current frame that were in the previous frame
     for (Widget widget : previousHitTestList) {
-      if (!currentHitTestList.contains(widget))
+      if (!currentHitTestList.contains(widget)) {
         eventStore.mouseExitEvent = new MouseEvent(
           MouseEvent.Type.EXIT,
           mousePosition.x, mousePosition.y,
           Input.BUTTON_NONE
         );
+
+        break;
+      }
     }
 
     this.mousePosition.set(mousePosition);
@@ -290,13 +300,13 @@ public final class UI {
 
   /** Dispatches generated {@link InputEvent} to widgets */
   private void dispatchInputEvents() {
-    // Dispatch mouse motion events
-    if (focusWidget != null && eventStore.mouseMotionEvent != null) {
-      traverseTree(focusWidget, TraverseDirection.UP, widget -> {
+    // Dispatch mouse motion events to widgets under mouse
+    if (eventStore.mouseMotionEvent != null) {
+      for (Widget widget : currentHitTestList) {
         if (widget instanceof InputEventHandler eventHandler &&
           !eventStore.mouseMotionEvent.isHandled())
           eventHandler.handleEvent(eventStore.mouseMotionEvent);
-      });
+      }
     }
 
     // Dispatch mouse enter events
@@ -313,7 +323,7 @@ public final class UI {
 
     // Dispatch mouse down and press events to the active widget
     if (activeWidget != null) {
-      traverseTree(activeWidget, TraverseDirection.UP, widget -> {
+      traverseTree(activeWidget, TraverseDirection.OUT, widget -> {
         if (widget instanceof InputEventHandler eventHandler) {
           if (eventStore.mouseDownEvent != null &&
             !eventStore.mouseDownEvent.isHandled())
@@ -328,7 +338,7 @@ public final class UI {
 
     // Dispatch mouse release and click events to the active widget
     if (lastActiveWidget != null) {
-      traverseTree(lastActiveWidget, TraverseDirection.UP, widget -> {
+      traverseTree(lastActiveWidget, TraverseDirection.OUT, widget -> {
         if (widget instanceof InputEventHandler eventHandler) {
           if (eventStore.mouseReleaseEvent != null &&
             !eventStore.mouseReleaseEvent.isHandled())
@@ -382,12 +392,12 @@ public final class UI {
   private void traverseTree(
     Widget tree,
     TraverseDirection direction,
-    WidgetTreeVisitor visitor
+    TreeWidgetVisitor visitor
   ) {
     visitor.visit(tree);
 
     switch (direction) {
-      case UP -> {
+      case OUT -> {
         Widget parent = tree.getParent();
 
         if (parent == null)
@@ -395,7 +405,7 @@ public final class UI {
 
         traverseTree(parent, direction, visitor);
       }
-      case DOWN -> {
+      case IN -> {
         if (tree instanceof SingleChildParent parent) {
           traverseTree(parent.getChild(), direction, visitor);
         } else if (tree instanceof MultiChildParent parent) {
@@ -409,10 +419,10 @@ public final class UI {
   }
 
   private enum TraverseDirection {
-    UP, DOWN
+    OUT, IN
   }
 
-  private interface WidgetTreeVisitor {
+  private interface TreeWidgetVisitor {
     void visit(Widget widget);
   }
 }
