@@ -99,7 +99,7 @@ public class RigidBody extends Component {
   }
 
   /**
-   * Creates a rectangle with the specified {@code width} and {@code height} and attaches it to
+   * Creates a rectangle with the specified {@code size} and {@code height} and attaches it to
    * this {@link RigidBody} via a {@link BodyFixture}
    * <p>
    * After creation, the new {@link Rectangle} and {@link BodyFixture} are passed to the {@code
@@ -114,7 +114,7 @@ public class RigidBody extends Component {
   }
 
   /**
-   * Creates a rectangle with the specified {@code width} and {@code height} and attaches it to
+   * Creates a rectangle with the specified {@code size} and {@code height} and attaches it to
    * this {@link RigidBody} via a {@link BodyFixture} without additional tuning
    * @see #addRectFixture(double, double, FixtureTuner)
    */

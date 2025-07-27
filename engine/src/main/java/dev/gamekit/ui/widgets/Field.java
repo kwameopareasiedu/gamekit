@@ -1,0 +1,213 @@
+package dev.gamekit.ui.widgets;
+
+import dev.gamekit.ui.Border;
+import dev.gamekit.ui.Constraints;
+import dev.gamekit.ui.Spacing;
+import dev.gamekit.ui.events.FocusEvent;
+import dev.gamekit.utils.Bounds;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.Objects;
+
+import static dev.gamekit.utils.Misc.coalesce;
+
+/** A {@link Text} widget extension which accepts text input */
+public class Field extends Text implements FocusEvent.Handler {
+  protected BufferedImage background;
+  protected Spacing padding;
+  protected Border defaultBorder;
+  protected Border focusBorder;
+  protected boolean focused;
+
+  private final Bounds absoluteContentBounds;
+  private final Bounds tempAbsoluteBounds;
+  private Stroke defaultBorderStroke;
+  private Stroke focusBorderStroke;
+
+  public Field(Config config, String text) {
+    super(config, text);
+    absoluteContentBounds = new Bounds();
+    tempAbsoluteBounds = new Bounds();
+  }
+
+  public static Field create(Config config, String text) {
+    return new Field(config, text);
+  }
+
+  public static Config config() {
+    return new Config();
+  }
+
+  @Override
+  protected void performMounted() {
+    super.performMounted();
+
+    Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
+    Config config = (Config) super.config;
+
+    background = coalesce(config.background, theme.fieldBackground);
+    padding = coalesce(config.padding, theme.fieldPadding, new Spacing());
+    defaultBorder =
+      coalesce(config.defaultBorder, theme.fieldDefaultBorder, new Border(1, 12, Color.WHITE));
+    focusBorder =
+      coalesce(config.focusBorder, theme.fieldFocusBorder, new Border(1, 12, Color.GREEN));
+
+    defaultBorderStroke = new BasicStroke(
+      (float) defaultBorder.size(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND
+    );
+
+    focusBorderStroke = new BasicStroke(
+      (float) focusBorder.size(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND
+    );
+  }
+
+  @Override
+  protected void performLayout(Constraints constraints) {
+    double horizontalSpacing = 2 * defaultBorder.size() + padding.getHorizontal();
+    double verticalSpacing = 2 * defaultBorder.size() + padding.getVertical();
+
+    super.performLayout(
+      new Constraints(
+        constraints.minWidth(), constraints.maxWidth() - horizontalSpacing,
+        constraints.minHeight(), constraints.maxHeight() - verticalSpacing
+      )
+    );
+
+    intrinsicBounds.setSize(
+      intrinsicBounds.width + horizontalSpacing,
+      intrinsicBounds.height + verticalSpacing
+    );
+
+    computedBounds.setSize(
+      constraints.constrainWidth(intrinsicBounds.width),
+      constraints.constrainHeight(intrinsicBounds.height)
+    );
+  }
+
+  @Override
+  protected void performPostLayout() {
+    absoluteContentBounds.set(absoluteBounds);
+
+    double horizontalSpacing = 2 * defaultBorder.size() + padding.getHorizontal();
+    double verticalSpacing = 2 * defaultBorder.size() + padding.getVertical();
+    double absoluteContentX = absoluteContentBounds.x + defaultBorder.size() + padding.left;
+    double absoluteContentY = absoluteContentBounds.y + defaultBorder.size() + padding.top;
+    double absoluteContentWidth = absoluteContentBounds.width - horizontalSpacing;
+    double absoluteContentHeight = absoluteContentBounds.height - verticalSpacing;
+
+    absoluteContentBounds.set(
+      absoluteContentX,
+      absoluteContentY,
+      absoluteContentWidth,
+      absoluteContentHeight
+    );
+  }
+
+  @Override
+  protected void performRender(Graphics2D g) {
+    if (background != null)
+      g.drawImage(
+        background,
+        (int) absoluteBounds.x, (int) absoluteBounds.y,
+        (int) absoluteBounds.width, (int) absoluteBounds.height,
+        null
+      );
+
+    tempAbsoluteBounds.set(absoluteBounds);
+    absoluteBounds.set(absoluteContentBounds);
+    super.performRender(g);
+    absoluteBounds.set(tempAbsoluteBounds);
+
+    Border resolvedBorder = defaultBorder;
+    Stroke resolvedBorderStroke = defaultBorderStroke;
+
+    if (focused) {
+      resolvedBorder = focusBorder;
+      resolvedBorderStroke = focusBorderStroke;
+    }
+
+    Stroke tempStroke = g.getStroke();
+    Color tempColor = g.getColor();
+
+    g.setStroke(resolvedBorderStroke);
+    g.setColor(resolvedBorder.color());
+    g.drawRoundRect(
+      (int) absoluteBounds.x, (int) absoluteBounds.y,
+      (int) absoluteBounds.width - 1, (int) absoluteBounds.height - 1,
+      (int) resolvedBorder.radius(), (int) resolvedBorder.radius()
+    );
+
+    g.setStroke(tempStroke);
+    g.setColor(tempColor);
+  }
+
+  @Override
+  public boolean stateEquals(Widget widget) {
+    if (widget instanceof Field fieldWidget)
+      return super.stateEquals(widget) &&
+        Objects.equals(padding, fieldWidget.padding) &&
+        Objects.equals(background, fieldWidget.background);
+
+    return false;
+  }
+
+  @Override
+  public void handleEvent(FocusEvent ev) {
+    switch (ev.type) {
+      case FOCUS -> focused = true;
+      case BLUR -> focused = false;
+    }
+
+    uiBridge.triggerRender();
+  }
+
+  public static class Config extends Text.Config<Config> {
+    BufferedImage background;
+    Spacing padding;
+    Border defaultBorder;
+    Border focusBorder;
+
+    Config() { }
+
+    public Config background(BufferedImage background) {
+      this.background = background;
+      return this;
+    }
+
+    public Config padding(Spacing padding) {
+      this.padding = padding;
+      return this;
+    }
+
+    public Config padding(int padding) {
+      this.padding = new Spacing(padding);
+      return this;
+    }
+
+    public Config padding(int horizontal, int vertical) {
+      this.padding = new Spacing(horizontal, vertical);
+      return this;
+    }
+
+    public Config padding(int top, int right, int bottom, int left) {
+      this.padding = new Spacing(top, right, bottom, left);
+      return this;
+    }
+
+    public Config border(Border border) {
+      this.defaultBorder = border;
+      return this;
+    }
+
+    public Config defaultBorder(Border defaultBorder) {
+      this.defaultBorder = defaultBorder;
+      return this;
+    }
+
+    public Config focusBorder(Border focusBorder) {
+      this.focusBorder = focusBorder;
+      return this;
+    }
+  }
+}

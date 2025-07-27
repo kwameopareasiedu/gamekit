@@ -82,11 +82,10 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
 
     BufferedImage bgImage = defaultBackground;
 
-    if (mousePressed) {
+    if (mousePressed)
       bgImage = pressedBackground;
-    } else if (mouseEntered) {
+    else if (mouseEntered)
       bgImage = hoverBackground;
-    }
 
     if (bgImage != null && ninePatchBorder != null) {
       super.renderAppearance(g);

@@ -1,12 +1,15 @@
-import dev.gamekit.core.*;
+import dev.gamekit.core.Application;
+import dev.gamekit.core.IO;
+import dev.gamekit.core.Scene;
 import dev.gamekit.settings.*;
+import dev.gamekit.ui.Border;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.enums.MainAxisAlignment;
 import dev.gamekit.ui.events.MouseEvent;
+import dev.gamekit.ui.widgets.*;
 import dev.gamekit.ui.widgets.Button;
 import dev.gamekit.ui.widgets.Image;
-import dev.gamekit.ui.widgets.*;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -24,6 +27,8 @@ public class Demo4UserInterface extends Scene {
   private static final BufferedImage LOGO = IO.getResourceImage("planetfall-logo.png");
   private static final BufferedImage SCRIM = IO.getResourceImage("transparent-black.png");
 
+  private String fieldValue = "Hello";
+
   public Demo4UserInterface() {
     super("Main Scene");
   }
@@ -34,7 +39,7 @@ public class Demo4UserInterface extends Scene {
         "Demo 4 - Declarative UI",
         Resolution.HD,
         WindowMode.WINDOWED,
-        Antialiasing.OFF,
+        Antialiasing.ON,
         TextAntialiasing.ON,
         AlphaInterpolation.SPEED,
         ImageInterpolation.NEAREST,
@@ -75,9 +80,14 @@ public class Demo4UserInterface extends Scene {
                 .gapSize(24),
               MainMenuButton.create("Tutorial", e -> System.out.println("0: " + e.type)),
               MainMenuButton.create("New Planet", e -> System.out.println("1: " + e.type)),
-              MainMenuButton.create("New Campaign", null),
-              MainMenuButton.create("Load Game", null),
-              MainMenuButton.create("Online Multiplayer", null),
+//              MainMenuButton.create("New Campaign", null),
+//              MainMenuButton.create("Load Game", null),
+//              MainMenuButton.create("Online Multiplayer", null),
+              Field.create(
+                Field.config().fontSize(24).fontStyle(Font.PLAIN)
+                  .padding(8).defaultBorder(new Border(4, 24, Color.RED)),
+                fieldValue
+              ),
               Column.create(
                 Column.config()
                   .mainAxisAlignment(MainAxisAlignment.START)
@@ -148,7 +158,7 @@ public class Demo4UserInterface extends Scene {
   static class MainMenuButton extends Compose {
     protected final String text;
 
-    public MainMenuButton(String text, MouseEvent.Listener mouseListener) {
+    public MainMenuButton(String text, MouseEvent.Handler mouseListener) {
       super(
         Button.create(
           Button.config().ninePatch(12, 12, 16, 12).mouseListener(mouseListener),
@@ -165,17 +175,14 @@ public class Demo4UserInterface extends Scene {
       this.text = text;
     }
 
-    public static MainMenuButton create(
-      String text,
-      MouseEvent.Listener mouseListener) {
+    public static MainMenuButton create(String text, MouseEvent.Handler mouseListener) {
       return new MainMenuButton(text, mouseListener);
     }
 
     @Override
     public boolean stateEquals(Widget widget) {
-      if (widget instanceof MainMenuButton mainMenuButton) {
+      if (widget instanceof MainMenuButton mainMenuButton)
         return Objects.equals(text, mainMenuButton.text);
-      }
 
       return false;
     }
@@ -207,9 +214,8 @@ public class Demo4UserInterface extends Scene {
 
     @Override
     public boolean stateEquals(Widget widget) {
-      if (widget instanceof SubMenuButton subMenuButton) {
+      if (widget instanceof SubMenuButton subMenuButton)
         return Objects.equals(text, subMenuButton.text);
-      }
 
       return false;
     }

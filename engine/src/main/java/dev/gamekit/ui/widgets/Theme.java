@@ -1,5 +1,6 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.ui.Border;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.enums.Alignment;
@@ -17,6 +18,7 @@ public class Theme extends SingleChildParent {
   public BufferedImage buttonDefaultBackground;
   public BufferedImage buttonHoverBackground;
   public BufferedImage buttonPressedBackground;
+
   public Font textFont;
   public Integer textFontStyle;
   public Integer textFontSize;
@@ -28,6 +30,11 @@ public class Theme extends SingleChildParent {
   public Integer textShadowOffsetX;
   public Integer textShadowOffsetY;
   public Color textShadowColor;
+
+  public BufferedImage fieldBackground;
+  public Spacing fieldPadding;
+  public Border fieldDefaultBorder;
+  public Border fieldFocusBorder;
 
   private final Config config;
 
@@ -52,21 +59,33 @@ public class Theme extends SingleChildParent {
   protected void performMounted() {
     Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
 
-    this.buttonNinePatchBorder = coalesce(config.buttonNinePatchBorder, theme.buttonNinePatchBorder);
-    this.buttonDefaultBackground = coalesce(config.buttonDefaultBackground, theme.buttonDefaultBackground);
-    this.buttonHoverBackground = coalesce(config.buttonHoverBackground, theme.buttonHoverBackground);
-    this.buttonPressedBackground = coalesce(config.buttonPressedBackground, theme.buttonPressedBackground);
+    this.buttonNinePatchBorder =
+      coalesce(config.buttonNinePatchBorder, theme.buttonNinePatchBorder);
+    this.buttonDefaultBackground =
+      coalesce(config.buttonDefaultBackground, theme.buttonDefaultBackground);
+    this.buttonHoverBackground =
+      coalesce(config.buttonHoverBackground, theme.buttonHoverBackground);
+    this.buttonPressedBackground =
+      coalesce(config.buttonPressedBackground, theme.buttonPressedBackground);
+
     this.textFont = coalesce(config.textFont, theme.textFont);
     this.textFontStyle = coalesce(config.textFontStyle, theme.textFontStyle);
     this.textFontSize = coalesce(config.textFontSize, theme.textFontSize);
     this.textColor = coalesce(config.textColor, theme.textColor);
     this.textBackgroundColor = coalesce(config.textBackgroundColor, theme.textBackgroundColor);
     this.textAlignment = coalesce(config.textAlignment, theme.textAlignment);
-    this.textVerticalAlignment = coalesce(config.textVerticalAlignment, theme.textVerticalAlignment);
+    this.textVerticalAlignment =
+      coalesce(config.textVerticalAlignment, theme.textVerticalAlignment);
     this.textShadowEnabled = coalesce(config.textShadowEnabled, theme.textShadowEnabled);
     this.textShadowOffsetX = coalesce(config.textShadowOffsetX, theme.textShadowOffsetX);
     this.textShadowOffsetY = coalesce(config.textShadowOffsetY, theme.textShadowOffsetY);
     this.textShadowColor = coalesce(config.textShadowColor, theme.textShadowColor);
+
+    this.fieldBackground = coalesce(config.fieldBackground, theme.fieldBackground);
+    this.fieldPadding = coalesce(config.fieldPadding, theme.fieldPadding);
+    this.fieldDefaultBorder = coalesce(config.fieldDefaultBorder, theme.fieldDefaultBorder);
+    this.fieldFocusBorder = coalesce(config.fieldFocusBorder, theme.fieldFocusBorder);
+
     super.performMounted();
   }
 
@@ -95,6 +114,7 @@ public class Theme extends SingleChildParent {
     BufferedImage buttonDefaultBackground;
     BufferedImage buttonHoverBackground;
     BufferedImage buttonPressedBackground;
+
     Font textFont;
     Integer textFontStyle;
     Integer textFontSize;
@@ -106,6 +126,11 @@ public class Theme extends SingleChildParent {
     Integer textShadowOffsetX;
     Integer textShadowOffsetY;
     Color textShadowColor;
+
+    BufferedImage fieldBackground;
+    Spacing fieldPadding;
+    Border fieldDefaultBorder;
+    Border fieldFocusBorder;
 
     Config() { }
 
@@ -192,6 +217,26 @@ public class Theme extends SingleChildParent {
 
     public Config textShadowColor(Color textShadowColor) {
       this.textShadowColor = textShadowColor;
+      return this;
+    }
+
+    public Config fieldBackground(BufferedImage fieldBackground) {
+      this.fieldBackground = fieldBackground;
+      return this;
+    }
+
+    public Config fieldPadding(Spacing fieldPadding) {
+      this.fieldPadding = fieldPadding;
+      return this;
+    }
+
+    public Config fieldDefaultBorder(Border fieldDefaultBorder) {
+      this.fieldDefaultBorder = fieldDefaultBorder;
+      return this;
+    }
+
+    public Config fieldFocusBorder(Border fieldFocusBorder) {
+      this.fieldFocusBorder = fieldFocusBorder;
       return this;
     }
   }

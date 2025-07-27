@@ -2,7 +2,10 @@ package dev.gamekit.core;
 
 import dev.gamekit.settings.Settings;
 import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.events.*;
+import dev.gamekit.ui.events.FocusEvent;
+import dev.gamekit.ui.events.InputEvent;
+import dev.gamekit.ui.events.KeyCharEvent;
+import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.widgets.MultiChildParent;
 import dev.gamekit.ui.widgets.Parent;
 import dev.gamekit.ui.widgets.SingleChildParent;
@@ -256,7 +259,7 @@ public final class UI {
       if (focusWidget != hoverWidget) {
         lastFocusWidget = focusWidget;
 
-        eventStore.focusEvent = new FocusEvent(
+        eventStore.blurEvent = new FocusEvent(
           FocusEvent.Type.BLUR
         );
       }
@@ -397,19 +400,19 @@ public final class UI {
     }
 
     // Dispatch focus events
-    if (focusWidget != null) {
-      if (eventStore.focusEvent != null &&
+    if (eventStore.focusEvent != null) {
+      if (focusWidget != null &&
         !eventStore.focusEvent.isHandled() &&
         focusWidget instanceof FocusEvent.Handler eventHandler)
         eventHandler.handleEvent(eventStore.focusEvent);
     }
 
     // Dispatch blur events
-    if (lastFocusWidget != null) {
-      if (eventStore.focusEvent != null &&
-        !eventStore.focusEvent.isHandled() &&
+    if (eventStore.blurEvent != null) {
+      if (lastFocusWidget != null &&
+        !eventStore.blurEvent.isHandled() &&
         lastFocusWidget instanceof FocusEvent.Handler eventHandler)
-        eventHandler.handleEvent(eventStore.focusEvent);
+        eventHandler.handleEvent(eventStore.blurEvent);
     }
 
     previousHitTestList.clear();

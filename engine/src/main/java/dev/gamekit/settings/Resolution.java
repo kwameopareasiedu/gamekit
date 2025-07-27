@@ -2,7 +2,7 @@ package dev.gamekit.settings;
 
 import java.awt.*;
 
-/** Represents the width and height the window at startup */
+/** Represents the size and height the window at startup */
 public record Resolution(int width, int height) implements Setting {
 
   /** A 640x480 resolution constant */
@@ -29,13 +29,13 @@ public record Resolution(int width, int height) implements Setting {
     Toolkit.getDefaultToolkit().getScreenSize().height
   );
 
-  /** Creates a new resolution from a given width and height */
+  /** Creates a new resolution from a given size and height */
   public static Resolution create(int width, int height) {
     return new Resolution(width, height);
   }
 
   @Override
   public String toString() {
-    return String.format(getClass().getName() + "[width=%d,height=%d]", width, height);
+    return String.format(getClass().getName() + "[size=%d,height=%d]", width, height);
   }
 }

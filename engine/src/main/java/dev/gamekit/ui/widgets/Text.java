@@ -15,6 +15,7 @@ import static dev.gamekit.utils.Misc.coalesce;
 /** A {@link Leaf} which renders text to the screen */
 @SuppressWarnings("MagicConstant")
 public class Text extends Leaf {
+  protected final Config<?> config;
   protected final String text;
   protected Font font;
   protected int fontStyle;
@@ -28,27 +29,26 @@ public class Text extends Leaf {
   protected int shadowOffsetY;
   protected Color shadowColor;
 
-  private final Config config;
   private Font renderFont;
   private FontMetrics fontMetrics;
   private String[] textLines;
   private double[] textOffsets;
 
-  public Text(Config config, String text) {
+  public Text(Config<?> config, String text) {
     this.config = config;
     this.text = text;
   }
 
-  public static Text create(Config params, String text) {
+  public static Text create(Config<?> params, String text) {
     return new Text(params, text);
   }
 
   public static Text create(String text) {
-    return new Text(new Config(), text);
+    return new Text(new Config<>(), text);
   }
 
-  public static Config config() {
-    return new Config();
+  public static Config<?> config() {
+    return new Config<>();
   }
 
   @Override
@@ -222,7 +222,8 @@ public class Text extends Leaf {
     return false;
   }
 
-  public static class Config {
+  @SuppressWarnings("unchecked")
+  public static class Config<T extends Config<T>> {
     Font font;
     Integer fontStyle;
     Integer fontSize;
@@ -235,55 +236,55 @@ public class Text extends Leaf {
     Integer shadowOffsetY;
     Color shadowColor;
 
-    public Config font(Font font) {
+    public T font(Font font) {
       this.font = font;
-      return this;
+      return (T) this;
     }
 
-    public Config fontStyle(int fontStyle) {
+    public T fontStyle(int fontStyle) {
       this.fontStyle = fontStyle;
-      return this;
+      return (T) this;
     }
 
-    public Config fontSize(int fontSize) {
+    public T fontSize(int fontSize) {
       this.fontSize = fontSize;
-      return this;
+      return (T) this;
     }
 
-    public Config color(Color color) {
+    public T color(Color color) {
       this.color = color;
-      return this;
+      return (T) this;
     }
 
-    public Config backgroundColor(Color backgroundColor) {
+    public T backgroundColor(Color backgroundColor) {
       this.backgroundColor = backgroundColor;
-      return this;
+      return (T) this;
     }
 
-    public Config alignment(Alignment alignment) {
+    public T alignment(Alignment alignment) {
       this.alignment = alignment;
-      return this;
+      return (T) this;
     }
 
-    public Config verticalAlignment(Alignment verticalAlignment) {
+    public T verticalAlignment(Alignment verticalAlignment) {
       this.verticalAlignment = verticalAlignment;
-      return this;
+      return (T) this;
     }
 
-    public Config shadowEnabled(boolean shadowEnabled) {
+    public T shadowEnabled(boolean shadowEnabled) {
       this.shadowEnabled = shadowEnabled;
-      return this;
+      return (T) this;
     }
 
-    public Config shadowOffset(int shadowOffsetX, int shadowOffsetY) {
+    public T shadowOffset(int shadowOffsetX, int shadowOffsetY) {
       this.shadowOffsetX = shadowOffsetX;
       this.shadowOffsetY = shadowOffsetY;
-      return this;
+      return (T) this;
     }
 
-    public Config shadowColor(Color shadowColor) {
+    public T shadowColor(Color shadowColor) {
       this.shadowColor = shadowColor;
-      return this;
+      return (T) this;
     }
   }
 }
