@@ -28,6 +28,7 @@ public final class UI {
   private final List<Widget> currentHitTestList;
   private final List<Widget> previousHitTestList;
   private final InputEventStore eventStore;
+  private final WidgetBridge uiBridge;
   private final Position mousePosition;
   private final BufferedImage canvasImage;
   private final Graphics2D canvasGraphics;
@@ -38,12 +39,7 @@ public final class UI {
   private boolean needsLayout = false;
   private int renderCount;
 
-  /** Return the {@link FontMetrics} for a given font */
-  public static FontMetrics getFontMetrics(Font font) {
-    return Window.getInstance().getUiGraphics().getFontMetrics(font);
-  }
-
-  public static UI getInstance() {
+  static UI getInstance() {
     return instance;
   }
 
@@ -58,6 +54,17 @@ public final class UI {
     this.currentHitTestList = new ArrayList<>();
     this.previousHitTestList = new ArrayList<>();
     this.eventStore = new InputEventStore();
+    this.uiBridge = new WidgetBridge() {
+      @Override
+      public FontMetrics getFontMetrics(Font font) {
+        return Window.getInstance().getUiGraphics().getFontMetrics(font);
+      }
+
+      @Override
+      public void triggerRender() {
+        UI.this.triggerRender();
+      }
+    };
     this.mousePosition = new Position();
     this.canvasImage = new BufferedImage(dw, dh, BufferedImage.TYPE_INT_ARGB);
     this.canvasGraphics = canvasImage.createGraphics();
@@ -73,10 +80,7 @@ public final class UI {
     UI.instance = this;
   }
 
-  public void triggerRender() {
-    renderCount = MAX_RENDERS_PER_TRIGGER;
-  }
-
+  /** Triggers a layout update during the next frame */
   void triggerUpdate() {
     needsLayout = true;
   }
@@ -90,7 +94,7 @@ public final class UI {
     this.tree = tree;
 
     if (this.tree != null) {
-      this.tree.mounted();
+      this.tree.mounted(uiBridge);
       this.tree.layout(windowConstraints);
       this.tree.postLayout();
       triggerRender();
@@ -134,7 +138,7 @@ public final class UI {
 
     currentWidgetQueue.add(tree);
     newWidgetQueue.add(newTree);
-    newTree.mounted();
+    newTree.mounted(uiBridge);
 
     while (!currentWidgetQueue.isEmpty() && !newWidgetQueue.isEmpty()) {
       Widget treeWidget = currentWidgetQueue.remove(0);
@@ -183,6 +187,11 @@ public final class UI {
     currentWidgetQueue.clear();
     newWidgetQueue.clear();
     needsLayout = false;
+  }
+
+  /** Triggers a re-render of the current widget tree */
+  private void triggerRender() {
+    renderCount = MAX_RENDERS_PER_TRIGGER;
   }
 
   /** Monitors {@link Input} and generates events for input actions */
@@ -427,5 +436,20 @@ public final class UI {
 
   private interface TreeWidgetVisitor {
     void visit(Widget widget);
+  }
+
+  /**
+   * Interface for a bridge object passed to {@link Widget widgets} enabling them to call
+   * certain methods in the {@link UI}
+   */
+  public interface WidgetBridge {
+    /**
+     * Gets the font metrics for the given font from the {@link Window}
+     * {@link Graphics2D graphics} object
+     */
+    FontMetrics getFontMetrics(Font font);
+
+    /** Triggers a re-render of the {@link Widget widget} tree */
+    void triggerRender();
   }
 }

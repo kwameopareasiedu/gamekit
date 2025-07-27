@@ -73,7 +73,7 @@ public class Text extends Leaf {
     renderFont = font != null
       ? font.deriveFont(fontStyle, fontSize)
       : Constants.DEFAULT_FONT.deriveFont(fontStyle, fontSize);
-    fontMetrics = UI.getFontMetrics(renderFont);
+    fontMetrics = uiBridge.getFontMetrics(renderFont);
     textLines = new String[0];
   }
 

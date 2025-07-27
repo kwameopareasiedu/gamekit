@@ -1,6 +1,7 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.Scene;
+import dev.gamekit.core.UI;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.utils.Bounds;
 import org.apache.logging.log4j.LogManager;
@@ -32,6 +33,7 @@ public abstract class Widget {
   protected final Bounds computedBounds;
   protected final Bounds intrinsicBounds;
   protected final Bounds clipBounds;
+  protected UI.WidgetBridge uiBridge;
   protected Constraints constraints;
   protected Widget parent;
 
@@ -63,7 +65,8 @@ public abstract class Widget {
    * Since this method is marked as {@code final}, subclasses should override the
    * {@link #performMounted()} method instead to perform any post-mount operations
    */
-  public final void mounted() {
+  public final void mounted(UI.WidgetBridge uiBridge) {
+    this.uiBridge = uiBridge;
     performMounted();
   }
 

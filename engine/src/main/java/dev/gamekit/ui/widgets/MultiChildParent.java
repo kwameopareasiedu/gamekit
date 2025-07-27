@@ -20,7 +20,7 @@ public abstract class MultiChildParent extends Parent {
 
   @Override
   protected void performMounted() {
-    children.forEach(Widget::mounted);
+    children.forEach(c -> c.mounted(uiBridge));
   }
 
   @Override

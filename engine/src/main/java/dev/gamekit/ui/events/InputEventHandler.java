@@ -5,6 +5,8 @@ import dev.gamekit.ui.widgets.Widget;
 
 /** Interface for {@link Widget Widgets} which can process {@link InputEvent InputEvents} */
 public interface InputEventHandler {
+  UI.WidgetBridge getUiBridge();
+
   default MouseEvent.Listener getMouseListener() {
     return null;
   }
@@ -21,25 +23,26 @@ public interface InputEventHandler {
   default void handleEvent(InputEvent event) {
     MouseEvent.Listener mouseListener = getMouseListener();
     KeyCharEvent.Listener keyCharListener = getKeyCharListener();
+    UI.WidgetBridge uiBridge = getUiBridge();
 
     if (event instanceof MouseEvent mouseEvent && mouseListener != null) {
       switch (mouseEvent.type) {
         case ENTER -> {
           setMouseEntered(true);
-          UI.getInstance().triggerRender();
+          uiBridge.triggerRender();
         }
         case DOWN -> {
           setMousePressed(true);
-          UI.getInstance().triggerRender();
+          uiBridge.triggerRender();
         }
         case RELEASE -> {
           setMousePressed(false);
-          UI.getInstance().triggerRender();
+          uiBridge.triggerRender();
         }
         case EXIT -> {
           setMouseEntered(false);
           setMousePressed(false);
-          UI.getInstance().triggerRender();
+          uiBridge.triggerRender();
         }
       }
 

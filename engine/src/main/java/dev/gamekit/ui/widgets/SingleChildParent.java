@@ -15,7 +15,7 @@ public abstract class SingleChildParent extends Parent {
 
   @Override
   protected void performMounted() {
-    child.mounted();
+    child.mounted(uiBridge);
   }
 
   @Override
