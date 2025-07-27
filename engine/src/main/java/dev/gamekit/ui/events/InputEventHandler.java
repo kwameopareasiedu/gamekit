@@ -5,15 +5,22 @@ import dev.gamekit.ui.widgets.Widget;
 
 /** Interface for {@link Widget Widgets} which can process {@link InputEvent InputEvents} */
 public interface InputEventHandler {
-  MouseEvent.Listener getMouseListener();
+  default MouseEvent.Listener getMouseListener() {
+    return null;
+  }
 
-  void setMouseEntered(boolean mouseEntered);
+  default KeyCharEvent.Listener getKeyCharListener() {
+    return null;
+  }
 
-  void setMousePressed(boolean mouseEntered);
+  default void setMouseEntered(boolean mouseEntered) { /* No-op */ }
+
+  default void setMousePressed(boolean mouseEntered) { /* No-op */ }
 
   /** Called when the implementor receives an {@link InputEvent} */
   default void handleEvent(InputEvent event) {
     MouseEvent.Listener mouseListener = getMouseListener();
+    KeyCharEvent.Listener keyCharListener = getKeyCharListener();
 
     if (event instanceof MouseEvent mouseEvent && mouseListener != null) {
       switch (mouseEvent.type) {
@@ -37,6 +44,8 @@ public interface InputEventHandler {
       }
 
       mouseListener.handleEvent(mouseEvent);
+    } else if (event instanceof KeyCharEvent keyCharEvent && keyCharListener != null) {
+      keyCharListener.handleEvent(keyCharEvent);
     }
   }
 }

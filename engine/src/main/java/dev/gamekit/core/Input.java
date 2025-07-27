@@ -218,15 +218,16 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
   private final KeyState[] keyStates;
   private final ButtonState[] buttonStates;
-  private final Position absMousePosition;
-  private final Position mousePosition;
+  private final Position absoluteMousePosition;
+  private final Position relativeMousePosition;
+  private char characterPressed = '\0';
   private boolean frozen = false;
 
   private Input() {
     keyStates = new KeyState[KEY_COUNT];
     buttonStates = new ButtonState[BUTTON_COUNT];
-    absMousePosition = new Position(MouseInfo.getPointerInfo().getLocation());
-    mousePosition = new Position(0, 0);
+    absoluteMousePosition = new Position(MouseInfo.getPointerInfo().getLocation());
+    relativeMousePosition = new Position(0, 0);
 
     IntStream.range(0, KEY_COUNT).forEach(
       i -> keyStates[i] = new KeyState()
@@ -264,6 +265,10 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
     return INSTANCE.buttonStates[buttonIndex].isReleased;
   }
 
+  public synchronized static char getPressedCharacter() {
+    return INSTANCE.characterPressed;
+  }
+
   public synchronized static Position getMousePosition() {
     Window.Info info = Window.getInfo();
     double scaleRatio = info.displayScaleRatio();
@@ -277,17 +282,15 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
     double scaledDisplayHeight = displayHeight * scaleRatio;
     double leftMargin = 0.5 * (windowWidth - scaledDisplayWidth);
     double topMargin = 0.5 * (windowHeight - scaledDisplayHeight);
-    double scaledMouseX =
-      inverseScaleRatio * (INSTANCE.absMousePosition.x - leftMargin);
-    double scaledMouseY =
-      inverseScaleRatio * (INSTANCE.absMousePosition.y - topMargin);
+    double scaledMouseX = inverseScaleRatio * (INSTANCE.absoluteMousePosition.x - leftMargin);
+    double scaledMouseY = inverseScaleRatio * (INSTANCE.absoluteMousePosition.y - topMargin);
 
-    INSTANCE.mousePosition.set(
+    INSTANCE.relativeMousePosition.set(
       (int) clamp(scaledMouseX, 0, displayWidth),
       (int) clamp(scaledMouseY, 0, displayHeight)
     );
 
-    return INSTANCE.mousePosition;
+    return INSTANCE.relativeMousePosition;
   }
 
   /**
@@ -308,12 +311,15 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
       i -> INSTANCE.buttonStates[i].reset()
     );
 
+    INSTANCE.characterPressed = '\0';
+
     INSTANCE.frozen = false;
   }
 
   @Override
   public synchronized void keyPressed(KeyEvent e) {
-    if (frozen) return;
+    if (frozen)
+      return;
 
     int keyCode = e.getKeyCode();
 
@@ -323,7 +329,8 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
   @Override
   public synchronized void keyReleased(KeyEvent e) {
-    if (frozen) return;
+    if (frozen)
+      return;
 
     int keyCode = e.getKeyCode();
 
@@ -332,11 +339,17 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   }
 
   @Override
-  public void keyTyped(KeyEvent e) { /* No-op */ }
+  public void keyTyped(KeyEvent e) {
+    if (frozen)
+      return;
+
+    characterPressed = e.getKeyChar();
+  }
 
   @Override
   public synchronized void mousePressed(MouseEvent e) {
-    if (frozen) return;
+    if (frozen)
+      return;
 
     int buttonCode = e.getButton();
 
@@ -346,7 +359,8 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
   @Override
   public synchronized void mouseReleased(MouseEvent e) {
-    if (frozen) return;
+    if (frozen)
+      return;
 
     int buttonCode = e.getButton();
 
@@ -356,16 +370,18 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
   @Override
   public synchronized void mouseDragged(MouseEvent e) {
-    if (frozen) return;
+    if (frozen)
+      return;
 
-    absMousePosition.set(e.getX(), e.getY());
+    absoluteMousePosition.set(e.getX(), e.getY());
   }
 
   @Override
   public synchronized void mouseMoved(MouseEvent e) {
-    if (frozen) return;
+    if (frozen)
+      return;
 
-    absMousePosition.set(e.getX(), e.getY());
+    absoluteMousePosition.set(e.getX(), e.getY());
   }
 
   @Override

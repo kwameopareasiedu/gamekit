@@ -9,6 +9,7 @@ public class InputEventStore {
   public MouseEvent mouseReleaseEvent;
   public MouseEvent mouseClickEvent;
   public MouseEvent mouseExitEvent;
+  public KeyCharEvent keyCharEvent;
 
   public void clear() {
     mouseMotionEvent = null;
@@ -18,5 +19,6 @@ public class InputEventStore {
     mouseReleaseEvent = null;
     mouseClickEvent = null;
     mouseExitEvent = null;
+    keyCharEvent = null;
   }
 }

@@ -2,10 +2,7 @@ package dev.gamekit.core;
 
 import dev.gamekit.settings.Settings;
 import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.events.InputEvent;
-import dev.gamekit.ui.events.InputEventHandler;
-import dev.gamekit.ui.events.InputEventStore;
-import dev.gamekit.ui.events.MouseEvent;
+import dev.gamekit.ui.events.*;
 import dev.gamekit.ui.widgets.MultiChildParent;
 import dev.gamekit.ui.widgets.Parent;
 import dev.gamekit.ui.widgets.SingleChildParent;
@@ -296,6 +293,12 @@ public final class UI {
     }
 
     this.mousePosition.set(mousePosition);
+
+    // Generate a key char event if a key has been pressed
+    if (Input.getPressedCharacter() != 0)
+      eventStore.keyCharEvent = new KeyCharEvent(
+        Input.getPressedCharacter()
+      );
   }
 
   /** Dispatches generated {@link InputEvent} to widgets */

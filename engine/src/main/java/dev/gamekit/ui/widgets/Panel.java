@@ -89,17 +89,6 @@ public class Panel extends SingleChildParent implements NinePatch, InputEventHan
   }
 
   @Override
-  public MouseEvent.Listener getMouseListener() {
-    return null;
-  }
-
-  @Override
-  public void setMouseEntered(boolean mouseEntered) {/* No-op */}
-
-  @Override
-  public void setMousePressed(boolean mouseEntered) {/* No-op */}
-
-  @Override
   public void handleEvent(InputEvent event) {
     event.setHandled();
   }
