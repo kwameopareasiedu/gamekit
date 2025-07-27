@@ -28,7 +28,7 @@ public final class UI {
   private final List<Widget> currentHitTestList;
   private final List<Widget> previousHitTestList;
   private final InputEventStore eventStore;
-  private final WidgetBridge uiBridge;
+  private final BridgeObject bridgeObject;
   private final Position mousePosition;
   private final BufferedImage canvasImage;
   private final Graphics2D canvasGraphics;
@@ -54,7 +54,7 @@ public final class UI {
     this.currentHitTestList = new ArrayList<>();
     this.previousHitTestList = new ArrayList<>();
     this.eventStore = new InputEventStore();
-    this.uiBridge = new WidgetBridge() {
+    this.bridgeObject = new BridgeObject() {
       @Override
       public FontMetrics getFontMetrics(Font font) {
         return Window.getInstance().getUiGraphics().getFontMetrics(font);
@@ -94,7 +94,7 @@ public final class UI {
     this.tree = tree;
 
     if (this.tree != null) {
-      this.tree.mounted(uiBridge);
+      this.tree.mounted(bridgeObject);
       this.tree.layout(windowConstraints);
       this.tree.postLayout();
       triggerRender();
@@ -138,7 +138,7 @@ public final class UI {
 
     currentWidgetQueue.add(tree);
     newWidgetQueue.add(newTree);
-    newTree.mounted(uiBridge);
+    newTree.mounted(bridgeObject);
 
     while (!currentWidgetQueue.isEmpty() && !newWidgetQueue.isEmpty()) {
       Widget treeWidget = currentWidgetQueue.remove(0);
@@ -442,7 +442,7 @@ public final class UI {
    * Interface for a bridge object passed to {@link Widget widgets} enabling them to call
    * certain methods in the {@link UI}
    */
-  public interface WidgetBridge {
+  public interface BridgeObject {
     /**
      * Gets the font metrics for the given font from the {@link Window}
      * {@link Graphics2D graphics} object

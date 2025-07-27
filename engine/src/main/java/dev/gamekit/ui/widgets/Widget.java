@@ -33,7 +33,7 @@ public abstract class Widget {
   protected final Bounds computedBounds;
   protected final Bounds intrinsicBounds;
   protected final Bounds clipBounds;
-  protected UI.WidgetBridge uiBridge;
+  protected UI.BridgeObject uiBridge;
   protected Constraints constraints;
   protected Widget parent;
 
@@ -65,7 +65,7 @@ public abstract class Widget {
    * Since this method is marked as {@code final}, subclasses should override the
    * {@link #performMounted()} method instead to perform any post-mount operations
    */
-  public final void mounted(UI.WidgetBridge uiBridge) {
+  public final void mounted(UI.BridgeObject uiBridge) {
     this.uiBridge = uiBridge;
     performMounted();
   }

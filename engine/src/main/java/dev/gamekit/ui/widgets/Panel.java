@@ -6,7 +6,6 @@ import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.events.InputEvent;
 import dev.gamekit.ui.events.InputEventHandler;
-import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.mixins.NinePatch;
 
 import java.awt.*;
@@ -90,7 +89,7 @@ public class Panel extends SingleChildParent implements NinePatch, InputEventHan
   }
 
   @Override
-  public UI.WidgetBridge getUiBridge() {
+  public UI.BridgeObject getUiBridge() {
     return uiBridge;
   }
 

@@ -108,7 +108,7 @@ public class Button extends SingleChildParent implements NinePatch, InputEventHa
   }
 
   @Override
-  public UI.WidgetBridge getUiBridge() {
+  public UI.BridgeObject getUiBridge() {
     return uiBridge;
   }
 
