@@ -3,8 +3,6 @@ package dev.gamekit.ui.widgets;
 import dev.gamekit.core.Constants;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Spacing;
-import dev.gamekit.ui.events.InputEvent;
-import dev.gamekit.ui.events.InputEventHandler;
 import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.mixins.NinePatch;
 
@@ -15,12 +13,12 @@ import java.util.Objects;
 import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link Widget} which can be clicked to trigger an event */
-public class Button extends SingleChildParent implements NinePatch, InputEventHandler {
+public class Button extends SingleChildParent implements NinePatch, MouseEvent.Handler {
   protected Spacing ninePatchBorder;
   protected BufferedImage defaultBackground;
   protected BufferedImage hoverBackground;
   protected BufferedImage pressedBackground;
-  protected MouseEvent.Listener mouseListener;
+  protected MouseEvent.Handler mouseListener;
   protected boolean mouseEntered;
   protected boolean mousePressed;
 
@@ -108,23 +106,21 @@ public class Button extends SingleChildParent implements NinePatch, InputEventHa
   }
 
   @Override
-  public void handleEvent(InputEvent event) {
-    if (event instanceof MouseEvent mouseEvent) {
-      switch (mouseEvent.type) {
-        case ENTER -> mouseEntered = true;
-        case DOWN -> mousePressed = true;
-        case RELEASE -> mousePressed = false;
-        case EXIT -> {
-          mouseEntered = false;
-          mousePressed = false;
-        }
+  public void handleEvent(MouseEvent event) {
+    switch (event.type) {
+      case ENTER -> mouseEntered = true;
+      case DOWN -> mousePressed = true;
+      case RELEASE -> mousePressed = false;
+      case EXIT -> {
+        mouseEntered = false;
+        mousePressed = false;
       }
-
-      uiBridge.triggerRender();
-
-      if (mouseListener != null)
-        mouseListener.handleEvent(mouseEvent);
     }
+
+    uiBridge.triggerRender();
+
+    if (mouseListener != null)
+      mouseListener.handleEvent(event);
   }
 
   public static class Config {
@@ -132,7 +128,7 @@ public class Button extends SingleChildParent implements NinePatch, InputEventHa
     BufferedImage defaultBackground;
     BufferedImage hoverBackground;
     BufferedImage pressedBackground;
-    MouseEvent.Listener mouseListener;
+    MouseEvent.Handler mouseListener;
 
     Config() { }
 
@@ -171,7 +167,7 @@ public class Button extends SingleChildParent implements NinePatch, InputEventHa
       return this;
     }
 
-    public Config mouseListener(MouseEvent.Listener mouseListener) {
+    public Config mouseListener(MouseEvent.Handler mouseListener) {
       this.mouseListener = mouseListener;
       return this;
     }

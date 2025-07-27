@@ -36,6 +36,7 @@ public final class UI {
   private Widget hoverWidget;
   private Widget focusWidget;
   private Widget activeWidget;
+  private Widget lastFocusWidget;
   private Widget lastActiveWidget;
   private boolean needsLayout = false;
   private int renderCount;
@@ -125,6 +126,11 @@ public final class UI {
     }
   }
 
+  /** Triggers a re-render of the current widget tree */
+  private void triggerRender() {
+    renderCount = MAX_RENDERS_PER_TRIGGER;
+  }
+
   /**
    * Updates the widget tree using a "diffing" algorithm
    * <p>
@@ -164,6 +170,7 @@ public final class UI {
         }
 
         if (treeWidget == hoverWidget) hoverWidget = newWidget;
+        if (treeWidget == focusWidget) focusWidget = newWidget;
         if (treeWidget == activeWidget) activeWidget = newWidget;
         if (treeWidget == lastActiveWidget) lastActiveWidget = newWidget;
       } else if (treeWidget instanceof SingleChildParent currentParent
@@ -190,11 +197,6 @@ public final class UI {
     needsLayout = false;
   }
 
-  /** Triggers a re-render of the current widget tree */
-  private void triggerRender() {
-    renderCount = MAX_RENDERS_PER_TRIGGER;
-  }
-
   /** Monitors {@link Input} and generates events for input actions */
   private void generateInputEvents() {
     if (tree == null)
@@ -206,7 +208,7 @@ public final class UI {
     Position mousePosition = Input.getMousePosition();
 
     traverseTree(tree, TraverseDirection.IN, widget -> {
-      if (widget instanceof InputEventHandler &&
+      if (widget instanceof InputEvent.Handler &&
         widget.hitTest(mousePosition.x, mousePosition.y)) {
         currentHitTestList.add(widget);
       }
@@ -249,8 +251,26 @@ public final class UI {
         Input.BUTTON_LMB
       );
 
-      // Since the mouse is down, the hover widget becomes the active widget until the mouse is
-      // released (i.e. activeWidget == null)
+      // If the hover widget is not the focus widget, a new widget has the focus now, so generate a
+      // blur event for the last focused
+      if (focusWidget != hoverWidget) {
+        lastFocusWidget = focusWidget;
+
+        eventStore.focusEvent = new FocusEvent(
+          FocusEvent.Type.BLUR
+        );
+      }
+
+      // Since the mouse is down, the hover widget becomes the focus widget
+      focusWidget = hoverWidget;
+
+      // Also generate a focus event
+      eventStore.focusEvent = new FocusEvent(
+        FocusEvent.Type.FOCUS
+      );
+
+      // If no widget is activated (i.e. activeWidget == null), the hover widget also becomes the
+      // active widget until the mouse is released
       if (activeWidget == null)
         activeWidget = hoverWidget;
     }
@@ -316,7 +336,7 @@ public final class UI {
     // Dispatch mouse motion events to widgets under mouse
     if (eventStore.mouseMotionEvent != null) {
       for (Widget widget : currentHitTestList) {
-        if (widget instanceof InputEventHandler eventHandler &&
+        if (widget instanceof MouseEvent.Handler eventHandler &&
           !eventStore.mouseMotionEvent.isHandled())
           eventHandler.handleEvent(eventStore.mouseMotionEvent);
       }
@@ -327,7 +347,7 @@ public final class UI {
       for (Widget widget : currentHitTestList) {
         if (activeWidget == null || widget == activeWidget) {
           if (!previousHitTestList.contains(widget) &&
-            widget instanceof InputEventHandler eventHandler &&
+            widget instanceof MouseEvent.Handler eventHandler &&
             !eventStore.mouseEnterEvent.isHandled())
             eventHandler.handleEvent(eventStore.mouseEnterEvent);
         }
@@ -337,7 +357,7 @@ public final class UI {
     // Dispatch mouse down and press events to the active widget
     if (activeWidget != null) {
       traverseTree(activeWidget, TraverseDirection.OUT, widget -> {
-        if (widget instanceof InputEventHandler eventHandler) {
+        if (widget instanceof MouseEvent.Handler eventHandler) {
           if (eventStore.mouseDownEvent != null &&
             !eventStore.mouseDownEvent.isHandled())
             eventHandler.handleEvent(eventStore.mouseDownEvent);
@@ -352,7 +372,7 @@ public final class UI {
     // Dispatch mouse release and click events to the active widget
     if (lastActiveWidget != null) {
       traverseTree(lastActiveWidget, TraverseDirection.OUT, widget -> {
-        if (widget instanceof InputEventHandler eventHandler) {
+        if (widget instanceof MouseEvent.Handler eventHandler) {
           if (eventStore.mouseReleaseEvent != null &&
             !eventStore.mouseReleaseEvent.isHandled())
             eventHandler.handleEvent(eventStore.mouseReleaseEvent);
@@ -369,16 +389,33 @@ public final class UI {
       for (Widget widget : previousHitTestList) {
         if (activeWidget == null || widget == activeWidget) {
           if (!currentHitTestList.contains(widget) &&
-            widget instanceof InputEventHandler eventHandler &&
+            widget instanceof MouseEvent.Handler eventHandler &&
             !eventStore.mouseExitEvent.isHandled())
             eventHandler.handleEvent(eventStore.mouseExitEvent);
         }
       }
     }
 
+    // Dispatch focus events
+    if (focusWidget != null) {
+      if (eventStore.focusEvent != null &&
+        !eventStore.focusEvent.isHandled() &&
+        focusWidget instanceof FocusEvent.Handler eventHandler)
+        eventHandler.handleEvent(eventStore.focusEvent);
+    }
+
+    // Dispatch blur events
+    if (lastFocusWidget != null) {
+      if (eventStore.focusEvent != null &&
+        !eventStore.focusEvent.isHandled() &&
+        lastFocusWidget instanceof FocusEvent.Handler eventHandler)
+        eventHandler.handleEvent(eventStore.focusEvent);
+    }
+
     previousHitTestList.clear();
     previousHitTestList.addAll(currentHitTestList);
     lastActiveWidget = null;
+    lastFocusWidget = null;
   }
 
   /** Draws the widget tree to the {@link Window} UI buffer */
@@ -463,6 +500,8 @@ public final class UI {
     public MouseEvent mouseReleaseEvent;
     public MouseEvent mouseClickEvent;
     public MouseEvent mouseExitEvent;
+    public FocusEvent focusEvent;
+    public FocusEvent blurEvent;
     public KeyCharEvent keyCharEvent;
 
     public void clear() {
@@ -473,6 +512,8 @@ public final class UI {
       mouseReleaseEvent = null;
       mouseClickEvent = null;
       mouseExitEvent = null;
+      focusEvent = null;
+      blurEvent = null;
       keyCharEvent = null;
     }
   }

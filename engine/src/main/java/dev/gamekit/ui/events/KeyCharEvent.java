@@ -8,9 +8,8 @@ public class KeyCharEvent extends InputEvent {
     this.charPressed = charPressed;
   }
 
-  /** Callback interface for a {@link KeyCharEvent} handler */
-  public interface Listener {
-    /** Called to handle the {@link KeyCharEvent} event */
-    void handleEvent(KeyCharEvent event);
+  /** Handler interface for {@link KeyCharEvent mouse events} */
+  public interface Handler extends InputEvent.Handler {
+    void handleEvent(KeyCharEvent ev);
   }
 }
