@@ -1,7 +1,6 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.Constants;
-import dev.gamekit.core.UI;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.enums.Alignment;
 

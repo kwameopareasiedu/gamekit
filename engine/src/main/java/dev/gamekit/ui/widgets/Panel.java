@@ -1,7 +1,6 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.Constants;
-import dev.gamekit.core.UI;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.events.InputEvent;
@@ -86,11 +85,6 @@ public class Panel extends SingleChildParent implements NinePatch, InputEventHan
     }
 
     return false;
-  }
-
-  @Override
-  public UI.BridgeObject getUiBridge() {
-    return uiBridge;
   }
 
   @Override

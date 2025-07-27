@@ -27,13 +27,14 @@ public final class UI {
   private final Constraints windowConstraints;
   private final List<Widget> currentHitTestList;
   private final List<Widget> previousHitTestList;
-  private final InputEventStore eventStore;
+  private final EventStore eventStore;
   private final BridgeObject bridgeObject;
   private final Position mousePosition;
   private final BufferedImage canvasImage;
   private final Graphics2D canvasGraphics;
   private Widget tree;
   private Widget hoverWidget;
+  private Widget focusWidget;
   private Widget activeWidget;
   private Widget lastActiveWidget;
   private boolean needsLayout = false;
@@ -53,7 +54,7 @@ public final class UI {
     this.windowConstraints = new Constraints(dw, dw, dh, dh);
     this.currentHitTestList = new ArrayList<>();
     this.previousHitTestList = new ArrayList<>();
-    this.eventStore = new InputEventStore();
+    this.eventStore = new EventStore();
     this.bridgeObject = new BridgeObject() {
       @Override
       public FontMetrics getFontMetrics(Font font) {
@@ -451,5 +452,28 @@ public final class UI {
 
     /** Triggers a re-render of the {@link Widget widget} tree */
     void triggerRender();
+  }
+
+  /** Convenience class which stores structures of {@link InputEvent} */
+  private static class EventStore {
+    public MouseEvent mouseMotionEvent;
+    public MouseEvent mouseEnterEvent;
+    public MouseEvent mouseDownEvent;
+    public MouseEvent mousePressEvent;
+    public MouseEvent mouseReleaseEvent;
+    public MouseEvent mouseClickEvent;
+    public MouseEvent mouseExitEvent;
+    public KeyCharEvent keyCharEvent;
+
+    public void clear() {
+      mouseMotionEvent = null;
+      mouseEnterEvent = null;
+      mouseDownEvent = null;
+      mousePressEvent = null;
+      mouseReleaseEvent = null;
+      mouseClickEvent = null;
+      mouseExitEvent = null;
+      keyCharEvent = null;
+    }
   }
 }

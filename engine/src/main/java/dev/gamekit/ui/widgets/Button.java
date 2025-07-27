@@ -1,9 +1,9 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.Constants;
-import dev.gamekit.core.UI;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Spacing;
+import dev.gamekit.ui.events.InputEvent;
 import dev.gamekit.ui.events.InputEventHandler;
 import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.mixins.NinePatch;
@@ -108,23 +108,23 @@ public class Button extends SingleChildParent implements NinePatch, InputEventHa
   }
 
   @Override
-  public UI.BridgeObject getUiBridge() {
-    return uiBridge;
-  }
+  public void handleEvent(InputEvent event) {
+    if (event instanceof MouseEvent mouseEvent) {
+      switch (mouseEvent.type) {
+        case ENTER -> mouseEntered = true;
+        case DOWN -> mousePressed = true;
+        case RELEASE -> mousePressed = false;
+        case EXIT -> {
+          mouseEntered = false;
+          mousePressed = false;
+        }
+      }
 
-  @Override
-  public MouseEvent.Listener getMouseListener() {
-    return mouseListener;
-  }
+      uiBridge.triggerRender();
 
-  @Override
-  public void setMouseEntered(boolean mouseEntered) {
-    this.mouseEntered = mouseEntered;
-  }
-
-  @Override
-  public void setMousePressed(boolean mousePressed) {
-    this.mousePressed = mousePressed;
+      if (mouseListener != null)
+        mouseListener.handleEvent(mouseEvent);
+    }
   }
 
   public static class Config {
