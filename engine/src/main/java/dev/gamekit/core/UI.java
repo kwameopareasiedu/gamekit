@@ -255,7 +255,7 @@ public final class UI {
       );
 
       // If the hover widget is not the focus widget, a new widget has the focus now, so generate a
-      // blur event for the last focused
+      // blur event for the last focused widget
       if (focusWidget != hoverWidget) {
         lastFocusWidget = focusWidget;
 
@@ -272,8 +272,8 @@ public final class UI {
         FocusEvent.Type.FOCUS
       );
 
-      // If no widget is activated (i.e. activeWidget == null), the hover widget also becomes the
-      // active widget until the mouse is released
+      // If no widget is currently being activated (i.e. activeWidget == null), the hover widget
+      // also becomes the active widget until the mouse is released
       if (activeWidget == null)
         activeWidget = hoverWidget;
     }
@@ -336,7 +336,7 @@ public final class UI {
 
   /** Dispatches generated {@link InputEvent} to widgets */
   private void dispatchInputEvents() {
-    // Dispatch mouse motion events to widgets under mouse
+    // Dispatch mouse motion event to widgets under mouse
     if (eventStore.mouseMotionEvent != null) {
       for (Widget widget : currentHitTestList) {
         if (widget instanceof MouseEvent.Handler eventHandler &&
@@ -345,7 +345,7 @@ public final class UI {
       }
     }
 
-    // Dispatch mouse enter events
+    // Dispatch mouse enter event
     if (eventStore.mouseEnterEvent != null) {
       for (Widget widget : currentHitTestList) {
         if (activeWidget == null || widget == activeWidget) {
@@ -387,7 +387,7 @@ public final class UI {
       });
     }
 
-    // Dispatch mouse exit events
+    // Dispatch mouse exit event
     if (eventStore.mouseExitEvent != null) {
       for (Widget widget : previousHitTestList) {
         if (activeWidget == null || widget == activeWidget) {
@@ -399,7 +399,7 @@ public final class UI {
       }
     }
 
-    // Dispatch focus events
+    // Dispatch focus event
     if (eventStore.focusEvent != null) {
       if (focusWidget != null &&
         !eventStore.focusEvent.isHandled() &&
@@ -407,12 +407,20 @@ public final class UI {
         eventHandler.handleEvent(eventStore.focusEvent);
     }
 
-    // Dispatch blur events
+    // Dispatch blur event
     if (eventStore.blurEvent != null) {
       if (lastFocusWidget != null &&
         !eventStore.blurEvent.isHandled() &&
         lastFocusWidget instanceof FocusEvent.Handler eventHandler)
         eventHandler.handleEvent(eventStore.blurEvent);
+    }
+
+    // Dispatch key char event
+    if (eventStore.keyCharEvent != null) {
+      if (focusWidget != null &&
+        !eventStore.keyCharEvent.isHandled() &&
+        focusWidget instanceof KeyCharEvent.Handler eventHandler)
+        eventHandler.handleEvent(eventStore.keyCharEvent);
     }
 
     previousHitTestList.clear();

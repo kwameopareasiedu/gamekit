@@ -3,7 +3,9 @@ package dev.gamekit.ui.widgets;
 import dev.gamekit.ui.Border;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Spacing;
+import dev.gamekit.ui.events.ChangeEvent;
 import dev.gamekit.ui.events.FocusEvent;
+import dev.gamekit.ui.events.KeyCharEvent;
 import dev.gamekit.utils.Bounds;
 
 import java.awt.*;
@@ -13,11 +15,14 @@ import java.util.Objects;
 import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link Text} widget extension which accepts text input */
-public class Field extends Text implements FocusEvent.Handler {
+public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Handler {
   protected BufferedImage background;
   protected Spacing padding;
   protected Border defaultBorder;
   protected Border focusBorder;
+  protected FocusEvent.Handler focusListener;
+  protected KeyCharEvent.Handler keyCharListener;
+  protected ChangeEvent.Handler changeListener;
   protected boolean focused;
 
   private final Bounds absoluteContentBounds;
@@ -52,6 +57,9 @@ public class Field extends Text implements FocusEvent.Handler {
       coalesce(config.defaultBorder, theme.fieldDefaultBorder, new Border(1, 12, Color.WHITE));
     focusBorder =
       coalesce(config.focusBorder, theme.fieldFocusBorder, new Border(1, 12, Color.GREEN));
+    focusListener = coalesce(config.focusListener, null);
+    keyCharListener = coalesce(config.keyCharListener, null);
+    changeListener = coalesce(config.changeListener, null);
 
     defaultBorderStroke = new BasicStroke(
       (float) defaultBorder.size(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND
@@ -160,6 +168,20 @@ public class Field extends Text implements FocusEvent.Handler {
     }
 
     uiBridge.triggerRender();
+
+    if (focusListener != null)
+      focusListener.handleEvent(ev);
+  }
+
+  @Override
+  public void handleEvent(KeyCharEvent ev) {
+    if (keyCharListener != null)
+      keyCharListener.handleEvent(ev);
+
+    if (!ev.isHandled() && changeListener != null) {
+      String newValue = text + ev.charPressed;
+      changeListener.handleEvent(new ChangeEvent(newValue));
+    }
   }
 
   public static class Config extends Text.Config<Config> {
@@ -167,6 +189,9 @@ public class Field extends Text implements FocusEvent.Handler {
     Spacing padding;
     Border defaultBorder;
     Border focusBorder;
+    FocusEvent.Handler focusListener;
+    KeyCharEvent.Handler keyCharListener;
+    ChangeEvent.Handler changeListener;
 
     Config() { }
 
@@ -207,6 +232,21 @@ public class Field extends Text implements FocusEvent.Handler {
 
     public Config focusBorder(Border focusBorder) {
       this.focusBorder = focusBorder;
+      return this;
+    }
+
+    public Config focusListener(FocusEvent.Handler focusListener) {
+      this.focusListener = focusListener;
+      return this;
+    }
+
+    public Config keyCharListener(KeyCharEvent.Handler keyCharListener) {
+      this.keyCharListener = keyCharListener;
+      return this;
+    }
+
+    public Config changeListener(ChangeEvent.Handler changeListener) {
+      this.changeListener = changeListener;
       return this;
     }
   }

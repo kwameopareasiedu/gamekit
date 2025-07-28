@@ -1,6 +1,6 @@
 package dev.gamekit.ui.events;
 
-/** Abstract base class for keyboard character events */
+/** Event class for keyboard character events */
 public class KeyCharEvent extends InputEvent {
   public final char charPressed;
 
@@ -8,7 +8,7 @@ public class KeyCharEvent extends InputEvent {
     this.charPressed = charPressed;
   }
 
-  /** Handler interface for {@link KeyCharEvent mouse events} */
+  /** Handler interface for {@link KeyCharEvent key char events} */
   public interface Handler extends InputEvent.Handler {
     void handleEvent(KeyCharEvent ev);
   }

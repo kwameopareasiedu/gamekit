@@ -14,7 +14,7 @@ public class FocusEvent extends InputEvent {
     BLUR,
   }
 
-  /** Handler interface for {@link FocusEvent mouse events} */
+  /** Handler interface for {@link FocusEvent focus events} */
   public interface Handler extends InputEvent.Handler {
     void handleEvent(FocusEvent ev);
   }
