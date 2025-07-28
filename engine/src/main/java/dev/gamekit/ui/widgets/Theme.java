@@ -7,6 +7,7 @@ import dev.gamekit.ui.enums.Alignment;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Objects;
 
 import static dev.gamekit.utils.Misc.coalesce;
 
@@ -56,6 +57,60 @@ public class Theme extends SingleChildParent {
   }
 
   @Override
+  public boolean stateEquals(Widget widget) {
+    if (widget instanceof Theme themeWidget) {
+      return Objects.equals(buttonNinePatchBorder, themeWidget.buttonNinePatchBorder) &&
+        Objects.equals(buttonDefaultBackground, themeWidget.buttonDefaultBackground) &&
+        Objects.equals(buttonHoverBackground, themeWidget.buttonHoverBackground) &&
+        Objects.equals(buttonPressedBackground, themeWidget.buttonPressedBackground) &&
+
+        Objects.equals(textFont, themeWidget.textFont) &&
+        Objects.equals(textFontStyle, themeWidget.textFontStyle) &&
+        Objects.equals(textFontSize, themeWidget.textFontSize) &&
+        Objects.equals(textColor, themeWidget.textColor) &&
+        Objects.equals(textBackgroundColor, themeWidget.textBackgroundColor) &&
+        Objects.equals(textAlignment, themeWidget.textAlignment) &&
+        Objects.equals(textVerticalAlignment, themeWidget.textVerticalAlignment) &&
+        Objects.equals(textShadowEnabled, themeWidget.textShadowEnabled) &&
+        Objects.equals(textShadowOffsetX, themeWidget.textShadowOffsetX) &&
+        Objects.equals(textShadowOffsetY, themeWidget.textShadowOffsetY) &&
+        Objects.equals(textShadowColor, themeWidget.textShadowColor) &&
+
+        Objects.equals(fieldBackground, themeWidget.fieldBackground) &&
+        Objects.equals(fieldPadding, themeWidget.fieldPadding) &&
+        Objects.equals(fieldDefaultBorder, themeWidget.fieldDefaultBorder) &&
+        Objects.equals(fieldFocusBorder, themeWidget.fieldFocusBorder);
+    }
+
+    return false;
+  }
+
+  @Override
+  protected void performUpdateState(Widget widget) {
+    this.buttonNinePatchBorder = ((Theme) widget).buttonNinePatchBorder;
+    this.buttonDefaultBackground = ((Theme) widget).buttonDefaultBackground;
+    this.buttonHoverBackground = ((Theme) widget).buttonHoverBackground;
+    this.buttonPressedBackground = ((Theme) widget).buttonPressedBackground;
+
+    this.textFont = ((Theme) widget).textFont;
+    this.textFontStyle = ((Theme) widget).textFontStyle;
+    this.textFontSize = ((Theme) widget).textFontSize;
+    this.textColor = ((Theme) widget).textColor;
+    this.textBackgroundColor = ((Theme) widget).textBackgroundColor;
+    this.textAlignment = ((Theme) widget).textAlignment;
+    this.textVerticalAlignment = ((Theme) widget).textVerticalAlignment;
+    this.textShadowEnabled = ((Theme) widget).textShadowEnabled;
+    this.textShadowOffsetX = ((Theme) widget).textShadowOffsetX;
+    this.textShadowOffsetY = ((Theme) widget).textShadowOffsetY;
+    this.textShadowColor = ((Theme) widget).textShadowColor;
+
+    this.fieldBackground = ((Theme) widget).fieldBackground;
+    this.fieldPadding = ((Theme) widget).fieldPadding;
+    this.fieldDefaultBorder = ((Theme) widget).fieldDefaultBorder;
+    this.fieldFocusBorder = ((Theme) widget).fieldFocusBorder;
+  }
+
+  @Override
   protected void performMounted() {
     Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
 
@@ -102,11 +157,6 @@ public class Theme extends SingleChildParent {
       constraints.constrainWidth(intrinsicBounds.width),
       constraints.constrainHeight(intrinsicBounds.height)
     );
-  }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    return false;
   }
 
   public static class Config {

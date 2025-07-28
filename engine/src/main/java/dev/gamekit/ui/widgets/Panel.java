@@ -37,6 +37,22 @@ public class Panel extends SingleChildParent implements NinePatch, MouseEvent.Ha
   }
 
   @Override
+  public boolean stateEquals(Widget widget) {
+    if (widget instanceof Panel panelWidget) {
+      return Objects.equals(background, panelWidget.background)
+        && Objects.equals(ninePatchBorder, panelWidget.ninePatchBorder);
+    }
+
+    return false;
+  }
+
+  @Override
+  protected void performUpdateState(Widget widget) {
+    this.background = ((Panel) widget).background;
+    this.ninePatchBorder = ((Panel) widget).ninePatchBorder;
+  }
+
+  @Override
   protected void performMounted() {
     this.background = coalesce(config.background, Constants.DEFAULT_PANEL_BG);
     this.ninePatchBorder = coalesce(config.ninePatchBorder, new Spacing());
@@ -75,16 +91,6 @@ public class Panel extends SingleChildParent implements NinePatch, MouseEvent.Ha
       ninePatchBorder,
       g
     );
-  }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    if (widget instanceof Panel panelWidget) {
-      return Objects.equals(background, panelWidget.background)
-        && Objects.equals(ninePatchBorder, panelWidget.ninePatchBorder);
-    }
-
-    return false;
   }
 
   @Override

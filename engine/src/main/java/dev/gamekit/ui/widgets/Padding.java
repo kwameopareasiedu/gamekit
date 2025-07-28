@@ -27,6 +27,19 @@ public class Padding extends SingleChildParent {
   }
 
   @Override
+  public boolean stateEquals(Widget widget) {
+    if (widget instanceof Padding paddingWidget)
+      return Objects.equals(padding, paddingWidget.padding);
+
+    return false;
+  }
+
+  @Override
+  protected void performUpdateState(Widget widget) {
+    this.padding = ((Padding) widget).padding;
+  }
+
+  @Override
   protected void performMounted() {
     padding = coalesce(config.padding, new Spacing());
     super.performMounted();
@@ -52,14 +65,6 @@ public class Padding extends SingleChildParent {
     );
 
     child.computedBounds.setPosition(padding.left, padding.top);
-  }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    if (widget instanceof Padding paddingWidget)
-      return Objects.equals(padding, paddingWidget.padding);
-
-    return false;
   }
 
   public static class Config {

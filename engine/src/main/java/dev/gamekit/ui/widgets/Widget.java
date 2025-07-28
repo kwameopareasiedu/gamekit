@@ -53,10 +53,25 @@ public abstract class Widget {
     this.parent = parent;
   }
 
-  /**
-   * Delegate method which returns {@code true} if this widget has the same state as {@code widget}
-   */
+  /** Delegate method which determines if this widget's state matches another {@code widget} */
   public abstract boolean stateEquals(Widget widget);
+
+  /**
+   * During UI reconciliation, this method is called with a new widget of the same type but with
+   * updated state, to update this widgets state.
+   * <p>
+   * It is guaranteed that the type of the incoming widget will be the same as this widget so it
+   * is safe to cast the incoming widget to this widgets class.
+   * <p>
+   * Since this method is marked as {@code final}, subclasses should override the
+   * {@link #performUpdateState(Widget widget)} method instead to perform any state updates
+   */
+  public final void updateState(Widget widget) {
+    performUpdateState(widget);
+  }
+
+  /** Delegate method performs the state update for this widget */
+  protected abstract void performUpdateState(Widget widget);
 
   /**
    * Called after the widget has been inserted into the widget tree and {@link #parent} is set.
@@ -166,7 +181,7 @@ public abstract class Widget {
    */
   protected abstract void performRender(Graphics2D g);
 
-  /** Determines if point (x, y) falls within the absolute bounds of this widget */
+  /** Determines if the point {@code (x,y)} falls within the absolute bounds of this widget */
   public boolean hitTest(double x, double y) {
     double absoluteRight = absoluteBounds.x + absoluteBounds.width;
     double absoluteBottom = absoluteBounds.y + absoluteBounds.height;
@@ -174,6 +189,10 @@ public abstract class Widget {
       absoluteBounds.y <= y && y <= absoluteBottom;
   }
 
+  /**
+   * Computes the absolute bounds, starting with the computed size and walking up its ancestry,
+   * to determine the absolute position
+   */
   protected void computeAbsoluteBounds() {
     double absoluteX = computedBounds.x;
     double absoluteY = computedBounds.y;

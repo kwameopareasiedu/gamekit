@@ -14,6 +14,14 @@ public class Empty extends Leaf {
   }
 
   @Override
+  public boolean stateEquals(Widget widget) {
+    return widget instanceof Empty;
+  }
+
+  @Override
+  protected void performUpdateState(Widget ignored) { /* No-op */ }
+
+  @Override
   protected void performLayout(Constraints constraints) {
     computedBounds.setSize(
       constraints.constrainWidth(0),
@@ -23,9 +31,4 @@ public class Empty extends Leaf {
 
   @Override
   protected void performRender(Graphics2D g) { /* No-op */ }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    return widget instanceof Empty;
-  }
 }

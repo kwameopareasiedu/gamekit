@@ -26,6 +26,20 @@ public class Scaled extends SingleChildParent {
   }
 
   @Override
+  public boolean stateEquals(Widget widget) {
+    if (widget instanceof Scaled scaledWidget) {
+      return Objects.equals(scale, scaledWidget.scale);
+    }
+
+    return false;
+  }
+
+  @Override
+  protected void performUpdateState(Widget widget) {
+    this.scale = ((Scaled) widget).scale;
+  }
+
+  @Override
   protected void performMounted() {
     scale = Math.max(0, coalesce(config.scale, 1.0));
     super.performMounted();
@@ -56,15 +70,6 @@ public class Scaled extends SingleChildParent {
         computedBounds.height, computedBounds.height
       )
     );
-  }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    if (widget instanceof Scaled scaledWidget) {
-      return Objects.equals(scale, scaledWidget.scale);
-    }
-
-    return false;
   }
 
   public static class Config {

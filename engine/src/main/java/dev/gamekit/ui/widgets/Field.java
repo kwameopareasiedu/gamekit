@@ -47,6 +47,23 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
   }
 
   @Override
+  public boolean stateEquals(Widget widget) {
+    if (widget instanceof Field fieldWidget)
+      return super.stateEquals(widget) &&
+        Objects.equals(padding, fieldWidget.padding) &&
+        Objects.equals(background, fieldWidget.background);
+
+    return false;
+  }
+
+  @Override
+  protected void performUpdateState(Widget widget) {
+    super.performUpdateState(widget);
+    this.padding = ((Field) widget).padding;
+    this.background = ((Field) widget).background;
+  }
+
+  @Override
   protected void performMounted() {
     super.performMounted();
 
@@ -150,16 +167,6 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
 
     g.setStroke(tempStroke);
     g.setColor(tempColor);
-  }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    if (widget instanceof Field fieldWidget)
-      return super.stateEquals(widget) &&
-        Objects.equals(padding, fieldWidget.padding) &&
-        Objects.equals(background, fieldWidget.background);
-
-    return false;
   }
 
   @Override

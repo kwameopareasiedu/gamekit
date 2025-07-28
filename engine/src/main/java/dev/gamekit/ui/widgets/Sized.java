@@ -33,6 +33,26 @@ public class Sized extends SingleChildParent {
   }
 
   @Override
+  public boolean stateEquals(Widget widget) {
+    if (widget instanceof Sized sizedWidget) {
+      return Objects.equals(widthType, sizedWidget.widthType) &&
+        Objects.equals(heightType, sizedWidget.heightType) &&
+        Objects.equals(width, sizedWidget.width) &&
+        Objects.equals(height, sizedWidget.height);
+    }
+
+    return false;
+  }
+
+  @Override
+  protected void performUpdateState(Widget widget) {
+    this.widthType = ((Sized) widget).widthType;
+    this.heightType = ((Sized) widget).heightType;
+    this.width = ((Sized) widget).width;
+    this.height = ((Sized) widget).height;
+  }
+
+  @Override
   protected void performMounted() {
     this.width = coalesce(config.width, 64.0);
     this.height = coalesce(config.height, 64.0);
@@ -96,17 +116,6 @@ public class Sized extends SingleChildParent {
       constraints.constrainWidth(intrinsicBounds.width),
       constraints.constrainHeight(intrinsicBounds.height)
     );
-  }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    if (widget instanceof Sized sizedWidget) {
-      return Objects.equals(widthType, sizedWidget.widthType) &&
-        Objects.equals(heightType, sizedWidget.heightType) &&
-        Objects.equals(width, sizedWidget.width) &&
-        Objects.equals(height, sizedWidget.height);
-    }
-    return false;
   }
 
   public static class Config {

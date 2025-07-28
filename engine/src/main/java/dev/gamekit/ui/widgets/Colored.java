@@ -25,6 +25,22 @@ public class Colored extends Leaf {
   }
 
   @Override
+  public boolean stateEquals(Widget widget) {
+    if (widget instanceof Colored panelWidget) {
+      return Objects.equals(color, panelWidget.color) &&
+        Objects.equals(borderRadius, panelWidget.borderRadius);
+    }
+
+    return false;
+  }
+
+  @Override
+  protected void performUpdateState(Widget widget) {
+    this.color = ((Colored) widget).color;
+    this.borderRadius = ((Colored) widget).borderRadius;
+  }
+
+  @Override
   protected void performMounted() {
     super.performMounted();
     this.color = config.color;
@@ -54,21 +70,11 @@ public class Colored extends Leaf {
     );
   }
 
-  @Override
-  public boolean stateEquals(Widget widget) {
-    if (widget instanceof Colored panelWidget) {
-      return Objects.equals(color, panelWidget.color) &&
-        Objects.equals(borderRadius, panelWidget.borderRadius);
-    }
-
-    return false;
-  }
-
   public static class Config {
     Color color = Color.GRAY;
     int borderRadius = 0;
 
-    Config() {}
+    Config() { }
 
     public Config color(Color color) {
       this.color = color;

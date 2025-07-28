@@ -19,14 +19,6 @@ public abstract class Flex extends MultiChildParent {
   }
 
   @Override
-  protected void performMounted() {
-    this.gapSize = config.gapSize;
-    this.mainAxisAlignment = config.mainAxisAlignment;
-    this.crossAxisAlignment = config.crossAxisAlignment;
-    super.performMounted();
-  }
-
-  @Override
   public boolean stateEquals(Widget widget) {
     if (widget instanceof Flex flexWidget) {
       return Objects.equals(gapSize, flexWidget.gapSize) &&
@@ -35,6 +27,21 @@ public abstract class Flex extends MultiChildParent {
     }
 
     return false;
+  }
+
+  @Override
+  protected void performUpdateState(Widget widget) {
+    this.gapSize = ((Flex) widget).gapSize;
+    this.mainAxisAlignment = ((Flex) widget).mainAxisAlignment;
+    this.crossAxisAlignment = ((Flex) widget).crossAxisAlignment;
+  }
+
+  @Override
+  protected void performMounted() {
+    this.gapSize = config.gapSize;
+    this.mainAxisAlignment = config.mainAxisAlignment;
+    this.crossAxisAlignment = config.crossAxisAlignment;
+    super.performMounted();
   }
 
   @SuppressWarnings("unchecked")

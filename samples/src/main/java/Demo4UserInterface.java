@@ -160,7 +160,7 @@ public class Demo4UserInterface extends Scene {
   }
 
   static class MainMenuButton extends Compose {
-    protected final String text;
+    protected String text;
 
     public MainMenuButton(String text, MouseEvent.Handler mouseListener) {
       super(
@@ -190,10 +190,15 @@ public class Demo4UserInterface extends Scene {
 
       return false;
     }
+
+    @Override
+    protected void performUpdateState(Widget widget) {
+      this.text = ((MainMenuButton) widget).text;
+    }
   }
 
   static class SubMenuButton extends Compose {
-    protected final String text;
+    protected String text;
 
     public SubMenuButton(String text) {
       super(
@@ -222,6 +227,11 @@ public class Demo4UserInterface extends Scene {
         return Objects.equals(text, subMenuButton.text);
 
       return false;
+    }
+
+    @Override
+    protected void performUpdateState(Widget widget) {
+      this.text = ((SubMenuButton) widget).text;
     }
   }
 }

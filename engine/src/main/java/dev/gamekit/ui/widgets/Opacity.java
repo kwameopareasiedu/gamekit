@@ -29,6 +29,20 @@ public class Opacity extends SingleChildParent {
   }
 
   @Override
+  public boolean stateEquals(Widget widget) {
+    if (widget instanceof Opacity opacityWidget) {
+      return Objects.equals(opacity, opacityWidget.opacity);
+    }
+
+    return false;
+  }
+
+  @Override
+  protected void performUpdateState(Widget widget) {
+    this.opacity = ((Opacity) widget).opacity;
+  }
+
+  @Override
   protected void performMounted() {
     this.opacity = clamp(coalesce(config.opacity, 1.0), 0, 1);
     this.composite = AlphaComposite.getInstance(
@@ -70,15 +84,6 @@ public class Opacity extends SingleChildParent {
     g.setComposite(composite);
     super.performRender(g);
     g.setComposite(c);
-  }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    if (widget instanceof Opacity opacityWidget) {
-      return Objects.equals(opacity, opacityWidget.opacity);
-    }
-
-    return false;
   }
 
   public static class Config {

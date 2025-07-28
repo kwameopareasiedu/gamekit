@@ -12,7 +12,7 @@ import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link Leaf} which renders a {@link BufferedImage} to the screen */
 public class Image extends Leaf {
-  protected final BufferedImage image;
+  protected BufferedImage image;
   protected ImageFit fit;
   protected ImageInterpolation interpolation;
 
@@ -36,6 +36,22 @@ public class Image extends Leaf {
 
   public static Config config() {
     return new Config();
+  }
+
+  @Override
+  public boolean stateEquals(Widget widget) {
+    if (widget instanceof Image imageWidget) {
+      return Objects.equals(image, imageWidget.image)
+        && Objects.equals(fit, imageWidget.fit);
+    }
+
+    return false;
+  }
+
+  @Override
+  protected void performUpdateState(Widget widget) {
+    this.fit = ((Image) widget).fit;
+    this.interpolation = ((Image) widget).interpolation;
   }
 
   @Override
@@ -93,16 +109,6 @@ public class Image extends Leaf {
     );
 
     originalInterpolation.apply(g);
-  }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    if (widget instanceof Image imageWidget) {
-      return Objects.equals(image, imageWidget.image)
-        && Objects.equals(fit, imageWidget.fit);
-    }
-
-    return false;
   }
 
   public static class Config {

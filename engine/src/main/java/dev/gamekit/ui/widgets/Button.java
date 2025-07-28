@@ -38,6 +38,27 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
   }
 
   @Override
+  public boolean stateEquals(Widget widget) {
+    if (widget instanceof Button buttonWidget) {
+      return Objects.equals(ninePatchBorder, buttonWidget.ninePatchBorder) &&
+        Objects.equals(defaultBackground, buttonWidget.defaultBackground) &&
+        Objects.equals(hoverBackground, buttonWidget.hoverBackground) &&
+        Objects.equals(pressedBackground, buttonWidget.pressedBackground);
+    }
+
+    return false;
+  }
+
+  @Override
+  protected void performUpdateState(Widget widget) {
+    this.ninePatchBorder = ((Button) widget).ninePatchBorder;
+    this.defaultBackground = ((Button) widget).defaultBackground;
+    this.hoverBackground = ((Button) widget).hoverBackground;
+    this.pressedBackground = ((Button) widget).pressedBackground;
+    this.mouseListener = ((Button) widget).mouseListener;
+  }
+
+  @Override
   protected void performMounted() {
     Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
 
@@ -91,17 +112,6 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
       super.renderAppearance(g);
       renderNinePatch(bgImage, absoluteBounds, ninePatchBorder, g);
     }
-  }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    if (widget instanceof Button buttonWidget) {
-      return Objects.equals(defaultBackground, buttonWidget.defaultBackground) &&
-        Objects.equals(hoverBackground, buttonWidget.hoverBackground) &&
-        Objects.equals(pressedBackground, buttonWidget.pressedBackground);
-    }
-
-    return false;
   }
 
   @Override

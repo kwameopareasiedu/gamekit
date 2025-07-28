@@ -28,6 +28,22 @@ public class Align extends SingleChildParent {
   }
 
   @Override
+  public boolean stateEquals(Widget widget) {
+    if (widget instanceof Align alignWidget) {
+      return Objects.equals(horizontalAlignment, alignWidget.horizontalAlignment)
+        && Objects.equals(verticalAlignment, alignWidget.verticalAlignment);
+    }
+
+    return false;
+  }
+
+  @Override
+  protected void performUpdateState(Widget widget) {
+    this.horizontalAlignment = ((Align) widget).horizontalAlignment;
+    this.verticalAlignment = ((Align) widget).verticalAlignment;
+  }
+
+  @Override
   protected void performMounted() {
     this.horizontalAlignment = coalesce(config.horizontalAlignment, Alignment.START);
     this.verticalAlignment = coalesce(config.verticalAlignment, Alignment.START);
@@ -66,16 +82,6 @@ public class Align extends SingleChildParent {
     };
 
     child.computedBounds.setPosition(hOffset, vOffset);
-  }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    if (widget instanceof Align alignWidget) {
-      return Objects.equals(horizontalAlignment, alignWidget.horizontalAlignment)
-        && Objects.equals(verticalAlignment, alignWidget.verticalAlignment);
-    }
-
-    return false;
   }
 
   public static class Config {

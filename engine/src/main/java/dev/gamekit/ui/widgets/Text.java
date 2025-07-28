@@ -16,7 +16,8 @@ import static dev.gamekit.utils.Misc.coalesce;
 @SuppressWarnings("MagicConstant")
 public class Text extends Leaf {
   protected final Config<?> config;
-  protected final String text;
+
+  protected String text;
   protected Font font;
   protected int fontStyle;
   protected int fontSize;
@@ -49,6 +50,40 @@ public class Text extends Leaf {
 
   public static Config<?> config() {
     return new Config<>();
+  }
+
+  @Override
+  public boolean stateEquals(Widget widget) {
+    if (widget instanceof Text textWidget) {
+      return Objects.equals(text, textWidget.text) &&
+        Objects.equals(font, textWidget.font) &&
+        Objects.equals(fontStyle, textWidget.fontStyle) &&
+        Objects.equals(fontSize, textWidget.fontSize) &&
+        Objects.equals(color, textWidget.color) &&
+        Objects.equals(backgroundColor, textWidget.backgroundColor) &&
+        Objects.equals(shadowEnabled, textWidget.shadowEnabled) &&
+        Objects.equals(shadowOffsetX, textWidget.shadowOffsetX) &&
+        Objects.equals(shadowOffsetY, textWidget.shadowOffsetY) &&
+        Objects.equals(shadowColor, textWidget.shadowColor);
+    }
+
+    return false;
+  }
+
+  @Override
+  protected void performUpdateState(Widget widget) {
+    this.text = ((Text) widget).text;
+    this.font = ((Text) widget).font;
+    this.fontStyle = ((Text) widget).fontStyle;
+    this.fontSize = ((Text) widget).fontSize;
+    this.color = ((Text) widget).color;
+    this.backgroundColor = ((Text) widget).backgroundColor;
+    this.alignment = ((Text) widget).alignment;
+    this.verticalAlignment = ((Text) widget).verticalAlignment;
+    this.shadowEnabled = ((Text) widget).shadowEnabled;
+    this.shadowOffsetX = ((Text) widget).shadowOffsetX;
+    this.shadowOffsetY = ((Text) widget).shadowOffsetY;
+    this.shadowColor = ((Text) widget).shadowColor;
   }
 
   @Override
@@ -202,24 +237,6 @@ public class Text extends Leaf {
         (int) ((i + 1) * fontSize + vOffset)
       );
     }
-  }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    if (widget instanceof Text textWidget) {
-      return Objects.equals(text, textWidget.text) &&
-        Objects.equals(font, textWidget.font) &&
-        Objects.equals(fontStyle, textWidget.fontStyle) &&
-        Objects.equals(fontSize, textWidget.fontSize) &&
-        Objects.equals(color, textWidget.color) &&
-        Objects.equals(backgroundColor, textWidget.backgroundColor) &&
-        Objects.equals(shadowEnabled, textWidget.shadowEnabled) &&
-        Objects.equals(shadowOffsetX, textWidget.shadowOffsetX) &&
-        Objects.equals(shadowOffsetY, textWidget.shadowOffsetY) &&
-        Objects.equals(shadowColor, textWidget.shadowColor);
-    }
-
-    return false;
   }
 
   @SuppressWarnings("unchecked")
