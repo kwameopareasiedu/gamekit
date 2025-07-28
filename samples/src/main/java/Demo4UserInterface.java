@@ -2,7 +2,7 @@ import dev.gamekit.core.Application;
 import dev.gamekit.core.IO;
 import dev.gamekit.core.Scene;
 import dev.gamekit.settings.*;
-import dev.gamekit.ui.Border;
+import dev.gamekit.ui.BorderData;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.enums.MainAxisAlignment;
@@ -85,7 +85,11 @@ public class Demo4UserInterface extends Scene {
 //              MainMenuButton.create("Online Multiplayer", null),
               Field.create(
                 Field.config().fontSize(24).fontStyle(Font.PLAIN)
-                  .padding(8).defaultBorder(new Border(4, 24, Color.RED)),
+                  .padding(8).defaultBorder(new BorderData(4, 24, Color.RED))
+                  .changeListener(ev -> {
+                    fieldValue = ev.value;
+                    updateUI();
+                  }),
                 fieldValue
               ),
               Column.create(

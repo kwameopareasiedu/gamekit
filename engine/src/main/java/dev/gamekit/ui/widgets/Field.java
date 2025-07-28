@@ -1,6 +1,7 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.ui.Border;
+import dev.gamekit.core.Input;
+import dev.gamekit.ui.BorderData;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.events.ChangeEvent;
@@ -9,6 +10,7 @@ import dev.gamekit.ui.events.KeyCharEvent;
 import dev.gamekit.utils.Bounds;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
@@ -18,8 +20,8 @@ import static dev.gamekit.utils.Misc.coalesce;
 public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Handler {
   protected BufferedImage background;
   protected Spacing padding;
-  protected Border defaultBorder;
-  protected Border focusBorder;
+  protected BorderData defaultBorder;
+  protected BorderData focusBorder;
   protected FocusEvent.Handler focusListener;
   protected KeyCharEvent.Handler keyCharListener;
   protected ChangeEvent.Handler changeListener;
@@ -54,9 +56,9 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
     background = coalesce(config.background, theme.fieldBackground);
     padding = coalesce(config.padding, theme.fieldPadding, new Spacing());
     defaultBorder =
-      coalesce(config.defaultBorder, theme.fieldDefaultBorder, new Border(1, 12, Color.WHITE));
+      coalesce(config.defaultBorder, theme.fieldDefaultBorder, new BorderData(1, 12, Color.WHITE));
     focusBorder =
-      coalesce(config.focusBorder, theme.fieldFocusBorder, new Border(1, 12, Color.GREEN));
+      coalesce(config.focusBorder, theme.fieldFocusBorder, new BorderData(1, 12, Color.GREEN));
     focusListener = coalesce(config.focusListener, null);
     keyCharListener = coalesce(config.keyCharListener, null);
     changeListener = coalesce(config.changeListener, null);
@@ -127,7 +129,7 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
     super.performRender(g);
     absoluteBounds.set(tempAbsoluteBounds);
 
-    Border resolvedBorder = defaultBorder;
+    BorderData resolvedBorder = defaultBorder;
     Stroke resolvedBorderStroke = defaultBorderStroke;
 
     if (focused) {
@@ -179,7 +181,13 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
       keyCharListener.handleEvent(ev);
 
     if (!ev.isHandled() && changeListener != null) {
-      String newValue = text + ev.charPressed;
+      int charKeyCode = KeyEvent.getExtendedKeyCodeForChar(ev.charPressed);
+
+      String newValue = switch (charKeyCode) {
+        case Input.KEY_BACK_SPACE -> text.substring(0, text.length() - 1);
+        default -> KeyEvent.getKeyText(charKeyCode).length() == 1 ? text + ev.charPressed : text;
+      };
+
       changeListener.handleEvent(new ChangeEvent(newValue));
     }
   }
@@ -187,8 +195,8 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
   public static class Config extends Text.Config<Config> {
     BufferedImage background;
     Spacing padding;
-    Border defaultBorder;
-    Border focusBorder;
+    BorderData defaultBorder;
+    BorderData focusBorder;
     FocusEvent.Handler focusListener;
     KeyCharEvent.Handler keyCharListener;
     ChangeEvent.Handler changeListener;
@@ -220,17 +228,17 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
       return this;
     }
 
-    public Config border(Border border) {
+    public Config border(BorderData border) {
       this.defaultBorder = border;
       return this;
     }
 
-    public Config defaultBorder(Border defaultBorder) {
+    public Config defaultBorder(BorderData defaultBorder) {
       this.defaultBorder = defaultBorder;
       return this;
     }
 
-    public Config focusBorder(Border focusBorder) {
+    public Config focusBorder(BorderData focusBorder) {
       this.focusBorder = focusBorder;
       return this;
     }

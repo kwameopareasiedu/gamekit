@@ -174,6 +174,7 @@ public final class UI {
 
         if (treeWidget == hoverWidget) hoverWidget = newWidget;
         if (treeWidget == focusWidget) focusWidget = newWidget;
+        if (treeWidget == lastFocusWidget) lastFocusWidget = newWidget;
         if (treeWidget == activeWidget) activeWidget = newWidget;
         if (treeWidget == lastActiveWidget) lastActiveWidget = newWidget;
       } else if (treeWidget instanceof SingleChildParent currentParent

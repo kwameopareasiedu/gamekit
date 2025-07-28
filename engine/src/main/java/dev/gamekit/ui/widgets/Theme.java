@@ -1,6 +1,6 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.ui.Border;
+import dev.gamekit.ui.BorderData;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.enums.Alignment;
@@ -33,8 +33,8 @@ public class Theme extends SingleChildParent {
 
   public BufferedImage fieldBackground;
   public Spacing fieldPadding;
-  public Border fieldDefaultBorder;
-  public Border fieldFocusBorder;
+  public BorderData fieldDefaultBorder;
+  public BorderData fieldFocusBorder;
 
   private final Config config;
 
@@ -129,8 +129,8 @@ public class Theme extends SingleChildParent {
 
     BufferedImage fieldBackground;
     Spacing fieldPadding;
-    Border fieldDefaultBorder;
-    Border fieldFocusBorder;
+    BorderData fieldDefaultBorder;
+    BorderData fieldFocusBorder;
 
     Config() { }
 
@@ -230,12 +230,12 @@ public class Theme extends SingleChildParent {
       return this;
     }
 
-    public Config fieldDefaultBorder(Border fieldDefaultBorder) {
+    public Config fieldDefaultBorder(BorderData fieldDefaultBorder) {
       this.fieldDefaultBorder = fieldDefaultBorder;
       return this;
     }
 
-    public Config fieldFocusBorder(Border fieldFocusBorder) {
+    public Config fieldFocusBorder(BorderData fieldFocusBorder) {
       this.fieldFocusBorder = fieldFocusBorder;
       return this;
     }
