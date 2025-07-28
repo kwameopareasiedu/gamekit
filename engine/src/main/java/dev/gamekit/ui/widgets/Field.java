@@ -191,8 +191,11 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
       int charKeyCode = KeyEvent.getExtendedKeyCodeForChar(ev.charPressed);
 
       String newValue = switch (charKeyCode) {
-        case Input.KEY_BACK_SPACE -> text.substring(0, text.length() - 1);
-        default -> KeyEvent.getKeyText(charKeyCode).length() == 1 ? text + ev.charPressed : text;
+        case Input.KEY_BACK_SPACE -> !text.isEmpty() ? text.substring(0, text.length() - 1) : text;
+        default -> {
+          boolean charIsPrintable = 32 <= charKeyCode && charKeyCode <= 126;
+          yield charIsPrintable ? text + ev.charPressed : text;
+        }
       };
 
       changeListener.handleEvent(new ChangeEvent(newValue));

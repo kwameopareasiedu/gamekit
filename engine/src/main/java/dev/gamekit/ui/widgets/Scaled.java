@@ -10,7 +10,7 @@ import static dev.gamekit.utils.Misc.coalesce;
 public class Scaled extends SingleChildParent {
   protected double scale;
 
-  private final Config config;
+  private Config config;
 
   public Scaled(Config config, Widget child) {
     super(child);
@@ -36,6 +36,7 @@ public class Scaled extends SingleChildParent {
 
   @Override
   protected void performUpdateState(Widget widget) {
+    this.config = ((Scaled) widget).config;
     this.scale = ((Scaled) widget).scale;
   }
 

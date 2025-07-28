@@ -11,7 +11,7 @@ import static dev.gamekit.utils.Misc.coalesce;
 public class Padding extends SingleChildParent {
   protected Spacing padding;
 
-  private final Config config;
+  private Config config;
 
   public Padding(Config config, Widget child) {
     super(child);
@@ -36,6 +36,7 @@ public class Padding extends SingleChildParent {
 
   @Override
   protected void performUpdateState(Widget widget) {
+    this.config = ((Padding) widget).config;
     this.padding = ((Padding) widget).padding;
   }
 

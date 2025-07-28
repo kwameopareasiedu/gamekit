@@ -37,7 +37,7 @@ public class Theme extends SingleChildParent {
   public BorderData fieldDefaultBorder;
   public BorderData fieldFocusBorder;
 
-  private final Config config;
+  private Config config;
 
   public Theme(Config config, Widget child) {
     super(child);
@@ -87,6 +87,8 @@ public class Theme extends SingleChildParent {
 
   @Override
   protected void performUpdateState(Widget widget) {
+    this.config = ((Theme) widget).config;
+
     this.buttonNinePatchBorder = ((Theme) widget).buttonNinePatchBorder;
     this.buttonDefaultBackground = ((Theme) widget).buttonDefaultBackground;
     this.buttonHoverBackground = ((Theme) widget).buttonHoverBackground;

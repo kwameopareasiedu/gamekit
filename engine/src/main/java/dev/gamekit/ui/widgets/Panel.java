@@ -3,7 +3,6 @@ package dev.gamekit.ui.widgets;
 import dev.gamekit.core.Constants;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Spacing;
-import dev.gamekit.ui.events.InputEvent;
 import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.mixins.NinePatch;
 
@@ -21,7 +20,7 @@ public class Panel extends SingleChildParent implements NinePatch, MouseEvent.Ha
   protected BufferedImage background;
   protected Spacing ninePatchBorder;
 
-  private final Config config;
+  private Config config;
 
   public Panel(Config config, Widget child) {
     super(child);
@@ -48,6 +47,7 @@ public class Panel extends SingleChildParent implements NinePatch, MouseEvent.Ha
 
   @Override
   protected void performUpdateState(Widget widget) {
+    this.config = ((Panel) widget).config;
     this.background = ((Panel) widget).background;
     this.ninePatchBorder = ((Panel) widget).ninePatchBorder;
   }

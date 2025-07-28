@@ -16,7 +16,7 @@ public class Image extends Leaf {
   protected ImageFit fit;
   protected ImageInterpolation interpolation;
 
-  private final Config config;
+  private Config config;
 
   public Image(Config config, BufferedImage image) {
     if (image == null)
@@ -50,6 +50,7 @@ public class Image extends Leaf {
 
   @Override
   protected void performUpdateState(Widget widget) {
+    this.config = ((Image) widget).config;
     this.fit = ((Image) widget).fit;
     this.interpolation = ((Image) widget).interpolation;
   }

@@ -11,7 +11,7 @@ public abstract class Flex extends MultiChildParent {
   protected MainAxisAlignment mainAxisAlignment;
   protected CrossAxisAlignment crossAxisAlignment;
 
-  private final Config<?> config;
+  private Config<?> config;
 
   public Flex(Config<? extends Config<?>> config, Widget... children) {
     super(children);
@@ -31,6 +31,7 @@ public abstract class Flex extends MultiChildParent {
 
   @Override
   protected void performUpdateState(Widget widget) {
+    this.config = ((Flex) widget).config;
     this.gapSize = ((Flex) widget).gapSize;
     this.mainAxisAlignment = ((Flex) widget).mainAxisAlignment;
     this.crossAxisAlignment = ((Flex) widget).crossAxisAlignment;

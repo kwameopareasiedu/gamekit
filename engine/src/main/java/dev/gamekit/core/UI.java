@@ -36,7 +36,6 @@ public final class UI {
   private final BufferedImage canvasImage;
   private final Graphics2D canvasGraphics;
   private Widget tree;
-  private Widget hoverWidget;
   private Widget focusWidget;
   private Widget activeWidget;
   private Widget lastFocusWidget;
@@ -146,38 +145,38 @@ public final class UI {
     Widget newTree = scene.createUI();
     boolean treeUpdated = false;
 
+    // Ensure the new tree is mounted to ensure state variables are set before comparison
+    newTree.mounted(bridgeObject);
+
     currentWidgetQueue.add(tree);
     newWidgetQueue.add(newTree);
-    newTree.mounted(bridgeObject);
 
     while (!currentWidgetQueue.isEmpty() && !newWidgetQueue.isEmpty()) {
       Widget treeWidget = currentWidgetQueue.remove(0);
       Widget newWidget = newWidgetQueue.remove(0);
 
-      if (!treeWidget.stateEquals(newWidget)) {
-        // Widget tree differs at this point, reconcile subtrees at this depth
+      boolean classMatch = treeWidget.getClass().equals(newWidget.getClass());
+      boolean stateMatch = treeWidget.stateEquals(newWidget);
+
+      if (!classMatch) {
         Parent treeWidgetParent = (Parent) treeWidget.getParent();
 
         if (treeWidgetParent == null) {
           tree = newWidget;
-          treeUpdated = true;
-          break;
-        } else if (treeWidgetParent instanceof SingleChildParent currentParent) {
-          currentParent.updateChild(newWidget);
-          treeUpdated = true;
-          break;
-        } else if (treeWidgetParent instanceof MultiChildParent currentParent) {
-          int index = currentParent.getChildren().indexOf(treeWidget);
-          currentParent.updateChild(index, newWidget);
-          treeUpdated = true;
+        } else if (treeWidgetParent instanceof SingleChildParent treeWidgetSingleChildParent) {
+          treeWidgetSingleChildParent.updateChild(newWidget);
+        } else if (treeWidgetParent instanceof MultiChildParent treeWidgetMultiChildParent) {
+          int index = treeWidgetMultiChildParent.getChildren().indexOf(treeWidget);
+          treeWidgetMultiChildParent.updateChild(index, newWidget);
         }
 
-        if (treeWidget == hoverWidget) hoverWidget = newWidget;
-        if (treeWidget == focusWidget) focusWidget = newWidget;
-        if (treeWidget == lastFocusWidget) lastFocusWidget = newWidget;
-        if (treeWidget == activeWidget) activeWidget = newWidget;
-        if (treeWidget == lastActiveWidget) lastActiveWidget = newWidget;
-      } else if (treeWidget instanceof SingleChildParent currentParent
+        treeUpdated = true;
+      } else if (!stateMatch) {
+        treeWidget.updateState(newWidget);
+        treeUpdated = true;
+      }
+
+      if (treeWidget instanceof SingleChildParent currentParent
         && newWidget instanceof SingleChildParent newParent) {
         // Add child of SingleChildParent to queue for processing
         currentWidgetQueue.add(currentParent.getChild());
@@ -219,7 +218,7 @@ public final class UI {
     });
 
     // Assign the last hit test widget as the hover widget
-    hoverWidget = !currentHitTestList.isEmpty()
+    Widget hoverWidget = !currentHitTestList.isEmpty()
       ? currentHitTestList.get(currentHitTestList.size() - 1)
       : null;
 

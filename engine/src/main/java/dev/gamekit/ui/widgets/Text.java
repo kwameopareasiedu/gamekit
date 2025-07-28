@@ -15,8 +15,7 @@ import static dev.gamekit.utils.Misc.coalesce;
 /** A {@link Leaf} which renders text to the screen */
 @SuppressWarnings("MagicConstant")
 public class Text extends Leaf {
-  protected final Config<?> config;
-
+  protected Config<?> config;
   protected String text;
   protected Font font;
   protected int fontStyle;
@@ -72,6 +71,7 @@ public class Text extends Leaf {
 
   @Override
   protected void performUpdateState(Widget widget) {
+    this.config = ((Text) widget).config;
     this.text = ((Text) widget).text;
     this.font = ((Text) widget).font;
     this.fontStyle = ((Text) widget).fontStyle;

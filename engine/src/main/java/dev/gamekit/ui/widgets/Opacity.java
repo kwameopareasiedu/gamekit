@@ -12,7 +12,7 @@ import static dev.gamekit.utils.Misc.coalesce;
 public class Opacity extends SingleChildParent {
   protected double opacity;
 
-  private final Config config;
+  private Config config;
   private AlphaComposite composite;
 
   public Opacity(Config config, Widget child) {
@@ -39,15 +39,17 @@ public class Opacity extends SingleChildParent {
 
   @Override
   protected void performUpdateState(Widget widget) {
+    this.config = ((Opacity) widget).config;
     this.opacity = ((Opacity) widget).opacity;
   }
 
   @Override
   protected void performMounted() {
     this.opacity = clamp(coalesce(config.opacity, 1.0), 0, 1);
-    this.composite = AlphaComposite.getInstance(
-      AlphaComposite.SRC_OVER, (float) this.opacity
-    );
+
+//    if (this.composite == null || this.composite.getAlpha() != opacity)
+    this.composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) this.opacity);
+
     super.performMounted();
   }
 
@@ -80,10 +82,10 @@ public class Opacity extends SingleChildParent {
 
   @Override
   protected void performRender(Graphics2D g) {
-    Composite c = g.getComposite();
+    Composite originalComposite = g.getComposite();
     g.setComposite(composite);
     super.performRender(g);
-    g.setComposite(c);
+    g.setComposite(originalComposite);
   }
 
   public static class Config {

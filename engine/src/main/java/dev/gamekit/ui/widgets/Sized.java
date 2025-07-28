@@ -17,7 +17,7 @@ public class Sized extends SingleChildParent {
   protected double width;
   protected double height;
 
-  private final Config config;
+  private Config config;
 
   public Sized(Config config, Widget child) {
     super(child);
@@ -46,6 +46,7 @@ public class Sized extends SingleChildParent {
 
   @Override
   protected void performUpdateState(Widget widget) {
+    this.config = ((Sized) widget).config;
     this.widthType = ((Sized) widget).widthType;
     this.heightType = ((Sized) widget).heightType;
     this.width = ((Sized) widget).width;

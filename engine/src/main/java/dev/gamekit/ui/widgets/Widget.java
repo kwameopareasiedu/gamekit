@@ -8,7 +8,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 /**
  * A widget is an abstract representation of a portion of a {@link Scene Scene's} user interface.
@@ -58,16 +57,20 @@ public abstract class Widget {
 
   /**
    * During UI reconciliation, this method is called with a new widget of the same type but with
-   * updated state, to update this widgets state.
+   * updated state, to update this widget's state.
    * <p>
    * It is guaranteed that the type of the incoming widget will be the same as this widget so it
-   * is safe to cast the incoming widget to this widgets class.
+   * is safe to cast the incoming widget to this widget's class.
+   * <p>
+   * {@link #mounted(UI.BridgeObject)} method is called afterward to ensure that variables
+   * depending on ancestors are recomputed.
    * <p>
    * Since this method is marked as {@code final}, subclasses should override the
    * {@link #performUpdateState(Widget widget)} method instead to perform any state updates
    */
   public final void updateState(Widget widget) {
     performUpdateState(widget);
+    mounted(uiBridge);
   }
 
   /** Delegate method performs the state update for this widget */
@@ -132,7 +135,7 @@ public abstract class Widget {
   protected void performPostLayout() { /* No-op */ }
 
   /**
-   * Renders the widget unto the provided {@link BufferedImage}
+   * Renders the widget with the provided {@link Graphics2D} object
    * <p>
    * This method is {@code final} and delegates the actual drawing to
    * {@link #performRender(Graphics2D)}.
@@ -164,6 +167,9 @@ public abstract class Widget {
     canvasGraphics.setClip(null);
 
     if (DEBUG_DRAW) {
+      Color originalColor = canvasGraphics.getColor();
+      Stroke originalStroke = canvasGraphics.getStroke();
+
       canvasGraphics.setColor(Color.CYAN);
       canvasGraphics.setStroke(DEBUG_OUTLINE_STROKE);
       canvasGraphics.drawRect(
@@ -172,6 +178,9 @@ public abstract class Widget {
         (int) absoluteBounds.width,
         (int) absoluteBounds.height
       );
+
+      canvasGraphics.setColor(originalColor);
+      canvasGraphics.setStroke(originalStroke);
     }
   }
 

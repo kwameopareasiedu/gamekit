@@ -10,7 +10,7 @@ public class Colored extends Leaf {
   protected Color color;
   protected int borderRadius;
 
-  private final Config config;
+  private Config config;
 
   public Colored(Config config) {
     this.config = config;
@@ -36,6 +36,7 @@ public class Colored extends Leaf {
 
   @Override
   protected void performUpdateState(Widget widget) {
+    this.config = ((Colored) widget).config;
     this.color = ((Colored) widget).color;
     this.borderRadius = ((Colored) widget).borderRadius;
   }

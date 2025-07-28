@@ -22,7 +22,7 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
   protected boolean mouseEntered;
   protected boolean mousePressed;
 
-  private final Config config;
+  private Config config;
 
   public Button(Config config, Widget child) {
     super(child);
@@ -51,6 +51,7 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
 
   @Override
   protected void performUpdateState(Widget widget) {
+    this.config = ((Button) widget).config;
     this.ninePatchBorder = ((Button) widget).ninePatchBorder;
     this.defaultBackground = ((Button) widget).defaultBackground;
     this.hoverBackground = ((Button) widget).hoverBackground;

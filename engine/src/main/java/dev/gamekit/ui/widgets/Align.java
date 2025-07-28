@@ -12,7 +12,7 @@ public class Align extends SingleChildParent {
   protected Alignment horizontalAlignment;
   protected Alignment verticalAlignment;
 
-  private final Config config;
+  private Config config;
 
   public Align(Config config, Widget child) {
     super(child);
@@ -39,6 +39,7 @@ public class Align extends SingleChildParent {
 
   @Override
   protected void performUpdateState(Widget widget) {
+    this.config = ((Align) widget).config;
     this.horizontalAlignment = ((Align) widget).horizontalAlignment;
     this.verticalAlignment = ((Align) widget).verticalAlignment;
   }
