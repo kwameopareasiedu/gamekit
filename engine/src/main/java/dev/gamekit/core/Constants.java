@@ -2,7 +2,6 @@ package dev.gamekit.core;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.lang.Math;
 
 /** Constants store for engine */
 public final class Constants {
@@ -16,9 +15,10 @@ public final class Constants {
   public static final BufferedImage HOVER_BUTTON_BG = IO.getResourceImage("btn-hover.png");
   public static final BufferedImage PRESSED_BUTTON_BG = IO.getResourceImage("btn-press.png");
   public static final BufferedImage DEFAULT_PANEL_BG = IO.getResourceImage("panel-default.png");
-  public static final BasicStroke DEBUG_STROKE = new BasicStroke(
-    1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND
-  );
+  public static final BufferedImage DEFAULT_CHECK_ICON =
+    IO.getResourceImage("check-icon-default.png");
+  public static final BasicStroke DEBUG_STROKE =
+    new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
   public static final double C1 = 1.70158;
   public static final double C2 = C1 * 1.525;

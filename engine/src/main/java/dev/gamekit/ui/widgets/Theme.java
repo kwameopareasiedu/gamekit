@@ -39,6 +39,8 @@ public class Theme extends SingleChildParent {
   public BorderData fieldFocusBorder;
   public Spacing fieldPadding;
 
+  public Spacing checkboxBackgroundNinePatchSpacing;
+  public Spacing checkboxIconNinePatchSpacing;
   public BufferedImage checkboxDefaultBackground;
   public BufferedImage checkboxToggledBackground;
   public BufferedImage checkboxDefaultIcon;
@@ -91,6 +93,8 @@ public class Theme extends SingleChildParent {
         Objects.equals(fieldFocusBorder, themeWidget.fieldFocusBorder) &&
         Objects.equals(fieldPadding, themeWidget.fieldPadding) &&
 
+        Objects.equals(checkboxBackgroundNinePatchSpacing, themeWidget.checkboxBackgroundNinePatchSpacing) &&
+        Objects.equals(checkboxIconNinePatchSpacing, themeWidget.checkboxIconNinePatchSpacing) &&
         Objects.equals(checkboxDefaultBackground, themeWidget.checkboxDefaultBackground) &&
         Objects.equals(checkboxToggledBackground, themeWidget.checkboxToggledBackground) &&
         Objects.equals(checkboxDefaultIcon, themeWidget.checkboxDefaultIcon) &&
@@ -140,6 +144,10 @@ public class Theme extends SingleChildParent {
     this.fieldFocusBorder = coalesce(config.fieldFocusBorder, theme.fieldFocusBorder);
     this.fieldPadding = coalesce(config.fieldPadding, theme.fieldPadding);
 
+    this.checkboxBackgroundNinePatchSpacing =
+      coalesce(config.checkboxBackgroundNinePatchSpacing, theme.checkboxBackgroundNinePatchSpacing);
+    this.checkboxIconNinePatchSpacing =
+      coalesce(config.checkboxIconNinePatchSpacing, theme.checkboxIconNinePatchSpacing);
     this.checkboxDefaultBackground =
       coalesce(config.checkboxDefaultBackground, theme.checkboxDefaultBackground);
     this.checkboxToggledBackground =
@@ -196,6 +204,8 @@ public class Theme extends SingleChildParent {
     private BorderData fieldFocusBorder;
     private Spacing fieldPadding;
 
+    private Spacing checkboxBackgroundNinePatchSpacing;
+    private Spacing checkboxIconNinePatchSpacing;
     private BufferedImage checkboxDefaultBackground;
     private BufferedImage checkboxToggledBackground;
     private BufferedImage checkboxDefaultIcon;
@@ -282,6 +292,15 @@ public class Theme extends SingleChildParent {
 
     public ThemeConfig fieldPadding(Spacing fieldPadding) {
       this.fieldPadding = fieldPadding;
+      return this;
+    }
+
+    public ThemeConfig checkboxNinePatchSpacing(
+      Spacing checkboxBackgroundNinePatchSpacing,
+      Spacing checkboxIconNinePatchSpacing
+    ) {
+      this.checkboxBackgroundNinePatchSpacing = checkboxBackgroundNinePatchSpacing;
+      this.checkboxIconNinePatchSpacing = checkboxIconNinePatchSpacing;
       return this;
     }
 

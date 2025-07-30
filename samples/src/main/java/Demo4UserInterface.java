@@ -96,10 +96,12 @@ public class Demo4UserInterface extends Scene {
                 fieldValue
               ),
               Checkbox.create(
-                Checkbox.config().value(checkboxValue).changeListener(ev -> {
-                  checkboxValue = ev.value;
-                  updateUI();
-                }),
+                Checkbox.config().value(checkboxValue)
+                  .ninePatchSpacing(Spacing.create(4), Spacing.create(0))
+                  .changeListener(ev -> {
+                    checkboxValue = ev.value;
+                    updateUI();
+                  }),
                 Text.create(
                   Text.config().font(20, Font.PLAIN),
                   "Active"
