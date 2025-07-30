@@ -128,6 +128,12 @@ public final class UI {
     }
   }
 
+  /** Called to unmount the {@link Widget} tree before being disposed */
+  void unmount() {
+    if (tree != null)
+      tree.unmount();
+  }
+
   /** Triggers a re-render of the current widget tree */
   private void triggerRender() {
     renderCount = MAX_RENDERS_PER_TRIGGER;
@@ -161,7 +167,8 @@ public final class UI {
       if (!classMatch) {
         Parent treeWidgetParent = (Parent) treeWidget.getParent();
 
-        // TODO: Unmount widget here
+        treeWidget.unmount();
+
         if (treeWidgetParent == null) {
           tree = newWidget;
         } else if (treeWidgetParent instanceof SingleChildParent treeWidgetSingleChildParent) {

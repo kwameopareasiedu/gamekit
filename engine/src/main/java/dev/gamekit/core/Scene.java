@@ -78,6 +78,7 @@ public abstract class Scene extends Entity {
   void _dispose() {
     logger.debug("Disposing scene");
     super._dispose();
+    ui.unmount();
     dispose();
   }
 }

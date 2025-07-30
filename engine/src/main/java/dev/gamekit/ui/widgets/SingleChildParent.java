@@ -32,6 +32,11 @@ public abstract class SingleChildParent extends Parent {
     child.render(g);
   }
 
+  @Override
+  protected void performUnmount() {
+    child.unmount();
+  }
+
   public Widget getChild() { return child; }
 
   public final void updateChild(Widget newChild) {

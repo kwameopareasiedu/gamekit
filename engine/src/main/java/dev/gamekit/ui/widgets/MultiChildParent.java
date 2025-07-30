@@ -36,6 +36,11 @@ public abstract class MultiChildParent extends Parent {
     children.forEach(child -> child.render(g));
   }
 
+  @Override
+  protected void performUnmount() {
+    children.forEach(Widget::unmount);
+  }
+
   public List<Widget> getChildren() { return children; }
 
   public final void updateChild(int index, Widget newChild) {

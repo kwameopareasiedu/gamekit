@@ -197,6 +197,22 @@ public abstract class Widget {
    */
   protected abstract void performRender(Graphics2D g);
 
+  /**
+   * Called before the widget is removed from the widget tree during UI reconciliation or during
+   * a scene dispose.
+   * <p>
+   * This is a good place to clean up any resources and stop animations used by the widget.
+   * <p>
+   * Since this method is marked as {@code final}, subclasses should override the
+   * {@link #performUnmount} method instead to perform rendering
+   */
+  public final void unmount() {
+    performUnmount();
+  }
+
+  /** Delegate method for subclasses to perform unmount operations */
+  protected void performUnmount() { /* No-op */ }
+
   /** Determines if the point {@code (x,y)} falls within the absolute bounds of this widget */
   public boolean hitTest(double x, double y) {
     double absoluteRight = absoluteBounds.x + absoluteBounds.width;
