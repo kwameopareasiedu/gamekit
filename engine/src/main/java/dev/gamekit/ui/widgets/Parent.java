@@ -10,10 +10,8 @@ import java.awt.*;
  */
 public abstract class Parent extends Widget {
   /**
-   * Renders the appearance of this parent
-   * <p>
-   * Since {@link Parent parents} contain one or more children, subclasses should be able to
-   * control when their own appearance is rendered before that of the child or children
+   * Called in the {@link #render(Graphics2D)} method to provide the parent's appearance before its
+   * child/children are also rendered on top of it.
    */
   protected void renderAppearance(Graphics2D g) { /* No-op */ }
 }

@@ -76,6 +76,8 @@ public class Image extends Leaf {
   @Override
   protected void performRender(Graphics2D g) {
     double dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
+    boolean clipChanged = false;
+    Shape originalClip = null;
 
     switch (fit) {
       case FIT, CROP -> {
@@ -83,8 +85,8 @@ public class Image extends Leaf {
         double heightRatio = absoluteBounds.height / intrinsicBounds.height;
 
         double scaleRatio = fit == ImageFit.FIT ?
-          intrinsicBounds.width > intrinsicBounds.height ? widthRatio : heightRatio :
-          intrinsicBounds.width <= intrinsicBounds.height ? widthRatio : heightRatio;
+          (intrinsicBounds.width > intrinsicBounds.height ? heightRatio : widthRatio) :
+          (intrinsicBounds.width > intrinsicBounds.height ? widthRatio : heightRatio);
 
         int scaledWidth = (int) (intrinsicBounds.width * scaleRatio);
         int scaledHeight = (int) (intrinsicBounds.height * scaleRatio);
@@ -92,10 +94,25 @@ public class Image extends Leaf {
         dy1 = absoluteBounds.y + (absoluteBounds.height - scaledHeight) / 2;
         dx2 = dx1 + scaledWidth;
         dy2 = dy1 + scaledHeight;
+
+        if (fit == ImageFit.CROP) {
+          originalClip = g.getClip();
+
+          g.setClip(
+            (int) absoluteBounds.x,
+            (int) absoluteBounds.y,
+            (int) absoluteBounds.width,
+            (int) absoluteBounds.height
+          );
+
+          clipChanged = true;
+        }
       }
       case STRETCH -> {
-        dx2 = absoluteBounds.width;
-        dy2 = absoluteBounds.height;
+        dx1 = absoluteBounds.x;
+        dy1 = absoluteBounds.y;
+        dx2 = dx1 + absoluteBounds.width;
+        dy2 = dy1 + absoluteBounds.height;
       }
     }
 
@@ -110,6 +127,9 @@ public class Image extends Leaf {
     );
 
     originalInterpolation.apply(g);
+
+    if (clipChanged)
+      g.setClip(originalClip);
   }
 
   public static class Config {

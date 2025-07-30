@@ -17,4 +17,20 @@ public record BorderData(
   public BorderData(double width) {
     this(width, 0, Color.WHITE);
   }
+
+  @Override
+  public String toString() {
+    return String.format(
+      getClass().getName() + "[size=%.2f,radius=%.2f,color=%s]",
+      size, radius, color
+    );
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj instanceof BorderData borderData &&
+      size == borderData.size &&
+      radius == borderData.radius &&
+      color == borderData.color;
+  }
 }

@@ -44,10 +44,17 @@ public abstract class Widget {
     parent = null;
   }
 
-  public Bounds getComputedBounds() { return computedBounds; }
+  /** Returns the {@link #computedBounds} of this widget */
+  public Bounds getComputedBounds() {
+    return computedBounds;
+  }
 
-  public Widget getParent() { return parent; }
+  /** Returns the {@link #parent} of this widget */
+  public Widget getParent() {
+    return parent;
+  }
 
+  /** Sets the {@link #parent} of this widget */
   public void setParent(Widget parent) {
     this.parent = parent;
   }
@@ -144,27 +151,7 @@ public abstract class Widget {
    * {@link #performRender(Graphics2D)} method instead to perform rendering
    */
   public final void render(Graphics2D canvasGraphics) {
-    if (parent != null) {
-      Bounds.intersect(absoluteBounds, parent.absoluteBounds, clipBounds);
-
-      canvasGraphics.setClip(
-        (int) clipBounds.x,
-        (int) clipBounds.y,
-        (int) clipBounds.width,
-        (int) clipBounds.height
-      );
-    } else {
-      canvasGraphics.setClip(
-        (int) absoluteBounds.x,
-        (int) absoluteBounds.y,
-        (int) absoluteBounds.width,
-        (int) absoluteBounds.height
-      );
-    }
-
     performRender(canvasGraphics);
-
-    canvasGraphics.setClip(null);
 
     if (DEBUG_DRAW) {
       Color originalColor = canvasGraphics.getColor();

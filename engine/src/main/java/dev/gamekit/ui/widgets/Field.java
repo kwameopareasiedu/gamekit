@@ -24,7 +24,7 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
   protected BorderData focusBorder;
   protected FocusEvent.Handler focusListener;
   protected KeyCharEvent.Handler keyCharListener;
-  protected ChangeEvent.Handler changeListener;
+  protected ChangeEvent.Handler<String> changeListener;
   protected boolean focused;
 
   private final Bounds absoluteContentBounds;
@@ -198,7 +198,7 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
         }
       };
 
-      changeListener.handleEvent(new ChangeEvent(newValue));
+      changeListener.handleEvent(new ChangeEvent<>(newValue));
     }
   }
 
@@ -209,7 +209,7 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
     BorderData focusBorder;
     FocusEvent.Handler focusListener;
     KeyCharEvent.Handler keyCharListener;
-    ChangeEvent.Handler changeListener;
+    ChangeEvent.Handler<String> changeListener;
 
     Config() { }
 
@@ -263,7 +263,7 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
       return this;
     }
 
-    public Config changeListener(ChangeEvent.Handler changeListener) {
+    public Config changeListener(ChangeEvent.Handler<String> changeListener) {
       this.changeListener = changeListener;
       return this;
     }

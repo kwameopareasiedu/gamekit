@@ -5,10 +5,12 @@ import dev.gamekit.settings.*;
 import dev.gamekit.ui.BorderData;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
+import dev.gamekit.ui.enums.ImageFit;
 import dev.gamekit.ui.enums.MainAxisAlignment;
 import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.widgets.*;
 import dev.gamekit.ui.widgets.Button;
+import dev.gamekit.ui.widgets.Checkbox;
 import dev.gamekit.ui.widgets.Image;
 
 import java.awt.*;
@@ -28,6 +30,7 @@ public class Demo4UserInterface extends Scene {
   private static final BufferedImage SCRIM = IO.getResourceImage("transparent-black.png");
 
   private String fieldValue = "Hello";
+  private boolean checkboxValue = false;
 
   public Demo4UserInterface() {
     super("Main Scene");
@@ -80,9 +83,6 @@ public class Demo4UserInterface extends Scene {
                 .gapSize(24),
               MainMenuButton.create("Tutorial", e -> System.out.println("0: " + e.type)),
               MainMenuButton.create("New Planet", e -> System.out.println("1: " + e.type)),
-//              MainMenuButton.create("New Campaign", null),
-//              MainMenuButton.create("Load Game", null),
-//              MainMenuButton.create("Online Multiplayer", null),
               Field.create(
                 Field.config().fontSize(24).fontStyle(Font.PLAIN)
                   .padding(8).defaultBorder(new BorderData(4, 24, Color.RED))
@@ -91,6 +91,16 @@ public class Demo4UserInterface extends Scene {
                     updateUI();
                   }),
                 fieldValue
+              ),
+              Checkbox.create(
+                Checkbox.config().value(checkboxValue).changeListener(ev -> {
+                  checkboxValue = ev.value;
+                  updateUI();
+                }),
+                Text.create(
+                  Text.config().fontSize(20).fontStyle(Font.PLAIN),
+                  "Active"
+                )
               ),
               Column.create(
                 Column.config()
@@ -111,7 +121,10 @@ public class Demo4UserInterface extends Scene {
         Align.config().verticalAlignment(Alignment.START),
         Sized.create(
           Sized.config().fractionalWidth(1).fractionalHeight(0.15),
-          Image.create(SCRIM)
+          Image.create(
+            Image.config().fit(ImageFit.CROP),
+            SCRIM
+          )
         )
       ),
 
@@ -122,7 +135,10 @@ public class Demo4UserInterface extends Scene {
           Stack.create(
             Sized.create(
               Sized.config().fractionalWidth(1).fractionalHeight(1),
-              Image.create(SCRIM)
+              Image.create(
+                Image.config().fit(ImageFit.STRETCH),
+                SCRIM
+              )
             ),
             Sized.create(
               Sized.config().fractionalWidth(1).fractionalHeight(1),
