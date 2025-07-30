@@ -14,7 +14,7 @@ public abstract class Parent extends Widget {
   }
 
   /**
-   * Called in the {@link #render(Graphics2D)} method to provide the parent's appearance before its
+   * Called in the {@link #render} method to provide the parent's appearance before its
    * child/children are also rendered on top of it.
    */
   protected void renderAppearance(Graphics2D g) { /* No-op */ }

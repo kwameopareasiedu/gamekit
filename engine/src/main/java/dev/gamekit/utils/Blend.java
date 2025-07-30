@@ -10,8 +10,7 @@ import java.lang.Math;
  * An abstract composite which blends source and destination colors in a way to produce the final
  * pixel color.
  * <p>
- * Subclasses must implement the {@link #blend(int, int)} method to determine how colors are
- * blended together.
+ * Subclasses must implement the {@link #blend} method to determine how colors are blended together.
  */
 public abstract class Blend implements Composite, CompositeContext {
   /**

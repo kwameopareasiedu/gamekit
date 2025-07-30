@@ -145,7 +145,7 @@ public final class UI {
     Widget newTree = scene.createUI();
     boolean treeUpdated = false;
 
-    // Ensure the new tree is mounted to ensure state variables are set before comparison
+    // Initialize the new tree to set up internal state before comparison
     newTree.init(bridgeObject);
 
     currentWidgetQueue.add(tree);
@@ -161,6 +161,7 @@ public final class UI {
       if (!classMatch) {
         Parent treeWidgetParent = (Parent) treeWidget.getParent();
 
+        // TODO: Unmount widget here
         if (treeWidgetParent == null) {
           tree = newWidget;
         } else if (treeWidgetParent instanceof SingleChildParent treeWidgetSingleChildParent) {
@@ -195,8 +196,6 @@ public final class UI {
       triggerRender();
     }
 
-    currentWidgetQueue.clear();
-    newWidgetQueue.clear();
     needsLayout = false;
   }
 
@@ -272,8 +271,8 @@ public final class UI {
         FocusEvent.Type.FOCUS
       );
 
-      // If no widget is currently being activated (i.e. activeWidget == null), the hover widget
-      // also becomes the active widget until the mouse is released
+      // If no widget is currently being activated, the hover widget also becomes the active
+      // widget until the mouse is released
       if (activeWidget == null)
         activeWidget = hoverWidget;
     }

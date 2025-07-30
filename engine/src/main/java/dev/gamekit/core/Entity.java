@@ -70,7 +70,7 @@ public abstract class Entity {
     return null;
   }
 
-  /** Called during {@link #start()} to get the components of the entity */
+  /** Called during {@link #start} to get the components of the entity */
   protected List<Component> getComponents() {
     return null;
   }

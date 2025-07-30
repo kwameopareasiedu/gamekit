@@ -10,10 +10,19 @@ import org.apache.logging.log4j.Logger;
 import java.awt.*;
 
 /**
- * A widget is an abstract representation of a portion of a {@link Scene Scene's} user interface.
+ * A widget is an abstract representation of a portion of a {@link Scene scene's} user interface.
  * <p>
- * Subclasses must implement the {@link #performLayout} and {@link #performRender(Graphics2D)} to
- * compute their position and size
+ * Widgets are used to describe all aspects of a user interface, including physical aspects such
+ * as text and buttons to layout effects like padding and alignment.
+ * <p>
+ * Widgets form a hierarchy based on composition. Each widget nests inside its parent and can
+ * receive context from the parent
+ * <p>
+ * Subclasses must implement the {@link #performLayout} and {@link #performRender} to compute
+ * their size
+ * <p>
+ * To create a user interface in a scene, you override its {@code createUI} method and return the
+ * desired widget hierarchy.
  * <p>
  * Widget layout is based on the
  * <a href="https://docs.flutter.dev/ui/layout/constraints">box-constraint</a>
@@ -34,8 +43,8 @@ public abstract class Widget {
   protected final Bounds clipBounds;
   protected UI.BridgeObject uiBridge;
   protected Constraints constraints;
-  protected Widget parent;
   protected WidgetConfig config;
+  protected Widget parent;
 
   public Widget(WidgetConfig config) {
     if (config == null)
@@ -77,7 +86,7 @@ public abstract class Widget {
    * A common use-case is to look up ancestors for additional information (E.g. Theme look up)
    * <p>
    * Since this method is marked as {@code final}, subclasses should override the
-   * {@link #performInit()} method instead to perform any post-mount operations
+   * {@link #performInit} method instead to perform any post-mount operations
    */
   public final void init(UI.BridgeObject uiBridge) {
     this.uiBridge = uiBridge;
@@ -97,10 +106,10 @@ public abstract class Widget {
    * It is guaranteed that the type of the incoming widget will be the same as this widget so it
    * is safe to cast the incoming widget to this widget's class.
    * <p>
-   * {@link #init(UI.BridgeObject)} method is called afterward to re-initialize the widget.
+   * {@link #init} method is called afterward to re-initialize the widget.
    * <p>
    * Since this method is marked as {@code final}, subclasses should override the
-   * {@link #performUpdate(Widget widget)} method instead to perform any state updates
+   * {@link #performUpdate} method instead to perform any state updates
    */
   public final void update(Widget widget) {
     this.config = widget.config;
@@ -112,11 +121,11 @@ public abstract class Widget {
   protected void performUpdate(Widget widget) { /* No-op */ }
 
   /**
-   * Computes the layout for the widget
+   * Computes the size of the widget and the relative position(s) of its child/children
    * <p>
    * This is called by either the parent widget or window and receives the {@link Constraints}
-   * from its parent or the window, and the resulting computed size must always respect this
-   * constraint
+   * from its parent or the window, and the resulting computed size <b>must</b> always respect
+   * this constraint
    * <p>
    * The goal of this method is to set the {@link #computedBounds} which controls where on the
    * screen the widget is rendered.
@@ -130,19 +139,23 @@ public abstract class Widget {
   }
 
   /**
-   * Delegate method which performs the actual layout and is passed the constraints from
-   * {@link #layout(Constraints)}.
+   * Delegate method which performs the actual layout and is passed the constraints from the
+   * {@link #layout} method.
    */
   protected abstract void performLayout(Constraints constraints);
 
   /**
    * Performs post-layout logic
    * <p>
-   * This exists because {@link #layout(Constraints)} uses a depth-first approach in traversing
+   * This exists because the engine calls {@link #layout} in a depth-first manner in traversing
    * this widget tree.
    * <p>
-   * With this approach, certain data (e.g. computed bounds position and parent computed bounds)
-   * may not be available until after the scene's UI widget tree has been completely laid out
+   * This means a widget's {@link #layout} method will not complete until its entire widget
+   * subtree has completed and hence certain data (e.g. relative position and that of the parent)
+   * will not be available until after the scene's UI widget tree has been completely laid out.
+   * <p>
+   * After complete scene layout, this method is called to perform computations that depend on
+   * the data computed during {@link #layout}
    * <p>
    * Since this method is marked as {@code final}, subclasses should override the
    * {@link #performPostLayout} method instead to perform any post layout logic
@@ -157,11 +170,8 @@ public abstract class Widget {
   /**
    * Renders the widget with the provided {@link Graphics2D} object
    * <p>
-   * This method is {@code final} and delegates the actual drawing to
-   * {@link #performRender(Graphics2D)}.
-   * <p>
    * Since this method is marked as {@code final}, subclasses should override the
-   * {@link #performRender(Graphics2D)} method instead to perform rendering
+   * {@link #performRender} method instead to perform rendering
    */
   public final void render(Graphics2D canvasGraphics) {
     performRender(canvasGraphics);

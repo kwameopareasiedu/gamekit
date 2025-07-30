@@ -15,7 +15,7 @@ import static dev.gamekit.utils.Math.*;
 /**
  * The {@link RigidBody} component enables physics-based motion for the entity.
  * <p>
- * During its {@link #update()} phase and after a physics simulation step is complete, this
+ * During its {@link #update} phase and after a physics simulation step is complete, this
  * component will update the attached entity's {@link Transform} component's position and rotation
  */
 public class RigidBody extends Component {
