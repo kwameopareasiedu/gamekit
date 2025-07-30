@@ -12,9 +12,9 @@ import java.util.Objects;
 
 import static dev.gamekit.utils.Misc.coalesce;
 
-/** A {@link Widget} which can be clicked to trigger an event */
+/** A {@link Widget} which can be clicked to trigger an action */
 public class Button extends SingleChildParent implements NinePatch, MouseEvent.Handler {
-  protected Spacing ninePatchBorder;
+  protected Spacing ninePatchSpacing;
   protected BufferedImage defaultBackground;
   protected BufferedImage hoverBackground;
   protected BufferedImage pressedBackground;
@@ -37,7 +37,7 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
   @Override
   public boolean stateEquals(Widget widget) {
     if (widget instanceof Button buttonWidget)
-      return Objects.equals(ninePatchBorder, buttonWidget.ninePatchBorder) &&
+      return Objects.equals(ninePatchSpacing, buttonWidget.ninePatchSpacing) &&
         Objects.equals(defaultBackground, buttonWidget.defaultBackground) &&
         Objects.equals(hoverBackground, buttonWidget.hoverBackground) &&
         Objects.equals(pressedBackground, buttonWidget.pressedBackground);
@@ -50,8 +50,8 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
     ButtonConfig config = (ButtonConfig) super.config;
     Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
 
-    this.ninePatchBorder =
-      coalesce(config.ninePatchBorder, theme.buttonNinePatchBorder, new Spacing(24));
+    this.ninePatchSpacing =
+      coalesce(config.ninePatchSpacing, theme.buttonNinePatchSpacing, Spacing.create(24));
     this.defaultBackground =
       coalesce(config.defaultBackground, theme.buttonDefaultBackground, Constants.DEFAULT_BUTTON_BG);
     this.hoverBackground =
@@ -87,8 +87,6 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
 
   @Override
   protected void renderAppearance(Graphics2D g) {
-    super.renderAppearance(g);
-
     BufferedImage bgImage = defaultBackground;
 
     if (mousePressed)
@@ -96,10 +94,8 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
     else if (mouseEntered)
       bgImage = hoverBackground;
 
-    if (bgImage != null && ninePatchBorder != null) {
-      super.renderAppearance(g);
-      renderNinePatch(bgImage, absoluteBounds, ninePatchBorder, g);
-    }
+    if (bgImage != null && ninePatchSpacing != null)
+      renderWith9PatchScaling(bgImage, absoluteBounds, ninePatchSpacing, g);
   }
 
   @Override
@@ -121,43 +117,24 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
   }
 
   public static class ButtonConfig extends SingleChildParentConfig {
-    Spacing ninePatchBorder;
-    BufferedImage defaultBackground;
-    BufferedImage hoverBackground;
-    BufferedImage pressedBackground;
-    MouseEvent.Handler mouseListener;
+    private Spacing ninePatchSpacing;
+    private BufferedImage defaultBackground;
+    private BufferedImage hoverBackground;
+    private BufferedImage pressedBackground;
+    private MouseEvent.Handler mouseListener;
 
-    public ButtonConfig ninePatch(Spacing border) {
-      this.ninePatchBorder = border;
+    public ButtonConfig ninePatchSpacing(Spacing ninePatchSpacing) {
+      this.ninePatchSpacing = ninePatchSpacing;
       return this;
     }
 
-    public ButtonConfig ninePatch(int all) {
-      this.ninePatchBorder = new Spacing(all);
-      return this;
-    }
-
-    public ButtonConfig ninePatch(int horizontal, int vertical) {
-      this.ninePatchBorder = new Spacing(horizontal, vertical);
-      return this;
-    }
-
-    public ButtonConfig ninePatch(int top, int right, int bottom, int left) {
-      this.ninePatchBorder = new Spacing(top, right, bottom, left);
-      return this;
-    }
-
-    public ButtonConfig defaultBackground(BufferedImage defaultBackground) {
+    public ButtonConfig background(
+      BufferedImage defaultBackground,
+      BufferedImage hoverBackground,
+      BufferedImage pressedBackground
+    ) {
       this.defaultBackground = defaultBackground;
-      return this;
-    }
-
-    public ButtonConfig hoverBackground(BufferedImage hoverBackground) {
       this.hoverBackground = hoverBackground;
-      return this;
-    }
-
-    public ButtonConfig pressedBackground(BufferedImage pressedBackground) {
       this.pressedBackground = pressedBackground;
       return this;
     }

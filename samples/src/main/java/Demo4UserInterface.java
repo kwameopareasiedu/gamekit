@@ -3,6 +3,7 @@ import dev.gamekit.core.IO;
 import dev.gamekit.core.Scene;
 import dev.gamekit.settings.*;
 import dev.gamekit.ui.BorderData;
+import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.enums.ImageFit;
@@ -60,9 +61,9 @@ public class Demo4UserInterface extends Scene {
       Image.create(BACKDROP),
 
       Align.create(
-        Align.config().horizontalAlignment(Alignment.START).verticalAlignment(Alignment.START),
+        Align.config().alignment(Alignment.START, Alignment.START),
         Padding.create(
-          Padding.config().padding(24, 0),
+          Padding.config().padding(Spacing.create(24, 0)),
           Sized.create(
             Sized.config().width(480).height(480),
             Image.create(LOGO)
@@ -71,11 +72,11 @@ public class Demo4UserInterface extends Scene {
       ),
 
       Align.create(
-        Align.config().horizontalAlignment(Alignment.START).verticalAlignment(Alignment.CENTER),
+        Align.config().alignment(Alignment.START, Alignment.CENTER),
         Padding.create(
-          Padding.config().padding(256, 8, 16, 96),
+          Padding.config().padding(Spacing.create(256, 8, 16, 96)),
           Theme.create(
-            Theme.config().textFontSize(10).textFontStyle(Font.BOLD).textFontStyle(Font.ITALIC),
+            Theme.config().textFont(10, Text.ITALIC),
             Column.create(
               Column.config()
                 .mainAxisAlignment(MainAxisAlignment.START)
@@ -84,8 +85,8 @@ public class Demo4UserInterface extends Scene {
               MainMenuButton.create("Tutorial", e -> System.out.println("0: " + e.type)),
               MainMenuButton.create("New Planet", e -> System.out.println("1: " + e.type)),
               Field.create(
-                Field.config().fontSize(24).fontStyle(Font.PLAIN)
-                  .padding(8).defaultBorder(new BorderData(4, 24, Color.RED))
+                Field.config().font(24, Text.PLAIN)
+                  .padding(Spacing.create(8)).border(BorderData.create(4, 24, Color.RED), null)
                   .changeListener(ev -> {
                     fieldValue = ev.value;
                     updateUI();
@@ -98,7 +99,7 @@ public class Demo4UserInterface extends Scene {
                   updateUI();
                 }),
                 Text.create(
-                  Text.config().fontSize(20).fontStyle(Font.PLAIN),
+                  Text.config().font(20, Font.PLAIN),
                   "Active"
                 )
               ),
@@ -118,7 +119,7 @@ public class Demo4UserInterface extends Scene {
       ),
 
       Align.create(
-        Align.config().verticalAlignment(Alignment.START),
+        Align.config().alignment(Alignment.CENTER, Alignment.START),
         Sized.create(
           Sized.config().fractionalWidth(1).fractionalHeight(0.15),
           Image.create(
@@ -129,7 +130,7 @@ public class Demo4UserInterface extends Scene {
       ),
 
       Align.create(
-        Align.config().verticalAlignment(Alignment.END),
+        Align.config().alignment(Alignment.CENTER, Alignment.END),
         Sized.create(
           Sized.config().fractionalWidth(1).fractionalHeight(0.15),
           Stack.create(
@@ -154,16 +155,16 @@ public class Demo4UserInterface extends Scene {
                   )
                 ),
                 Button.create(
-                  Button.config().ninePatch(12, 12, 18, 12),
+                  Button.config().ninePatchSpacing(Spacing.create(12, 12, 18, 12)),
                   Text.create(
-                    Text.config().fontSize(12).fontStyle(Font.BOLD),
+                    Text.config().font(12, Text.BOLD),
                     "Create Account"
                   )
                 ),
                 Button.create(
-                  Button.config().ninePatch(12, 12, 18, 12),
+                  Button.config().ninePatchSpacing(Spacing.create(12, 12, 18, 12)),
                   Text.create(
-                    Text.config().fontSize(12).fontStyle(Font.BOLD),
+                    Text.config().font(12, Text.BOLD),
                     "Login"
                   )
                 )
@@ -182,11 +183,11 @@ public class Demo4UserInterface extends Scene {
       super(
         new ComposeConfig() { },
         Button.create(
-          Button.config().ninePatch(12, 12, 16, 12).mouseListener(mouseListener),
+          Button.config().ninePatchSpacing(Spacing.create(12, 12, 16, 12)).mouseListener(mouseListener),
           Padding.create(
-            Padding.config().padding(12, 12, 16, 12),
+            Padding.config().padding(Spacing.create(12, 12, 16, 12)),
             Text.create(
-              Text.config().fontSize(20).fontStyle(Font.BOLD),
+              Text.config().font(20, Text.BOLD),
               text
             )
           )
@@ -221,9 +222,9 @@ public class Demo4UserInterface extends Scene {
       super(
         new ComposeConfig() { },
         Button.create(
-          Button.config().ninePatch(6, 6, 8, 6),
+          Button.config().ninePatchSpacing(Spacing.create(6, 6, 8, 6)),
           Padding.create(
-            Padding.config().padding(6, 6, 8, 6),
+            Padding.config().padding(Spacing.create(12, 12, 16, 12)),
             Text.create(
               Text.config(),
               text

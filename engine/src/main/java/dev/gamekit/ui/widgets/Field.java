@@ -18,10 +18,11 @@ import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link Text} widget extension which accepts text input */
 public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Handler {
-  protected BufferedImage background;
-  protected Spacing padding;
+  protected BufferedImage defaultBackground;
+  protected BufferedImage focusBackground;
   protected BorderData defaultBorder;
   protected BorderData focusBorder;
+  protected Spacing padding;
   protected FocusEvent.Handler focusListener;
   protected KeyCharEvent.Handler keyCharListener;
   protected ChangeEvent.Handler<String> changeListener;
@@ -50,8 +51,11 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
   public boolean stateEquals(Widget widget) {
     if (widget instanceof Field fieldWidget)
       return super.stateEquals(widget) &&
-        Objects.equals(padding, fieldWidget.padding) &&
-        Objects.equals(background, fieldWidget.background);
+        Objects.equals(defaultBackground, fieldWidget.defaultBackground) &&
+        Objects.equals(focusBackground, fieldWidget.focusBackground) &&
+        Objects.equals(defaultBorder, fieldWidget.defaultBorder) &&
+        Objects.equals(focusBorder, fieldWidget.focusBorder) &&
+        Objects.equals(padding, fieldWidget.padding);
 
     return false;
   }
@@ -63,12 +67,13 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
     FieldConfig config = (FieldConfig) super.config;
     Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
 
-    background = coalesce(config.background, theme.fieldBackground);
-    padding = coalesce(config.padding, theme.fieldPadding, new Spacing());
+    defaultBackground = coalesce(config.defaultBackground, theme.fieldDefaultBackground);
+    focusBackground = coalesce(config.focusBackground, theme.fieldFocusBackground);
     defaultBorder =
-      coalesce(config.defaultBorder, theme.fieldDefaultBorder, new BorderData(1, 12, Color.WHITE));
+      coalesce(config.defaultBorder, theme.fieldDefaultBorder, BorderData.create(1, 12, Color.WHITE));
     focusBorder =
-      coalesce(config.focusBorder, theme.fieldFocusBorder, new BorderData(1, 12, Color.GREEN));
+      coalesce(config.focusBorder, theme.fieldFocusBorder, BorderData.create(1, 12, Color.GREEN));
+    padding = coalesce(config.padding, theme.fieldPadding, Spacing.create());
     focusListener = coalesce(config.focusListener, null);
     keyCharListener = coalesce(config.keyCharListener, null);
     changeListener = coalesce(config.changeListener, null);
@@ -126,6 +131,18 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
 
   @Override
   protected void performRender(Graphics2D g) {
+    BufferedImage background = defaultBackground;
+    BorderData border = defaultBorder;
+    Stroke borderStroke = defaultBorderStroke;
+    Stroke originalStroke = g.getStroke();
+    Color originalColor = g.getColor();
+
+    if (focused) {
+      background = focusBackground;
+      border = focusBorder;
+      borderStroke = focusBorderStroke;
+    }
+
     if (background != null)
       g.drawImage(
         background,
@@ -139,27 +156,16 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
     super.performRender(g);
     absoluteBounds.set(tempAbsoluteBounds);
 
-    BorderData resolvedBorder = defaultBorder;
-    Stroke resolvedBorderStroke = defaultBorderStroke;
-
-    if (focused) {
-      resolvedBorder = focusBorder;
-      resolvedBorderStroke = focusBorderStroke;
-    }
-
-    Stroke tempStroke = g.getStroke();
-    Color tempColor = g.getColor();
-
-    g.setStroke(resolvedBorderStroke);
-    g.setColor(resolvedBorder.color());
+    g.setStroke(borderStroke);
+    g.setColor(border.color());
     g.drawRoundRect(
       (int) absoluteBounds.x, (int) absoluteBounds.y,
       (int) absoluteBounds.width - 1, (int) absoluteBounds.height - 1,
-      (int) resolvedBorder.radius(), (int) resolvedBorder.radius()
+      (int) border.radius(), (int) border.radius()
     );
 
-    g.setStroke(tempStroke);
-    g.setColor(tempColor);
+    g.setStroke(originalStroke);
+    g.setColor(originalColor);
   }
 
   @Override
@@ -196,51 +202,29 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
   }
 
   public static class FieldConfig extends TextConfig<FieldConfig> {
-    BufferedImage background;
-    Spacing padding;
-    BorderData defaultBorder;
-    BorderData focusBorder;
-    FocusEvent.Handler focusListener;
-    KeyCharEvent.Handler keyCharListener;
-    ChangeEvent.Handler<String> changeListener;
+    private BufferedImage defaultBackground;
+    private BufferedImage focusBackground;
+    private BorderData defaultBorder;
+    private BorderData focusBorder;
+    private Spacing padding;
+    private FocusEvent.Handler focusListener;
+    private KeyCharEvent.Handler keyCharListener;
+    private ChangeEvent.Handler<String> changeListener;
 
-    public FieldConfig background(BufferedImage background) {
-      this.background = background;
+    public FieldConfig background(BufferedImage defaultBackground, BufferedImage focusBackground) {
+      this.defaultBackground = defaultBackground;
+      this.focusBackground = focusBackground;
+      return this;
+    }
+
+    public FieldConfig border(BorderData defaultBorder, BorderData focusBorder) {
+      this.defaultBorder = defaultBorder;
+      this.focusBorder = focusBorder;
       return this;
     }
 
     public FieldConfig padding(Spacing padding) {
       this.padding = padding;
-      return this;
-    }
-
-    public FieldConfig padding(int padding) {
-      this.padding = new Spacing(padding);
-      return this;
-    }
-
-    public FieldConfig padding(int horizontal, int vertical) {
-      this.padding = new Spacing(horizontal, vertical);
-      return this;
-    }
-
-    public FieldConfig padding(int top, int right, int bottom, int left) {
-      this.padding = new Spacing(top, right, bottom, left);
-      return this;
-    }
-
-    public FieldConfig border(BorderData border) {
-      this.defaultBorder = border;
-      return this;
-    }
-
-    public FieldConfig defaultBorder(BorderData defaultBorder) {
-      this.defaultBorder = defaultBorder;
-      return this;
-    }
-
-    public FieldConfig focusBorder(BorderData focusBorder) {
-      this.focusBorder = focusBorder;
       return this;
     }
 

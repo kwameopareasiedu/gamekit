@@ -13,16 +13,16 @@ public class Bounds {
     this(0, 0, 0, 0);
   }
 
-  /** Copy constructor for this class */
-  public Bounds(Bounds bounds) {
-    this(bounds.x, bounds.y, bounds.width, bounds.height);
-  }
-
   public Bounds(double x, double y, double width, double height) {
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
+  }
+
+  /** Copy constructor for this class */
+  public Bounds(Bounds copy) {
+    this(copy.x, copy.y, copy.width, copy.height);
   }
 
   /** Computes the intersection of two bounds and stores the result in {@code out} */

@@ -15,13 +15,17 @@ import static dev.gamekit.utils.Misc.coalesce;
 /** A {@link Leaf} which renders text to the screen */
 @SuppressWarnings("MagicConstant")
 public class Text extends Leaf {
+  public static final int PLAIN = Font.PLAIN;
+  public static final int BOLD = Font.BOLD;
+  public static final int ITALIC = Font.ITALIC;
+
   protected String text;
   protected Font font;
-  protected int fontStyle;
   protected int fontSize;
-  protected Color color;
+  protected int fontStyle;
+  protected Color foregroundColor;
   protected Color backgroundColor;
-  protected Alignment alignment;
+  protected Alignment horizontalAlignment;
   protected Alignment verticalAlignment;
   protected boolean shadowEnabled;
   protected int shadowOffsetX;
@@ -34,9 +38,7 @@ public class Text extends Leaf {
   private double[] textOffsets;
 
   public Text(TextConfig<?> config, String text) {
-    super(config);
-    this.config = config;
-    this.text = text;
+    super(config.text(text));
   }
 
   public static Text create(TextConfig<?> params, String text) {
@@ -56,10 +58,12 @@ public class Text extends Leaf {
     if (widget instanceof Text textWidget)
       return Objects.equals(text, textWidget.text) &&
         Objects.equals(font, textWidget.font) &&
-        Objects.equals(fontStyle, textWidget.fontStyle) &&
         Objects.equals(fontSize, textWidget.fontSize) &&
-        Objects.equals(color, textWidget.color) &&
+        Objects.equals(fontStyle, textWidget.fontStyle) &&
+        Objects.equals(foregroundColor, textWidget.foregroundColor) &&
         Objects.equals(backgroundColor, textWidget.backgroundColor) &&
+        Objects.equals(horizontalAlignment, textWidget.horizontalAlignment) &&
+        Objects.equals(verticalAlignment, textWidget.verticalAlignment) &&
         Objects.equals(shadowEnabled, textWidget.shadowEnabled) &&
         Objects.equals(shadowOffsetX, textWidget.shadowOffsetX) &&
         Objects.equals(shadowOffsetY, textWidget.shadowOffsetY) &&
@@ -73,13 +77,18 @@ public class Text extends Leaf {
     TextConfig<?> config = (TextConfig<?>) super.config;
     Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
 
+    if (config.text == null)
+      throw new IllegalArgumentException("Text text cannot be null");
+
+    text = coalesce(config.text, "");
     font = coalesce(config.font, theme.textFont, Constants.DEFAULT_FONT);
-    fontStyle = coalesce(config.fontStyle, theme.textFontStyle, Font.PLAIN);
     fontSize = coalesce(config.fontSize, theme.textFontSize, 20);
-    color = coalesce(config.color, theme.textColor, Color.WHITE);
+    fontStyle = coalesce(config.fontStyle, theme.textFontStyle, Font.PLAIN);
+    foregroundColor = coalesce(config.foregroundColor, theme.textForegroundColor, Color.WHITE);
     backgroundColor =
       coalesce(config.backgroundColor, theme.textBackgroundColor, Constants.TRANSPARENT_COLOR);
-    alignment = coalesce(config.alignment, theme.textAlignment, Alignment.START);
+    horizontalAlignment =
+      coalesce(config.horizontalAlignment, theme.textHorizontalAlignment, Alignment.START);
     verticalAlignment =
       coalesce(config.verticalAlignment, theme.textVerticalAlignment, Alignment.START);
     shadowEnabled = coalesce(config.shadowEnabled, theme.textShadowEnabled, false);
@@ -94,11 +103,6 @@ public class Text extends Leaf {
     textLines = new String[0];
 
     super.performInit();
-  }
-
-  @Override
-  protected void performUpdate(Widget widget) {
-    this.text = ((Text) widget).text;
   }
 
   @Override
@@ -170,7 +174,7 @@ public class Text extends Leaf {
         String line1 = lines.get(i);
         int line1Width = fontMetrics.stringWidth(line1);
 
-        double line1Offset = switch (alignment) {
+        double line1Offset = switch (horizontalAlignment) {
           case CENTER -> computedBounds.width / 2 - line1Width / 2.0;
           case END -> computedBounds.width - line1Width;
           default -> 0;
@@ -181,7 +185,7 @@ public class Text extends Leaf {
     } else {
       textLines = new String[]{ text };
       textOffsets = new double[]{
-        switch (alignment) {
+        switch (horizontalAlignment) {
           case CENTER -> computedBounds.width / 2 - intrinsicBounds.width / 2.0;
           case END -> computedBounds.width - intrinsicBounds.width;
           default -> 0;
@@ -215,7 +219,7 @@ public class Text extends Leaf {
       }
     }
 
-    g.setColor(color);
+    g.setColor(foregroundColor);
 
     for (int i = 0; i < textLines.length; i++) {
       String line = textLines[i];
@@ -231,65 +235,56 @@ public class Text extends Leaf {
 
   @SuppressWarnings("unchecked")
   public static class TextConfig<T extends TextConfig<T>> extends LeafConfig {
-    Font font;
-    Integer fontStyle;
-    Integer fontSize;
-    Color color;
-    Color backgroundColor;
-    Alignment alignment;
-    Alignment verticalAlignment;
-    Boolean shadowEnabled;
-    Integer shadowOffsetX;
-    Integer shadowOffsetY;
-    Color shadowColor;
+    private String text;
+    private Font font;
+    private Integer fontStyle;
+    private Integer fontSize;
+    private Color foregroundColor;
+    private Color backgroundColor;
+    private Alignment horizontalAlignment;
+    private Alignment verticalAlignment;
+    private Boolean shadowEnabled;
+    private Integer shadowOffsetX;
+    private Integer shadowOffsetY;
+    private Color shadowColor;
 
-    public T font(Font font) {
+    private T text(String text) {
+      this.text = text;
+      return (T) this;
+    }
+
+    public T font(int fontSize, int fontStyle, Font font) {
+      this.fontSize = fontSize;
+      this.fontStyle = fontStyle;
       this.font = font;
       return (T) this;
     }
 
-    public T fontStyle(int fontStyle) {
-      this.fontStyle = fontStyle;
-      return (T) this;
+    public T font(int fontSize, int fontStyle) {
+      return font(fontSize, fontStyle, null);
     }
 
-    public T fontSize(int fontSize) {
-      this.fontSize = fontSize;
-      return (T) this;
-    }
-
-    public T color(Color color) {
-      this.color = color;
-      return (T) this;
-    }
-
-    public T backgroundColor(Color backgroundColor) {
+    public T color(Color color, Color backgroundColor) {
+      this.foregroundColor = color;
       this.backgroundColor = backgroundColor;
       return (T) this;
     }
 
-    public T alignment(Alignment alignment) {
-      this.alignment = alignment;
-      return (T) this;
-    }
-
-    public T verticalAlignment(Alignment verticalAlignment) {
+    public T alignment(Alignment horizontalAlignment, Alignment verticalAlignment) {
+      this.horizontalAlignment = horizontalAlignment;
       this.verticalAlignment = verticalAlignment;
       return (T) this;
     }
 
-    public T shadowEnabled(boolean shadowEnabled) {
+    public T shadow(
+      boolean shadowEnabled,
+      int shadowOffsetX,
+      int shadowOffsetY,
+      Color shadowColor
+    ) {
       this.shadowEnabled = shadowEnabled;
-      return (T) this;
-    }
-
-    public T shadowOffset(int shadowOffsetX, int shadowOffsetY) {
       this.shadowOffsetX = shadowOffsetX;
       this.shadowOffsetY = shadowOffsetY;
-      return (T) this;
-    }
-
-    public T shadowColor(Color shadowColor) {
       this.shadowColor = shadowColor;
       return (T) this;
     }

@@ -9,14 +9,13 @@ public class Spacing {
   public int bottom;
   public int left;
 
-  public Spacing() { this(0); }
+  public Spacing() {
+    this(0);
+  }
 
   /** Creates a new spacing, setting all sides to {@code size} */
-  public Spacing(int size) { this(size, size); }
-
-  /** Creates a new spacing, copying values from another spacing object */
-  public Spacing(Spacing spacing) {
-    this(spacing.top, spacing.right, spacing.bottom, spacing.left);
+  public Spacing(int size) {
+    this(size, size);
   }
 
   /**
@@ -33,6 +32,31 @@ public class Spacing {
     this.right = Math.max(0, right);
     this.bottom = Math.max(0, bottom);
     this.left = Math.max(0, left);
+  }
+
+  /** Creates a new spacing, copying values from another spacing object */
+  public Spacing(Spacing copy) {
+    this(copy.top, copy.right, copy.bottom, copy.left);
+  }
+
+  public static Spacing create() {
+    return new Spacing();
+  }
+
+  public static Spacing create(int all) {
+    return new Spacing(all);
+  }
+
+  public static Spacing create(int horizontal, int vertical) {
+    return new Spacing(horizontal, vertical);
+  }
+
+  public static Spacing create(int top, int right, int bottom, int left) {
+    return new Spacing(top, right, bottom, left);
+  }
+
+  public static Spacing create(Spacing copy) {
+    return new Spacing(copy);
   }
 
   /** Returns the sum of the top and bottom spacing */

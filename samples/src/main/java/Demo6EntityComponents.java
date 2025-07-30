@@ -6,6 +6,7 @@ import dev.gamekit.settings.Antialiasing;
 import dev.gamekit.settings.Resolution;
 import dev.gamekit.settings.Settings;
 import dev.gamekit.settings.WindowMode;
+import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.widgets.*;
 import dev.gamekit.utils.Vector;
@@ -75,11 +76,11 @@ public class Demo6EntityComponents extends Scene {
   protected Widget createUI() {
     return Stack.create(
       Align.create(
-        Align.config().verticalAlignment(Alignment.END).horizontalAlignment(Alignment.CENTER),
+        Align.config().alignment(Alignment.CENTER, Alignment.END),
         Padding.create(
-          Padding.config().padding(24),
+          Padding.config().padding(Spacing.create(24)),
           Text.create(
-            Text.config().alignment(Alignment.CENTER),
+            Text.config().alignment(Alignment.CENTER, Alignment.CENTER),
             "Press the space bar to launch the ball"
           )
         )

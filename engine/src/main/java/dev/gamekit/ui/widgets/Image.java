@@ -17,13 +17,7 @@ public class Image extends Leaf {
   protected ImageInterpolation interpolation;
 
   public Image(ImageConfig config, BufferedImage image) {
-    super(config);
-
-    if (image == null)
-      throw new IllegalArgumentException("Image cannot be null");
-
-    this.config = config;
-    this.image = image;
+    super(config.image(image));
   }
 
   public static Image create(ImageConfig config, BufferedImage image) {
@@ -40,10 +34,10 @@ public class Image extends Leaf {
 
   @Override
   public boolean stateEquals(Widget widget) {
-    if (widget instanceof Image imageWidget) {
-      return Objects.equals(image, imageWidget.image)
-        && Objects.equals(fit, imageWidget.fit);
-    }
+    if (widget instanceof Image imageWidget)
+      return Objects.equals(image, imageWidget.image) &&
+        Objects.equals(fit, imageWidget.fit) &&
+        Objects.equals(interpolation, imageWidget.interpolation);
 
     return false;
   }
@@ -52,6 +46,10 @@ public class Image extends Leaf {
   protected void performInit() {
     ImageConfig config = (ImageConfig) super.config;
 
+    if (config.image == null)
+      throw new IllegalArgumentException("Image image cannot be null");
+
+    this.image = coalesce(config.image);
     this.fit = coalesce(config.fit, ImageFit.FIT);
     this.interpolation = coalesce(config.interpolation, ImageInterpolation.DEFAULT);
 
@@ -133,8 +131,14 @@ public class Image extends Leaf {
   }
 
   public static class ImageConfig extends LeafConfig {
-    ImageFit fit;
-    ImageInterpolation interpolation;
+    private BufferedImage image;
+    private ImageFit fit;
+    private ImageInterpolation interpolation;
+
+    private ImageConfig image(BufferedImage image) {
+      this.image = image;
+      return this;
+    }
 
     public ImageConfig fit(ImageFit fit) {
       this.fit = fit;

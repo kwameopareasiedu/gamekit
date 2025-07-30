@@ -13,16 +13,19 @@ import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link SingleChildParent} input component which toggles between two states */
 public class Checkbox extends SingleChildParent implements MouseEvent.Handler {
+  protected BufferedImage defaultBackground;
+  protected BufferedImage toggledBackground;
+  protected BufferedImage defaultIcon;
+  protected BufferedImage toggledIcon;
   protected BorderData defaultBorder;
-  protected BorderData activeBorder;
-  protected BufferedImage background;
+  protected BorderData toggledBorder;
   protected Integer spacing;
   protected Integer size;
-  protected Boolean value;
+  protected Boolean toggled;
   protected ChangeEvent.Handler<Boolean> changeListener;
 
   private Stroke defaultBorderStroke;
-  private Stroke activeBorderStroke;
+  private Stroke toggledBorderStroke;
 
   public Checkbox(CheckboxConfig config, Widget child) {
     super(config, child);
@@ -39,12 +42,15 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler {
   @Override
   public boolean stateEquals(Widget widget) {
     if (widget instanceof Checkbox checkboxWidget)
-      return Objects.equals(defaultBorder, checkboxWidget.defaultBorder) &&
-        Objects.equals(activeBorder, checkboxWidget.activeBorder) &&
-        Objects.equals(background, checkboxWidget.background) &&
+      return Objects.equals(defaultBackground, checkboxWidget.defaultBackground) &&
+        Objects.equals(toggledBackground, checkboxWidget.toggledBackground) &&
+        Objects.equals(defaultIcon, checkboxWidget.defaultIcon) &&
+        Objects.equals(toggledIcon, checkboxWidget.toggledIcon) &&
+        Objects.equals(defaultBorder, checkboxWidget.defaultBorder) &&
+        Objects.equals(toggledBorder, checkboxWidget.toggledBorder) &&
         Objects.equals(spacing, checkboxWidget.spacing) &&
         Objects.equals(size, checkboxWidget.size) &&
-        Objects.equals(value, checkboxWidget.value);
+        Objects.equals(toggled, checkboxWidget.toggled);
 
     return false;
   }
@@ -52,21 +58,29 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler {
   @Override
   protected void performInit() {
     CheckboxConfig config = (CheckboxConfig) super.config;
+    Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
 
-    this.defaultBorder = coalesce(config.defaultBorder, new BorderData(3, 12, Color.WHITE));
-    this.activeBorder = coalesce(config.activeBorder, new BorderData(2, 12, Color.CYAN));
-    this.background = coalesce(config.background, null);
-    this.spacing = coalesce(config.spacing, 12);
-    this.size = coalesce(config.size, 24);
-    this.value = coalesce(config.value, false);
+    this.defaultBackground =
+      coalesce(config.defaultBackground, theme.checkboxDefaultBackground, null);
+    this.toggledBackground =
+      coalesce(config.toggledBackground, theme.checkboxToggledBackground, null);
+    this.defaultIcon = coalesce(config.defaultIcon, theme.checkboxDefaultIcon, null);
+    this.toggledIcon = coalesce(config.toggledIcon, theme.checkboxToggledIcon, null);
+    this.defaultBorder =
+      coalesce(config.defaultBorder, theme.checkboxDefaultBorder, BorderData.create(3, 12, Color.WHITE));
+    this.toggledBorder =
+      coalesce(config.toggledBorder, theme.checkboxToggledBorder, BorderData.create(2, 12, Color.CYAN));
+    this.spacing = coalesce(config.spacing, theme.checkboxSpacing, 12);
+    this.size = coalesce(config.size, theme.checkboxSize, 24);
+    this.toggled = coalesce(config.value, false);
     this.changeListener = coalesce(config.changeListener, null);
 
     defaultBorderStroke = new BasicStroke(
       (float) defaultBorder.size(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND
     );
 
-    activeBorderStroke = new BasicStroke(
-      (float) activeBorder.size(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND
+    toggledBorderStroke = new BasicStroke(
+      (float) toggledBorder.size(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND
     );
 
     super.performInit();
@@ -99,24 +113,43 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler {
 
   @Override
   protected void renderAppearance(Graphics2D g) {
-    if (value && background != null)
-      g.drawImage(background, 0, 0, null);
+    BufferedImage background = defaultBackground;
+    BufferedImage icon = defaultIcon;
+    BorderData border = defaultBorder;
+    Stroke borderStroke = defaultBorderStroke;
+    Stroke originalStroke = g.getStroke();
+    Color originalColor = g.getColor();
 
-    BorderData resolvedBorder = defaultBorder;
-    Stroke resolvedBorderStroke = defaultBorderStroke;
-
-    if (value) {
-      resolvedBorder = activeBorder;
-      resolvedBorderStroke = activeBorderStroke;
+    if (toggled) {
+      background = toggledBackground;
+      icon = toggledIcon;
+      border = toggledBorder;
+      borderStroke = toggledBorderStroke;
     }
 
-    g.setStroke(resolvedBorderStroke);
-    g.setColor(resolvedBorder.color());
+    if (background != null)
+      g.drawImage(
+        background, (int) absoluteBounds.x, (int) absoluteBounds.y,
+        (int) absoluteBounds.width, (int) absoluteBounds.height,
+        0, 0, background.getWidth(), background.getHeight(), null
+      );
+
+    if (icon != null)
+      g.drawImage(
+        icon, (int) absoluteBounds.x, (int) absoluteBounds.y, size, size,
+        0, 0, icon.getWidth(), icon.getHeight(), null
+      );
+
+    g.setStroke(borderStroke);
+    g.setColor(border.color());
 
     g.drawRoundRect(
       (int) absoluteBounds.x, (int) absoluteBounds.y, size - 1, size - 1,
-      (int) resolvedBorder.radius(), (int) resolvedBorder.radius()
+      (int) border.radius(), (int) border.radius()
     );
+
+    g.setStroke(originalStroke);
+    g.setColor(originalColor);
   }
 
   @Override
@@ -124,7 +157,7 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler {
     switch (ev.type) {
       case CLICK -> {
         if (changeListener != null)
-          changeListener.handleEvent(new ChangeEvent<>(!value));
+          changeListener.handleEvent(new ChangeEvent<>(!toggled));
       }
       case EXIT -> { }
     }
@@ -133,26 +166,35 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler {
   }
 
   public static class CheckboxConfig extends SingleChildParentConfig {
-    BorderData defaultBorder;
-    BorderData activeBorder;
-    BufferedImage background;
-    Integer spacing;
-    Integer size;
-    Boolean value;
-    ChangeEvent.Handler<Boolean> changeListener;
+    private BufferedImage defaultBackground;
+    private BufferedImage toggledBackground;
+    private BufferedImage defaultIcon;
+    private BufferedImage toggledIcon;
+    private BorderData defaultBorder;
+    private BorderData toggledBorder;
+    private Integer spacing;
+    private Integer size;
+    private Boolean value;
+    private ChangeEvent.Handler<Boolean> changeListener;
 
-    public CheckboxConfig defaultBorder(BorderData defaultBorder) {
+    public CheckboxConfig background(
+      BufferedImage defaultBackground,
+      BufferedImage toggledBackground
+    ) {
+      this.defaultBackground = defaultBackground;
+      this.toggledBackground = toggledBackground;
+      return this;
+    }
+
+    public CheckboxConfig icon(BufferedImage defaultIcon, BufferedImage toggledIcon) {
+      this.defaultIcon = defaultIcon;
+      this.toggledIcon = toggledIcon;
+      return this;
+    }
+
+    public CheckboxConfig border(BorderData defaultBorder, BorderData toggledBorder) {
       this.defaultBorder = defaultBorder;
-      return this;
-    }
-
-    public CheckboxConfig activeBorder(BorderData activeBorder) {
-      this.activeBorder = activeBorder;
-      return this;
-    }
-
-    public CheckboxConfig background(BufferedImage background) {
-      this.background = background;
+      this.toggledBorder = toggledBorder;
       return this;
     }
 

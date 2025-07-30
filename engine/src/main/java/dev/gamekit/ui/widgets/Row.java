@@ -63,8 +63,7 @@ public class Row extends Flex {
     for (var child : children) {
       child.computedBounds.setX(newX);
       newX += child.computedBounds.width;
-      newX += mainAxisAlignment == MainAxisAlignment.SPACE_BETWEEN ?
-        spaceBetween : gapSize;
+      newX += mainAxisAlignment == MainAxisAlignment.SPACE_BETWEEN ? spaceBetween : gapSize;
     }
 
     for (var child : children) {

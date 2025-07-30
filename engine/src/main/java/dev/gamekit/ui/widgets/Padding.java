@@ -69,20 +69,5 @@ public class Padding extends SingleChildParent {
       this.padding = padding;
       return this;
     }
-
-    public PaddingConfig padding(int padding) {
-      this.padding = new Spacing(padding);
-      return this;
-    }
-
-    public PaddingConfig padding(int horizontal, int vertical) {
-      this.padding = new Spacing(horizontal, vertical);
-      return this;
-    }
-
-    public PaddingConfig padding(int top, int right, int bottom, int left) {
-      this.padding = new Spacing(top, right, bottom, left);
-      return this;
-    }
   }
 }

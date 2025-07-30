@@ -1,5 +1,6 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.core.Constants;
 import dev.gamekit.core.Scene;
 import dev.gamekit.core.UI;
 import dev.gamekit.ui.Constraints;
@@ -31,10 +32,6 @@ import java.awt.*;
  */
 public abstract class Widget {
   public static boolean DEBUG_DRAW = false;
-
-  private static final BasicStroke DEBUG_OUTLINE_STROKE = new BasicStroke(
-    1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND
-  );
 
   protected final Logger logger = LogManager.getLogger(getClass());
   protected final Bounds absoluteBounds;
@@ -181,7 +178,7 @@ public abstract class Widget {
       Stroke originalStroke = canvasGraphics.getStroke();
 
       canvasGraphics.setColor(Color.CYAN);
-      canvasGraphics.setStroke(DEBUG_OUTLINE_STROKE);
+      canvasGraphics.setStroke(Constants.DEBUG_STROKE);
       canvasGraphics.drawRect(
         (int) absoluteBounds.x,
         (int) absoluteBounds.y,

@@ -12,15 +12,12 @@ import dev.gamekit.ui.widgets.*;
 import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.utils.Position;
 import dev.gamekit.utils.Vector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
 public class Playground extends Scene {
-  private static final Logger LOGGER = LogManager.getLogger();
   private static final BufferedImage SPEAKER_IMG = IO.getResourceImage("speaker.png");
 
   private double pan = 0;
@@ -56,8 +53,8 @@ public class Playground extends Scene {
 
   @Override
   protected void start() {
-//    Audio.<AudioClip3D>get("waterflow").setPosition(0, 0);
-//    Audio.get("waterflow").play(true);
+    //    Audio.<AudioClip3D>get("waterflow").setPosition(0, 0);
+    //    Audio.get("waterflow").play(true);
   }
 
   @Override
@@ -99,11 +96,11 @@ public class Playground extends Scene {
         .crossAxisAlignment(CrossAxisAlignment.STRETCH)
         .gapSize(24),
       Text.create(
-        Text.config().alignment(Alignment.CENTER),
+        Text.config().alignment(Alignment.CENTER, Alignment.CENTER),
         "Press the Space Bar to play/restart the audio"
       ),
       Text.create(
-        Text.config().alignment(Alignment.CENTER),
+        Text.config().alignment(Alignment.CENTER, Alignment.CENTER),
         "Move the mouse from left to right to pan the audio"
       ),
       Row.create(
