@@ -29,7 +29,7 @@
 ### Changed
 
 - Changed signature of `public void mounted()` lifecycle method in `Widget` class to
-  `public voidinit(UI.BridgeObject)`
+  `public void init(UI.BridgeObject)`
 - Renamed `public void updateState(Widget)` in `Widget` to `public void update(Widget)`
 
 ### Deprecated

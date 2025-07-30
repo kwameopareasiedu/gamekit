@@ -29,6 +29,7 @@ public class Demo4UserInterface extends Scene {
   private static final BufferedImage BACKDROP = IO.getResourceImage("planetfall-artwork.jpg");
   private static final BufferedImage LOGO = IO.getResourceImage("planetfall-logo.png");
   private static final BufferedImage SCRIM = IO.getResourceImage("transparent-black.png");
+  private static final BufferedImage FIELD_SLOT = IO.getResourceImage("field-slot.png");
 
   private String fieldValue = "Hello";
   private boolean checkboxValue = false;
@@ -86,7 +87,8 @@ public class Demo4UserInterface extends Scene {
               MainMenuButton.create("New Planet", e -> System.out.println("1: " + e.type)),
               Field.create(
                 Field.config().font(24, Text.PLAIN)
-                  .padding(Spacing.create(8)).border(BorderData.create(4, 24, Color.RED), null)
+                  .background(FIELD_SLOT, FIELD_SLOT).ninePatchSpacing(Spacing.create(4))
+                  .padding(Spacing.create(8)).border(BorderData.create(0, 24, Color.RED), null)
                   .changeListener(ev -> {
                     fieldValue = ev.value;
                     updateUI();

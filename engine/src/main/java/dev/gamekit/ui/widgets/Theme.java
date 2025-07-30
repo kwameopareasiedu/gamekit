@@ -32,6 +32,7 @@ public class Theme extends SingleChildParent {
   public Integer textShadowOffsetY;
   public Color textShadowColor;
 
+  public Spacing fieldNinePatchSpacing;
   public BufferedImage fieldDefaultBackground;
   public BufferedImage fieldFocusBackground;
   public BorderData fieldDefaultBorder;
@@ -83,6 +84,7 @@ public class Theme extends SingleChildParent {
         Objects.equals(textShadowOffsetY, themeWidget.textShadowOffsetY) &&
         Objects.equals(textShadowColor, themeWidget.textShadowColor) &&
 
+        Objects.equals(fieldNinePatchSpacing, themeWidget.fieldNinePatchSpacing) &&
         Objects.equals(fieldDefaultBackground, themeWidget.fieldDefaultBackground) &&
         Objects.equals(fieldFocusBackground, themeWidget.fieldFocusBackground) &&
         Objects.equals(fieldDefaultBorder, themeWidget.fieldDefaultBorder) &&
@@ -129,6 +131,8 @@ public class Theme extends SingleChildParent {
     this.textShadowOffsetY = coalesce(config.textShadowOffsetY, theme.textShadowOffsetY);
     this.textShadowColor = coalesce(config.textShadowColor, theme.textShadowColor);
 
+    this.fieldNinePatchSpacing =
+      coalesce(config.fieldNinePatchSpacing, theme.fieldNinePatchSpacing);
     this.fieldDefaultBackground =
       coalesce(config.fieldDefaultBackground, theme.fieldDefaultBackground);
     this.fieldFocusBackground = coalesce(config.fieldFocusBackground, theme.fieldFocusBackground);
@@ -185,6 +189,7 @@ public class Theme extends SingleChildParent {
     private Integer textShadowOffsetY;
     private Color textShadowColor;
 
+    private Spacing fieldNinePatchSpacing;
     private BufferedImage fieldDefaultBackground;
     private BufferedImage fieldFocusBackground;
     private BorderData fieldDefaultBorder;
@@ -252,6 +257,11 @@ public class Theme extends SingleChildParent {
       this.textShadowOffsetX = textShadowOffsetX;
       this.textShadowOffsetY = textShadowOffsetY;
       this.textShadowColor = textShadowColor;
+      return this;
+    }
+
+    public ThemeConfig fieldNinePatchSpacing(Spacing fieldNinePatchSpacing) {
+      this.fieldNinePatchSpacing = fieldNinePatchSpacing;
       return this;
     }
 

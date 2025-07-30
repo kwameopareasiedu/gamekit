@@ -7,6 +7,7 @@ import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.events.ChangeEvent;
 import dev.gamekit.ui.events.FocusEvent;
 import dev.gamekit.ui.events.KeyCharEvent;
+import dev.gamekit.ui.mixins.NinePatch;
 import dev.gamekit.utils.Bounds;
 
 import java.awt.*;
@@ -17,7 +18,8 @@ import java.util.Objects;
 import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link Text} widget extension which accepts text input */
-public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Handler {
+public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Handler, NinePatch {
+  protected Spacing ninePatchSpacing;
   protected BufferedImage defaultBackground;
   protected BufferedImage focusBackground;
   protected BorderData defaultBorder;
@@ -51,6 +53,7 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
   public boolean stateEquals(Widget widget) {
     if (widget instanceof Field fieldWidget)
       return super.stateEquals(widget) &&
+        Objects.equals(ninePatchSpacing, fieldWidget.ninePatchSpacing) &&
         Objects.equals(defaultBackground, fieldWidget.defaultBackground) &&
         Objects.equals(focusBackground, fieldWidget.focusBackground) &&
         Objects.equals(defaultBorder, fieldWidget.defaultBorder) &&
@@ -67,6 +70,7 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
     FieldConfig config = (FieldConfig) super.config;
     Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
 
+    ninePatchSpacing = coalesce(config.ninePatchSpacing, theme.fieldNinePatchSpacing);
     defaultBackground = coalesce(config.defaultBackground, theme.fieldDefaultBackground);
     focusBackground = coalesce(config.focusBackground, theme.fieldFocusBackground);
     defaultBorder =
@@ -144,12 +148,7 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
     }
 
     if (background != null)
-      g.drawImage(
-        background,
-        (int) absoluteBounds.x, (int) absoluteBounds.y,
-        (int) absoluteBounds.width, (int) absoluteBounds.height,
-        null
-      );
+      renderWith9PatchScaling(background, absoluteBounds, ninePatchSpacing, g);
 
     tempAbsoluteBounds.set(absoluteBounds);
     absoluteBounds.set(absoluteContentBounds);
@@ -202,6 +201,7 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
   }
 
   public static class FieldConfig extends TextConfig<FieldConfig> {
+    private Spacing ninePatchSpacing;
     private BufferedImage defaultBackground;
     private BufferedImage focusBackground;
     private BorderData defaultBorder;
@@ -210,6 +210,11 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
     private FocusEvent.Handler focusListener;
     private KeyCharEvent.Handler keyCharListener;
     private ChangeEvent.Handler<String> changeListener;
+
+    public FieldConfig ninePatchSpacing(Spacing ninePatchSpacing) {
+      this.ninePatchSpacing = ninePatchSpacing;
+      return this;
+    }
 
     public FieldConfig background(BufferedImage defaultBackground, BufferedImage focusBackground) {
       this.defaultBackground = defaultBackground;
