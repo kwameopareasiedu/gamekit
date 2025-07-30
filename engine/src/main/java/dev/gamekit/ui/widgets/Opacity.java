@@ -12,45 +12,38 @@ import static dev.gamekit.utils.Misc.coalesce;
 public class Opacity extends SingleChildParent {
   protected double opacity;
 
-  private Config config;
   private AlphaComposite composite;
 
-  public Opacity(Config config, Widget child) {
-    super(child);
-    this.config = config;
+  public Opacity(OpacityConfig config, Widget child) {
+    super(config, child);
   }
 
-  public static Opacity create(Config config, Widget child) {
+  public static Opacity create(OpacityConfig config, Widget child) {
     return new Opacity(config, child);
   }
 
-  public static Config config() {
-    return new Config();
+  public static OpacityConfig config() {
+    return new OpacityConfig();
   }
 
   @Override
   public boolean stateEquals(Widget widget) {
-    if (widget instanceof Opacity opacityWidget) {
+    if (widget instanceof Opacity opacityWidget)
       return Objects.equals(opacity, opacityWidget.opacity);
-    }
 
     return false;
   }
 
   @Override
-  protected void performUpdateState(Widget widget) {
-    this.config = ((Opacity) widget).config;
-    this.opacity = ((Opacity) widget).opacity;
-  }
+  protected void performInit() {
+    OpacityConfig config = (OpacityConfig) super.config;
 
-  @Override
-  protected void performMounted() {
     this.opacity = clamp(coalesce(config.opacity, 1.0), 0, 1);
 
-//    if (this.composite == null || this.composite.getAlpha() != opacity)
-    this.composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) this.opacity);
+    if (this.composite == null || this.composite.getAlpha() != opacity)
+      this.composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) this.opacity);
 
-    super.performMounted();
+    super.performInit();
   }
 
   @Override
@@ -88,12 +81,10 @@ public class Opacity extends SingleChildParent {
     g.setComposite(originalComposite);
   }
 
-  public static class Config {
+  public static class OpacityConfig extends SingleChildParentConfig {
     Double opacity;
 
-    Config() { }
-
-    public Config opacity(double opacity) {
+    public OpacityConfig opacity(double opacity) {
       this.opacity = opacity;
       return this;
     }

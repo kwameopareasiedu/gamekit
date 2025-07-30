@@ -180,6 +180,7 @@ public class Demo4UserInterface extends Scene {
 
     public MainMenuButton(String text, MouseEvent.Handler mouseListener) {
       super(
+        new ComposeConfig() { },
         Button.create(
           Button.config().ninePatch(12, 12, 16, 12).mouseListener(mouseListener),
           Padding.create(
@@ -208,7 +209,7 @@ public class Demo4UserInterface extends Scene {
     }
 
     @Override
-    protected void performUpdateState(Widget widget) {
+    protected void performUpdate(Widget widget) {
       this.text = ((MainMenuButton) widget).text;
     }
   }
@@ -218,6 +219,7 @@ public class Demo4UserInterface extends Scene {
 
     public SubMenuButton(String text) {
       super(
+        new ComposeConfig() { },
         Button.create(
           Button.config().ninePatch(6, 6, 8, 6),
           Padding.create(
@@ -246,7 +248,7 @@ public class Demo4UserInterface extends Scene {
     }
 
     @Override
-    protected void performUpdateState(Widget widget) {
+    protected void performUpdate(Widget widget) {
       this.text = ((SubMenuButton) widget).text;
     }
   }

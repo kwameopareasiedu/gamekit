@@ -35,13 +35,18 @@ public abstract class Widget {
   protected UI.BridgeObject uiBridge;
   protected Constraints constraints;
   protected Widget parent;
+  protected WidgetConfig config;
 
-  public Widget() {
-    absoluteBounds = new Bounds(0, 0, 0, 0);
-    computedBounds = new Bounds(0, 0, 0, 0);
-    intrinsicBounds = new Bounds(0, 0, 0, 0);
-    clipBounds = new Bounds(0, 0, 0, 0);
-    parent = null;
+  public Widget(WidgetConfig config) {
+    if (config == null)
+      throw new IllegalArgumentException("Widget config cannot be null");
+
+    this.config = config;
+    this.absoluteBounds = new Bounds(0, 0, 0, 0);
+    this.computedBounds = new Bounds(0, 0, 0, 0);
+    this.intrinsicBounds = new Bounds(0, 0, 0, 0);
+    this.clipBounds = new Bounds(0, 0, 0, 0);
+    this.parent = null;
   }
 
   /** Returns the {@link #computedBounds} of this widget */
@@ -63,40 +68,48 @@ public abstract class Widget {
   public abstract boolean stateEquals(Widget widget);
 
   /**
-   * During UI reconciliation, this method is called with a new widget of the same type but with
-   * updated state, to update this widget's state.
+   * Called to initialize the widget after it has been inserted into the widget tree and
+   * {@link #parent} has been set.
+   * <p>
+   * If the widget is updated some time after first initialization, this method is called
+   * afterward to re-initialize the widget.
+   * <p>
+   * A common use-case is to look up ancestors for additional information (E.g. Theme look up)
+   * <p>
+   * Since this method is marked as {@code final}, subclasses should override the
+   * {@link #performInit()} method instead to perform any post-mount operations
+   */
+  public final void init(UI.BridgeObject uiBridge) {
+    this.uiBridge = uiBridge;
+    performInit();
+  }
+
+  /** Delegate method which performs initialization logic in subclasses */
+  protected void performInit() { /* No-op */ }
+
+  /**
+   * During UI updates, the engine checks which widgets need to be replaced or just updated by
+   * comparing the types and states.
+   * <p>
+   * For widgets that only need state updates, this method is called with the updated widget
+   * containing the new state.
    * <p>
    * It is guaranteed that the type of the incoming widget will be the same as this widget so it
    * is safe to cast the incoming widget to this widget's class.
    * <p>
-   * {@link #mounted(UI.BridgeObject)} method is called afterward to ensure that variables
-   * depending on ancestors are recomputed.
+   * {@link #init(UI.BridgeObject)} method is called afterward to re-initialize the widget.
    * <p>
    * Since this method is marked as {@code final}, subclasses should override the
-   * {@link #performUpdateState(Widget widget)} method instead to perform any state updates
+   * {@link #performUpdate(Widget widget)} method instead to perform any state updates
    */
-  public final void updateState(Widget widget) {
-    performUpdateState(widget);
-    mounted(uiBridge);
+  public final void update(Widget widget) {
+    this.config = widget.config;
+    performUpdate(widget);
+    init(uiBridge);
   }
 
   /** Delegate method performs the state update for this widget */
-  protected abstract void performUpdateState(Widget widget);
-
-  /**
-   * Called after the widget has been inserted into the widget tree and {@link #parent} is set.
-   * This is useful if the widget needs to access some ancestors for additional information.
-   * <p>
-   * Since this method is marked as {@code final}, subclasses should override the
-   * {@link #performMounted()} method instead to perform any post-mount operations
-   */
-  public final void mounted(UI.BridgeObject uiBridge) {
-    this.uiBridge = uiBridge;
-    performMounted();
-  }
-
-  /** Delegate method which runs post-mounted logic */
-  protected void performMounted() { /* No-op */ }
+  protected void performUpdate(Widget widget) { /* No-op */ }
 
   /**
    * Computes the layout for the widget
@@ -229,4 +242,7 @@ public abstract class Widget {
 
     return null;
   }
+
+  /** Base class for all widget constructor configurations */
+  public static abstract class WidgetConfig { }
 }

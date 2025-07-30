@@ -19,6 +19,23 @@
 
 ### Removed
 
+## 0.5.1
+
+### Added
+
+- Added `Field` which is a `Text` widget extension which accepts text input
+- Added `Checkbox` which is a `SingleChildParent` input component which toggles between two states
+
+### Changed
+
+- Changed signature of `public void mounted()` lifecycle method in `Widget` class to
+  `public voidinit(UI.BridgeObject)`
+- Renamed `public void updateState(Widget)` in `Widget` to `public void update(Widget)`
+
+### Deprecated
+
+### Removed
+
 ## 0.5.0-SNAPSHOT-1
 
 ### Added
@@ -28,7 +45,7 @@
 - Added `RigidBody` which is a `Component` that enables physics-based motion for an entity
 - Added `Physics` class which manages the physics world updates and collision processing
 - Added component lifecycle processing to `Entity` class
-- Added `public <T extends Component> findComponent(Class<T> clazz)` to `Entity` class which finds 
+- Added `public <T extends Component> findComponent(Class<T> clazz)` to `Entity` class which finds
   a specific component on and `Entity`
 - Added `public void mounted()` lifecycle method to `Widget` class
 - Added `Theme` widget which is a `SingleChildParent` which theme variables to its descendants

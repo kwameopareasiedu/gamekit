@@ -21,21 +21,19 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler {
   protected Boolean value;
   protected ChangeEvent.Handler<Boolean> changeListener;
 
-  private Config config;
   private Stroke defaultBorderStroke;
   private Stroke activeBorderStroke;
 
-  public Checkbox(Config config, Widget child) {
-    super(child);
-    this.config = config;
+  public Checkbox(CheckboxConfig config, Widget child) {
+    super(config, child);
   }
 
-  public static Checkbox create(Config config, Widget child) {
+  public static Checkbox create(CheckboxConfig config, Widget child) {
     return new Checkbox(config, child);
   }
 
-  public static Config config() {
-    return new Config();
+  public static CheckboxConfig config() {
+    return new CheckboxConfig();
   }
 
   @Override
@@ -52,12 +50,9 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler {
   }
 
   @Override
-  protected void performUpdateState(Widget widget) {
-    this.config = ((Checkbox) widget).config;
-  }
+  protected void performInit() {
+    CheckboxConfig config = (CheckboxConfig) super.config;
 
-  @Override
-  protected void performMounted() {
     this.defaultBorder = coalesce(config.defaultBorder, new BorderData(3, 12, Color.WHITE));
     this.activeBorder = coalesce(config.activeBorder, new BorderData(2, 12, Color.CYAN));
     this.background = coalesce(config.background, null);
@@ -74,7 +69,7 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler {
       (float) activeBorder.size(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND
     );
 
-    super.performMounted();
+    super.performInit();
   }
 
   @Override
@@ -137,7 +132,7 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler {
     uiBridge.triggerRender();
   }
 
-  public static class Config {
+  public static class CheckboxConfig extends SingleChildParentConfig {
     BorderData defaultBorder;
     BorderData activeBorder;
     BufferedImage background;
@@ -146,39 +141,37 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler {
     Boolean value;
     ChangeEvent.Handler<Boolean> changeListener;
 
-    Config() { }
-
-    public Config defaultBorder(BorderData defaultBorder) {
+    public CheckboxConfig defaultBorder(BorderData defaultBorder) {
       this.defaultBorder = defaultBorder;
       return this;
     }
 
-    public Config activeBorder(BorderData activeBorder) {
+    public CheckboxConfig activeBorder(BorderData activeBorder) {
       this.activeBorder = activeBorder;
       return this;
     }
 
-    public Config background(BufferedImage background) {
+    public CheckboxConfig background(BufferedImage background) {
       this.background = background;
       return this;
     }
 
-    public Config spacing(Integer spacing) {
+    public CheckboxConfig spacing(Integer spacing) {
       this.spacing = spacing;
       return this;
     }
 
-    public Config size(Integer size) {
+    public CheckboxConfig size(Integer size) {
       this.size = size;
       return this;
     }
 
-    public Config value(Boolean value) {
+    public CheckboxConfig value(Boolean value) {
       this.value = value;
       return this;
     }
 
-    public Config changeListener(ChangeEvent.Handler<Boolean> changeListener) {
+    public CheckboxConfig changeListener(ChangeEvent.Handler<Boolean> changeListener) {
       this.changeListener = changeListener;
       return this;
     }

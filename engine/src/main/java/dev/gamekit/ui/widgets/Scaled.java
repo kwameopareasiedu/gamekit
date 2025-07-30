@@ -10,40 +10,33 @@ import static dev.gamekit.utils.Misc.coalesce;
 public class Scaled extends SingleChildParent {
   protected double scale;
 
-  private Config config;
-
-  public Scaled(Config config, Widget child) {
-    super(child);
-    this.config = config;
+  public Scaled(ScaledConfig config, Widget child) {
+    super(config, child);
   }
 
-  public static Scaled create(Config config, Widget child) {
+  public static Scaled create(ScaledConfig config, Widget child) {
     return new Scaled(config, child);
   }
 
-  public static Config config() {
-    return new Config();
+  public static ScaledConfig config() {
+    return new ScaledConfig();
   }
 
   @Override
   public boolean stateEquals(Widget widget) {
-    if (widget instanceof Scaled scaledWidget) {
+    if (widget instanceof Scaled scaledWidget)
       return Objects.equals(scale, scaledWidget.scale);
-    }
 
     return false;
   }
 
   @Override
-  protected void performUpdateState(Widget widget) {
-    this.config = ((Scaled) widget).config;
-    this.scale = ((Scaled) widget).scale;
-  }
+  protected void performInit() {
+    ScaledConfig config = (ScaledConfig) super.config;
 
-  @Override
-  protected void performMounted() {
     scale = Math.max(0, coalesce(config.scale, 1.0));
-    super.performMounted();
+
+    super.performInit();
   }
 
   @Override
@@ -73,12 +66,10 @@ public class Scaled extends SingleChildParent {
     );
   }
 
-  public static class Config {
+  public static class ScaledConfig extends SingleChildParentConfig {
     Double scale;
 
-    Config() { }
-
-    public Config scale(double scale) {
+    public ScaledConfig scale(double scale) {
       this.scale = scale;
       return this;
     }

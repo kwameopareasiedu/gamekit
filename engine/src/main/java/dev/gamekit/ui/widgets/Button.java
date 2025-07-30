@@ -22,45 +22,32 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
   protected boolean mouseEntered;
   protected boolean mousePressed;
 
-  private Config config;
-
-  public Button(Config config, Widget child) {
-    super(child);
-    this.config = config;
+  public Button(ButtonConfig config, Widget child) {
+    super(config, child);
   }
 
-  public static Button create(Config config, Widget child) {
+  public static Button create(ButtonConfig config, Widget child) {
     return new Button(config, child);
   }
 
-  public static Config config() {
-    return new Config();
+  public static ButtonConfig config() {
+    return new ButtonConfig();
   }
 
   @Override
   public boolean stateEquals(Widget widget) {
-    if (widget instanceof Button buttonWidget) {
+    if (widget instanceof Button buttonWidget)
       return Objects.equals(ninePatchBorder, buttonWidget.ninePatchBorder) &&
         Objects.equals(defaultBackground, buttonWidget.defaultBackground) &&
         Objects.equals(hoverBackground, buttonWidget.hoverBackground) &&
         Objects.equals(pressedBackground, buttonWidget.pressedBackground);
-    }
 
     return false;
   }
 
   @Override
-  protected void performUpdateState(Widget widget) {
-    this.config = ((Button) widget).config;
-    this.ninePatchBorder = ((Button) widget).ninePatchBorder;
-    this.defaultBackground = ((Button) widget).defaultBackground;
-    this.hoverBackground = ((Button) widget).hoverBackground;
-    this.pressedBackground = ((Button) widget).pressedBackground;
-    this.mouseListener = ((Button) widget).mouseListener;
-  }
-
-  @Override
-  protected void performMounted() {
+  protected void performInit() {
+    ButtonConfig config = (ButtonConfig) super.config;
     Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
 
     this.ninePatchBorder =
@@ -73,7 +60,7 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
       coalesce(config.pressedBackground, theme.buttonPressedBackground, Constants.PRESSED_BUTTON_BG);
     this.mouseListener = coalesce(config.mouseListener, null);
 
-    super.performMounted();
+    super.performInit();
   }
 
   @Override
@@ -133,51 +120,49 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
       mouseListener.handleEvent(event);
   }
 
-  public static class Config {
+  public static class ButtonConfig extends SingleChildParentConfig {
     Spacing ninePatchBorder;
     BufferedImage defaultBackground;
     BufferedImage hoverBackground;
     BufferedImage pressedBackground;
     MouseEvent.Handler mouseListener;
 
-    Config() { }
-
-    public Config ninePatch(Spacing border) {
+    public ButtonConfig ninePatch(Spacing border) {
       this.ninePatchBorder = border;
       return this;
     }
 
-    public Config ninePatch(int all) {
+    public ButtonConfig ninePatch(int all) {
       this.ninePatchBorder = new Spacing(all);
       return this;
     }
 
-    public Config ninePatch(int horizontal, int vertical) {
+    public ButtonConfig ninePatch(int horizontal, int vertical) {
       this.ninePatchBorder = new Spacing(horizontal, vertical);
       return this;
     }
 
-    public Config ninePatch(int top, int right, int bottom, int left) {
+    public ButtonConfig ninePatch(int top, int right, int bottom, int left) {
       this.ninePatchBorder = new Spacing(top, right, bottom, left);
       return this;
     }
 
-    public Config defaultBackground(BufferedImage defaultBackground) {
+    public ButtonConfig defaultBackground(BufferedImage defaultBackground) {
       this.defaultBackground = defaultBackground;
       return this;
     }
 
-    public Config hoverBackground(BufferedImage hoverBackground) {
+    public ButtonConfig hoverBackground(BufferedImage hoverBackground) {
       this.hoverBackground = hoverBackground;
       return this;
     }
 
-    public Config pressedBackground(BufferedImage pressedBackground) {
+    public ButtonConfig pressedBackground(BufferedImage pressedBackground) {
       this.pressedBackground = pressedBackground;
       return this;
     }
 
-    public Config mouseListener(MouseEvent.Handler mouseListener) {
+    public ButtonConfig mouseListener(MouseEvent.Handler mouseListener) {
       this.mouseListener = mouseListener;
       return this;
     }

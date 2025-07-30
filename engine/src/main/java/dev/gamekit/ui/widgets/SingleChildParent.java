@@ -6,16 +6,19 @@ import java.awt.*;
 public abstract class SingleChildParent extends Parent {
   protected Widget child;
 
-  public SingleChildParent(Widget child) {
+  public SingleChildParent(SingleChildParentConfig config, Widget child) {
+    super(config);
+
     if (child == null)
       throw new IllegalArgumentException("Child of SingleChildParent cannot be null");
+
     this.child = child;
     child.setParent(this);
   }
 
   @Override
-  protected void performMounted() {
-    child.mounted(uiBridge);
+  protected void performInit() {
+    child.init(uiBridge);
   }
 
   @Override
@@ -36,4 +39,6 @@ public abstract class SingleChildParent extends Parent {
     child = newChild;
     newChild.setParent(this);
   }
+
+  public abstract static class SingleChildParentConfig extends ParentConfig { }
 }

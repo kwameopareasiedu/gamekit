@@ -10,8 +10,8 @@ import java.awt.*;
  * {@link Compose} delegates its layout and rendering to the supplied widget tree
  */
 public abstract class Compose extends SingleChildParent {
-  protected Compose(Widget child) {
-    super(child);
+  protected Compose(ComposeConfig config, Widget child) {
+    super(config, child);
   }
 
   @Override
@@ -31,4 +31,6 @@ public abstract class Compose extends SingleChildParent {
   public final void performRender(Graphics2D g) {
     getChild().performRender(g);
   }
+
+  public abstract static class ComposeConfig extends SingleChildParentConfig { }
 }

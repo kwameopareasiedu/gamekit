@@ -5,51 +5,45 @@ import dev.gamekit.ui.enums.MainAxisAlignment;
 
 import java.util.Objects;
 
+import static dev.gamekit.utils.Misc.coalesce;
+
 /** A {@link MultiChildParent} which arranges its children linearly along one axis */
 public abstract class Flex extends MultiChildParent {
   protected int gapSize;
   protected MainAxisAlignment mainAxisAlignment;
   protected CrossAxisAlignment crossAxisAlignment;
 
-  private Config<?> config;
-
-  public Flex(Config<? extends Config<?>> config, Widget... children) {
-    super(children);
+  public Flex(FlexConfig<? extends FlexConfig<?>> config, Widget... children) {
+    super(config, children);
     this.config = config;
   }
 
   @Override
   public boolean stateEquals(Widget widget) {
-    if (widget instanceof Flex flexWidget) {
+    if (widget instanceof Flex flexWidget)
       return Objects.equals(gapSize, flexWidget.gapSize) &&
         Objects.equals(mainAxisAlignment, flexWidget.mainAxisAlignment) &&
         Objects.equals(crossAxisAlignment, flexWidget.crossAxisAlignment);
-    }
 
     return false;
   }
 
   @Override
-  protected void performUpdateState(Widget widget) {
-    this.config = ((Flex) widget).config;
-    this.gapSize = ((Flex) widget).gapSize;
-    this.mainAxisAlignment = ((Flex) widget).mainAxisAlignment;
-    this.crossAxisAlignment = ((Flex) widget).crossAxisAlignment;
-  }
+  protected void performInit() {
+    FlexConfig<?> config = (FlexConfig<?>) super.config;
 
-  @Override
-  protected void performMounted() {
-    this.gapSize = config.gapSize;
-    this.mainAxisAlignment = config.mainAxisAlignment;
-    this.crossAxisAlignment = config.crossAxisAlignment;
-    super.performMounted();
+    this.gapSize = coalesce(config.gapSize, 12);
+    this.mainAxisAlignment = coalesce(config.mainAxisAlignment, MainAxisAlignment.START);
+    this.crossAxisAlignment = coalesce(config.crossAxisAlignment, CrossAxisAlignment.START);
+
+    super.performInit();
   }
 
   @SuppressWarnings("unchecked")
-  public static class Config<T extends Config<T>> {
-    Integer gapSize = 12;
-    MainAxisAlignment mainAxisAlignment = MainAxisAlignment.START;
-    CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.START;
+  public static class FlexConfig<T extends FlexConfig<T>> extends MultiChildParentConfig {
+    Integer gapSize;
+    MainAxisAlignment mainAxisAlignment;
+    CrossAxisAlignment crossAxisAlignment;
 
     public T gapSize(int gapSize) {
       this.gapSize = gapSize;

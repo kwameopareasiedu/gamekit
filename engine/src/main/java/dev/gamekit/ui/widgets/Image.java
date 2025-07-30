@@ -16,9 +16,9 @@ public class Image extends Leaf {
   protected ImageFit fit;
   protected ImageInterpolation interpolation;
 
-  private Config config;
+  public Image(ImageConfig config, BufferedImage image) {
+    super(config);
 
-  public Image(Config config, BufferedImage image) {
     if (image == null)
       throw new IllegalArgumentException("Image cannot be null");
 
@@ -26,16 +26,16 @@ public class Image extends Leaf {
     this.image = image;
   }
 
-  public static Image create(Config config, BufferedImage image) {
+  public static Image create(ImageConfig config, BufferedImage image) {
     return new Image(config, image);
   }
 
   public static Image create(BufferedImage image) {
-    return new Image(new Config(), image);
+    return new Image(new ImageConfig(), image);
   }
 
-  public static Config config() {
-    return new Config();
+  public static ImageConfig config() {
+    return new ImageConfig();
   }
 
   @Override
@@ -49,18 +49,18 @@ public class Image extends Leaf {
   }
 
   @Override
-  protected void performUpdateState(Widget widget) {
-    this.config = ((Image) widget).config;
-    this.fit = ((Image) widget).fit;
-    this.interpolation = ((Image) widget).interpolation;
-  }
-
-  @Override
-  protected void performMounted() {
-    super.performMounted();
+  protected void performInit() {
+    ImageConfig config = (ImageConfig) super.config;
 
     this.fit = coalesce(config.fit, ImageFit.FIT);
     this.interpolation = coalesce(config.interpolation, ImageInterpolation.DEFAULT);
+
+    super.performInit();
+  }
+
+  @Override
+  protected void performUpdate(Widget widget) {
+    this.image = ((Image) widget).image;
   }
 
   @Override
@@ -132,18 +132,16 @@ public class Image extends Leaf {
       g.setClip(originalClip);
   }
 
-  public static class Config {
+  public static class ImageConfig extends LeafConfig {
     ImageFit fit;
     ImageInterpolation interpolation;
 
-    Config() { }
-
-    public Config fit(ImageFit fit) {
+    public ImageConfig fit(ImageFit fit) {
       this.fit = fit;
       return this;
     }
 
-    public Config interpolation(ImageInterpolation interpolation) {
+    public ImageConfig interpolation(ImageInterpolation interpolation) {
       this.interpolation = interpolation;
       return this;
     }

@@ -11,19 +11,16 @@ import static dev.gamekit.utils.Misc.coalesce;
 public class Padding extends SingleChildParent {
   protected Spacing padding;
 
-  private Config config;
-
-  public Padding(Config config, Widget child) {
-    super(child);
-    this.config = config;
+  public Padding(PaddingConfig config, Widget child) {
+    super(config, child);
   }
 
-  public static Padding create(Config config, Widget child) {
+  public static Padding create(PaddingConfig config, Widget child) {
     return new Padding(config, child);
   }
 
-  public static Config config() {
-    return new Config();
+  public static PaddingConfig config() {
+    return new PaddingConfig();
   }
 
   @Override
@@ -35,15 +32,12 @@ public class Padding extends SingleChildParent {
   }
 
   @Override
-  protected void performUpdateState(Widget widget) {
-    this.config = ((Padding) widget).config;
-    this.padding = ((Padding) widget).padding;
-  }
+  protected void performInit() {
+    PaddingConfig config = (PaddingConfig) super.config;
 
-  @Override
-  protected void performMounted() {
     padding = coalesce(config.padding, new Spacing());
-    super.performMounted();
+
+    super.performInit();
   }
 
   @Override
@@ -68,27 +62,25 @@ public class Padding extends SingleChildParent {
     child.computedBounds.setPosition(padding.left, padding.top);
   }
 
-  public static class Config {
+  public static class PaddingConfig extends SingleChildParentConfig {
     Spacing padding = new Spacing();
 
-    Config() { }
-
-    public Config padding(Spacing padding) {
+    public PaddingConfig padding(Spacing padding) {
       this.padding = padding;
       return this;
     }
 
-    public Config padding(int padding) {
+    public PaddingConfig padding(int padding) {
       this.padding = new Spacing(padding);
       return this;
     }
 
-    public Config padding(int horizontal, int vertical) {
+    public PaddingConfig padding(int horizontal, int vertical) {
       this.padding = new Spacing(horizontal, vertical);
       return this;
     }
 
-    public Config padding(int top, int right, int bottom, int left) {
+    public PaddingConfig padding(int top, int right, int bottom, int left) {
       this.padding = new Spacing(top, right, bottom, left);
       return this;
     }

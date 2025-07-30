@@ -9,9 +9,15 @@ import java.awt.*;
  * to the box-constraint model used.
  */
 public abstract class Parent extends Widget {
+  public Parent(ParentConfig config) {
+    super(config);
+  }
+
   /**
    * Called in the {@link #render(Graphics2D)} method to provide the parent's appearance before its
    * child/children are also rendered on top of it.
    */
   protected void renderAppearance(Graphics2D g) { /* No-op */ }
+
+  public static abstract class ParentConfig extends WidgetConfig { }
 }

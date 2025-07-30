@@ -15,7 +15,6 @@ import static dev.gamekit.utils.Misc.coalesce;
 /** A {@link Leaf} which renders text to the screen */
 @SuppressWarnings("MagicConstant")
 public class Text extends Leaf {
-  protected Config<?> config;
   protected String text;
   protected Font font;
   protected int fontStyle;
@@ -34,26 +33,27 @@ public class Text extends Leaf {
   private String[] textLines;
   private double[] textOffsets;
 
-  public Text(Config<?> config, String text) {
+  public Text(TextConfig<?> config, String text) {
+    super(config);
     this.config = config;
     this.text = text;
   }
 
-  public static Text create(Config<?> params, String text) {
+  public static Text create(TextConfig<?> params, String text) {
     return new Text(params, text);
   }
 
   public static Text create(String text) {
-    return new Text(new Config<>(), text);
+    return new Text(new TextConfig<>(), text);
   }
 
-  public static Config<?> config() {
-    return new Config<>();
+  public static TextConfig<?> config() {
+    return new TextConfig<>();
   }
 
   @Override
   public boolean stateEquals(Widget widget) {
-    if (widget instanceof Text textWidget) {
+    if (widget instanceof Text textWidget)
       return Objects.equals(text, textWidget.text) &&
         Objects.equals(font, textWidget.font) &&
         Objects.equals(fontStyle, textWidget.fontStyle) &&
@@ -64,30 +64,13 @@ public class Text extends Leaf {
         Objects.equals(shadowOffsetX, textWidget.shadowOffsetX) &&
         Objects.equals(shadowOffsetY, textWidget.shadowOffsetY) &&
         Objects.equals(shadowColor, textWidget.shadowColor);
-    }
 
     return false;
   }
 
   @Override
-  protected void performUpdateState(Widget widget) {
-    this.config = ((Text) widget).config;
-    this.text = ((Text) widget).text;
-    this.font = ((Text) widget).font;
-    this.fontStyle = ((Text) widget).fontStyle;
-    this.fontSize = ((Text) widget).fontSize;
-    this.color = ((Text) widget).color;
-    this.backgroundColor = ((Text) widget).backgroundColor;
-    this.alignment = ((Text) widget).alignment;
-    this.verticalAlignment = ((Text) widget).verticalAlignment;
-    this.shadowEnabled = ((Text) widget).shadowEnabled;
-    this.shadowOffsetX = ((Text) widget).shadowOffsetX;
-    this.shadowOffsetY = ((Text) widget).shadowOffsetY;
-    this.shadowColor = ((Text) widget).shadowColor;
-  }
-
-  @Override
-  protected void performMounted() {
+  protected void performInit() {
+    TextConfig<?> config = (TextConfig<?>) super.config;
     Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
 
     font = coalesce(config.font, theme.textFont, Constants.DEFAULT_FONT);
@@ -109,6 +92,13 @@ public class Text extends Leaf {
       : Constants.DEFAULT_FONT.deriveFont(fontStyle, fontSize);
     fontMetrics = uiBridge.getFontMetrics(renderFont);
     textLines = new String[0];
+
+    super.performInit();
+  }
+
+  @Override
+  protected void performUpdate(Widget widget) {
+    this.text = ((Text) widget).text;
   }
 
   @Override
@@ -240,7 +230,7 @@ public class Text extends Leaf {
   }
 
   @SuppressWarnings("unchecked")
-  public static class Config<T extends Config<T>> {
+  public static class TextConfig<T extends TextConfig<T>> extends LeafConfig {
     Font font;
     Integer fontStyle;
     Integer fontSize;

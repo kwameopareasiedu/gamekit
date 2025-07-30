@@ -17,49 +17,39 @@ public class Sized extends SingleChildParent {
   protected double width;
   protected double height;
 
-  private Config config;
-
-  public Sized(Config config, Widget child) {
-    super(child);
-    this.config = config;
+  public Sized(SizedConfig config, Widget child) {
+    super(config, child);
   }
 
-  public static Sized create(Config config, Widget child) {
+  public static Sized create(SizedConfig config, Widget child) {
     return new Sized(config, child);
   }
 
-  public static Config config() {
-    return new Config();
+  public static SizedConfig config() {
+    return new SizedConfig();
   }
 
   @Override
   public boolean stateEquals(Widget widget) {
-    if (widget instanceof Sized sizedWidget) {
+    if (widget instanceof Sized sizedWidget)
       return Objects.equals(widthType, sizedWidget.widthType) &&
         Objects.equals(heightType, sizedWidget.heightType) &&
         Objects.equals(width, sizedWidget.width) &&
         Objects.equals(height, sizedWidget.height);
-    }
 
     return false;
   }
 
   @Override
-  protected void performUpdateState(Widget widget) {
-    this.config = ((Sized) widget).config;
-    this.widthType = ((Sized) widget).widthType;
-    this.heightType = ((Sized) widget).heightType;
-    this.width = ((Sized) widget).width;
-    this.height = ((Sized) widget).height;
-  }
+  protected void performInit() {
+    SizedConfig config = (SizedConfig) super.config;
 
-  @Override
-  protected void performMounted() {
     this.width = coalesce(config.width, 64.0);
     this.height = coalesce(config.height, 64.0);
     this.widthType = coalesce(config.widthType, DimensionType.FIXED);
     this.heightType = coalesce(config.heightType, DimensionType.FIXED);
-    super.performMounted();
+
+    super.performInit();
   }
 
   @Override
@@ -119,45 +109,43 @@ public class Sized extends SingleChildParent {
     );
   }
 
-  public static class Config {
+  public static class SizedConfig extends SingleChildParentConfig {
     DimensionType widthType;
     DimensionType heightType;
     Double width;
     Double height;
 
-    Config() { }
-
-    public Config width(int width) {
+    public SizedConfig width(int width) {
       this.widthType = DimensionType.FIXED;
       this.width = (double) width;
       return this;
     }
 
-    public Config height(int height) {
+    public SizedConfig height(int height) {
       this.heightType = DimensionType.FIXED;
       this.height = (double) height;
       return this;
     }
 
-    public Config intrinsicWidth() {
+    public SizedConfig intrinsicWidth() {
       this.widthType = DimensionType.INTRINSIC;
       this.width = (double) 0;
       return this;
     }
 
-    public Config intrinsicHeight() {
+    public SizedConfig intrinsicHeight() {
       this.heightType = DimensionType.INTRINSIC;
       this.height = (double) 0;
       return this;
     }
 
-    public Config fractionalWidth(double width) {
+    public SizedConfig fractionalWidth(double width) {
       this.widthType = DimensionType.FRACTIONAL;
       this.width = clamp(width, 0, 1);
       return this;
     }
 
-    public Config fractionalHeight(double height) {
+    public SizedConfig fractionalHeight(double height) {
       this.heightType = DimensionType.FRACTIONAL;
       this.height = clamp(height, 0, 1);
       return this;

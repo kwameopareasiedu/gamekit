@@ -5,47 +5,42 @@ import dev.gamekit.ui.Constraints;
 import java.awt.*;
 import java.util.Objects;
 
+import static dev.gamekit.utils.Misc.coalesce;
+
 /** A {@link Leaf} which renders a solid color background */
 public class Colored extends Leaf {
   protected Color color;
   protected int borderRadius;
 
-  private Config config;
-
-  public Colored(Config config) {
-    this.config = config;
+  public Colored(ColoredConfig config) {
+    super(config);
   }
 
-  public static Colored create(Config config) {
+  public static Colored create(ColoredConfig config) {
     return new Colored(config);
   }
 
-  public static Config config() {
-    return new Config();
+  public static ColoredConfig config() {
+    return new ColoredConfig();
   }
 
   @Override
   public boolean stateEquals(Widget widget) {
-    if (widget instanceof Colored panelWidget) {
+    if (widget instanceof Colored panelWidget)
       return Objects.equals(color, panelWidget.color) &&
         Objects.equals(borderRadius, panelWidget.borderRadius);
-    }
 
     return false;
   }
 
   @Override
-  protected void performUpdateState(Widget widget) {
-    this.config = ((Colored) widget).config;
-    this.color = ((Colored) widget).color;
-    this.borderRadius = ((Colored) widget).borderRadius;
-  }
+  protected void performInit() {
+    ColoredConfig config = (ColoredConfig) super.config;
 
-  @Override
-  protected void performMounted() {
-    super.performMounted();
-    this.color = config.color;
-    this.borderRadius = config.borderRadius;
+    this.color = coalesce(config.color, Color.GRAY);
+    this.borderRadius = coalesce(config.borderRadius, 0);
+
+    super.performInit();
   }
 
   @Override
@@ -71,18 +66,16 @@ public class Colored extends Leaf {
     );
   }
 
-  public static class Config {
-    Color color = Color.GRAY;
-    int borderRadius = 0;
+  public static class ColoredConfig extends LeafConfig {
+    Color color;
+    Integer borderRadius;
 
-    Config() { }
-
-    public Config color(Color color) {
+    public ColoredConfig color(Color color) {
       this.color = color;
       return this;
     }
 
-    public Config borderRadius(int borderRadius) {
+    public ColoredConfig borderRadius(int borderRadius) {
       this.borderRadius = borderRadius;
       return this;
     }

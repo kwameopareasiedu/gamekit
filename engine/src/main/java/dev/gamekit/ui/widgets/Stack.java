@@ -4,21 +4,18 @@ import dev.gamekit.ui.Constraints;
 
 /** A {@link MultiChildParent} which stacks its children on top of each other */
 public class Stack extends MultiChildParent {
-  public Stack(Widget... children) {
-    super(children);
+  public Stack(StackConfig config, Widget... children) {
+    super(config, children);
   }
 
   public static Stack create(Widget... children) {
-    return new Stack(children);
+    return new Stack(new StackConfig(), children);
   }
 
   @Override
   public boolean stateEquals(Widget widget) {
     return widget instanceof Stack;
   }
-
-  @Override
-  protected void performUpdateState(Widget widget) { /* No-op */ }
 
   @Override
   protected void performLayout(Constraints constraints) {
@@ -50,4 +47,6 @@ public class Stack extends MultiChildParent {
       );
     }
   }
+
+  public static class StackConfig extends MultiChildParentConfig { }
 }

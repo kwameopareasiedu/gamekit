@@ -98,7 +98,7 @@ public final class UI {
     this.tree = tree;
 
     if (this.tree != null) {
-      this.tree.mounted(bridgeObject);
+      this.tree.init(bridgeObject);
       this.tree.layout(windowConstraints);
       this.tree.postLayout();
       triggerRender();
@@ -146,7 +146,7 @@ public final class UI {
     boolean treeUpdated = false;
 
     // Ensure the new tree is mounted to ensure state variables are set before comparison
-    newTree.mounted(bridgeObject);
+    newTree.init(bridgeObject);
 
     currentWidgetQueue.add(tree);
     newWidgetQueue.add(newTree);
@@ -172,7 +172,7 @@ public final class UI {
 
         treeUpdated = true;
       } else if (!stateMatch) {
-        treeWidget.updateState(newWidget);
+        treeWidget.update(newWidget);
         treeUpdated = true;
       }
 

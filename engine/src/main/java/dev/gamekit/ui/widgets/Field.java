@@ -32,18 +32,18 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
   private Stroke defaultBorderStroke;
   private Stroke focusBorderStroke;
 
-  public Field(Config config, String text) {
+  public Field(FieldConfig config, String text) {
     super(config, text);
     absoluteContentBounds = new Bounds();
     tempAbsoluteBounds = new Bounds();
   }
 
-  public static Field create(Config config, String text) {
+  public static Field create(FieldConfig config, String text) {
     return new Field(config, text);
   }
 
-  public static Config config() {
-    return new Config();
+  public static FieldConfig config() {
+    return new FieldConfig();
   }
 
   @Override
@@ -57,18 +57,11 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
   }
 
   @Override
-  protected void performUpdateState(Widget widget) {
-    super.performUpdateState(widget);
-    this.padding = ((Field) widget).padding;
-    this.background = ((Field) widget).background;
-  }
+  protected void performInit() {
+    super.performInit();
 
-  @Override
-  protected void performMounted() {
-    super.performMounted();
-
+    FieldConfig config = (FieldConfig) super.config;
     Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
-    Config config = (Config) super.config;
 
     background = coalesce(config.background, theme.fieldBackground);
     padding = coalesce(config.padding, theme.fieldPadding, new Spacing());
@@ -202,7 +195,7 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
     }
   }
 
-  public static class Config extends Text.Config<Config> {
+  public static class FieldConfig extends TextConfig<FieldConfig> {
     BufferedImage background;
     Spacing padding;
     BorderData defaultBorder;
@@ -211,59 +204,57 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
     KeyCharEvent.Handler keyCharListener;
     ChangeEvent.Handler<String> changeListener;
 
-    Config() { }
-
-    public Config background(BufferedImage background) {
+    public FieldConfig background(BufferedImage background) {
       this.background = background;
       return this;
     }
 
-    public Config padding(Spacing padding) {
+    public FieldConfig padding(Spacing padding) {
       this.padding = padding;
       return this;
     }
 
-    public Config padding(int padding) {
+    public FieldConfig padding(int padding) {
       this.padding = new Spacing(padding);
       return this;
     }
 
-    public Config padding(int horizontal, int vertical) {
+    public FieldConfig padding(int horizontal, int vertical) {
       this.padding = new Spacing(horizontal, vertical);
       return this;
     }
 
-    public Config padding(int top, int right, int bottom, int left) {
+    public FieldConfig padding(int top, int right, int bottom, int left) {
       this.padding = new Spacing(top, right, bottom, left);
       return this;
     }
 
-    public Config border(BorderData border) {
+    public FieldConfig border(BorderData border) {
       this.defaultBorder = border;
       return this;
     }
 
-    public Config defaultBorder(BorderData defaultBorder) {
+    public FieldConfig defaultBorder(BorderData defaultBorder) {
       this.defaultBorder = defaultBorder;
       return this;
     }
 
-    public Config focusBorder(BorderData focusBorder) {
+    public FieldConfig focusBorder(BorderData focusBorder) {
       this.focusBorder = focusBorder;
       return this;
     }
 
-    public Config focusListener(FocusEvent.Handler focusListener) {
+    public FieldConfig focusListener(FocusEvent.Handler focusListener) {
       this.focusListener = focusListener;
       return this;
     }
 
-    public Config keyCharListener(KeyCharEvent.Handler keyCharListener) {
+    public FieldConfig keyCharListener(KeyCharEvent.Handler keyCharListener) {
       this.keyCharListener = keyCharListener;
       return this;
     }
 
-    public Config changeListener(ChangeEvent.Handler<String> changeListener) {
+    public FieldConfig changeListener(ChangeEvent.Handler<String> changeListener) {
       this.changeListener = changeListener;
       return this;
     }

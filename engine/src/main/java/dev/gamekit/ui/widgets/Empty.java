@@ -9,17 +9,18 @@ import java.awt.*;
  * {@code null} would have been preferable
  */
 public class Empty extends Leaf {
+  public Empty(LeafConfig config) {
+    super(config);
+  }
+
   public static Empty create() {
-    return new Empty();
+    return new Empty(new LeafConfig() { });
   }
 
   @Override
   public boolean stateEquals(Widget widget) {
     return widget instanceof Empty;
   }
-
-  @Override
-  protected void performUpdateState(Widget ignored) { /* No-op */ }
 
   @Override
   protected void performLayout(Constraints constraints) {

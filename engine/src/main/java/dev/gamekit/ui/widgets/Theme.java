@@ -37,19 +37,16 @@ public class Theme extends SingleChildParent {
   public BorderData fieldDefaultBorder;
   public BorderData fieldFocusBorder;
 
-  private Config config;
-
-  public Theme(Config config, Widget child) {
-    super(child);
-    this.config = config;
+  public Theme(ThemeConfig config, Widget child) {
+    super(config, child);
   }
 
-  public static Theme create(Config params, Widget child) {
+  public static Theme create(ThemeConfig params, Widget child) {
     return new Theme(params, child);
   }
 
-  public static Config config() {
-    return new Config();
+  public static ThemeConfig config() {
+    return new ThemeConfig();
   }
 
   public static Theme getDefault() {
@@ -58,7 +55,7 @@ public class Theme extends SingleChildParent {
 
   @Override
   public boolean stateEquals(Widget widget) {
-    if (widget instanceof Theme themeWidget) {
+    if (widget instanceof Theme themeWidget)
       return Objects.equals(buttonNinePatchBorder, themeWidget.buttonNinePatchBorder) &&
         Objects.equals(buttonDefaultBackground, themeWidget.buttonDefaultBackground) &&
         Objects.equals(buttonHoverBackground, themeWidget.buttonHoverBackground) &&
@@ -80,40 +77,13 @@ public class Theme extends SingleChildParent {
         Objects.equals(fieldPadding, themeWidget.fieldPadding) &&
         Objects.equals(fieldDefaultBorder, themeWidget.fieldDefaultBorder) &&
         Objects.equals(fieldFocusBorder, themeWidget.fieldFocusBorder);
-    }
 
     return false;
   }
 
   @Override
-  protected void performUpdateState(Widget widget) {
-    this.config = ((Theme) widget).config;
-
-    this.buttonNinePatchBorder = ((Theme) widget).buttonNinePatchBorder;
-    this.buttonDefaultBackground = ((Theme) widget).buttonDefaultBackground;
-    this.buttonHoverBackground = ((Theme) widget).buttonHoverBackground;
-    this.buttonPressedBackground = ((Theme) widget).buttonPressedBackground;
-
-    this.textFont = ((Theme) widget).textFont;
-    this.textFontStyle = ((Theme) widget).textFontStyle;
-    this.textFontSize = ((Theme) widget).textFontSize;
-    this.textColor = ((Theme) widget).textColor;
-    this.textBackgroundColor = ((Theme) widget).textBackgroundColor;
-    this.textAlignment = ((Theme) widget).textAlignment;
-    this.textVerticalAlignment = ((Theme) widget).textVerticalAlignment;
-    this.textShadowEnabled = ((Theme) widget).textShadowEnabled;
-    this.textShadowOffsetX = ((Theme) widget).textShadowOffsetX;
-    this.textShadowOffsetY = ((Theme) widget).textShadowOffsetY;
-    this.textShadowColor = ((Theme) widget).textShadowColor;
-
-    this.fieldBackground = ((Theme) widget).fieldBackground;
-    this.fieldPadding = ((Theme) widget).fieldPadding;
-    this.fieldDefaultBorder = ((Theme) widget).fieldDefaultBorder;
-    this.fieldFocusBorder = ((Theme) widget).fieldFocusBorder;
-  }
-
-  @Override
-  protected void performMounted() {
+  protected void performInit() {
+    ThemeConfig config = (ThemeConfig) super.config;
     Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
 
     this.buttonNinePatchBorder =
@@ -143,7 +113,7 @@ public class Theme extends SingleChildParent {
     this.fieldDefaultBorder = coalesce(config.fieldDefaultBorder, theme.fieldDefaultBorder);
     this.fieldFocusBorder = coalesce(config.fieldFocusBorder, theme.fieldFocusBorder);
 
-    super.performMounted();
+    super.performInit();
   }
 
   @Override
@@ -161,7 +131,7 @@ public class Theme extends SingleChildParent {
     );
   }
 
-  public static class Config {
+  public static class ThemeConfig extends SingleChildParentConfig {
     Spacing buttonNinePatchBorder;
     BufferedImage buttonDefaultBackground;
     BufferedImage buttonHoverBackground;
@@ -184,110 +154,108 @@ public class Theme extends SingleChildParent {
     BorderData fieldDefaultBorder;
     BorderData fieldFocusBorder;
 
-    Config() { }
-
-    public Config ninePatch(Spacing border) {
+    public ThemeConfig ninePatch(Spacing border) {
       this.buttonNinePatchBorder = border;
       return this;
     }
 
-    public Config ninePatch(int all) {
+    public ThemeConfig ninePatch(int all) {
       this.buttonNinePatchBorder = new Spacing(all);
       return this;
     }
 
-    public Config ninePatch(int horizontal, int vertical) {
+    public ThemeConfig ninePatch(int horizontal, int vertical) {
       this.buttonNinePatchBorder = new Spacing(horizontal, vertical);
       return this;
     }
 
-    public Config ninePatch(int top, int right, int bottom, int left) {
+    public ThemeConfig ninePatch(int top, int right, int bottom, int left) {
       this.buttonNinePatchBorder = new Spacing(top, right, bottom, left);
       return this;
     }
 
-    public Config buttonDefaultBackground(BufferedImage buttonDefaultBackground) {
+    public ThemeConfig buttonDefaultBackground(BufferedImage buttonDefaultBackground) {
       this.buttonDefaultBackground = buttonDefaultBackground;
       return this;
     }
 
-    public Config buttonHoverBackground(BufferedImage buttonHoverBackground) {
+    public ThemeConfig buttonHoverBackground(BufferedImage buttonHoverBackground) {
       this.buttonHoverBackground = buttonHoverBackground;
       return this;
     }
 
-    public Config buttonPressedBackground(BufferedImage buttonPressedBackground) {
+    public ThemeConfig buttonPressedBackground(BufferedImage buttonPressedBackground) {
       this.buttonPressedBackground = buttonPressedBackground;
       return this;
     }
 
-    public Config textFont(Font textFont) {
+    public ThemeConfig textFont(Font textFont) {
       this.textFont = textFont;
       return this;
     }
 
-    public Config textFontStyle(int textFontStyle) {
+    public ThemeConfig textFontStyle(int textFontStyle) {
       this.textFontStyle = textFontStyle;
       return this;
     }
 
-    public Config textFontSize(int textFontSize) {
+    public ThemeConfig textFontSize(int textFontSize) {
       this.textFontSize = textFontSize;
       return this;
     }
 
-    public Config textColor(Color textColor) {
+    public ThemeConfig textColor(Color textColor) {
       this.textColor = textColor;
       return this;
     }
 
-    public Config textBackgroundColor(Color textBackgroundColor) {
+    public ThemeConfig textBackgroundColor(Color textBackgroundColor) {
       this.textBackgroundColor = textBackgroundColor;
       return this;
     }
 
-    public Config textAlignment(Alignment textAlignment) {
+    public ThemeConfig textAlignment(Alignment textAlignment) {
       this.textAlignment = textAlignment;
       return this;
     }
 
-    public Config textVerticalAlignment(Alignment textVerticalAlignment) {
+    public ThemeConfig textVerticalAlignment(Alignment textVerticalAlignment) {
       this.textVerticalAlignment = textVerticalAlignment;
       return this;
     }
 
-    public Config textShadowEnabled(boolean textShadowEnabled) {
+    public ThemeConfig textShadowEnabled(boolean textShadowEnabled) {
       this.textShadowEnabled = textShadowEnabled;
       return this;
     }
 
-    public Config textShadowOffset(int textShadowOffsetX, int textShadowOffsetY) {
+    public ThemeConfig textShadowOffset(int textShadowOffsetX, int textShadowOffsetY) {
       this.textShadowOffsetX = textShadowOffsetX;
       this.textShadowOffsetY = textShadowOffsetY;
       return this;
     }
 
-    public Config textShadowColor(Color textShadowColor) {
+    public ThemeConfig textShadowColor(Color textShadowColor) {
       this.textShadowColor = textShadowColor;
       return this;
     }
 
-    public Config fieldBackground(BufferedImage fieldBackground) {
+    public ThemeConfig fieldBackground(BufferedImage fieldBackground) {
       this.fieldBackground = fieldBackground;
       return this;
     }
 
-    public Config fieldPadding(Spacing fieldPadding) {
+    public ThemeConfig fieldPadding(Spacing fieldPadding) {
       this.fieldPadding = fieldPadding;
       return this;
     }
 
-    public Config fieldDefaultBorder(BorderData fieldDefaultBorder) {
+    public ThemeConfig fieldDefaultBorder(BorderData fieldDefaultBorder) {
       this.fieldDefaultBorder = fieldDefaultBorder;
       return this;
     }
 
-    public Config fieldFocusBorder(BorderData fieldFocusBorder) {
+    public ThemeConfig fieldFocusBorder(BorderData fieldFocusBorder) {
       this.fieldFocusBorder = fieldFocusBorder;
       return this;
     }
