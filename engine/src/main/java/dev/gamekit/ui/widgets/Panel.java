@@ -1,6 +1,6 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.core.Constants;
+import dev.gamekit.core.IO;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.events.MouseEvent;
@@ -17,6 +17,9 @@ import static dev.gamekit.utils.Misc.coalesce;
  * as a background to its descendants
  */
 public class Panel extends SingleChildParent implements NinePatch, MouseEvent.Handler {
+  public static final BufferedImage DEFAULT_BG =
+    IO.getResourceImage("default-sprites.png", 470, 64, 120, 120);
+
   protected BufferedImage background;
   protected Spacing ninePatchSpacing;
 
@@ -45,7 +48,7 @@ public class Panel extends SingleChildParent implements NinePatch, MouseEvent.Ha
   protected void performInit() {
     PanelConfig config = (PanelConfig) super.config;
 
-    this.background = coalesce(config.background, Constants.PANEL_DEFAULT_BG);
+    this.background = coalesce(config.background, DEFAULT_BG);
     this.ninePatchSpacing = coalesce(config.ninePatchSpacing, new Spacing());
 
     super.performInit();

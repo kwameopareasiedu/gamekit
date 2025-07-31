@@ -1,6 +1,6 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.core.Constants;
+import dev.gamekit.core.IO;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.events.MouseEvent;
@@ -14,6 +14,13 @@ import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link Widget} which can be clicked to trigger an action */
 public class Button extends SingleChildParent implements NinePatch, MouseEvent.Handler {
+  public static final BufferedImage DEFAULT_BG =
+    IO.getResourceImage("default-sprites.png", 64, 64, 350, 120);
+  public static final BufferedImage HOVER_BG =
+    IO.getResourceImage("default-sprites.png", 64, 232, 350, 120);
+  public static final BufferedImage PRESSED_BG =
+    IO.getResourceImage("default-sprites.png", 64, 400, 350, 120);
+
   protected Spacing ninePatchSpacing;
   protected BufferedImage defaultBackground;
   protected BufferedImage hoverBackground;
@@ -53,11 +60,11 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
     this.ninePatchSpacing =
       coalesce(config.ninePatchSpacing, theme.buttonNinePatchSpacing, Spacing.create(24));
     this.defaultBackground =
-      coalesce(config.defaultBackground, theme.buttonDefaultBackground, Constants.BUTTON_DEFAULT_BG);
+      coalesce(config.defaultBackground, theme.buttonDefaultBackground, DEFAULT_BG);
     this.hoverBackground =
-      coalesce(config.hoverBackground, theme.buttonHoverBackground, Constants.BUTTON_HOVER_BG);
+      coalesce(config.hoverBackground, theme.buttonHoverBackground, HOVER_BG);
     this.pressedBackground =
-      coalesce(config.pressedBackground, theme.buttonPressedBackground, Constants.BUTTON_PRESS_BG);
+      coalesce(config.pressedBackground, theme.buttonPressedBackground, PRESSED_BG);
     this.mouseListener = coalesce(config.mouseListener, null);
 
     super.performInit();

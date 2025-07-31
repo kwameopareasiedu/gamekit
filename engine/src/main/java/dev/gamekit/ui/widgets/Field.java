@@ -1,6 +1,6 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.core.Constants;
+import dev.gamekit.core.IO;
 import dev.gamekit.core.Input;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Spacing;
@@ -19,6 +19,11 @@ import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link Text} widget extension which accepts text input */
 public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Handler, NinePatch {
+  public static final BufferedImage DEFAULT_BG =
+    IO.getResourceImage("default-sprites.png", 646, 64, 96, 32);
+  public static final BufferedImage FOCUS_BG =
+    IO.getResourceImage("default-sprites.png", 646, 135, 96, 32);
+
   protected Spacing ninePatchSpacing;
   protected BufferedImage defaultBackground;
   protected BufferedImage focusBackground;
@@ -67,10 +72,8 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
     foregroundColor = coalesce(config.foregroundColor, theme.textForegroundColor, Color.BLACK);
     ninePatchSpacing =
       coalesce(config.ninePatchSpacing, theme.fieldNinePatchSpacing, Spacing.create(2));
-    defaultBackground =
-      coalesce(config.defaultBackground, theme.fieldDefaultBackground, Constants.FIELD_DEFAULT_BG);
-    focusBackground =
-      coalesce(config.focusBackground, theme.fieldFocusBackground, Constants.FIELD_FOCUS_BG);
+    defaultBackground = coalesce(config.defaultBackground, theme.fieldDefaultBackground, DEFAULT_BG);
+    focusBackground = coalesce(config.focusBackground, theme.fieldFocusBackground, FOCUS_BG);
     padding = coalesce(config.padding, theme.fieldPadding, Spacing.create());
     focusListener = coalesce(config.focusListener, null);
     keyCharListener = coalesce(config.keyCharListener, null);

@@ -1,6 +1,6 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.core.Constants;
+import dev.gamekit.core.IO;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.events.ChangeEvent;
@@ -16,6 +16,11 @@ import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link SingleChildParent} input widget which toggles between two states */
 public class Checkbox extends SingleChildParent implements MouseEvent.Handler, NinePatch {
+  public static final BufferedImage DEFAULT_ICON =
+    IO.getResourceImage("default-sprites.png", 646, 206, 32, 32);
+  public static final BufferedImage TOGGLED_ICON =
+    IO.getResourceImage("default-sprites.png", 646, 277, 32, 32);
+
   protected Spacing ninePatchSpacing;
   protected BufferedImage defaultIcon;
   protected BufferedImage toggledIcon;
@@ -59,10 +64,8 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
 
     this.ninePatchSpacing =
       coalesce(config.ninePatchSpacing, theme.checkboxNinePatchSpacing, Spacing.create(8));
-    this.defaultIcon =
-      coalesce(config.defaultIcon, theme.checkboxDefaultIcon, Constants.DEFAULT_CHECKBOX_ICON);
-    this.toggledIcon =
-      coalesce(config.toggledIcon, theme.checkboxToggledIcon, Constants.TOGGLED_CHECKBOX_ICON);
+    this.defaultIcon = coalesce(config.defaultIcon, theme.checkboxDefaultIcon, DEFAULT_ICON);
+    this.toggledIcon = coalesce(config.toggledIcon, theme.checkboxToggledIcon, TOGGLED_ICON);
     this.gapSize = coalesce(config.gapSize, theme.checkboxGapSize, 12);
     this.iconSize = coalesce(config.iconSize, theme.checkboxIconSize, 24);
     this.toggled = coalesce(config.value, false);
