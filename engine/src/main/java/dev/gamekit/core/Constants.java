@@ -11,15 +11,22 @@ public final class Constants {
 
   public static final Font DEFAULT_FONT = IO.getResourceFont("font-default.ttf");
   public static final Color TRANSPARENT_COLOR = new Color(0x0000000, true);
-  public static final BufferedImage DEFAULT_BUTTON_BG = IO.getResourceImage("btn-default.png");
-  public static final BufferedImage HOVER_BUTTON_BG = IO.getResourceImage("btn-hover.png");
-  public static final BufferedImage PRESSED_BUTTON_BG = IO.getResourceImage("btn-press.png");
-  public static final BufferedImage DEFAULT_PANEL_BG = IO.getResourceImage("panel-default.png");
-  public static final BufferedImage DEFAULT_FIELD_BG = IO.getResourceImage("field-default.png");
+  public static final BufferedImage BUTTON_DEFAULT_BG =
+    IO.getResourceImage("default-sprites.png", 64, 64, 350, 120);
+  public static final BufferedImage BUTTON_HOVER_BG =
+    IO.getResourceImage("default-sprites.png", 64, 232, 350, 120);
+  public static final BufferedImage BUTTON_PRESS_BG =
+    IO.getResourceImage("default-sprites.png", 64, 400, 350, 120);
+  public static final BufferedImage PANEL_DEFAULT_BG =
+    IO.getResourceImage("default-sprites.png", 470, 64, 120, 120);
+  public static final BufferedImage FIELD_DEFAULT_BG =
+    IO.getResourceImage("default-sprites.png", 646, 64, 96, 32);
+  public static final BufferedImage FIELD_FOCUS_BG =
+    IO.getResourceImage("default-sprites.png", 646, 135, 96, 32);
   public static final BufferedImage DEFAULT_CHECKBOX_ICON =
-    IO.getResourceImage("checkbox-default.png");
+    IO.getResourceImage("default-sprites.png", 646, 206, 32, 32);
   public static final BufferedImage TOGGLED_CHECKBOX_ICON =
-    IO.getResourceImage("checkbox-toggled.png");
+    IO.getResourceImage("default-sprites.png", 646, 277, 32, 32);
   public static final BasicStroke DEBUG_STROKE =
     new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 

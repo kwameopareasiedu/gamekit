@@ -66,11 +66,11 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
 
     foregroundColor = coalesce(config.foregroundColor, theme.textForegroundColor, Color.BLACK);
     ninePatchSpacing =
-      coalesce(config.ninePatchSpacing, theme.fieldNinePatchSpacing, Spacing.create(12));
+      coalesce(config.ninePatchSpacing, theme.fieldNinePatchSpacing, Spacing.create(2));
     defaultBackground =
-      coalesce(config.defaultBackground, theme.fieldDefaultBackground, Constants.DEFAULT_FIELD_BG);
+      coalesce(config.defaultBackground, theme.fieldDefaultBackground, Constants.FIELD_DEFAULT_BG);
     focusBackground =
-      coalesce(config.focusBackground, theme.fieldFocusBackground, Constants.DEFAULT_FIELD_BG);
+      coalesce(config.focusBackground, theme.fieldFocusBackground, Constants.FIELD_FOCUS_BG);
     padding = coalesce(config.padding, theme.fieldPadding, Spacing.create());
     focusListener = coalesce(config.focusListener, null);
     keyCharListener = coalesce(config.keyCharListener, null);

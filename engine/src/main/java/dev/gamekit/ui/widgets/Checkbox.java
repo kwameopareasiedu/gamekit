@@ -14,7 +14,7 @@ import java.util.Objects;
 
 import static dev.gamekit.utils.Misc.coalesce;
 
-/** A {@link SingleChildParent} input component which toggles between two states */
+/** A {@link SingleChildParent} input widget which toggles between two states */
 public class Checkbox extends SingleChildParent implements MouseEvent.Handler, NinePatch {
   protected Spacing ninePatchSpacing;
   protected BufferedImage defaultIcon;
@@ -58,7 +58,7 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
     Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
 
     this.ninePatchSpacing =
-      coalesce(config.ninePatchSpacing, theme.checkboxNinePatchSpacing, null);
+      coalesce(config.ninePatchSpacing, theme.checkboxNinePatchSpacing, Spacing.create(8));
     this.defaultIcon =
       coalesce(config.defaultIcon, theme.checkboxDefaultIcon, Constants.DEFAULT_CHECKBOX_ICON);
     this.toggledIcon =

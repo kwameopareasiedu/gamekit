@@ -45,7 +45,7 @@ public class Panel extends SingleChildParent implements NinePatch, MouseEvent.Ha
   protected void performInit() {
     PanelConfig config = (PanelConfig) super.config;
 
-    this.background = coalesce(config.background, Constants.DEFAULT_PANEL_BG);
+    this.background = coalesce(config.background, Constants.PANEL_DEFAULT_BG);
     this.ninePatchSpacing = coalesce(config.ninePatchSpacing, new Spacing());
 
     super.performInit();

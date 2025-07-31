@@ -53,11 +53,11 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
     this.ninePatchSpacing =
       coalesce(config.ninePatchSpacing, theme.buttonNinePatchSpacing, Spacing.create(24));
     this.defaultBackground =
-      coalesce(config.defaultBackground, theme.buttonDefaultBackground, Constants.DEFAULT_BUTTON_BG);
+      coalesce(config.defaultBackground, theme.buttonDefaultBackground, Constants.BUTTON_DEFAULT_BG);
     this.hoverBackground =
-      coalesce(config.hoverBackground, theme.buttonHoverBackground, Constants.HOVER_BUTTON_BG);
+      coalesce(config.hoverBackground, theme.buttonHoverBackground, Constants.BUTTON_HOVER_BG);
     this.pressedBackground =
-      coalesce(config.pressedBackground, theme.buttonPressedBackground, Constants.PRESSED_BUTTON_BG);
+      coalesce(config.pressedBackground, theme.buttonPressedBackground, Constants.BUTTON_PRESS_BG);
     this.mouseListener = coalesce(config.mouseListener, null);
 
     super.performInit();
