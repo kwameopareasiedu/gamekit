@@ -34,12 +34,10 @@ public class Image extends Leaf {
 
   @Override
   public boolean stateEquals(Widget widget) {
-    if (widget instanceof Image imageWidget)
-      return Objects.equals(image, imageWidget.image) &&
-        Objects.equals(fit, imageWidget.fit) &&
-        Objects.equals(interpolation, imageWidget.interpolation);
-
-    return false;
+    return widget instanceof Image imageWidget &&
+      Objects.equals(image, imageWidget.image) &&
+      Objects.equals(fit, imageWidget.fit) &&
+      Objects.equals(interpolation, imageWidget.interpolation);
   }
 
   @Override
@@ -54,11 +52,6 @@ public class Image extends Leaf {
     this.interpolation = coalesce(config.interpolation, ImageInterpolation.DEFAULT);
 
     super.performInit();
-  }
-
-  @Override
-  protected void performUpdate(Widget widget) {
-    this.image = ((Image) widget).image;
   }
 
   @Override

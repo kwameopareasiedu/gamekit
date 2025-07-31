@@ -31,6 +31,7 @@ public class Demo4UserInterface extends Scene {
 
   private String fieldValue = "Hello";
   private boolean checkboxValue = false;
+  private double sliderValue = 50;
 
   public Demo4UserInterface() {
     super("Main Scene");
@@ -40,8 +41,8 @@ public class Demo4UserInterface extends Scene {
     Application game = new Application(
       new Settings(
         "Demo 4 - Declarative UI",
-        Resolution.HD,
-        WindowMode.WINDOWED,
+        Resolution.NATIVE,
+        WindowMode.FULLSCREEN,
         Antialiasing.ON,
         TextAntialiasing.ON,
         AlphaInterpolation.SPEED,
@@ -100,6 +101,13 @@ public class Demo4UserInterface extends Scene {
                 Text.create(
                   Text.config().font(20, Font.PLAIN),
                   "Active"
+                )
+              ),
+              Sized.create(
+                Sized.config().width(256).intrinsicHeight(),
+                Slider.create(
+                  Slider.config().range(0, 100).fillMode(Slider.FillMode.SCALE),
+                  sliderValue
                 )
               ),
               Column.create(
