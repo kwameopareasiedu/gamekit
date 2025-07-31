@@ -22,7 +22,7 @@ import java.util.Objects;
 
 /** {@link UI} manages the user interface within a {@link Scene} */
 public final class UI {
-  private static final int MAX_RENDERS_PER_TRIGGER = 12;
+  private static final int MAX_RENDERS_PER_TRIGGER = 32;
   private static final Logger LOGGER = LogManager.getLogger(UI.class);
   private static UI instance;
 
