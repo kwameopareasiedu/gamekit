@@ -185,6 +185,33 @@ public class Slider extends Leaf implements NinePatch {
       return this;
     }
 
+    public SliderConfig background(
+      BufferedImage trackBackground,
+      BufferedImage fillBackground,
+      BufferedImage thumbBackground
+    ) {
+      this.trackBackground = trackBackground;
+      this.fillBackground = fillBackground;
+      this.thumbBackground = thumbBackground;
+      return this;
+    }
+
+    public SliderConfig ninePatchSpacing(
+      Spacing trackNinePatchSpacing,
+      Spacing fillNinePatchSpacing,
+      Spacing thumbNinePatchSpacing
+    ) {
+      this.trackNinePatchSpacing = trackNinePatchSpacing;
+      this.fillNinePatchSpacing = fillNinePatchSpacing;
+      this.thumbNinePatchSpacing = thumbNinePatchSpacing;
+      return this;
+    }
+
+    public SliderConfig thumbSize(int thumbSize) {
+      this.thumbSize = thumbSize;
+      return this;
+    }
+
     public SliderConfig range(double minValue, double maxValue) {
       this.minValue = minValue;
       this.maxValue = maxValue;

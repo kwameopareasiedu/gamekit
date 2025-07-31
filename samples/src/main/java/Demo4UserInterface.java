@@ -28,6 +28,7 @@ public class Demo4UserInterface extends Scene {
   private static final BufferedImage BACKDROP = IO.getResourceImage("planetfall-artwork.jpg");
   private static final BufferedImage LOGO = IO.getResourceImage("planetfall-logo.png");
   private static final BufferedImage SCRIM = IO.getResourceImage("transparent-black.png");
+  private static final BufferedImage THUMB = IO.getResourceImage("slider-thumb.png");
 
   private String fieldValue = "Hello";
   private boolean checkboxValue = false;
@@ -106,7 +107,8 @@ public class Demo4UserInterface extends Scene {
               Sized.create(
                 Sized.config().width(256).intrinsicHeight(),
                 Slider.create(
-                  Slider.config().range(0, 100).fillMode(Slider.FillMode.SCALE),
+                  Slider.config().range(0, 100).fillMode(Slider.FillMode.SCALE).
+                    background(null, null, THUMB).ninePatchSpacing(null, null, Spacing.create(10)),
                   sliderValue
                 )
               ),
