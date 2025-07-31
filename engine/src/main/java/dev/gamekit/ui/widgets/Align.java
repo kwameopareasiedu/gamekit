@@ -78,8 +78,8 @@ public class Align extends SingleChildParent {
   }
 
   public static class AlignConfig extends SingleChildParentConfig {
-    Alignment horizontalAlignment;
-    Alignment verticalAlignment;
+    protected Alignment horizontalAlignment;
+    protected Alignment verticalAlignment;
 
     public AlignConfig alignment(Alignment horizontalAlignment, Alignment verticalAlignment) {
       this.horizontalAlignment = horizontalAlignment;

@@ -117,11 +117,11 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
   }
 
   public static class ButtonConfig extends SingleChildParentConfig {
-    private Spacing ninePatchSpacing;
-    private BufferedImage defaultBackground;
-    private BufferedImage hoverBackground;
-    private BufferedImage pressedBackground;
-    private MouseEvent.Handler mouseListener;
+    protected Spacing ninePatchSpacing;
+    protected BufferedImage defaultBackground;
+    protected BufferedImage hoverBackground;
+    protected BufferedImage pressedBackground;
+    protected MouseEvent.Handler mouseListener;
 
     public ButtonConfig ninePatchSpacing(Spacing ninePatchSpacing) {
       this.ninePatchSpacing = ninePatchSpacing;

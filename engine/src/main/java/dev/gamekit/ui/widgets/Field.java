@@ -1,7 +1,7 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.core.Constants;
 import dev.gamekit.core.Input;
-import dev.gamekit.ui.BorderData;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.events.ChangeEvent;
@@ -22,22 +22,18 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
   protected Spacing ninePatchSpacing;
   protected BufferedImage defaultBackground;
   protected BufferedImage focusBackground;
-  protected BorderData defaultBorder;
-  protected BorderData focusBorder;
   protected Spacing padding;
   protected FocusEvent.Handler focusListener;
   protected KeyCharEvent.Handler keyCharListener;
   protected ChangeEvent.Handler<String> changeListener;
   protected boolean focused;
 
-  private final Bounds absoluteContentBounds;
+  private final Bounds contentAbsoluteBounds;
   private final Bounds tempAbsoluteBounds;
-  private Stroke defaultBorderStroke;
-  private Stroke focusBorderStroke;
 
   public Field(FieldConfig config, String text) {
     super(config, text);
-    absoluteContentBounds = new Bounds();
+    contentAbsoluteBounds = new Bounds();
     tempAbsoluteBounds = new Bounds();
   }
 
@@ -56,8 +52,6 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
         Objects.equals(ninePatchSpacing, fieldWidget.ninePatchSpacing) &&
         Objects.equals(defaultBackground, fieldWidget.defaultBackground) &&
         Objects.equals(focusBackground, fieldWidget.focusBackground) &&
-        Objects.equals(defaultBorder, fieldWidget.defaultBorder) &&
-        Objects.equals(focusBorder, fieldWidget.focusBorder) &&
         Objects.equals(padding, fieldWidget.padding);
 
     return false;
@@ -70,42 +64,31 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
     FieldConfig config = (FieldConfig) super.config;
     Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
 
-    ninePatchSpacing = coalesce(config.ninePatchSpacing, theme.fieldNinePatchSpacing);
-    defaultBackground = coalesce(config.defaultBackground, theme.fieldDefaultBackground);
-    focusBackground = coalesce(config.focusBackground, theme.fieldFocusBackground);
-    defaultBorder =
-      coalesce(config.defaultBorder, theme.fieldDefaultBorder, BorderData.create(1, 12, Color.WHITE));
-    focusBorder =
-      coalesce(config.focusBorder, theme.fieldFocusBorder, BorderData.create(1, 12, Color.GREEN));
+    foregroundColor = coalesce(config.foregroundColor, theme.textForegroundColor, Color.BLACK);
+    ninePatchSpacing =
+      coalesce(config.ninePatchSpacing, theme.fieldNinePatchSpacing, Spacing.create(12));
+    defaultBackground =
+      coalesce(config.defaultBackground, theme.fieldDefaultBackground, Constants.DEFAULT_FIELD_BG);
+    focusBackground =
+      coalesce(config.focusBackground, theme.fieldFocusBackground, Constants.DEFAULT_FIELD_BG);
     padding = coalesce(config.padding, theme.fieldPadding, Spacing.create());
     focusListener = coalesce(config.focusListener, null);
     keyCharListener = coalesce(config.keyCharListener, null);
     changeListener = coalesce(config.changeListener, null);
-
-    defaultBorderStroke = new BasicStroke(
-      (float) defaultBorder.size(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND
-    );
-
-    focusBorderStroke = new BasicStroke(
-      (float) focusBorder.size(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND
-    );
   }
 
   @Override
   protected void performLayout(Constraints constraints) {
-    double horizontalSpacing = 2 * defaultBorder.size() + padding.getHorizontal();
-    double verticalSpacing = 2 * defaultBorder.size() + padding.getVertical();
-
     super.performLayout(
       new Constraints(
-        constraints.minWidth(), constraints.maxWidth() - horizontalSpacing,
-        constraints.minHeight(), constraints.maxHeight() - verticalSpacing
+        constraints.minWidth(), constraints.maxWidth() - padding.getHorizontal(),
+        constraints.minHeight(), constraints.maxHeight() - padding.getVertical()
       )
     );
 
     intrinsicBounds.setSize(
-      intrinsicBounds.width + horizontalSpacing,
-      intrinsicBounds.height + verticalSpacing
+      intrinsicBounds.width + padding.getHorizontal(),
+      intrinsicBounds.height + padding.getVertical()
     );
 
     computedBounds.setSize(
@@ -116,16 +99,14 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
 
   @Override
   protected void performPostLayout() {
-    absoluteContentBounds.set(absoluteBounds);
+    contentAbsoluteBounds.set(absoluteBounds);
 
-    double horizontalSpacing = 2 * defaultBorder.size() + padding.getHorizontal();
-    double verticalSpacing = 2 * defaultBorder.size() + padding.getVertical();
-    double absoluteContentX = absoluteContentBounds.x + defaultBorder.size() + padding.left;
-    double absoluteContentY = absoluteContentBounds.y + defaultBorder.size() + padding.top;
-    double absoluteContentWidth = absoluteContentBounds.width - horizontalSpacing;
-    double absoluteContentHeight = absoluteContentBounds.height - verticalSpacing;
+    double absoluteContentX = contentAbsoluteBounds.x + padding.left;
+    double absoluteContentY = contentAbsoluteBounds.y + padding.top;
+    double absoluteContentWidth = contentAbsoluteBounds.width - padding.getHorizontal();
+    double absoluteContentHeight = contentAbsoluteBounds.height - padding.getVertical();
 
-    absoluteContentBounds.set(
+    contentAbsoluteBounds.set(
       absoluteContentX,
       absoluteContentY,
       absoluteContentWidth,
@@ -136,35 +117,17 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
   @Override
   protected void performRender(Graphics2D g) {
     BufferedImage background = defaultBackground;
-    BorderData border = defaultBorder;
-    Stroke borderStroke = defaultBorderStroke;
-    Stroke originalStroke = g.getStroke();
-    Color originalColor = g.getColor();
 
-    if (focused) {
+    if (focused)
       background = focusBackground;
-      border = focusBorder;
-      borderStroke = focusBorderStroke;
-    }
 
     if (background != null)
       renderWith9PatchScaling(background, absoluteBounds, ninePatchSpacing, g);
 
     tempAbsoluteBounds.set(absoluteBounds);
-    absoluteBounds.set(absoluteContentBounds);
+    absoluteBounds.set(contentAbsoluteBounds);
     super.performRender(g);
     absoluteBounds.set(tempAbsoluteBounds);
-
-    g.setStroke(borderStroke);
-    g.setColor(border.color());
-    g.drawRoundRect(
-      (int) absoluteBounds.x, (int) absoluteBounds.y,
-      (int) absoluteBounds.width - 1, (int) absoluteBounds.height - 1,
-      (int) border.radius(), (int) border.radius()
-    );
-
-    g.setStroke(originalStroke);
-    g.setColor(originalColor);
   }
 
   @Override
@@ -201,15 +164,13 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
   }
 
   public static class FieldConfig extends TextConfig<FieldConfig> {
-    private Spacing ninePatchSpacing;
-    private BufferedImage defaultBackground;
-    private BufferedImage focusBackground;
-    private BorderData defaultBorder;
-    private BorderData focusBorder;
-    private Spacing padding;
-    private FocusEvent.Handler focusListener;
-    private KeyCharEvent.Handler keyCharListener;
-    private ChangeEvent.Handler<String> changeListener;
+    protected Spacing ninePatchSpacing;
+    protected BufferedImage defaultBackground;
+    protected BufferedImage focusBackground;
+    protected Spacing padding;
+    protected FocusEvent.Handler focusListener;
+    protected KeyCharEvent.Handler keyCharListener;
+    protected ChangeEvent.Handler<String> changeListener;
 
     public FieldConfig ninePatchSpacing(Spacing ninePatchSpacing) {
       this.ninePatchSpacing = ninePatchSpacing;
@@ -219,12 +180,6 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
     public FieldConfig background(BufferedImage defaultBackground, BufferedImage focusBackground) {
       this.defaultBackground = defaultBackground;
       this.focusBackground = focusBackground;
-      return this;
-    }
-
-    public FieldConfig border(BorderData defaultBorder, BorderData focusBorder) {
-      this.defaultBorder = defaultBorder;
-      this.focusBorder = focusBorder;
       return this;
     }
 

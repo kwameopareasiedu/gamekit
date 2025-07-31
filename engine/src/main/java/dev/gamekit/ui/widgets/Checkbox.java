@@ -1,7 +1,6 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.Constants;
-import dev.gamekit.ui.BorderData;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.events.ChangeEvent;
@@ -17,22 +16,15 @@ import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link SingleChildParent} input component which toggles between two states */
 public class Checkbox extends SingleChildParent implements MouseEvent.Handler, NinePatch {
-  protected Spacing backgroundNinePatchSpacing;
-  protected Spacing iconNinePatchSpacing;
-  protected BufferedImage defaultBackground;
-  protected BufferedImage toggledBackground;
+  protected Spacing ninePatchSpacing;
   protected BufferedImage defaultIcon;
   protected BufferedImage toggledIcon;
-  protected BorderData defaultBorder;
-  protected BorderData toggledBorder;
-  protected Integer spacing;
-  protected Integer size;
+  protected Integer gapSize;
+  protected Integer iconSize;
   protected Boolean toggled;
   protected ChangeEvent.Handler<Boolean> changeListener;
 
   private final Bounds iconAbsoluteBounds;
-  private Stroke defaultBorderStroke;
-  private Stroke toggledBorderStroke;
 
   public Checkbox(CheckboxConfig config, Widget child) {
     super(config, child);
@@ -50,16 +42,11 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
   @Override
   public boolean stateEquals(Widget widget) {
     if (widget instanceof Checkbox checkboxWidget)
-      return Objects.equals(backgroundNinePatchSpacing, checkboxWidget.backgroundNinePatchSpacing) &&
-        Objects.equals(iconNinePatchSpacing, checkboxWidget.iconNinePatchSpacing) &&
-        Objects.equals(defaultBackground, checkboxWidget.defaultBackground) &&
-        Objects.equals(toggledBackground, checkboxWidget.toggledBackground) &&
+      return Objects.equals(ninePatchSpacing, checkboxWidget.ninePatchSpacing) &&
         Objects.equals(defaultIcon, checkboxWidget.defaultIcon) &&
         Objects.equals(toggledIcon, checkboxWidget.toggledIcon) &&
-        Objects.equals(defaultBorder, checkboxWidget.defaultBorder) &&
-        Objects.equals(toggledBorder, checkboxWidget.toggledBorder) &&
-        Objects.equals(spacing, checkboxWidget.spacing) &&
-        Objects.equals(size, checkboxWidget.size) &&
+        Objects.equals(gapSize, checkboxWidget.gapSize) &&
+        Objects.equals(iconSize, checkboxWidget.iconSize) &&
         Objects.equals(toggled, checkboxWidget.toggled);
 
     return false;
@@ -70,33 +57,15 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
     CheckboxConfig config = (CheckboxConfig) super.config;
     Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
 
-    this.backgroundNinePatchSpacing =
-      coalesce(config.backgroundNinePatchSpacing, theme.checkboxBackgroundNinePatchSpacing, null);
-    this.iconNinePatchSpacing =
-      coalesce(config.iconNinePatchSpacing, theme.checkboxIconNinePatchSpacing, null);
-    this.defaultBackground =
-      coalesce(config.defaultBackground, theme.checkboxDefaultBackground, null);
-    this.toggledBackground =
-      coalesce(config.toggledBackground, theme.checkboxToggledBackground, null);
+    this.ninePatchSpacing =
+      coalesce(config.ninePatchSpacing, theme.checkboxNinePatchSpacing, null);
     this.defaultIcon = coalesce(config.defaultIcon, theme.checkboxDefaultIcon, null);
     this.toggledIcon =
       coalesce(config.toggledIcon, theme.checkboxToggledIcon, Constants.DEFAULT_CHECK_ICON);
-    this.defaultBorder =
-      coalesce(config.defaultBorder, theme.checkboxDefaultBorder, BorderData.create(1, 4, Color.WHITE));
-    this.toggledBorder =
-      coalesce(config.toggledBorder, theme.checkboxToggledBorder, BorderData.create(1, 4, Color.CYAN));
-    this.spacing = coalesce(config.spacing, theme.checkboxSpacing, 12);
-    this.size = coalesce(config.size, theme.checkboxSize, 24);
+    this.gapSize = coalesce(config.gapSize, theme.checkboxGapSize, 12);
+    this.iconSize = coalesce(config.iconSize, theme.checkboxIconSize, 24);
     this.toggled = coalesce(config.value, false);
     this.changeListener = coalesce(config.changeListener, null);
-
-    defaultBorderStroke = new BasicStroke(
-      (float) defaultBorder.size(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND
-    );
-
-    toggledBorderStroke = new BasicStroke(
-      (float) toggledBorder.size(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND
-    );
 
     super.performInit();
   }
@@ -105,14 +74,14 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
   protected void performLayout(Constraints constraints) {
     child.layout(
       new Constraints(
-        0, constraints.maxWidth() - size - spacing,
+        0, constraints.maxWidth() - iconSize - gapSize,
         0, constraints.maxHeight()
       )
     );
 
     intrinsicBounds.setSize(
-      size + spacing + child.computedBounds.width,
-      Math.max(size, child.computedBounds.height)
+      iconSize + gapSize + child.computedBounds.width,
+      Math.max(iconSize, child.computedBounds.height)
     );
 
     computedBounds.setSize(
@@ -121,50 +90,27 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
     );
 
     child.computedBounds.setPosition(
-      size + spacing,
-      child.computedBounds.height > size ? 0 : (int) (0.5 * (size - child.computedBounds.height))
+      iconSize + gapSize,
+      child.computedBounds.height > iconSize ? 0 : (int) (0.5 * (iconSize - child.computedBounds.height))
     );
   }
 
   @Override
   protected void performPostLayout() {
-    iconAbsoluteBounds.set(absoluteBounds.x, absoluteBounds.y, size, size);
+    iconAbsoluteBounds.set(absoluteBounds.x, absoluteBounds.y, iconSize, iconSize);
 
     super.performPostLayout();
   }
 
   @Override
   protected void renderAppearance(Graphics2D g) {
-    BufferedImage background = defaultBackground;
     BufferedImage icon = defaultIcon;
-    BorderData border = defaultBorder;
-    Stroke borderStroke = defaultBorderStroke;
-    Stroke originalStroke = g.getStroke();
-    Color originalColor = g.getColor();
 
-    if (toggled) {
-      background = toggledBackground;
+    if (toggled)
       icon = toggledIcon;
-      border = toggledBorder;
-      borderStroke = toggledBorderStroke;
-    }
-
-    if (background != null)
-      renderWith9PatchScaling(background, absoluteBounds, backgroundNinePatchSpacing, g);
 
     if (icon != null)
-      renderWith9PatchScaling(icon, iconAbsoluteBounds, iconNinePatchSpacing, g);
-
-    g.setStroke(borderStroke);
-    g.setColor(border.color());
-
-    g.drawRoundRect(
-      (int) absoluteBounds.x, (int) absoluteBounds.y, size - 1, size - 1,
-      (int) border.radius(), (int) border.radius()
-    );
-
-    g.setStroke(originalStroke);
-    g.setColor(originalColor);
+      renderWith9PatchScaling(icon, iconAbsoluteBounds, ninePatchSpacing, g);
   }
 
   @Override
@@ -181,34 +127,16 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
   }
 
   public static class CheckboxConfig extends SingleChildParentConfig {
-    private Spacing backgroundNinePatchSpacing;
-    private Spacing iconNinePatchSpacing;
-    private BufferedImage defaultBackground;
-    private BufferedImage toggledBackground;
-    private BufferedImage defaultIcon;
-    private BufferedImage toggledIcon;
-    private BorderData defaultBorder;
-    private BorderData toggledBorder;
-    private Integer spacing;
-    private Integer size;
-    private Boolean value;
-    private ChangeEvent.Handler<Boolean> changeListener;
+    protected Spacing ninePatchSpacing;
+    protected BufferedImage defaultIcon;
+    protected BufferedImage toggledIcon;
+    protected Integer gapSize;
+    protected Integer iconSize;
+    protected Boolean value;
+    protected ChangeEvent.Handler<Boolean> changeListener;
 
-    public CheckboxConfig ninePatchSpacing(
-      Spacing backgroundNinePatchSpacing,
-      Spacing iconNinePatchSpacing
-    ) {
-      this.backgroundNinePatchSpacing = backgroundNinePatchSpacing;
-      this.iconNinePatchSpacing = iconNinePatchSpacing;
-      return this;
-    }
-
-    public CheckboxConfig background(
-      BufferedImage defaultBackground,
-      BufferedImage toggledBackground
-    ) {
-      this.defaultBackground = defaultBackground;
-      this.toggledBackground = toggledBackground;
+    public CheckboxConfig ninePatchSpacing(Spacing ninePatchSpacing) {
+      this.ninePatchSpacing = ninePatchSpacing;
       return this;
     }
 
@@ -218,19 +146,13 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
       return this;
     }
 
-    public CheckboxConfig border(BorderData defaultBorder, BorderData toggledBorder) {
-      this.defaultBorder = defaultBorder;
-      this.toggledBorder = toggledBorder;
+    public CheckboxConfig gapSize(Integer gapSize) {
+      this.gapSize = gapSize;
       return this;
     }
 
-    public CheckboxConfig spacing(Integer spacing) {
-      this.spacing = spacing;
-      return this;
-    }
-
-    public CheckboxConfig size(Integer size) {
-      this.size = size;
+    public CheckboxConfig iconSize(Integer iconSize) {
+      this.iconSize = iconSize;
       return this;
     }
 

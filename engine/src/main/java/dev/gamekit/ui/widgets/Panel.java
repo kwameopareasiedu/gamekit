@@ -18,7 +18,7 @@ import static dev.gamekit.utils.Misc.coalesce;
  */
 public class Panel extends SingleChildParent implements NinePatch, MouseEvent.Handler {
   protected BufferedImage background;
-  protected Spacing ninePatchBorder;
+  protected Spacing ninePatchSpacing;
 
   public Panel(PanelConfig config, Widget child) {
     super(config, child);
@@ -36,7 +36,7 @@ public class Panel extends SingleChildParent implements NinePatch, MouseEvent.Ha
   public boolean stateEquals(Widget widget) {
     if (widget instanceof Panel panelWidget)
       return Objects.equals(background, panelWidget.background)
-        && Objects.equals(ninePatchBorder, panelWidget.ninePatchBorder);
+        && Objects.equals(ninePatchSpacing, panelWidget.ninePatchSpacing);
 
     return false;
   }
@@ -46,7 +46,7 @@ public class Panel extends SingleChildParent implements NinePatch, MouseEvent.Ha
     PanelConfig config = (PanelConfig) super.config;
 
     this.background = coalesce(config.background, Constants.DEFAULT_PANEL_BG);
-    this.ninePatchBorder = coalesce(config.ninePatchBorder, new Spacing());
+    this.ninePatchSpacing = coalesce(config.ninePatchSpacing, new Spacing());
 
     super.performInit();
   }
@@ -80,7 +80,7 @@ public class Panel extends SingleChildParent implements NinePatch, MouseEvent.Ha
     renderWith9PatchScaling(
       background,
       absoluteBounds,
-      ninePatchBorder,
+      ninePatchSpacing,
       g
     );
   }
@@ -91,31 +91,31 @@ public class Panel extends SingleChildParent implements NinePatch, MouseEvent.Ha
   }
 
   public static class PanelConfig extends SingleChildParentConfig {
-    BufferedImage background;
-    Spacing ninePatchBorder;
+    protected BufferedImage background;
+    protected Spacing ninePatchSpacing;
 
     public PanelConfig background(BufferedImage background) {
       this.background = background;
       return this;
     }
 
-    public PanelConfig ninePatch(Spacing border) {
-      this.ninePatchBorder = border;
+    public PanelConfig ninePatchSpacing(Spacing ninePatchSpacing) {
+      this.ninePatchSpacing = ninePatchSpacing;
       return this;
     }
 
     public PanelConfig ninePatch(int all) {
-      this.ninePatchBorder = new Spacing(all);
+      this.ninePatchSpacing = new Spacing(all);
       return this;
     }
 
     public PanelConfig ninePatch(int horizontal, int vertical) {
-      this.ninePatchBorder = new Spacing(horizontal, vertical);
+      this.ninePatchSpacing = new Spacing(horizontal, vertical);
       return this;
     }
 
     public PanelConfig ninePatch(int top, int right, int bottom, int left) {
-      this.ninePatchBorder = new Spacing(top, right, bottom, left);
+      this.ninePatchSpacing = new Spacing(top, right, bottom, left);
       return this;
     }
   }

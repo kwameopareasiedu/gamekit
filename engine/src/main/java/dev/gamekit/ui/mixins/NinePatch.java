@@ -23,23 +23,23 @@ public interface NinePatch {
     double iw = image.getWidth();
     double ih = image.getHeight();
 
-    double nl = ninePatchSpacing.left;
-    double nt = ninePatchSpacing.top;
-    double nr = iw - ninePatchSpacing.right;
-    double nb = ih - ninePatchSpacing.bottom;
+    double snl = ninePatchSpacing.left;
+    double snt = ninePatchSpacing.top;
+    double snr = iw - ninePatchSpacing.right;
+    double snb = ih - ninePatchSpacing.bottom;
 
     double[][] srcBounds = new double[][]{
-      new double[]{ 0, 0, nl, nt },
-      new double[]{ nl, 0, nr, nt },
-      new double[]{ nr, 0, iw, nt },
+      new double[]{ 0, 0, snl, snt },
+      new double[]{ snl, 0, snr, snt },
+      new double[]{ snr, 0, iw, snt },
 
-      new double[]{ 0, nt, nl, nb },
-      new double[]{ nl, nt, nr, nb },
-      new double[]{ nr, nt, iw, nb },
+      new double[]{ 0, snt, snl, snb },
+      new double[]{ snl, snt, snr, snb },
+      new double[]{ snr, snt, iw, snb },
 
-      new double[]{ 0, nb, nl, ih },
-      new double[]{ nl, nb, nr, ih },
-      new double[]{ nr, nb, iw, ih },
+      new double[]{ 0, snb, snl, ih },
+      new double[]{ snl, snb, snr, ih },
+      new double[]{ snr, snb, iw, ih },
     };
 
     double dx1 = absoluteBounds.x;
@@ -47,23 +47,23 @@ public interface NinePatch {
     double dx2 = dx1 + absoluteBounds.width;
     double dy2 = dy1 + absoluteBounds.height;
 
-    nl = dx1 + ninePatchSpacing.left;
-    nt = dy1 + ninePatchSpacing.top;
-    nr = dx2 - ninePatchSpacing.right;
-    nb = dy2 - ninePatchSpacing.bottom;
+    double dnl = dx1 + ninePatchSpacing.left;
+    double dnt = dy1 + ninePatchSpacing.top;
+    double dnr = dx2 - ninePatchSpacing.right;
+    double dnb = dy2 - ninePatchSpacing.bottom;
 
     double[][] destBounds = new double[][]{
-      new double[]{ dx1, dy1, nl, nt },
-      new double[]{ nl, dy1, nr, nt },
-      new double[]{ nr, dy1, dx2, nt },
+      new double[]{ dx1, dy1, dnl, dnt },
+      new double[]{ dnl, dy1, dnr, dnt },
+      new double[]{ dnr, dy1, dx2, dnt },
 
-      new double[]{ dx1, nt, nl, nb },
-      new double[]{ nl, nt, nr, nb },
-      new double[]{ nr, nt, dx2, nb },
+      new double[]{ dx1, dnt, dnl, dnb },
+      new double[]{ dnl, dnt, dnr, dnb },
+      new double[]{ dnr, dnt, dx2, dnb },
 
-      new double[]{ dx1, nb, nl, dy2 },
-      new double[]{ nl, nb, nr, dy2 },
-      new double[]{ nr, nb, dx2, dy2 },
+      new double[]{ dx1, dnb, dnl, dy2 },
+      new double[]{ dnl, dnb, dnr, dy2 },
+      new double[]{ dnr, dnb, dx2, dy2 },
     };
 
     for (int i = 0; i < srcBounds.length; i++) {

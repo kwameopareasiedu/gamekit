@@ -2,7 +2,6 @@ import dev.gamekit.core.Application;
 import dev.gamekit.core.IO;
 import dev.gamekit.core.Scene;
 import dev.gamekit.settings.*;
-import dev.gamekit.ui.BorderData;
 import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
@@ -29,7 +28,6 @@ public class Demo4UserInterface extends Scene {
   private static final BufferedImage BACKDROP = IO.getResourceImage("planetfall-artwork.jpg");
   private static final BufferedImage LOGO = IO.getResourceImage("planetfall-logo.png");
   private static final BufferedImage SCRIM = IO.getResourceImage("transparent-black.png");
-  private static final BufferedImage FIELD_SLOT = IO.getResourceImage("field-slot.png");
 
   private String fieldValue = "Hello";
   private boolean checkboxValue = false;
@@ -86,18 +84,15 @@ public class Demo4UserInterface extends Scene {
               MainMenuButton.create("Tutorial", e -> System.out.println("0: " + e.type)),
               MainMenuButton.create("New Planet", e -> System.out.println("1: " + e.type)),
               Field.create(
-                Field.config().font(24, Text.PLAIN)
-                  .background(FIELD_SLOT, FIELD_SLOT).ninePatchSpacing(Spacing.create(4))
-                  .padding(Spacing.create(8)).border(BorderData.create(0, 24, Color.RED), null)
-                  .changeListener(ev -> {
+                Field.config().font(24, Text.PLAIN).ninePatchSpacing(Spacing.create(12))
+                  .padding(Spacing.create(8)).changeListener(ev -> {
                     fieldValue = ev.value;
                     updateUI();
                   }),
                 fieldValue
               ),
               Checkbox.create(
-                Checkbox.config().value(checkboxValue)
-                  .ninePatchSpacing(Spacing.create(4), Spacing.create(0))
+                Checkbox.config().value(checkboxValue).ninePatchSpacing(Spacing.create(4))
                   .changeListener(ev -> {
                     checkboxValue = ev.value;
                     updateUI();

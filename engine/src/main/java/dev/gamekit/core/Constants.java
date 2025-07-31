@@ -15,6 +15,7 @@ public final class Constants {
   public static final BufferedImage HOVER_BUTTON_BG = IO.getResourceImage("btn-hover.png");
   public static final BufferedImage PRESSED_BUTTON_BG = IO.getResourceImage("btn-press.png");
   public static final BufferedImage DEFAULT_PANEL_BG = IO.getResourceImage("panel-default.png");
+  public static final BufferedImage DEFAULT_FIELD_BG = IO.getResourceImage("field-default.png");
   public static final BufferedImage DEFAULT_CHECK_ICON =
     IO.getResourceImage("check-icon-default.png");
   public static final BasicStroke DEBUG_STROKE =

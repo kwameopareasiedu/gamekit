@@ -1,6 +1,5 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.ui.BorderData;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.enums.Alignment;
@@ -35,20 +34,13 @@ public class Theme extends SingleChildParent {
   public Spacing fieldNinePatchSpacing;
   public BufferedImage fieldDefaultBackground;
   public BufferedImage fieldFocusBackground;
-  public BorderData fieldDefaultBorder;
-  public BorderData fieldFocusBorder;
   public Spacing fieldPadding;
 
-  public Spacing checkboxBackgroundNinePatchSpacing;
-  public Spacing checkboxIconNinePatchSpacing;
-  public BufferedImage checkboxDefaultBackground;
-  public BufferedImage checkboxToggledBackground;
+  public Spacing checkboxNinePatchSpacing;
   public BufferedImage checkboxDefaultIcon;
   public BufferedImage checkboxToggledIcon;
-  public BorderData checkboxDefaultBorder;
-  public BorderData checkboxToggledBorder;
-  public Integer checkboxSpacing;
-  public Integer checkboxSize;
+  public Integer checkboxGapSize;
+  public Integer checkboxIconSize;
 
   public Theme(ThemeConfig config, Widget child) {
     super(config, child);
@@ -89,20 +81,13 @@ public class Theme extends SingleChildParent {
         Objects.equals(fieldNinePatchSpacing, themeWidget.fieldNinePatchSpacing) &&
         Objects.equals(fieldDefaultBackground, themeWidget.fieldDefaultBackground) &&
         Objects.equals(fieldFocusBackground, themeWidget.fieldFocusBackground) &&
-        Objects.equals(fieldDefaultBorder, themeWidget.fieldDefaultBorder) &&
-        Objects.equals(fieldFocusBorder, themeWidget.fieldFocusBorder) &&
         Objects.equals(fieldPadding, themeWidget.fieldPadding) &&
 
-        Objects.equals(checkboxBackgroundNinePatchSpacing, themeWidget.checkboxBackgroundNinePatchSpacing) &&
-        Objects.equals(checkboxIconNinePatchSpacing, themeWidget.checkboxIconNinePatchSpacing) &&
-        Objects.equals(checkboxDefaultBackground, themeWidget.checkboxDefaultBackground) &&
-        Objects.equals(checkboxToggledBackground, themeWidget.checkboxToggledBackground) &&
+        Objects.equals(checkboxNinePatchSpacing, themeWidget.checkboxNinePatchSpacing) &&
         Objects.equals(checkboxDefaultIcon, themeWidget.checkboxDefaultIcon) &&
         Objects.equals(checkboxToggledIcon, themeWidget.checkboxToggledIcon) &&
-        Objects.equals(checkboxDefaultBorder, themeWidget.checkboxDefaultBorder) &&
-        Objects.equals(checkboxToggledBorder, themeWidget.checkboxToggledBorder) &&
-        Objects.equals(checkboxSpacing, themeWidget.checkboxSpacing) &&
-        Objects.equals(checkboxSize, themeWidget.checkboxSize);
+        Objects.equals(checkboxGapSize, themeWidget.checkboxGapSize) &&
+        Objects.equals(checkboxIconSize, themeWidget.checkboxIconSize);
 
     return false;
   }
@@ -140,26 +125,14 @@ public class Theme extends SingleChildParent {
     this.fieldDefaultBackground =
       coalesce(config.fieldDefaultBackground, theme.fieldDefaultBackground);
     this.fieldFocusBackground = coalesce(config.fieldFocusBackground, theme.fieldFocusBackground);
-    this.fieldDefaultBorder = coalesce(config.fieldDefaultBorder, theme.fieldDefaultBorder);
-    this.fieldFocusBorder = coalesce(config.fieldFocusBorder, theme.fieldFocusBorder);
     this.fieldPadding = coalesce(config.fieldPadding, theme.fieldPadding);
 
-    this.checkboxBackgroundNinePatchSpacing =
-      coalesce(config.checkboxBackgroundNinePatchSpacing, theme.checkboxBackgroundNinePatchSpacing);
-    this.checkboxIconNinePatchSpacing =
-      coalesce(config.checkboxIconNinePatchSpacing, theme.checkboxIconNinePatchSpacing);
-    this.checkboxDefaultBackground =
-      coalesce(config.checkboxDefaultBackground, theme.checkboxDefaultBackground);
-    this.checkboxToggledBackground =
-      coalesce(config.checkboxToggledBackground, theme.checkboxToggledBackground);
+    this.checkboxNinePatchSpacing =
+      coalesce(config.checkboxNinePatchSpacing, theme.checkboxNinePatchSpacing);
     this.checkboxDefaultIcon = coalesce(config.checkboxDefaultIcon, theme.checkboxDefaultIcon);
     this.checkboxToggledIcon = coalesce(config.checkboxToggledIcon, theme.checkboxToggledIcon);
-    this.checkboxDefaultBorder =
-      coalesce(config.checkboxDefaultBorder, theme.checkboxDefaultBorder);
-    this.checkboxToggledBorder =
-      coalesce(config.checkboxToggledBorder, theme.checkboxToggledBorder);
-    this.checkboxSpacing = coalesce(config.checkboxSpacing, theme.checkboxSpacing);
-    this.checkboxSize = coalesce(config.checkboxSize, theme.checkboxSize);
+    this.checkboxGapSize = coalesce(config.checkboxGapSize, theme.checkboxGapSize);
+    this.checkboxIconSize = coalesce(config.checkboxIconSize, theme.checkboxIconSize);
 
     super.performInit();
   }
@@ -180,40 +153,33 @@ public class Theme extends SingleChildParent {
   }
 
   public static class ThemeConfig extends SingleChildParentConfig {
-    private Spacing buttonNinePatchSpacing;
-    private BufferedImage buttonDefaultBackground;
-    private BufferedImage buttonHoverBackground;
-    private BufferedImage buttonPressedBackground;
+    protected Spacing buttonNinePatchSpacing;
+    protected BufferedImage buttonDefaultBackground;
+    protected BufferedImage buttonHoverBackground;
+    protected BufferedImage buttonPressedBackground;
 
-    private Font textFont;
-    private Integer textFontSize;
-    private Integer textFontStyle;
-    private Color textForegroundColor;
-    private Color textBackgroundColor;
-    private Alignment textHorizontalAlignment;
-    private Alignment textVerticalAlignment;
-    private Boolean textShadowEnabled;
-    private Integer textShadowOffsetX;
-    private Integer textShadowOffsetY;
-    private Color textShadowColor;
+    protected Font textFont;
+    protected Integer textFontSize;
+    protected Integer textFontStyle;
+    protected Color textForegroundColor;
+    protected Color textBackgroundColor;
+    protected Alignment textHorizontalAlignment;
+    protected Alignment textVerticalAlignment;
+    protected Boolean textShadowEnabled;
+    protected Integer textShadowOffsetX;
+    protected Integer textShadowOffsetY;
+    protected Color textShadowColor;
 
-    private Spacing fieldNinePatchSpacing;
-    private BufferedImage fieldDefaultBackground;
-    private BufferedImage fieldFocusBackground;
-    private BorderData fieldDefaultBorder;
-    private BorderData fieldFocusBorder;
-    private Spacing fieldPadding;
+    protected Spacing fieldNinePatchSpacing;
+    protected BufferedImage fieldDefaultBackground;
+    protected BufferedImage fieldFocusBackground;
+    protected Spacing fieldPadding;
 
-    private Spacing checkboxBackgroundNinePatchSpacing;
-    private Spacing checkboxIconNinePatchSpacing;
-    private BufferedImage checkboxDefaultBackground;
-    private BufferedImage checkboxToggledBackground;
-    private BufferedImage checkboxDefaultIcon;
-    private BufferedImage checkboxToggledIcon;
-    private BorderData checkboxDefaultBorder;
-    private BorderData checkboxToggledBorder;
-    private Integer checkboxSpacing;
-    private Integer checkboxSize;
+    protected Spacing checkboxNinePatchSpacing;
+    protected BufferedImage checkboxDefaultIcon;
+    protected BufferedImage checkboxToggledIcon;
+    protected Integer checkboxGapSize;
+    protected Integer checkboxIconSize;
 
     public ThemeConfig buttonNinePatchSpacing(Spacing buttonNinePatchSpacing) {
       this.buttonNinePatchSpacing = buttonNinePatchSpacing;
@@ -284,32 +250,13 @@ public class Theme extends SingleChildParent {
       return this;
     }
 
-    public ThemeConfig fieldBorder(BorderData fieldDefaultBorder, BorderData fieldFocusBorder) {
-      this.fieldDefaultBorder = fieldDefaultBorder;
-      this.fieldFocusBorder = fieldFocusBorder;
-      return this;
-    }
-
     public ThemeConfig fieldPadding(Spacing fieldPadding) {
       this.fieldPadding = fieldPadding;
       return this;
     }
 
-    public ThemeConfig checkboxNinePatchSpacing(
-      Spacing checkboxBackgroundNinePatchSpacing,
-      Spacing checkboxIconNinePatchSpacing
-    ) {
-      this.checkboxBackgroundNinePatchSpacing = checkboxBackgroundNinePatchSpacing;
-      this.checkboxIconNinePatchSpacing = checkboxIconNinePatchSpacing;
-      return this;
-    }
-
-    public ThemeConfig checkboxBackground(
-      BufferedImage checkboxDefaultBackground,
-      BufferedImage checkboxToggledBackground
-    ) {
-      this.checkboxDefaultBackground = checkboxDefaultBackground;
-      this.checkboxToggledBackground = checkboxToggledBackground;
+    public ThemeConfig checkboxNinePatchSpacing(Spacing checkboxNinePatchSpacing) {
+      this.checkboxNinePatchSpacing = checkboxNinePatchSpacing;
       return this;
     }
 
@@ -322,22 +269,13 @@ public class Theme extends SingleChildParent {
       return this;
     }
 
-    public ThemeConfig checkboxBorder(
-      BorderData checkboxDefaultBorder,
-      BorderData checkboxToggledBorder
-    ) {
-      this.checkboxDefaultBorder = checkboxDefaultBorder;
-      this.checkboxToggledBorder = checkboxToggledBorder;
+    public ThemeConfig checkboxGapSize(Integer checkboxGapSize) {
+      this.checkboxGapSize = checkboxGapSize;
       return this;
     }
 
-    public ThemeConfig checkboxSpacing(Integer checkboxSpacing) {
-      this.checkboxSpacing = checkboxSpacing;
-      return this;
-    }
-
-    public ThemeConfig checkboxSize(Integer checkboxSize) {
-      this.checkboxSize = checkboxSize;
+    public ThemeConfig checkboxIconSize(Integer checkboxIconSize) {
+      this.checkboxIconSize = checkboxIconSize;
       return this;
     }
   }

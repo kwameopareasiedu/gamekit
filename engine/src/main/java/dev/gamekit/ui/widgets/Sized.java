@@ -110,10 +110,10 @@ public class Sized extends SingleChildParent {
   }
 
   public static class SizedConfig extends SingleChildParentConfig {
-    DimensionType widthType;
-    DimensionType heightType;
-    Double width;
-    Double height;
+    protected DimensionType widthType;
+    protected DimensionType heightType;
+    protected Double width;
+    protected Double height;
 
     public SizedConfig width(int width) {
       this.widthType = DimensionType.FIXED;

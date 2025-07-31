@@ -67,8 +67,8 @@ public class Colored extends Leaf {
   }
 
   public static class ColoredConfig extends LeafConfig {
-    Color color;
-    Integer borderRadius;
+    protected Color color;
+    protected Integer borderRadius;
 
     public ColoredConfig color(Color color) {
       this.color = color;

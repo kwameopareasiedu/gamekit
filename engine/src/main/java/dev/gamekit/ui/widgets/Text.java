@@ -235,18 +235,18 @@ public class Text extends Leaf {
 
   @SuppressWarnings("unchecked")
   public static class TextConfig<T extends TextConfig<T>> extends LeafConfig {
-    private String text;
-    private Font font;
-    private Integer fontStyle;
-    private Integer fontSize;
-    private Color foregroundColor;
-    private Color backgroundColor;
-    private Alignment horizontalAlignment;
-    private Alignment verticalAlignment;
-    private Boolean shadowEnabled;
-    private Integer shadowOffsetX;
-    private Integer shadowOffsetY;
-    private Color shadowColor;
+    protected String text;
+    protected Font font;
+    protected Integer fontStyle;
+    protected Integer fontSize;
+    protected Color foregroundColor;
+    protected Color backgroundColor;
+    protected Alignment horizontalAlignment;
+    protected Alignment verticalAlignment;
+    protected Boolean shadowEnabled;
+    protected Integer shadowOffsetX;
+    protected Integer shadowOffsetY;
+    protected Color shadowColor;
 
     private T text(String text) {
       this.text = text;

@@ -131,9 +131,9 @@ public class Image extends Leaf {
   }
 
   public static class ImageConfig extends LeafConfig {
-    private BufferedImage image;
-    private ImageFit fit;
-    private ImageInterpolation interpolation;
+    protected BufferedImage image;
+    protected ImageFit fit;
+    protected ImageInterpolation interpolation;
 
     private ImageConfig image(BufferedImage image) {
       this.image = image;

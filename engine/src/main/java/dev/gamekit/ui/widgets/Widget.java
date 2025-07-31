@@ -17,10 +17,7 @@ import java.awt.*;
  * as text and buttons to layout effects like padding and alignment.
  * <p>
  * Widgets form a hierarchy based on composition. Each widget nests inside its parent and can
- * receive context from the parent
- * <p>
- * Subclasses must implement the {@link #performLayout} and {@link #performRender} to compute
- * their size
+ * receive context from the parent.
  * <p>
  * To create a user interface in a scene, you override its {@code createUI} method and return the
  * desired widget hierarchy.

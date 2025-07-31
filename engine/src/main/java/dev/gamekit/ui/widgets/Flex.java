@@ -41,9 +41,9 @@ public abstract class Flex extends MultiChildParent {
 
   @SuppressWarnings("unchecked")
   public static class FlexConfig<T extends FlexConfig<T>> extends MultiChildParentConfig {
-    Integer gapSize;
-    MainAxisAlignment mainAxisAlignment;
-    CrossAxisAlignment crossAxisAlignment;
+    protected Integer gapSize;
+    protected MainAxisAlignment mainAxisAlignment;
+    protected CrossAxisAlignment crossAxisAlignment;
 
     public T gapSize(int gapSize) {
       this.gapSize = gapSize;

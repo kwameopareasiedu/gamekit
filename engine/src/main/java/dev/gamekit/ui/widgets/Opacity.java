@@ -82,7 +82,7 @@ public class Opacity extends SingleChildParent {
   }
 
   public static class OpacityConfig extends SingleChildParentConfig {
-    Double opacity;
+    protected Double opacity;
 
     public OpacityConfig opacity(double opacity) {
       this.opacity = opacity;

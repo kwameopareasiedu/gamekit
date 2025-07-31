@@ -67,7 +67,7 @@ public class Scaled extends SingleChildParent {
   }
 
   public static class ScaledConfig extends SingleChildParentConfig {
-    Double scale;
+    protected Double scale;
 
     public ScaledConfig scale(double scale) {
       this.scale = scale;
