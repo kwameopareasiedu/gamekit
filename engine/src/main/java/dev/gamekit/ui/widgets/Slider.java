@@ -30,7 +30,6 @@ public class Slider extends Progress implements NinePatch, MouseEvent.Handler {
   private final Bounds thumbAbsoluteBounds;
   private final Position lastMousePosition;
   private boolean mouseDown = false;
-  private double valueRatio = 0;
 
   public Slider(SliderConfig config, Double value) {
     super(config, value);
@@ -68,8 +67,6 @@ public class Slider extends Progress implements NinePatch, MouseEvent.Handler {
     this.thumbWidth = coalesce(config.thumbWidth, theme.sliderThumbWidth, 32);
     this.thumbHeight = coalesce(config.thumbHeight, theme.sliderThumbHeight, 32);
     this.changeListener = coalesce(config.changeListener, null);
-
-    valueRatio = (value - minValue) / (maxValue - minValue);
   }
 
   @Override
@@ -93,10 +90,14 @@ public class Slider extends Progress implements NinePatch, MouseEvent.Handler {
   protected void performPostLayout() {
     super.performPostLayout();
 
-    double relativeThumbX = valueRatio * (absoluteBounds.width - thumbWidth);
+    double thumbPositionX = absoluteBounds.x +
+      valueRatio * absoluteBounds.width - 0.5 * thumbWidth;
+
+    double thumbPositionY = absoluteBounds.y +
+      absoluteBounds.height / 2.0 - thumbHeight / 2.0;
 
     thumbAbsoluteBounds.set(
-      absoluteBounds.x + relativeThumbX, absoluteBounds.y,
+      thumbPositionX, thumbPositionY,
       thumbWidth, thumbHeight
     );
   }

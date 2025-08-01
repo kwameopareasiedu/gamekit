@@ -28,9 +28,9 @@ public class Progress extends Leaf implements NinePatch {
   protected Double minValue;
   protected Double maxValue;
   protected Double value;
+  protected double valueRatio = 0;
 
   private final Bounds fillAbsoluteBounds;
-  private double valueRatio = 0;
 
   public Progress(ProgressConfig<?> config, Double value) {
     super(config.value(value));
@@ -125,7 +125,7 @@ public class Progress extends Leaf implements NinePatch {
     if (trackBackground != null)
       renderWith9PatchScaling(trackBackground, absoluteBounds, trackEdgeInsets, g);
 
-    if (fillBackground != null && isFillVisible()) {
+    if (fillBackground != null) {
       Shape originalClip = g.getClip();
 
       if (fillMode == FillMode.CLIP)
@@ -148,11 +148,6 @@ public class Progress extends Leaf implements NinePatch {
       if (fillMode == FillMode.CLIP)
         g.setClip(originalClip);
     }
-  }
-
-  /** Returns a boolean indicating whether the fill background should be rendered */
-  protected boolean isFillVisible() {
-    return true;
   }
 
   @SuppressWarnings("unchecked")
