@@ -101,9 +101,8 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
 
   @Override
   protected void performPostLayout() {
-    iconAbsoluteBounds.set(absoluteBounds.x, absoluteBounds.y, iconSize, iconSize);
-
     super.performPostLayout();
+    iconAbsoluteBounds.set(absoluteBounds.x, absoluteBounds.y, iconSize, iconSize);
   }
 
   @Override

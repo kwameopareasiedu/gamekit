@@ -29,10 +29,14 @@ public class Demo4UserInterface extends Scene {
   private static final BufferedImage LOGO = IO.getResourceImage("planetfall-logo.png");
   private static final BufferedImage SCRIM = IO.getResourceImage("transparent-black.png");
   private static final BufferedImage THUMB = IO.getResourceImage("slider-thumb.png");
+  private static final BufferedImage PROGRESS_TRACK =
+    IO.getResourceImage("progress.png", 0, 4, 48, 8);
+  private static final BufferedImage PROGRESS_FILL =
+    IO.getResourceImage("progress.png", 50, 4, 4, 8);
 
   private String fieldValue = "Hello";
   private boolean checkboxValue = false;
-  private double sliderValue = 50;
+  private double sliderValue = 100;
 
   public Demo4UserInterface() {
     super("Main Scene");
@@ -109,6 +113,15 @@ public class Demo4UserInterface extends Scene {
                 Slider.create(
                   Slider.config().range(0, 100).fillMode(Slider.FillMode.SCALE).
                     background(null, null, THUMB).ninePatchSpacing(null, null, Spacing.create(10)),
+                  sliderValue
+                )
+              ),
+              Sized.create(
+                Sized.config().width(256).height(48),
+                Progress.create(
+                  Progress.config().range(0, 100).track(PROGRESS_TRACK, Spacing.create(0))
+                    .fillMargin(Spacing.create(12, 0)).fill(PROGRESS_FILL, Spacing.create(1, 0))
+                    .fillMode(Progress.FillMode.CLIP),
                   sliderValue
                 )
               ),
