@@ -2,7 +2,6 @@ import dev.gamekit.core.Application;
 import dev.gamekit.core.Input;
 import dev.gamekit.core.Renderer;
 import dev.gamekit.core.Scene;
-import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.widgets.Align;
 import dev.gamekit.ui.widgets.Padding;
@@ -63,7 +62,7 @@ public class Demo3Input extends Scene {
     return Align.create(
       Align.config().horizontalAlignment(Alignment.CENTER).verticalAlignment(Alignment.END),
       Padding.create(
-        Padding.config().padding(Spacing.create(48)),
+        Padding.config().padding(48, 48, 48, 48),
         Text.create(
           Text.config().horizontalAlignment(Alignment.CENTER).verticalAlignment(Alignment.CENTER),
           "Click the Left Mouse Button or press the Space Bar to change color"

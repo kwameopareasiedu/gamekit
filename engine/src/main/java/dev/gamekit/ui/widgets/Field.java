@@ -69,10 +69,11 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
 
     color = coalesce(config.color, theme.textForegroundColor, Color.BLACK);
     edgeInsets =
-      coalesce(config.edgeInsets, theme.fieldEdgeInsets, Spacing.create(2));
-    defaultBackground = coalesce(config.defaultBackground, theme.fieldDefaultBackground, DEFAULT_BG);
+      coalesce(config.edgeInsets, theme.fieldEdgeInsets, new Spacing(2));
+    defaultBackground =
+      coalesce(config.defaultBackground, theme.fieldDefaultBackground, DEFAULT_BG);
     focusBackground = coalesce(config.focusBackground, theme.fieldFocusBackground, FOCUS_BG);
-    padding = coalesce(config.padding, theme.fieldPadding, Spacing.create());
+    padding = coalesce(config.padding, theme.fieldPadding, new Spacing());
     focusListener = coalesce(config.focusListener, null);
     keyCharListener = coalesce(config.keyCharListener, null);
     changeListener = coalesce(config.changeListener, null);
@@ -183,13 +184,13 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
       return this;
     }
 
-    public FieldConfig edgeInsets(Spacing edgeInsets) {
-      this.edgeInsets = edgeInsets;
+    public FieldConfig edgeInsets(int top, int right, int bottom, int left) {
+      this.edgeInsets = new Spacing(top, right, bottom, left);
       return this;
     }
 
-    public FieldConfig padding(Spacing padding) {
-      this.padding = padding;
+    public FieldConfig padding(int top, int right, int bottom, int left) {
+      this.padding = new Spacing(top, right, bottom, left);
       return this;
     }
 

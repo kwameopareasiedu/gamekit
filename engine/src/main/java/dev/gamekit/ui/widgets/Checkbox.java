@@ -65,7 +65,7 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
     this.defaultIcon = coalesce(config.defaultIcon, theme.checkboxDefaultIcon, DEFAULT_ICON);
     this.toggledIcon = coalesce(config.toggledIcon, theme.checkboxToggledIcon, TOGGLED_ICON);
     this.iconEdgeInsets =
-      coalesce(config.iconEdgeInsets, theme.checkboxIconEdgeInsets, Spacing.create(8));
+      coalesce(config.iconEdgeInsets, theme.checkboxIconEdgeInsets, new Spacing(8));
     this.iconWidth = coalesce(config.iconWidth, theme.checkboxIconWidth, 24);
     this.iconHeight = coalesce(config.iconHeight, theme.checkboxIconHeight, 24);
     this.gapSize = coalesce(config.gapSize, theme.checkboxGapSize, 12);
@@ -152,8 +152,8 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
       return this;
     }
 
-    public CheckboxConfig iconEdgeInsets(Spacing iconEdgeInsets) {
-      this.iconEdgeInsets = iconEdgeInsets;
+    public CheckboxConfig iconEdgeInsets(int top, int right, int bottom, int left) {
+      this.iconEdgeInsets = new Spacing(top, right, bottom, left);
       return this;
     }
 

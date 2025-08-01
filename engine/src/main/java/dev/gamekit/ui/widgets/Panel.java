@@ -93,8 +93,8 @@ public class Panel extends SingleChildParent implements NinePatch, MouseEvent.Ha
       return this;
     }
 
-    public PanelConfig edgeInsets(Spacing edgeInsets) {
-      this.edgeInsets = edgeInsets;
+    public PanelConfig edgeInsets(int top, int right, int bottom, int left) {
+      this.edgeInsets = new Spacing(top, right, bottom, left);
       return this;
     }
   }

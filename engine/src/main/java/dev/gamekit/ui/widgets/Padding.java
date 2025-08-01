@@ -63,8 +63,8 @@ public class Padding extends SingleChildParent {
   public static class PaddingConfig extends SingleChildParentConfig {
     protected Spacing padding;
 
-    public PaddingConfig padding(Spacing padding) {
-      this.padding = padding;
+    public PaddingConfig padding(int top, int right, int bottom, int left) {
+      this.padding = new Spacing(top, right, bottom, left);
       return this;
     }
   }

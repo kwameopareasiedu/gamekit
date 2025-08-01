@@ -23,7 +23,7 @@ public class Spacing {
    * @param vertical   Vertical spacing (Top and bottom)
    * @param horizontal Horizontal spacing (Left and right)
    */
-  public Spacing(int horizontal, int vertical) {
+  public Spacing(int vertical, int horizontal) {
     this(vertical, horizontal, vertical, horizontal);
   }
 
@@ -39,26 +39,6 @@ public class Spacing {
     this(copy.top, copy.right, copy.bottom, copy.left);
   }
 
-  public static Spacing create() {
-    return new Spacing();
-  }
-
-  public static Spacing create(int all) {
-    return new Spacing(all);
-  }
-
-  public static Spacing create(int horizontal, int vertical) {
-    return new Spacing(horizontal, vertical);
-  }
-
-  public static Spacing create(int top, int right, int bottom, int left) {
-    return new Spacing(top, right, bottom, left);
-  }
-
-  public static Spacing create(Spacing copy) {
-    return new Spacing(copy);
-  }
-
   /** Returns the sum of the top and bottom spacing */
   public int getVertical() { return top + bottom; }
 
@@ -69,7 +49,7 @@ public class Spacing {
     set(size, size, size, size);
   }
 
-  public void set(int horizontal, int vertical) {
+  public void set(int vertical, int horizontal) {
     set(vertical, horizontal, vertical, horizontal);
   }
 

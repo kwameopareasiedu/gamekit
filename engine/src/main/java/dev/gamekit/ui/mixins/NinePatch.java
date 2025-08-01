@@ -12,21 +12,22 @@ import java.awt.image.BufferedImage;
  * Mixin for {@link Widget Widgets} which provides functionality for rendering images using the
  * <a href="https://en.wikipedia.org/wiki/9-slice_scaling">9-patch scaling algorithm</a>
  */
+@SuppressWarnings("ExtractMethodRecommender")
 public interface NinePatch {
   /** Called to render an image using the 9-patch algorithm */
   default void renderWith9PatchScaling(
     BufferedImage image,
     Bounds absoluteBounds,
-    Spacing ninePatchSpacing,
+    Spacing edgeInsets,
     Graphics2D graphics
   ) {
     double iw = image.getWidth();
     double ih = image.getHeight();
 
-    double snl = ninePatchSpacing.left;
-    double snt = ninePatchSpacing.top;
-    double snr = iw - ninePatchSpacing.right;
-    double snb = ih - ninePatchSpacing.bottom;
+    double snl = edgeInsets.left;
+    double snt = edgeInsets.top;
+    double snr = iw - edgeInsets.right;
+    double snb = ih - edgeInsets.bottom;
 
     double[][] srcBounds = new double[][]{
       new double[]{ 0, 0, snl, snt },
@@ -47,10 +48,10 @@ public interface NinePatch {
     double dx2 = dx1 + absoluteBounds.width;
     double dy2 = dy1 + absoluteBounds.height;
 
-    double dnl = dx1 + ninePatchSpacing.left;
-    double dnt = dy1 + ninePatchSpacing.top;
-    double dnr = dx2 - ninePatchSpacing.right;
-    double dnb = dy2 - ninePatchSpacing.bottom;
+    double dnl = dx1 + edgeInsets.left;
+    double dnt = dy1 + edgeInsets.top;
+    double dnr = dx2 - edgeInsets.right;
+    double dnb = dy2 - edgeInsets.bottom;
 
     double[][] destBounds = new double[][]{
       new double[]{ dx1, dy1, dnl, dnt },
@@ -83,10 +84,10 @@ public interface NinePatch {
       graphics.setColor(Color.RED);
       graphics.setStroke(Constants.DEBUG_STROKE);
       graphics.drawRect(
-        (int) (absoluteBounds.x + ninePatchSpacing.left),
-        (int) (absoluteBounds.y + ninePatchSpacing.top),
-        (int) (absoluteBounds.width - ninePatchSpacing.getHorizontal()),
-        (int) (absoluteBounds.height - ninePatchSpacing.getVertical())
+        (int) (absoluteBounds.x + edgeInsets.left),
+        (int) (absoluteBounds.y + edgeInsets.top),
+        (int) (absoluteBounds.width - edgeInsets.getHorizontal()),
+        (int) (absoluteBounds.height - edgeInsets.getVertical())
       );
 
       graphics.setColor(originalColor);

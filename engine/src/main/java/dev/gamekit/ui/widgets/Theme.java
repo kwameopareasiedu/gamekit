@@ -253,8 +253,8 @@ public class Theme extends SingleChildParent {
       return this;
     }
 
-    public ThemeConfig panelEdgeInsets(Spacing panelEdgeInsets) {
-      this.panelEdgeInsets = panelEdgeInsets;
+    public ThemeConfig panelEdgeInsets(int top, int right, int bottom, int left) {
+      this.panelEdgeInsets = new Spacing(top, right, bottom, left);
       return this;
     }
 
@@ -273,8 +273,8 @@ public class Theme extends SingleChildParent {
       return this;
     }
 
-    public ThemeConfig buttonEdgeInsets(Spacing buttonEdgeInsets) {
-      this.buttonEdgeInsets = buttonEdgeInsets;
+    public ThemeConfig buttonEdgeInsets(int top, int right, int bottom, int left) {
+      this.buttonEdgeInsets = new Spacing(top, right, bottom, left);
       return this;
     }
 
@@ -336,13 +336,13 @@ public class Theme extends SingleChildParent {
       return this;
     }
 
-    public ThemeConfig fieldEdgeInsets(Spacing fieldEdgeInsets) {
-      this.fieldEdgeInsets = fieldEdgeInsets;
+    public ThemeConfig fieldEdgeInsets(int top, int right, int bottom, int left) {
+      this.fieldEdgeInsets = new Spacing(top, right, bottom, left);
       return this;
     }
 
-    public ThemeConfig fieldPadding(Spacing fieldPadding) {
-      this.fieldPadding = fieldPadding;
+    public ThemeConfig fieldPadding(int top, int right, int bottom, int left) {
+      this.fieldPadding = new Spacing(top, right, bottom, left);
       return this;
     }
 
@@ -356,8 +356,8 @@ public class Theme extends SingleChildParent {
       return this;
     }
 
-    public ThemeConfig checkboxEdgeInsets(Spacing checkboxEdgeInsets) {
-      this.checkboxEdgeInsets = checkboxEdgeInsets;
+    public ThemeConfig checkboxEdgeInsets(int top, int right, int bottom, int left) {
+      this.checkboxEdgeInsets = new Spacing(top, right, bottom, left);
       return this;
     }
 
@@ -377,8 +377,8 @@ public class Theme extends SingleChildParent {
       return this;
     }
 
-    public ThemeConfig progressTrackEdgeInsets(Spacing progressTrackEdgeInsets) {
-      this.progressTrackEdgeInsets = progressTrackEdgeInsets;
+    public ThemeConfig progressTrackEdgeInsets(int top, int right, int bottom, int left) {
+      this.progressTrackEdgeInsets = new Spacing(top, right, bottom, left);
       return this;
     }
 
@@ -387,13 +387,13 @@ public class Theme extends SingleChildParent {
       return this;
     }
 
-    public ThemeConfig progressFillEdgeInsets(Spacing progressFillEdgeInsets) {
-      this.progressFillEdgeInsets = progressFillEdgeInsets;
+    public ThemeConfig progressFillEdgeInsets(int top, int right, int bottom, int left) {
+      this.progressFillEdgeInsets = new Spacing(top, right, bottom, left);
       return this;
     }
 
-    public ThemeConfig progressFillMargin(Spacing progressFillMargin) {
-      this.progressFillMargin = progressFillMargin;
+    public ThemeConfig progressFillMargin(int top, int right, int bottom, int left) {
+      this.progressFillMargin = new Spacing(top, right, bottom, left);
       return this;
     }
 
@@ -407,8 +407,8 @@ public class Theme extends SingleChildParent {
       return this;
     }
 
-    public ThemeConfig sliderThumbEdgeInsets(Spacing sliderThumbEdgeInsets) {
-      this.sliderThumbEdgeInsets = sliderThumbEdgeInsets;
+    public ThemeConfig sliderThumbEdgeInsets(int top, int right, int bottom, int left) {
+      this.sliderThumbEdgeInsets = new Spacing(top, right, bottom, left);
       return this;
     }
 

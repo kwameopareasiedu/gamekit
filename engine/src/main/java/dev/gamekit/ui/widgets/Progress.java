@@ -81,10 +81,10 @@ public class Progress extends Leaf implements NinePatch {
       coalesce(config.trackBackground, theme.progressTrackBackground, TRACK_BG);
     this.fillBackground = coalesce(config.fillBackground, theme.progressFillBackground, FILL_BG);
     this.trackEdgeInsets =
-      coalesce(config.trackEdgeInsets, theme.progressTrackEdgeInsets, Spacing.create(8));
+      coalesce(config.trackEdgeInsets, theme.progressTrackEdgeInsets, new Spacing(8));
     this.fillEdgeInsets =
-      coalesce(config.fillEdgeInsets, theme.progressFillEdgeInsets, Spacing.create(8));
-    this.fillMargin = coalesce(config.fillMargin, theme.progressFillMargin, Spacing.create(0));
+      coalesce(config.fillEdgeInsets, theme.progressFillEdgeInsets, new Spacing(8));
+    this.fillMargin = coalesce(config.fillMargin, theme.progressFillMargin, new Spacing(0));
     this.fillMode = coalesce(config.fillMode, theme.progressFillMode, FillMode.SCALE);
     this.minValue = coalesce(config.minValue);
     this.maxValue = coalesce(config.maxValue);
@@ -183,8 +183,8 @@ public class Progress extends Leaf implements NinePatch {
       return (T) this;
     }
 
-    public T trackEdgeInsets(Spacing trackEdgeInsets) {
-      this.trackEdgeInsets = trackEdgeInsets;
+    public T trackEdgeInsets(int top, int right, int bottom, int left) {
+      this.trackEdgeInsets = new Spacing(top, right, bottom, left);
       return (T) this;
     }
 
@@ -193,13 +193,13 @@ public class Progress extends Leaf implements NinePatch {
       return (T) this;
     }
 
-    public T fillEdgeInsets(Spacing fillEdgeInsets) {
-      this.fillEdgeInsets = fillEdgeInsets;
+    public T fillEdgeInsets(int top, int right, int bottom, int left) {
+      this.fillEdgeInsets = new Spacing(top, right, bottom, left);
       return (T) this;
     }
 
-    public T fillMargin(Spacing fillMargin) {
-      this.fillMargin = fillMargin;
+    public T fillMargin(int top, int right, int bottom, int left) {
+      this.fillMargin = new Spacing(top, right, bottom, left);
       return (T) this;
     }
 

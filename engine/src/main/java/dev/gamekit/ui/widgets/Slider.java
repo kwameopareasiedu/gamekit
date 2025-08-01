@@ -56,7 +56,7 @@ public class Slider extends Progress implements NinePatch {
 
     this.thumbBackground = coalesce(config.thumbBackground, theme.sliderThumbBackground, THUMB_BG);
     this.thumbEdgeInsets =
-      coalesce(config.thumbEdgeInsets, theme.sliderThumbEdgeInsets, Spacing.create(8));
+      coalesce(config.thumbEdgeInsets, theme.sliderThumbEdgeInsets, new Spacing(8));
     this.thumbWidth = coalesce(config.thumbWidth, theme.sliderThumbWidth, 32);
     this.thumbHeight = coalesce(config.thumbHeight, theme.sliderThumbHeight, 32);
 
@@ -116,8 +116,8 @@ public class Slider extends Progress implements NinePatch {
       return this;
     }
 
-    public SliderConfig thumbEdgeInsets(Spacing thumbEdgeInsets) {
-      this.thumbEdgeInsets = thumbEdgeInsets;
+    public SliderConfig thumbEdgeInsets(int top, int right, int bottom, int left) {
+      this.thumbEdgeInsets = new Spacing(top, right, bottom, left);
       return this;
     }
 

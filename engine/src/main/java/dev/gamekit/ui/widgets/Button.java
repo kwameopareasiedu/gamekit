@@ -56,7 +56,7 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
     Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
 
     this.edgeInsets =
-      coalesce(config.edgeInsets, theme.buttonEdgeInsets, Spacing.create(24));
+      coalesce(config.edgeInsets, theme.buttonEdgeInsets, new Spacing(24));
     this.defaultBackground =
       coalesce(config.defaultBackground, theme.buttonDefaultBackground, DEFAULT_BG);
     this.hoverBackground =
@@ -143,8 +143,8 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
       return this;
     }
 
-    public ButtonConfig edgeInsets(Spacing edgeInsets) {
-      this.edgeInsets = edgeInsets;
+    public ButtonConfig edgeInsets(int top, int right, int bottom, int left) {
+      this.edgeInsets = new Spacing(top, right, bottom, left);
       return this;
     }
 

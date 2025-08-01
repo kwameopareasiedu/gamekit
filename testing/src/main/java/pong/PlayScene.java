@@ -4,7 +4,6 @@ import dev.gamekit.components.RigidBody;
 import dev.gamekit.core.IO;
 import dev.gamekit.core.Renderer;
 import dev.gamekit.core.Scene;
-import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.widgets.Align;
 import dev.gamekit.ui.widgets.Padding;
@@ -50,7 +49,7 @@ public class PlayScene extends Scene {
     return Align.create(
       Align.config().horizontalAlignment(Alignment.CENTER),
       Padding.create(
-        Padding.config().padding(Spacing.create(32)),
+        Padding.config().padding(32, 32, 32, 32),
         Text.create(
           Text.config().fontSize(72).fontStyle(Text.BOLD).horizontalAlignment(Alignment.CENTER),
           "Score"
