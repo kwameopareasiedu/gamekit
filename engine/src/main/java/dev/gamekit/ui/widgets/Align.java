@@ -26,11 +26,9 @@ public class Align extends SingleChildParent {
 
   @Override
   public boolean stateEquals(Widget widget) {
-    if (widget instanceof Align alignWidget)
-      return Objects.equals(horizontalAlignment, alignWidget.horizontalAlignment)
-        && Objects.equals(verticalAlignment, alignWidget.verticalAlignment);
-
-    return false;
+    return widget instanceof Align alignWidget &&
+      Objects.equals(horizontalAlignment, alignWidget.horizontalAlignment)
+      && Objects.equals(verticalAlignment, alignWidget.verticalAlignment);
   }
 
   @Override
@@ -81,8 +79,12 @@ public class Align extends SingleChildParent {
     protected Alignment horizontalAlignment;
     protected Alignment verticalAlignment;
 
-    public AlignConfig alignment(Alignment horizontalAlignment, Alignment verticalAlignment) {
+    public AlignConfig horizontalAlignment(Alignment horizontalAlignment) {
       this.horizontalAlignment = horizontalAlignment;
+      return this;
+    }
+
+    public AlignConfig verticalAlignment(Alignment verticalAlignment) {
       this.verticalAlignment = verticalAlignment;
       return this;
     }

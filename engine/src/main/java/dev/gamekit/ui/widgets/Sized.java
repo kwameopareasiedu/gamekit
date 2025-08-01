@@ -31,13 +31,11 @@ public class Sized extends SingleChildParent {
 
   @Override
   public boolean stateEquals(Widget widget) {
-    if (widget instanceof Sized sizedWidget)
-      return Objects.equals(widthType, sizedWidget.widthType) &&
-        Objects.equals(heightType, sizedWidget.heightType) &&
-        Objects.equals(width, sizedWidget.width) &&
-        Objects.equals(height, sizedWidget.height);
-
-    return false;
+    return widget instanceof Sized sizedWidget &&
+      Objects.equals(widthType, sizedWidget.widthType) &&
+      Objects.equals(heightType, sizedWidget.heightType) &&
+      Objects.equals(width, sizedWidget.width) &&
+      Objects.equals(height, sizedWidget.height);
   }
 
   @Override

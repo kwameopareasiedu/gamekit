@@ -14,10 +14,13 @@ import static dev.gamekit.utils.Misc.coalesce;
 public class Theme extends SingleChildParent {
   private static final Theme DEFAULT_THEME = create(config(), Empty.create());
 
-  public Spacing buttonNinePatchSpacing;
+  public BufferedImage panelBackground;
+  public Spacing panelEdgeInsets;
+
   public BufferedImage buttonDefaultBackground;
   public BufferedImage buttonHoverBackground;
   public BufferedImage buttonPressedBackground;
+  public Spacing buttonEdgeInsets;
 
   public Font textFont;
   public Integer textFontSize;
@@ -31,16 +34,29 @@ public class Theme extends SingleChildParent {
   public Integer textShadowOffsetY;
   public Color textShadowColor;
 
-  public Spacing fieldNinePatchSpacing;
   public BufferedImage fieldDefaultBackground;
   public BufferedImage fieldFocusBackground;
+  public Spacing fieldEdgeInsets;
   public Spacing fieldPadding;
 
-  public Spacing checkboxNinePatchSpacing;
   public BufferedImage checkboxDefaultIcon;
   public BufferedImage checkboxToggledIcon;
+  public Spacing checkboxIconEdgeInsets;
+  public Integer checkboxIconWidth;
+  public Integer checkboxIconHeight;
   public Integer checkboxGapSize;
-  public Integer checkboxIconSize;
+
+  public BufferedImage progressTrackBackground;
+  public BufferedImage progressFillBackground;
+  public Spacing progressTrackEdgeInsets;
+  public Spacing progressFillEdgeInsets;
+  public Spacing progressFillMargin;
+  public Progress.FillMode progressFillMode;
+
+  public BufferedImage sliderThumbBackground;
+  public Spacing sliderThumbEdgeInsets;
+  public Integer sliderThumbWidth;
+  public Integer sliderThumbHeight;
 
   public Theme(ThemeConfig config, Widget child) {
     super(config, child);
@@ -60,36 +76,51 @@ public class Theme extends SingleChildParent {
 
   @Override
   public boolean stateEquals(Widget widget) {
-    if (widget instanceof Theme themeWidget)
-      return Objects.equals(buttonNinePatchSpacing, themeWidget.buttonNinePatchSpacing) &&
-        Objects.equals(buttonDefaultBackground, themeWidget.buttonDefaultBackground) &&
-        Objects.equals(buttonHoverBackground, themeWidget.buttonHoverBackground) &&
-        Objects.equals(buttonPressedBackground, themeWidget.buttonPressedBackground) &&
+    return widget instanceof Theme themeWidget &&
 
-        Objects.equals(textFont, themeWidget.textFont) &&
-        Objects.equals(textFontStyle, themeWidget.textFontStyle) &&
-        Objects.equals(textFontSize, themeWidget.textFontSize) &&
-        Objects.equals(textForegroundColor, themeWidget.textForegroundColor) &&
-        Objects.equals(textBackgroundColor, themeWidget.textBackgroundColor) &&
-        Objects.equals(textHorizontalAlignment, themeWidget.textHorizontalAlignment) &&
-        Objects.equals(textVerticalAlignment, themeWidget.textVerticalAlignment) &&
-        Objects.equals(textShadowEnabled, themeWidget.textShadowEnabled) &&
-        Objects.equals(textShadowOffsetX, themeWidget.textShadowOffsetX) &&
-        Objects.equals(textShadowOffsetY, themeWidget.textShadowOffsetY) &&
-        Objects.equals(textShadowColor, themeWidget.textShadowColor) &&
+      Objects.equals(panelBackground, themeWidget.panelBackground) &&
+      Objects.equals(panelEdgeInsets, themeWidget.panelEdgeInsets) &&
 
-        Objects.equals(fieldNinePatchSpacing, themeWidget.fieldNinePatchSpacing) &&
-        Objects.equals(fieldDefaultBackground, themeWidget.fieldDefaultBackground) &&
-        Objects.equals(fieldFocusBackground, themeWidget.fieldFocusBackground) &&
-        Objects.equals(fieldPadding, themeWidget.fieldPadding) &&
+      Objects.equals(buttonDefaultBackground, themeWidget.buttonDefaultBackground) &&
+      Objects.equals(buttonHoverBackground, themeWidget.buttonHoverBackground) &&
+      Objects.equals(buttonPressedBackground, themeWidget.buttonPressedBackground) &&
+      Objects.equals(buttonEdgeInsets, themeWidget.buttonEdgeInsets) &&
 
-        Objects.equals(checkboxNinePatchSpacing, themeWidget.checkboxNinePatchSpacing) &&
-        Objects.equals(checkboxDefaultIcon, themeWidget.checkboxDefaultIcon) &&
-        Objects.equals(checkboxToggledIcon, themeWidget.checkboxToggledIcon) &&
-        Objects.equals(checkboxGapSize, themeWidget.checkboxGapSize) &&
-        Objects.equals(checkboxIconSize, themeWidget.checkboxIconSize);
+      Objects.equals(textFont, themeWidget.textFont) &&
+      Objects.equals(textFontStyle, themeWidget.textFontStyle) &&
+      Objects.equals(textFontSize, themeWidget.textFontSize) &&
+      Objects.equals(textForegroundColor, themeWidget.textForegroundColor) &&
+      Objects.equals(textBackgroundColor, themeWidget.textBackgroundColor) &&
+      Objects.equals(textHorizontalAlignment, themeWidget.textHorizontalAlignment) &&
+      Objects.equals(textVerticalAlignment, themeWidget.textVerticalAlignment) &&
+      Objects.equals(textShadowEnabled, themeWidget.textShadowEnabled) &&
+      Objects.equals(textShadowOffsetX, themeWidget.textShadowOffsetX) &&
+      Objects.equals(textShadowOffsetY, themeWidget.textShadowOffsetY) &&
+      Objects.equals(textShadowColor, themeWidget.textShadowColor) &&
 
-    return false;
+      Objects.equals(fieldDefaultBackground, themeWidget.fieldDefaultBackground) &&
+      Objects.equals(fieldFocusBackground, themeWidget.fieldFocusBackground) &&
+      Objects.equals(fieldEdgeInsets, themeWidget.fieldEdgeInsets) &&
+      Objects.equals(fieldPadding, themeWidget.fieldPadding) &&
+
+      Objects.equals(checkboxDefaultIcon, themeWidget.checkboxDefaultIcon) &&
+      Objects.equals(checkboxToggledIcon, themeWidget.checkboxToggledIcon) &&
+      Objects.equals(checkboxIconEdgeInsets, themeWidget.checkboxIconEdgeInsets) &&
+      Objects.equals(checkboxIconWidth, themeWidget.checkboxIconWidth) &&
+      Objects.equals(checkboxIconHeight, themeWidget.checkboxIconHeight) &&
+      Objects.equals(checkboxGapSize, themeWidget.checkboxGapSize) &&
+
+      Objects.equals(progressTrackBackground, themeWidget.progressTrackBackground) &&
+      Objects.equals(progressFillBackground, themeWidget.progressFillBackground) &&
+      Objects.equals(progressTrackEdgeInsets, themeWidget.progressTrackEdgeInsets) &&
+      Objects.equals(progressFillEdgeInsets, themeWidget.progressFillEdgeInsets) &&
+      Objects.equals(progressFillMargin, themeWidget.progressFillMargin) &&
+      Objects.equals(progressFillMode, themeWidget.progressFillMode) &&
+
+      Objects.equals(sliderThumbBackground, themeWidget.sliderThumbBackground) &&
+      Objects.equals(sliderThumbEdgeInsets, themeWidget.sliderThumbEdgeInsets) &&
+      Objects.equals(sliderThumbWidth, themeWidget.sliderThumbWidth) &&
+      Objects.equals(sliderThumbHeight, themeWidget.sliderThumbHeight);
   }
 
   @Override
@@ -97,19 +128,22 @@ public class Theme extends SingleChildParent {
     ThemeConfig config = (ThemeConfig) super.config;
     Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
 
-    this.buttonNinePatchSpacing =
-      coalesce(config.buttonNinePatchSpacing, theme.buttonNinePatchSpacing);
+    this.panelBackground = coalesce(config.panelBackground, theme.panelBackground);
+    this.panelEdgeInsets = coalesce(config.panelEdgeInsets, theme.panelEdgeInsets);
+
     this.buttonDefaultBackground =
       coalesce(config.buttonDefaultBackground, theme.buttonDefaultBackground);
     this.buttonHoverBackground =
       coalesce(config.buttonHoverBackground, theme.buttonHoverBackground);
     this.buttonPressedBackground =
       coalesce(config.buttonPressedBackground, theme.buttonPressedBackground);
+    this.buttonEdgeInsets =
+      coalesce(config.buttonEdgeInsets, theme.buttonEdgeInsets);
 
     this.textFont = coalesce(config.textFont, theme.textFont);
     this.textFontSize = coalesce(config.textFontSize, theme.textFontSize);
     this.textFontStyle = coalesce(config.textFontStyle, theme.textFontStyle);
-    this.textForegroundColor = coalesce(config.textForegroundColor, theme.textForegroundColor);
+    this.textForegroundColor = coalesce(config.textColor, theme.textForegroundColor);
     this.textBackgroundColor = coalesce(config.textBackgroundColor, theme.textBackgroundColor);
     this.textHorizontalAlignment =
       coalesce(config.textHorizontalAlignment, theme.textHorizontalAlignment);
@@ -120,19 +154,36 @@ public class Theme extends SingleChildParent {
     this.textShadowOffsetY = coalesce(config.textShadowOffsetY, theme.textShadowOffsetY);
     this.textShadowColor = coalesce(config.textShadowColor, theme.textShadowColor);
 
-    this.fieldNinePatchSpacing =
-      coalesce(config.fieldNinePatchSpacing, theme.fieldNinePatchSpacing);
     this.fieldDefaultBackground =
       coalesce(config.fieldDefaultBackground, theme.fieldDefaultBackground);
     this.fieldFocusBackground = coalesce(config.fieldFocusBackground, theme.fieldFocusBackground);
+    this.fieldEdgeInsets = coalesce(config.fieldEdgeInsets, theme.fieldEdgeInsets);
     this.fieldPadding = coalesce(config.fieldPadding, theme.fieldPadding);
 
-    this.checkboxNinePatchSpacing =
-      coalesce(config.checkboxNinePatchSpacing, theme.checkboxNinePatchSpacing);
     this.checkboxDefaultIcon = coalesce(config.checkboxDefaultIcon, theme.checkboxDefaultIcon);
     this.checkboxToggledIcon = coalesce(config.checkboxToggledIcon, theme.checkboxToggledIcon);
+    this.checkboxIconEdgeInsets = coalesce(config.checkboxEdgeInsets, theme.checkboxIconEdgeInsets);
+    this.checkboxIconWidth = coalesce(config.checkboxIconWidth, theme.checkboxIconWidth);
+    this.checkboxIconHeight = coalesce(config.checkboxIconHeight, theme.checkboxIconHeight);
     this.checkboxGapSize = coalesce(config.checkboxGapSize, theme.checkboxGapSize);
-    this.checkboxIconSize = coalesce(config.checkboxIconSize, theme.checkboxIconSize);
+
+    this.progressTrackBackground =
+      coalesce(config.progressTrackBackground, theme.progressTrackBackground);
+    this.progressFillBackground =
+      coalesce(config.progressFillBackground, theme.progressFillBackground);
+    this.progressTrackEdgeInsets =
+      coalesce(config.progressTrackEdgeInsets, theme.progressTrackEdgeInsets);
+    this.progressFillEdgeInsets =
+      coalesce(config.progressFillEdgeInsets, theme.progressFillEdgeInsets);
+    this.progressFillMargin = coalesce(config.progressFillMargin, theme.progressFillMargin);
+    this.progressFillMode = coalesce(config.progressFillMode, theme.progressFillMode);
+
+    this.sliderThumbBackground =
+      coalesce(config.sliderThumbBackground, theme.sliderThumbBackground);
+    this.sliderThumbEdgeInsets =
+      coalesce(config.sliderThumbEdgeInsets, theme.sliderThumbEdgeInsets);
+    this.sliderThumbWidth = coalesce(config.sliderThumbWidth, theme.sliderThumbWidth);
+    this.sliderThumbHeight = coalesce(config.sliderThumbHeight, theme.sliderThumbHeight);
 
     super.performInit();
   }
@@ -153,15 +204,18 @@ public class Theme extends SingleChildParent {
   }
 
   public static class ThemeConfig extends SingleChildParentConfig {
-    protected Spacing buttonNinePatchSpacing;
+    protected BufferedImage panelBackground;
+    protected Spacing panelEdgeInsets;
+
     protected BufferedImage buttonDefaultBackground;
     protected BufferedImage buttonHoverBackground;
     protected BufferedImage buttonPressedBackground;
+    protected Spacing buttonEdgeInsets;
 
     protected Font textFont;
     protected Integer textFontSize;
     protected Integer textFontStyle;
-    protected Color textForegroundColor;
+    protected Color textColor;
     protected Color textBackgroundColor;
     protected Alignment textHorizontalAlignment;
     protected Alignment textVerticalAlignment;
@@ -170,83 +224,120 @@ public class Theme extends SingleChildParent {
     protected Integer textShadowOffsetY;
     protected Color textShadowColor;
 
-    protected Spacing fieldNinePatchSpacing;
     protected BufferedImage fieldDefaultBackground;
     protected BufferedImage fieldFocusBackground;
+    protected Spacing fieldEdgeInsets;
     protected Spacing fieldPadding;
 
-    protected Spacing checkboxNinePatchSpacing;
     protected BufferedImage checkboxDefaultIcon;
     protected BufferedImage checkboxToggledIcon;
+    protected Spacing checkboxEdgeInsets;
+    protected Integer checkboxIconWidth;
+    protected Integer checkboxIconHeight;
     protected Integer checkboxGapSize;
-    protected Integer checkboxIconSize;
 
-    public ThemeConfig buttonNinePatchSpacing(Spacing buttonNinePatchSpacing) {
-      this.buttonNinePatchSpacing = buttonNinePatchSpacing;
+    protected BufferedImage progressTrackBackground;
+    protected BufferedImage progressFillBackground;
+    protected Spacing progressTrackEdgeInsets;
+    protected Spacing progressFillEdgeInsets;
+    protected Spacing progressFillMargin;
+    protected Progress.FillMode progressFillMode;
+
+    protected BufferedImage sliderThumbBackground;
+    protected Spacing sliderThumbEdgeInsets;
+    protected Integer sliderThumbWidth;
+    protected Integer sliderThumbHeight;
+
+    public ThemeConfig panelBackground(BufferedImage panelBackground) {
+      this.panelBackground = panelBackground;
       return this;
     }
 
-    public ThemeConfig buttonBackground(
-      BufferedImage buttonDefaultBackground,
-      BufferedImage buttonHoverBackground,
-      BufferedImage buttonPressedBackground
-    ) {
+    public ThemeConfig panelEdgeInsets(Spacing panelEdgeInsets) {
+      this.panelEdgeInsets = panelEdgeInsets;
+      return this;
+    }
+
+    public ThemeConfig buttonDefaultBackground(BufferedImage buttonDefaultBackground) {
       this.buttonDefaultBackground = buttonDefaultBackground;
+      return this;
+    }
+
+    public ThemeConfig buttonHoverBackground(BufferedImage buttonHoverBackground) {
       this.buttonHoverBackground = buttonHoverBackground;
+      return this;
+    }
+
+    public ThemeConfig buttonPressedBackground(BufferedImage buttonPressedBackground) {
       this.buttonPressedBackground = buttonPressedBackground;
       return this;
     }
 
-    public ThemeConfig textFont(int textFontSize, int textFontStyle, Font textFont) {
-      this.textFontSize = textFontSize;
-      this.textFontStyle = textFontStyle;
-      this.textFont = textFont;
+    public ThemeConfig buttonEdgeInsets(Spacing buttonEdgeInsets) {
+      this.buttonEdgeInsets = buttonEdgeInsets;
       return this;
     }
 
-    public ThemeConfig textFont(int fontSize, int fontStyle) {
-      return textFont(fontSize, fontStyle, null);
-    }
-
-    public ThemeConfig textColor(Color textForegroundColor, Color textBackgroundColor) {
-      this.textForegroundColor = textForegroundColor;
-      this.textBackgroundColor = textBackgroundColor;
+    public ThemeConfig textFont(Font font) {
+      this.textFont = font;
       return this;
     }
 
-    public ThemeConfig textAlignment(
-      Alignment textHorizontalAlignment,
-      Alignment textVerticalAlignment
-    ) {
-      this.textHorizontalAlignment = textHorizontalAlignment;
-      this.textVerticalAlignment = textVerticalAlignment;
+    public ThemeConfig textFontSize(int fontSize) {
+      this.textFontSize = fontSize;
+      return this;
+    }
+
+    public ThemeConfig textFontStyle(int fontStyle) {
+      this.textFontStyle = fontStyle;
+      return this;
+    }
+
+    public ThemeConfig textColor(Color color) {
+      this.textColor = color;
+      return this;
+    }
+
+    public ThemeConfig textBackgroundColor(Color backgroundColor) {
+      this.textBackgroundColor = backgroundColor;
+      return this;
+    }
+
+    public ThemeConfig textHorizontalAlignment(Alignment horizontalAlignment) {
+      this.textHorizontalAlignment = horizontalAlignment;
+      return this;
+    }
+
+    public ThemeConfig textVerticalAlignment(Alignment verticalAlignment) {
+      this.textVerticalAlignment = verticalAlignment;
       return this;
     }
 
     public ThemeConfig textShadow(
-      boolean textShadowEnabled,
-      int textShadowOffsetX,
-      int textShadowOffsetY,
-      Color textShadowColor
+      boolean shadowEnabled,
+      int shadowOffsetX,
+      int shadowOffsetY,
+      Color shadowColor
     ) {
-      this.textShadowEnabled = textShadowEnabled;
-      this.textShadowOffsetX = textShadowOffsetX;
-      this.textShadowOffsetY = textShadowOffsetY;
-      this.textShadowColor = textShadowColor;
+      this.textShadowEnabled = shadowEnabled;
+      this.textShadowOffsetX = shadowOffsetX;
+      this.textShadowOffsetY = shadowOffsetY;
+      this.textShadowColor = shadowColor;
       return this;
     }
 
-    public ThemeConfig fieldNinePatchSpacing(Spacing fieldNinePatchSpacing) {
-      this.fieldNinePatchSpacing = fieldNinePatchSpacing;
-      return this;
-    }
-
-    public ThemeConfig fieldBackground(
-      BufferedImage fieldDefaultBackground,
-      BufferedImage fieldFocusBackground
-    ) {
+    public ThemeConfig fieldDefaultBackground(BufferedImage fieldDefaultBackground) {
       this.fieldDefaultBackground = fieldDefaultBackground;
+      return this;
+    }
+
+    public ThemeConfig fieldFocusBackground(BufferedImage fieldFocusBackground) {
       this.fieldFocusBackground = fieldFocusBackground;
+      return this;
+    }
+
+    public ThemeConfig fieldEdgeInsets(Spacing fieldEdgeInsets) {
+      this.fieldEdgeInsets = fieldEdgeInsets;
       return this;
     }
 
@@ -255,17 +346,24 @@ public class Theme extends SingleChildParent {
       return this;
     }
 
-    public ThemeConfig checkboxNinePatchSpacing(Spacing checkboxNinePatchSpacing) {
-      this.checkboxNinePatchSpacing = checkboxNinePatchSpacing;
+    public ThemeConfig checkboxDefaultIcon(BufferedImage checkboxDefaultIcon) {
+      this.checkboxDefaultIcon = checkboxDefaultIcon;
       return this;
     }
 
-    public ThemeConfig checkboxIcon(
-      BufferedImage checkboxDefaultIcon,
-      BufferedImage checkboxToggledIcon
-    ) {
-      this.checkboxDefaultIcon = checkboxDefaultIcon;
+    public ThemeConfig checkboxToggledIcon(BufferedImage checkboxToggledIcon) {
       this.checkboxToggledIcon = checkboxToggledIcon;
+      return this;
+    }
+
+    public ThemeConfig checkboxEdgeInsets(Spacing checkboxEdgeInsets) {
+      this.checkboxEdgeInsets = checkboxEdgeInsets;
+      return this;
+    }
+
+    public ThemeConfig checkboxIconSize(Integer checkboxIconWidth, Integer checkboxIconHeight) {
+      this.checkboxIconWidth = checkboxIconWidth;
+      this.checkboxIconHeight = checkboxIconHeight;
       return this;
     }
 
@@ -274,8 +372,49 @@ public class Theme extends SingleChildParent {
       return this;
     }
 
-    public ThemeConfig checkboxIconSize(Integer checkboxIconSize) {
-      this.checkboxIconSize = checkboxIconSize;
+    public ThemeConfig progressTrackBackground(BufferedImage progressTrackBackground) {
+      this.progressTrackBackground = progressTrackBackground;
+      return this;
+    }
+
+    public ThemeConfig progressTrackEdgeInsets(Spacing progressTrackEdgeInsets) {
+      this.progressTrackEdgeInsets = progressTrackEdgeInsets;
+      return this;
+    }
+
+    public ThemeConfig progressFillBackground(BufferedImage progressFillBackground) {
+      this.progressFillBackground = progressFillBackground;
+      return this;
+    }
+
+    public ThemeConfig progressFillEdgeInsets(Spacing progressFillEdgeInsets) {
+      this.progressFillEdgeInsets = progressFillEdgeInsets;
+      return this;
+    }
+
+    public ThemeConfig progressFillMargin(Spacing progressFillMargin) {
+      this.progressFillMargin = progressFillMargin;
+      return this;
+    }
+
+    public ThemeConfig progressFillMode(Progress.FillMode progressFillMode) {
+      this.progressFillMode = progressFillMode;
+      return this;
+    }
+
+    public ThemeConfig sliderThumbBackground(BufferedImage sliderThumbBackground) {
+      this.sliderThumbBackground = sliderThumbBackground;
+      return this;
+    }
+
+    public ThemeConfig sliderThumbEdgeInsets(Spacing sliderThumbEdgeInsets) {
+      this.sliderThumbEdgeInsets = sliderThumbEdgeInsets;
+      return this;
+    }
+
+    public ThemeConfig sliderThumbSize(int sliderThumbWidth, int sliderThumbHeight) {
+      this.sliderThumbWidth = sliderThumbWidth;
+      this.sliderThumbHeight = sliderThumbHeight;
       return this;
     }
   }

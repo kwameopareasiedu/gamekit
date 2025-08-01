@@ -89,10 +89,8 @@ public class Row extends Flex {
 
   @Override
   public boolean stateEquals(Widget widget) {
-    if (widget instanceof Row rowWidget)
-      return super.stateEquals(rowWidget);
-
-    return false;
+    return widget instanceof Row rowWidget &&
+      super.stateEquals(rowWidget);
   }
 
   public static class RowConfig<T extends RowConfig<T>> extends FlexConfig<T> { }

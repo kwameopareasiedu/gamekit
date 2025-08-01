@@ -26,21 +26,19 @@ public class Colored extends Leaf {
 
   @Override
   public boolean stateEquals(Widget widget) {
-    if (widget instanceof Colored panelWidget)
-      return Objects.equals(color, panelWidget.color) &&
-        Objects.equals(borderRadius, panelWidget.borderRadius);
-
-    return false;
+    return widget instanceof Colored coloredWidget &&
+      Objects.equals(color, coloredWidget.color) &&
+      Objects.equals(borderRadius, coloredWidget.borderRadius);
   }
 
   @Override
   protected void performInit() {
+    super.performInit();
+
     ColoredConfig config = (ColoredConfig) super.config;
 
     this.color = coalesce(config.color, Color.GRAY);
     this.borderRadius = coalesce(config.borderRadius, 0);
-
-    super.performInit();
   }
 
   @Override

@@ -23,7 +23,7 @@ public class Text extends Leaf {
   protected Font font;
   protected Integer fontSize;
   protected Integer fontStyle;
-  protected Color foregroundColor;
+  protected Color color;
   protected Color backgroundColor;
   protected Alignment horizontalAlignment;
   protected Alignment verticalAlignment;
@@ -55,21 +55,19 @@ public class Text extends Leaf {
 
   @Override
   public boolean stateEquals(Widget widget) {
-    if (widget instanceof Text textWidget)
-      return Objects.equals(text, textWidget.text) &&
-        Objects.equals(font, textWidget.font) &&
-        Objects.equals(fontSize, textWidget.fontSize) &&
-        Objects.equals(fontStyle, textWidget.fontStyle) &&
-        Objects.equals(foregroundColor, textWidget.foregroundColor) &&
-        Objects.equals(backgroundColor, textWidget.backgroundColor) &&
-        Objects.equals(horizontalAlignment, textWidget.horizontalAlignment) &&
-        Objects.equals(verticalAlignment, textWidget.verticalAlignment) &&
-        Objects.equals(shadowEnabled, textWidget.shadowEnabled) &&
-        Objects.equals(shadowOffsetX, textWidget.shadowOffsetX) &&
-        Objects.equals(shadowOffsetY, textWidget.shadowOffsetY) &&
-        Objects.equals(shadowColor, textWidget.shadowColor);
-
-    return false;
+    return widget instanceof Text textWidget &&
+      Objects.equals(text, textWidget.text) &&
+      Objects.equals(font, textWidget.font) &&
+      Objects.equals(fontSize, textWidget.fontSize) &&
+      Objects.equals(fontStyle, textWidget.fontStyle) &&
+      Objects.equals(color, textWidget.color) &&
+      Objects.equals(backgroundColor, textWidget.backgroundColor) &&
+      Objects.equals(horizontalAlignment, textWidget.horizontalAlignment) &&
+      Objects.equals(verticalAlignment, textWidget.verticalAlignment) &&
+      Objects.equals(shadowEnabled, textWidget.shadowEnabled) &&
+      Objects.equals(shadowOffsetX, textWidget.shadowOffsetX) &&
+      Objects.equals(shadowOffsetY, textWidget.shadowOffsetY) &&
+      Objects.equals(shadowColor, textWidget.shadowColor);
   }
 
   @Override
@@ -84,9 +82,8 @@ public class Text extends Leaf {
     font = coalesce(config.font, theme.textFont, Constants.DEFAULT_FONT);
     fontSize = coalesce(config.fontSize, theme.textFontSize, 20);
     fontStyle = coalesce(config.fontStyle, theme.textFontStyle, Font.PLAIN);
-    foregroundColor = coalesce(config.foregroundColor, theme.textForegroundColor, Color.WHITE);
-    backgroundColor =
-      coalesce(config.backgroundColor, theme.textBackgroundColor, Constants.TRANSPARENT_COLOR);
+    color = coalesce(config.color, theme.textForegroundColor, Color.WHITE);
+    backgroundColor = coalesce(config.backgroundColor, theme.textBackgroundColor, null);
     horizontalAlignment =
       coalesce(config.horizontalAlignment, theme.textHorizontalAlignment, Alignment.START);
     verticalAlignment =
@@ -219,7 +216,22 @@ public class Text extends Leaf {
       }
     }
 
-    g.setColor(foregroundColor);
+    if (backgroundColor != null) {
+      Color originalBackgroundColor = g.getBackground();
+      g.setBackground(backgroundColor);
+
+      g.fillRect(
+        (int) absoluteBounds.x,
+        (int) absoluteBounds.y,
+        (int) absoluteBounds.width,
+        (int) absoluteBounds.height
+      );
+
+      g.setBackground(originalBackgroundColor);
+    }
+
+    Color originalColor = g.getColor();
+    g.setColor(color);
 
     for (int i = 0; i < textLines.length; i++) {
       String line = textLines[i];
@@ -231,6 +243,8 @@ public class Text extends Leaf {
         (int) ((i + 1) * fontSize + vOffset)
       );
     }
+
+    g.setColor(originalColor);
   }
 
   @SuppressWarnings("unchecked")
@@ -239,7 +253,7 @@ public class Text extends Leaf {
     protected Font font;
     protected Integer fontStyle;
     protected Integer fontSize;
-    protected Color foregroundColor;
+    protected Color color;
     protected Color backgroundColor;
     protected Alignment horizontalAlignment;
     protected Alignment verticalAlignment;
@@ -253,25 +267,37 @@ public class Text extends Leaf {
       return (T) this;
     }
 
-    public T font(int fontSize, int fontStyle, Font font) {
-      this.fontSize = fontSize;
-      this.fontStyle = fontStyle;
+    public T font(Font font) {
       this.font = font;
       return (T) this;
     }
 
-    public T font(int fontSize, int fontStyle) {
-      return font(fontSize, fontStyle, null);
+    public T fontSize(int fontSize) {
+      this.fontSize = fontSize;
+      return (T) this;
     }
 
-    public T color(Color foregroundColor, Color backgroundColor) {
-      this.foregroundColor = foregroundColor;
+    public T fontStyle(int fontStyle) {
+      this.fontStyle = fontStyle;
+      return (T) this;
+    }
+
+    public T color(Color color) {
+      this.color = color;
+      return (T) this;
+    }
+
+    public T backgroundColor(Color backgroundColor) {
       this.backgroundColor = backgroundColor;
       return (T) this;
     }
 
-    public T alignment(Alignment horizontalAlignment, Alignment verticalAlignment) {
+    public T horizontalAlignment(Alignment horizontalAlignment) {
       this.horizontalAlignment = horizontalAlignment;
+      return (T) this;
+    }
+
+    public T verticalAlignment(Alignment verticalAlignment) {
       this.verticalAlignment = verticalAlignment;
       return (T) this;
     }

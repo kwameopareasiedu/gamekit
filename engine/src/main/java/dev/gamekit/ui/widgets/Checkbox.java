@@ -21,11 +21,12 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
   public static final BufferedImage TOGGLED_ICON =
     IO.getResourceImage("default-sprites.png", 646, 277, 32, 32);
 
-  protected Spacing ninePatchSpacing;
   protected BufferedImage defaultIcon;
   protected BufferedImage toggledIcon;
+  protected Spacing iconEdgeInsets;
+  protected Integer iconWidth;
+  protected Integer iconHeight;
   protected Integer gapSize;
-  protected Integer iconSize;
   protected Boolean toggled;
   protected ChangeEvent.Handler<Boolean> changeListener;
 
@@ -46,15 +47,14 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
 
   @Override
   public boolean stateEquals(Widget widget) {
-    if (widget instanceof Checkbox checkboxWidget)
-      return Objects.equals(ninePatchSpacing, checkboxWidget.ninePatchSpacing) &&
-        Objects.equals(defaultIcon, checkboxWidget.defaultIcon) &&
-        Objects.equals(toggledIcon, checkboxWidget.toggledIcon) &&
-        Objects.equals(gapSize, checkboxWidget.gapSize) &&
-        Objects.equals(iconSize, checkboxWidget.iconSize) &&
-        Objects.equals(toggled, checkboxWidget.toggled);
-
-    return false;
+    return widget instanceof Checkbox checkboxWidget &&
+      Objects.equals(defaultIcon, checkboxWidget.defaultIcon) &&
+      Objects.equals(toggledIcon, checkboxWidget.toggledIcon) &&
+      Objects.equals(iconEdgeInsets, checkboxWidget.iconEdgeInsets) &&
+      Objects.equals(iconWidth, checkboxWidget.iconWidth) &&
+      Objects.equals(iconHeight, checkboxWidget.iconHeight) &&
+      Objects.equals(gapSize, checkboxWidget.gapSize) &&
+      Objects.equals(toggled, checkboxWidget.toggled);
   }
 
   @Override
@@ -62,12 +62,13 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
     CheckboxConfig config = (CheckboxConfig) super.config;
     Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
 
-    this.ninePatchSpacing =
-      coalesce(config.ninePatchSpacing, theme.checkboxNinePatchSpacing, Spacing.create(8));
     this.defaultIcon = coalesce(config.defaultIcon, theme.checkboxDefaultIcon, DEFAULT_ICON);
     this.toggledIcon = coalesce(config.toggledIcon, theme.checkboxToggledIcon, TOGGLED_ICON);
+    this.iconEdgeInsets =
+      coalesce(config.iconEdgeInsets, theme.checkboxIconEdgeInsets, Spacing.create(8));
+    this.iconWidth = coalesce(config.iconWidth, theme.checkboxIconWidth, 24);
+    this.iconHeight = coalesce(config.iconHeight, theme.checkboxIconHeight, 24);
     this.gapSize = coalesce(config.gapSize, theme.checkboxGapSize, 12);
-    this.iconSize = coalesce(config.iconSize, theme.checkboxIconSize, 24);
     this.toggled = coalesce(config.value, false);
     this.changeListener = coalesce(config.changeListener, null);
 
@@ -78,14 +79,14 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
   protected void performLayout(Constraints constraints) {
     child.layout(
       new Constraints(
-        0, constraints.maxWidth() - iconSize - gapSize,
+        0, constraints.maxWidth() - iconWidth - gapSize,
         0, constraints.maxHeight()
       )
     );
 
     intrinsicBounds.setSize(
-      iconSize + gapSize + child.computedBounds.width,
-      Math.max(iconSize, child.computedBounds.height)
+      iconWidth + gapSize + child.computedBounds.width,
+      Math.max(iconHeight, child.computedBounds.height)
     );
 
     computedBounds.setSize(
@@ -94,15 +95,17 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
     );
 
     child.computedBounds.setPosition(
-      iconSize + gapSize,
-      child.computedBounds.height > iconSize ? 0 : (int) (0.5 * (iconSize - child.computedBounds.height))
+      iconWidth + gapSize,
+      child.computedBounds.height <= iconHeight 
+        ? (int) (0.5 * (iconHeight - child.computedBounds.height)) 
+        : 0
     );
   }
 
   @Override
   protected void performPostLayout() {
     super.performPostLayout();
-    iconAbsoluteBounds.set(absoluteBounds.x, absoluteBounds.y, iconSize, iconSize);
+    iconAbsoluteBounds.set(absoluteBounds.x, absoluteBounds.y, iconWidth, iconHeight);
   }
 
   @Override
@@ -113,7 +116,7 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
       icon = toggledIcon;
 
     if (icon != null)
-      renderWith9PatchScaling(icon, iconAbsoluteBounds, ninePatchSpacing, g);
+      renderWith9PatchScaling(icon, iconAbsoluteBounds, iconEdgeInsets, g);
   }
 
   @Override
@@ -130,32 +133,38 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
   }
 
   public static class CheckboxConfig extends SingleChildParentConfig {
-    protected Spacing ninePatchSpacing;
     protected BufferedImage defaultIcon;
     protected BufferedImage toggledIcon;
+    protected Spacing iconEdgeInsets;
+    protected Integer iconWidth;
+    protected Integer iconHeight;
     protected Integer gapSize;
-    protected Integer iconSize;
     protected Boolean value;
     protected ChangeEvent.Handler<Boolean> changeListener;
 
-    public CheckboxConfig ninePatchSpacing(Spacing ninePatchSpacing) {
-      this.ninePatchSpacing = ninePatchSpacing;
+    public CheckboxConfig defaultIcon(BufferedImage defaultIcon) {
+      this.defaultIcon = defaultIcon;
       return this;
     }
 
-    public CheckboxConfig icon(BufferedImage defaultIcon, BufferedImage toggledIcon) {
-      this.defaultIcon = defaultIcon;
+    public CheckboxConfig toggledIcon(BufferedImage toggledIcon) {
       this.toggledIcon = toggledIcon;
+      return this;
+    }
+
+    public CheckboxConfig iconEdgeInsets(Spacing iconEdgeInsets) {
+      this.iconEdgeInsets = iconEdgeInsets;
+      return this;
+    }
+
+    public CheckboxConfig iconSize(Integer iconWidth, Integer iconHeight) {
+      this.iconWidth = iconWidth;
+      this.iconHeight = iconHeight;
       return this;
     }
 
     public CheckboxConfig gapSize(Integer gapSize) {
       this.gapSize = gapSize;
-      return this;
-    }
-
-    public CheckboxConfig iconSize(Integer iconSize) {
-      this.iconSize = iconSize;
       return this;
     }
 

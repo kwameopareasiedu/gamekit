@@ -109,8 +109,7 @@ public class Image extends Leaf {
 
     ImageInterpolation originalInterpolation = ImageInterpolation.from(g);
 
-    if (interpolation != ImageInterpolation.DEFAULT)
-      interpolation.apply(g);
+    interpolation.apply(g);
 
     g.drawImage(
       image, (int) dx1, (int) dy1, (int) dx2, (int) dy2,

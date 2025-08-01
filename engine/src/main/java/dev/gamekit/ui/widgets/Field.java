@@ -24,9 +24,9 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
   public static final BufferedImage FOCUS_BG =
     IO.getResourceImage("default-sprites.png", 646, 135, 96, 32);
 
-  protected Spacing ninePatchSpacing;
   protected BufferedImage defaultBackground;
   protected BufferedImage focusBackground;
+  protected Spacing edgeInsets;
   protected Spacing padding;
   protected FocusEvent.Handler focusListener;
   protected KeyCharEvent.Handler keyCharListener;
@@ -52,14 +52,12 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
 
   @Override
   public boolean stateEquals(Widget widget) {
-    if (widget instanceof Field fieldWidget)
-      return super.stateEquals(widget) &&
-        Objects.equals(ninePatchSpacing, fieldWidget.ninePatchSpacing) &&
-        Objects.equals(defaultBackground, fieldWidget.defaultBackground) &&
-        Objects.equals(focusBackground, fieldWidget.focusBackground) &&
-        Objects.equals(padding, fieldWidget.padding);
-
-    return false;
+    return widget instanceof Field fieldWidget &&
+      super.stateEquals(widget) &&
+      Objects.equals(defaultBackground, fieldWidget.defaultBackground) &&
+      Objects.equals(focusBackground, fieldWidget.focusBackground) &&
+      Objects.equals(edgeInsets, fieldWidget.edgeInsets) &&
+      Objects.equals(padding, fieldWidget.padding);
   }
 
   @Override
@@ -69,9 +67,9 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
     FieldConfig config = (FieldConfig) super.config;
     Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
 
-    foregroundColor = coalesce(config.foregroundColor, theme.textForegroundColor, Color.BLACK);
-    ninePatchSpacing =
-      coalesce(config.ninePatchSpacing, theme.fieldNinePatchSpacing, Spacing.create(2));
+    color = coalesce(config.color, theme.textForegroundColor, Color.BLACK);
+    edgeInsets =
+      coalesce(config.edgeInsets, theme.fieldEdgeInsets, Spacing.create(2));
     defaultBackground = coalesce(config.defaultBackground, theme.fieldDefaultBackground, DEFAULT_BG);
     focusBackground = coalesce(config.focusBackground, theme.fieldFocusBackground, FOCUS_BG);
     padding = coalesce(config.padding, theme.fieldPadding, Spacing.create());
@@ -125,7 +123,7 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
       background = focusBackground;
 
     if (background != null)
-      renderWith9PatchScaling(background, absoluteBounds, ninePatchSpacing, g);
+      renderWith9PatchScaling(background, absoluteBounds, edgeInsets, g);
 
     tempAbsoluteBounds.set(absoluteBounds);
     absoluteBounds.set(contentAbsoluteBounds);
@@ -167,22 +165,26 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
   }
 
   public static class FieldConfig extends TextConfig<FieldConfig> {
-    protected Spacing ninePatchSpacing;
     protected BufferedImage defaultBackground;
     protected BufferedImage focusBackground;
+    protected Spacing edgeInsets;
     protected Spacing padding;
     protected FocusEvent.Handler focusListener;
     protected KeyCharEvent.Handler keyCharListener;
     protected ChangeEvent.Handler<String> changeListener;
 
-    public FieldConfig ninePatchSpacing(Spacing ninePatchSpacing) {
-      this.ninePatchSpacing = ninePatchSpacing;
+    public FieldConfig defaultBackground(BufferedImage defaultBackground) {
+      this.defaultBackground = defaultBackground;
       return this;
     }
 
-    public FieldConfig background(BufferedImage defaultBackground, BufferedImage focusBackground) {
-      this.defaultBackground = defaultBackground;
+    public FieldConfig focusBackground(BufferedImage focusBackground) {
       this.focusBackground = focusBackground;
+      return this;
+    }
+
+    public FieldConfig edgeInsets(Spacing edgeInsets) {
+      this.edgeInsets = edgeInsets;
       return this;
     }
 

@@ -20,12 +20,10 @@ public abstract class Flex extends MultiChildParent {
 
   @Override
   public boolean stateEquals(Widget widget) {
-    if (widget instanceof Flex flexWidget)
-      return Objects.equals(gapSize, flexWidget.gapSize) &&
-        Objects.equals(mainAxisAlignment, flexWidget.mainAxisAlignment) &&
-        Objects.equals(crossAxisAlignment, flexWidget.crossAxisAlignment);
-
-    return false;
+    return widget instanceof Flex flexWidget &&
+      Objects.equals(gapSize, flexWidget.gapSize) &&
+      Objects.equals(mainAxisAlignment, flexWidget.mainAxisAlignment) &&
+      Objects.equals(crossAxisAlignment, flexWidget.crossAxisAlignment);
   }
 
   @Override

@@ -21,13 +21,13 @@ public class Progress extends Leaf implements NinePatch {
 
   protected BufferedImage trackBackground;
   protected BufferedImage fillBackground;
-  protected Spacing trackNinePatchSpacing;
-  protected Spacing fillNinePatchSpacing;
+  protected Spacing trackEdgeInsets;
+  protected Spacing fillEdgeInsets;
   protected Spacing fillMargin;
   protected FillMode fillMode;
   protected Double minValue;
   protected Double maxValue;
-  protected double value;
+  protected Double value;
 
   private final Bounds fillAbsoluteBounds;
   private double valueRatio = 0;
@@ -50,8 +50,8 @@ public class Progress extends Leaf implements NinePatch {
     return widget instanceof Progress progressWidget &&
       Objects.equals(trackBackground, progressWidget.trackBackground) &&
       Objects.equals(fillBackground, progressWidget.fillBackground) &&
-      Objects.equals(trackNinePatchSpacing, progressWidget.trackNinePatchSpacing) &&
-      Objects.equals(fillNinePatchSpacing, progressWidget.fillNinePatchSpacing) &&
+      Objects.equals(trackEdgeInsets, progressWidget.trackEdgeInsets) &&
+      Objects.equals(fillEdgeInsets, progressWidget.fillEdgeInsets) &&
       Objects.equals(fillMargin, progressWidget.fillMargin) &&
       Objects.equals(fillMode, progressWidget.fillMode) &&
       Objects.equals(minValue, progressWidget.minValue) &&
@@ -77,12 +77,15 @@ public class Progress extends Leaf implements NinePatch {
     else if (config.value < config.minValue || config.value > config.maxValue)
       throw new IllegalArgumentException("Progress value must be between minValue and maxValue");
 
-    this.trackBackground = coalesce(config.trackBackground, TRACK_BG);
-    this.fillBackground = coalesce(config.fillBackground, FILL_BG);
-    this.trackNinePatchSpacing = coalesce(config.trackNinePatchSpacing, Spacing.create(8));
-    this.fillNinePatchSpacing = coalesce(config.fillNinePatchSpacing, Spacing.create(8));
-    this.fillMargin = coalesce(config.fillMargin, Spacing.create(0));
-    this.fillMode = coalesce(config.fillMode, FillMode.SCALE);
+    this.trackBackground =
+      coalesce(config.trackBackground, theme.progressTrackBackground, TRACK_BG);
+    this.fillBackground = coalesce(config.fillBackground, theme.progressFillBackground, FILL_BG);
+    this.trackEdgeInsets =
+      coalesce(config.trackEdgeInsets, theme.progressTrackEdgeInsets, Spacing.create(8));
+    this.fillEdgeInsets =
+      coalesce(config.fillEdgeInsets, theme.progressFillEdgeInsets, Spacing.create(8));
+    this.fillMargin = coalesce(config.fillMargin, theme.progressFillMargin, Spacing.create(0));
+    this.fillMode = coalesce(config.fillMode, theme.progressFillMode, FillMode.SCALE);
     this.minValue = coalesce(config.minValue);
     this.maxValue = coalesce(config.maxValue);
     this.value = coalesce(config.value);
@@ -120,7 +123,7 @@ public class Progress extends Leaf implements NinePatch {
   @Override
   protected void performRender(Graphics2D g) {
     if (trackBackground != null)
-      renderWith9PatchScaling(trackBackground, absoluteBounds, trackNinePatchSpacing, g);
+      renderWith9PatchScaling(trackBackground, absoluteBounds, trackEdgeInsets, g);
 
     if (fillBackground != null && isFillVisible()) {
       Shape originalClip = g.getClip();
@@ -139,7 +142,7 @@ public class Progress extends Leaf implements NinePatch {
           case SCALE -> fillAbsoluteBounds;
           case CLIP -> absoluteBounds;
         },
-        fillNinePatchSpacing, g
+        fillEdgeInsets, g
       );
 
       if (fillMode == FillMode.CLIP)
@@ -156,8 +159,8 @@ public class Progress extends Leaf implements NinePatch {
   public static class ProgressConfig<T extends ProgressConfig<T>> extends LeafConfig {
     protected BufferedImage trackBackground;
     protected BufferedImage fillBackground;
-    protected Spacing trackNinePatchSpacing;
-    protected Spacing fillNinePatchSpacing;
+    protected Spacing trackEdgeInsets;
+    protected Spacing fillEdgeInsets;
     protected Spacing fillMargin;
     protected FillMode fillMode;
     protected Double minValue;
@@ -175,20 +178,28 @@ public class Progress extends Leaf implements NinePatch {
       return (T) this;
     }
 
-    public T track(BufferedImage trackBackground, Spacing trackNinePatchSpacing) {
+    public T trackBackground(BufferedImage trackBackground) {
       this.trackBackground = trackBackground;
-      this.trackNinePatchSpacing = trackNinePatchSpacing;
+      return (T) this;
+    }
+
+    public T trackEdgeInsets(Spacing trackEdgeInsets) {
+      this.trackEdgeInsets = trackEdgeInsets;
+      return (T) this;
+    }
+
+    public T fillBackground(BufferedImage fillBackground) {
+      this.fillBackground = fillBackground;
+      return (T) this;
+    }
+
+    public T fillEdgeInsets(Spacing fillEdgeInsets) {
+      this.fillEdgeInsets = fillEdgeInsets;
       return (T) this;
     }
 
     public T fillMargin(Spacing fillMargin) {
       this.fillMargin = fillMargin;
-      return (T) this;
-    }
-
-    public T fill(BufferedImage fillBackground, Spacing fillNinePatchSpacing) {
-      this.fillBackground = fillBackground;
-      this.fillNinePatchSpacing = fillNinePatchSpacing;
       return (T) this;
     }
 

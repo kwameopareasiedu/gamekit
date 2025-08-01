@@ -12,16 +12,13 @@ import java.util.Objects;
 
 import static dev.gamekit.utils.Misc.coalesce;
 
-/**
- * A {@link SingleChildParent} which uses the 9-patch algorithm to render a {@link BufferedImage}
- * as a background to its descendants
- */
+/** A {@link SingleChildParent} which uses the 9-patch algorithm to render a background */
 public class Panel extends SingleChildParent implements NinePatch, MouseEvent.Handler {
   public static final BufferedImage DEFAULT_BG =
     IO.getResourceImage("default-sprites.png", 470, 64, 120, 120);
 
   protected BufferedImage background;
-  protected Spacing ninePatchSpacing;
+  protected Spacing edgeInsets;
 
   public Panel(PanelConfig config, Widget child) {
     super(config, child);
@@ -37,19 +34,18 @@ public class Panel extends SingleChildParent implements NinePatch, MouseEvent.Ha
 
   @Override
   public boolean stateEquals(Widget widget) {
-    if (widget instanceof Panel panelWidget)
-      return Objects.equals(background, panelWidget.background)
-        && Objects.equals(ninePatchSpacing, panelWidget.ninePatchSpacing);
-
-    return false;
+    return widget instanceof Panel panelWidget &&
+      Objects.equals(background, panelWidget.background)
+      && Objects.equals(edgeInsets, panelWidget.edgeInsets);
   }
 
   @Override
   protected void performInit() {
     PanelConfig config = (PanelConfig) super.config;
+    Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
 
-    this.background = coalesce(config.background, DEFAULT_BG);
-    this.ninePatchSpacing = coalesce(config.ninePatchSpacing, new Spacing());
+    this.background = coalesce(config.background, theme.panelBackground, DEFAULT_BG);
+    this.edgeInsets = coalesce(config.edgeInsets, theme.panelEdgeInsets, new Spacing());
 
     super.performInit();
   }
@@ -80,12 +76,7 @@ public class Panel extends SingleChildParent implements NinePatch, MouseEvent.Ha
   public void renderAppearance(Graphics2D g) {
     super.renderAppearance(g);
 
-    renderWith9PatchScaling(
-      background,
-      absoluteBounds,
-      ninePatchSpacing,
-      g
-    );
+    renderWith9PatchScaling(background, absoluteBounds, edgeInsets, g);
   }
 
   @Override
@@ -95,30 +86,15 @@ public class Panel extends SingleChildParent implements NinePatch, MouseEvent.Ha
 
   public static class PanelConfig extends SingleChildParentConfig {
     protected BufferedImage background;
-    protected Spacing ninePatchSpacing;
+    protected Spacing edgeInsets;
 
     public PanelConfig background(BufferedImage background) {
       this.background = background;
       return this;
     }
 
-    public PanelConfig ninePatchSpacing(Spacing ninePatchSpacing) {
-      this.ninePatchSpacing = ninePatchSpacing;
-      return this;
-    }
-
-    public PanelConfig ninePatch(int all) {
-      this.ninePatchSpacing = new Spacing(all);
-      return this;
-    }
-
-    public PanelConfig ninePatch(int horizontal, int vertical) {
-      this.ninePatchSpacing = new Spacing(horizontal, vertical);
-      return this;
-    }
-
-    public PanelConfig ninePatch(int top, int right, int bottom, int left) {
-      this.ninePatchSpacing = new Spacing(top, right, bottom, left);
+    public PanelConfig edgeInsets(Spacing edgeInsets) {
+      this.edgeInsets = edgeInsets;
       return this;
     }
   }

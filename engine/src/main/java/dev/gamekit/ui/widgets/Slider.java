@@ -19,7 +19,8 @@ public class Slider extends Progress implements NinePatch {
 
   protected BufferedImage thumbBackground;
   protected Spacing thumbEdgeInsets;
-  protected Integer thumbSize;
+  protected Integer thumbWidth;
+  protected Integer thumbHeight;
 
   private final Bounds thumbAbsoluteBounds;
   private double valueRatio = 0;
@@ -42,7 +43,8 @@ public class Slider extends Progress implements NinePatch {
     return widget instanceof Slider sliderWidget && super.stateEquals(widget) &&
       Objects.equals(thumbBackground, sliderWidget.thumbBackground) &&
       Objects.equals(thumbEdgeInsets, sliderWidget.thumbEdgeInsets) &&
-      Objects.equals(thumbSize, sliderWidget.thumbSize);
+      Objects.equals(thumbWidth, sliderWidget.thumbWidth) &&
+      Objects.equals(thumbHeight, sliderWidget.thumbHeight);
   }
 
   @Override
@@ -52,9 +54,11 @@ public class Slider extends Progress implements NinePatch {
     SliderConfig config = (SliderConfig) super.config;
     Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
 
-    this.thumbBackground = coalesce(config.thumbBackground, THUMB_BG);
-    this.thumbEdgeInsets = coalesce(config.thumbEdgeInsets, Spacing.create(8));
-    this.thumbSize = coalesce(config.thumbSize, 32);
+    this.thumbBackground = coalesce(config.thumbBackground, theme.sliderThumbBackground, THUMB_BG);
+    this.thumbEdgeInsets =
+      coalesce(config.thumbEdgeInsets, theme.sliderThumbEdgeInsets, Spacing.create(8));
+    this.thumbWidth = coalesce(config.thumbWidth, theme.sliderThumbWidth, 32);
+    this.thumbHeight = coalesce(config.thumbHeight, theme.sliderThumbHeight, 32);
 
     valueRatio = (value - minValue) / (maxValue - minValue);
   }
@@ -66,8 +70,8 @@ public class Slider extends Progress implements NinePatch {
     intrinsicBounds.setSize(
       constraints.maxWidth(),
       trackBackground != null
-        ? Math.max(trackBackground.getHeight(), thumbSize)
-        : thumbSize
+        ? Math.max(trackBackground.getHeight(), thumbHeight)
+        : thumbHeight
     );
 
     computedBounds.setSize(
@@ -78,11 +82,11 @@ public class Slider extends Progress implements NinePatch {
 
   @Override
   protected void performPostLayout() {
-    double relativeThumbX = valueRatio * (absoluteBounds.width - thumbSize);
+    double relativeThumbX = valueRatio * (absoluteBounds.width - thumbWidth);
 
     thumbAbsoluteBounds.set(
       absoluteBounds.x + relativeThumbX, absoluteBounds.y,
-      thumbSize, thumbSize
+      thumbWidth, thumbHeight
     );
 
     super.performPostLayout();
@@ -98,13 +102,14 @@ public class Slider extends Progress implements NinePatch {
 
   @Override
   protected boolean isFillVisible() {
-    return valueRatio * absoluteBounds.width > 0.5 * thumbSize;
+    return valueRatio * absoluteBounds.width > 0.5 * thumbWidth;
   }
 
   public static class SliderConfig extends ProgressConfig<SliderConfig> {
     protected BufferedImage thumbBackground;
     protected Spacing thumbEdgeInsets;
-    protected Integer thumbSize;
+    protected Integer thumbWidth;
+    protected Integer thumbHeight;
 
     public SliderConfig thumbBackground(BufferedImage thumbBackground) {
       this.thumbBackground = thumbBackground;
@@ -116,8 +121,9 @@ public class Slider extends Progress implements NinePatch {
       return this;
     }
 
-    public SliderConfig thumbSize(int thumbSize) {
-      this.thumbSize = thumbSize;
+    public SliderConfig thumbSize(int thumbWidth, int thumbHeight) {
+      this.thumbWidth = thumbWidth;
+      this.thumbHeight = thumbHeight;
       return this;
     }
   }

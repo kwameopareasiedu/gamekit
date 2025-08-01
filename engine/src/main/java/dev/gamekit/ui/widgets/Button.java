@@ -21,10 +21,10 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
   public static final BufferedImage PRESSED_BG =
     IO.getResourceImage("default-sprites.png", 64, 400, 350, 120);
 
-  protected Spacing ninePatchSpacing;
   protected BufferedImage defaultBackground;
   protected BufferedImage hoverBackground;
   protected BufferedImage pressedBackground;
+  protected Spacing edgeInsets;
   protected MouseEvent.Handler mouseListener;
   protected boolean mouseEntered;
   protected boolean mousePressed;
@@ -43,13 +43,11 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
 
   @Override
   public boolean stateEquals(Widget widget) {
-    if (widget instanceof Button buttonWidget)
-      return Objects.equals(ninePatchSpacing, buttonWidget.ninePatchSpacing) &&
-        Objects.equals(defaultBackground, buttonWidget.defaultBackground) &&
-        Objects.equals(hoverBackground, buttonWidget.hoverBackground) &&
-        Objects.equals(pressedBackground, buttonWidget.pressedBackground);
-
-    return false;
+    return widget instanceof Button buttonWidget &&
+      Objects.equals(defaultBackground, buttonWidget.defaultBackground) &&
+      Objects.equals(hoverBackground, buttonWidget.hoverBackground) &&
+      Objects.equals(pressedBackground, buttonWidget.pressedBackground) &&
+      Objects.equals(edgeInsets, buttonWidget.edgeInsets);
   }
 
   @Override
@@ -57,8 +55,8 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
     ButtonConfig config = (ButtonConfig) super.config;
     Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
 
-    this.ninePatchSpacing =
-      coalesce(config.ninePatchSpacing, theme.buttonNinePatchSpacing, Spacing.create(24));
+    this.edgeInsets =
+      coalesce(config.edgeInsets, theme.buttonEdgeInsets, Spacing.create(24));
     this.defaultBackground =
       coalesce(config.defaultBackground, theme.buttonDefaultBackground, DEFAULT_BG);
     this.hoverBackground =
@@ -101,8 +99,8 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
     else if (mouseEntered)
       bgImage = hoverBackground;
 
-    if (bgImage != null && ninePatchSpacing != null)
-      renderWith9PatchScaling(bgImage, absoluteBounds, ninePatchSpacing, g);
+    if (bgImage != null && edgeInsets != null)
+      renderWith9PatchScaling(bgImage, absoluteBounds, edgeInsets, g);
   }
 
   @Override
@@ -124,25 +122,29 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
   }
 
   public static class ButtonConfig extends SingleChildParentConfig {
-    protected Spacing ninePatchSpacing;
     protected BufferedImage defaultBackground;
     protected BufferedImage hoverBackground;
     protected BufferedImage pressedBackground;
+    protected Spacing edgeInsets;
     protected MouseEvent.Handler mouseListener;
 
-    public ButtonConfig ninePatchSpacing(Spacing ninePatchSpacing) {
-      this.ninePatchSpacing = ninePatchSpacing;
+    public ButtonConfig defaultBackground(BufferedImage defaultBackground) {
+      this.defaultBackground = defaultBackground;
       return this;
     }
 
-    public ButtonConfig background(
-      BufferedImage defaultBackground,
-      BufferedImage hoverBackground,
-      BufferedImage pressedBackground
-    ) {
-      this.defaultBackground = defaultBackground;
+    public ButtonConfig hoverBackground(BufferedImage hoverBackground) {
       this.hoverBackground = hoverBackground;
+      return this;
+    }
+
+    public ButtonConfig pressedBackground(BufferedImage pressedBackground) {
       this.pressedBackground = pressedBackground;
+      return this;
+    }
+
+    public ButtonConfig edgeInsets(Spacing edgeInsets) {
+      this.edgeInsets = edgeInsets;
       return this;
     }
 
