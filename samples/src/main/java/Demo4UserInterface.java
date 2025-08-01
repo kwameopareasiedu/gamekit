@@ -36,7 +36,7 @@ public class Demo4UserInterface extends Scene {
 
   private String fieldValue = "Hello";
   private boolean checkboxValue = false;
-  private double sliderValue = 100;
+  private double sliderValue = 65;
 
   public Demo4UserInterface() {
     super("Main Scene");
@@ -111,8 +111,8 @@ public class Demo4UserInterface extends Scene {
               Sized.create(
                 Sized.config().width(256).intrinsicHeight(),
                 Slider.create(
-                  Slider.config().range(0, 100).fillMode(Slider.FillMode.SCALE).
-                    background(null, null, THUMB).ninePatchSpacing(null, null, Spacing.create(10)),
+                  Slider.config().range(0, 100).fillMode(Slider.FillMode.SCALE)
+                    .thumbBackground(THUMB).thumbEdgeInsets(Spacing.create(10)),
                   sliderValue
                 )
               ),

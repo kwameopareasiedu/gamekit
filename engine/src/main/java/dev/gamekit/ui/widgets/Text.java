@@ -21,15 +21,15 @@ public class Text extends Leaf {
 
   protected String text;
   protected Font font;
-  protected int fontSize;
-  protected int fontStyle;
+  protected Integer fontSize;
+  protected Integer fontStyle;
   protected Color foregroundColor;
   protected Color backgroundColor;
   protected Alignment horizontalAlignment;
   protected Alignment verticalAlignment;
-  protected boolean shadowEnabled;
-  protected int shadowOffsetX;
-  protected int shadowOffsetY;
+  protected Boolean shadowEnabled;
+  protected Integer shadowOffsetX;
+  protected Integer shadowOffsetY;
   protected Color shadowColor;
 
   private Font renderFont;
@@ -264,8 +264,8 @@ public class Text extends Leaf {
       return font(fontSize, fontStyle, null);
     }
 
-    public T color(Color color, Color backgroundColor) {
-      this.foregroundColor = color;
+    public T color(Color foregroundColor, Color backgroundColor) {
+      this.foregroundColor = foregroundColor;
       this.backgroundColor = backgroundColor;
       return (T) this;
     }

@@ -32,38 +32,38 @@ public class Progress extends Leaf implements NinePatch {
   private final Bounds fillAbsoluteBounds;
   private double valueRatio = 0;
 
-  public Progress(ProgressConfig config, Double value) {
+  public Progress(ProgressConfig<?> config, Double value) {
     super(config.value(value));
     fillAbsoluteBounds = new Bounds();
   }
 
-  public static Progress create(ProgressConfig config, double value) {
+  public static Progress create(ProgressConfig<?> config, double value) {
     return new Progress(config, value);
   }
 
-  public static ProgressConfig config() {
-    return new ProgressConfig();
+  public static ProgressConfig<?> config() {
+    return new ProgressConfig<>();
   }
 
   @Override
   public boolean stateEquals(Widget widget) {
-    return widget instanceof Progress sliderWidget &&
-      Objects.equals(trackBackground, sliderWidget.trackBackground) &&
-      Objects.equals(fillBackground, sliderWidget.fillBackground) &&
-      Objects.equals(trackNinePatchSpacing, sliderWidget.trackNinePatchSpacing) &&
-      Objects.equals(fillNinePatchSpacing, sliderWidget.fillNinePatchSpacing) &&
-      Objects.equals(fillMargin, sliderWidget.fillMargin) &&
-      Objects.equals(fillMode, sliderWidget.fillMode) &&
-      Objects.equals(minValue, sliderWidget.minValue) &&
-      Objects.equals(maxValue, sliderWidget.maxValue) &&
-      Objects.equals(value, sliderWidget.value);
+    return widget instanceof Progress progressWidget &&
+      Objects.equals(trackBackground, progressWidget.trackBackground) &&
+      Objects.equals(fillBackground, progressWidget.fillBackground) &&
+      Objects.equals(trackNinePatchSpacing, progressWidget.trackNinePatchSpacing) &&
+      Objects.equals(fillNinePatchSpacing, progressWidget.fillNinePatchSpacing) &&
+      Objects.equals(fillMargin, progressWidget.fillMargin) &&
+      Objects.equals(fillMode, progressWidget.fillMode) &&
+      Objects.equals(minValue, progressWidget.minValue) &&
+      Objects.equals(maxValue, progressWidget.maxValue) &&
+      Objects.equals(value, progressWidget.value);
   }
 
   @Override
   protected void performInit() {
     super.performInit();
 
-    ProgressConfig config = (ProgressConfig) super.config;
+    ProgressConfig<?> config = (ProgressConfig<?>) super.config;
     Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
 
     if (config.value == null)
@@ -152,7 +152,8 @@ public class Progress extends Leaf implements NinePatch {
     return true;
   }
 
-  public static class ProgressConfig extends LeafConfig {
+  @SuppressWarnings("unchecked")
+  public static class ProgressConfig<T extends ProgressConfig<T>> extends LeafConfig {
     protected BufferedImage trackBackground;
     protected BufferedImage fillBackground;
     protected Spacing trackNinePatchSpacing;
@@ -163,37 +164,37 @@ public class Progress extends Leaf implements NinePatch {
     protected Double maxValue;
     protected Double value;
 
-    private ProgressConfig value(double value) {
+    private T value(double value) {
       this.value = value;
-      return this;
+      return (T) this;
     }
 
-    public ProgressConfig range(double minValue, double maxValue) {
+    public T range(double minValue, double maxValue) {
       this.minValue = minValue;
       this.maxValue = maxValue;
-      return this;
+      return (T) this;
     }
 
-    public ProgressConfig track(BufferedImage trackBackground, Spacing trackNinePatchSpacing) {
+    public T track(BufferedImage trackBackground, Spacing trackNinePatchSpacing) {
       this.trackBackground = trackBackground;
       this.trackNinePatchSpacing = trackNinePatchSpacing;
-      return this;
+      return (T) this;
     }
 
-    public ProgressConfig fillMargin(Spacing fillMargin) {
+    public T fillMargin(Spacing fillMargin) {
       this.fillMargin = fillMargin;
-      return this;
+      return (T) this;
     }
 
-    public ProgressConfig fill(BufferedImage fillBackground, Spacing fillNinePatchSpacing) {
+    public T fill(BufferedImage fillBackground, Spacing fillNinePatchSpacing) {
       this.fillBackground = fillBackground;
       this.fillNinePatchSpacing = fillNinePatchSpacing;
-      return this;
+      return (T) this;
     }
 
-    public ProgressConfig fillMode(FillMode fillMode) {
+    public T fillMode(FillMode fillMode) {
       this.fillMode = fillMode;
-      return this;
+      return (T) this;
     }
   }
 
