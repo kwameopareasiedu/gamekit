@@ -96,8 +96,8 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
 
     child.computedBounds.setPosition(
       iconWidth + gapSize,
-      child.computedBounds.height <= iconHeight 
-        ? (int) (0.5 * (iconHeight - child.computedBounds.height)) 
+      child.computedBounds.height <= iconHeight
+        ? iconHeight / 2.0 - child.computedBounds.height / 2.0
         : 0
     );
   }
@@ -105,7 +105,9 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
   @Override
   protected void performPostLayout() {
     super.performPostLayout();
-    iconAbsoluteBounds.set(absoluteBounds.x, absoluteBounds.y, iconWidth, iconHeight);
+
+    double iconPositionY = absoluteBounds.y + (absoluteBounds.height / 2.0 - iconHeight / 2.0);
+    iconAbsoluteBounds.set(absoluteBounds.x, iconPositionY, iconWidth, iconHeight);
   }
 
   @Override

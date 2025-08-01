@@ -105,7 +105,7 @@ public class Demo4UserInterface extends Scene {
                     updateUI();
                   }),
                 Text.create(
-                  Text.config().fontSize(20).fontStyle(Text.PLAIN),
+                  Text.config().fontSize(32).fontStyle(Text.PLAIN),
                   "Active"
                 )
               ),

@@ -24,9 +24,11 @@
 ### Added
 
 - Added `Field` widget which is a `Text` widget extension which accepts text input
-- Added `Checkbox` widget which is a `SingleChildParent` input component which toggles between two 
+- Added `Checkbox` widget which is a `SingleChildParent` input component which toggles between two
   states
 - Added `Progress` widget which is a `Leaf` widget which displays a progress bar
+- Added `Slider` widget which is a `Progress` widget extension which adjusts a value by moving a
+  slider
 
 ### Changed
 
