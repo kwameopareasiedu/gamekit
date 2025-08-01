@@ -3,17 +3,21 @@ package dev.gamekit.ui.widgets;
 import dev.gamekit.core.IO;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Spacing;
+import dev.gamekit.ui.events.ChangeEvent;
+import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.mixins.NinePatch;
 import dev.gamekit.utils.Bounds;
+import dev.gamekit.utils.Position;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
+import static dev.gamekit.utils.Math.clamp;
 import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link Progress} widget extension which adjusts a value by moving a slider */
-public class Slider extends Progress implements NinePatch {
+public class Slider extends Progress implements NinePatch, MouseEvent.Handler {
   public static final BufferedImage THUMB_BG =
     IO.getResourceImage("default-sprites.png", 470, 346, 32, 32);
 
@@ -21,13 +25,17 @@ public class Slider extends Progress implements NinePatch {
   protected Spacing thumbEdgeInsets;
   protected Integer thumbWidth;
   protected Integer thumbHeight;
+  protected ChangeEvent.Handler<Double> changeListener;
 
   private final Bounds thumbAbsoluteBounds;
+  private final Position lastMousePosition;
+  private boolean mouseDown = false;
   private double valueRatio = 0;
 
   public Slider(SliderConfig config, Double value) {
     super(config, value);
     thumbAbsoluteBounds = new Bounds();
+    lastMousePosition = new Position();
   }
 
   public static Slider create(SliderConfig config, double value) {
@@ -59,6 +67,7 @@ public class Slider extends Progress implements NinePatch {
       coalesce(config.thumbEdgeInsets, theme.sliderThumbEdgeInsets, new Spacing(8));
     this.thumbWidth = coalesce(config.thumbWidth, theme.sliderThumbWidth, 32);
     this.thumbHeight = coalesce(config.thumbHeight, theme.sliderThumbHeight, 32);
+    this.changeListener = coalesce(config.changeListener, null);
 
     valueRatio = (value - minValue) / (maxValue - minValue);
   }
@@ -82,14 +91,14 @@ public class Slider extends Progress implements NinePatch {
 
   @Override
   protected void performPostLayout() {
+    super.performPostLayout();
+
     double relativeThumbX = valueRatio * (absoluteBounds.width - thumbWidth);
 
     thumbAbsoluteBounds.set(
       absoluteBounds.x + relativeThumbX, absoluteBounds.y,
       thumbWidth, thumbHeight
     );
-
-    super.performPostLayout();
   }
 
   @Override
@@ -101,8 +110,31 @@ public class Slider extends Progress implements NinePatch {
   }
 
   @Override
-  protected boolean isFillVisible() {
-    return valueRatio * absoluteBounds.width > 0.5 * thumbWidth;
+  public void handleEvent(MouseEvent ev) {
+    switch (ev.type) {
+      case MOTION -> {
+        if (mouseDown && changeListener != null) {
+          double pixelDelta = ev.x - lastMousePosition.x;
+          double valueDelta = pixelDelta / absoluteBounds.width * (maxValue - minValue);
+          double newValue = clamp(value + valueDelta, minValue, maxValue);
+          changeListener.handleEvent(new ChangeEvent<>(newValue));
+        }
+
+        lastMousePosition.set(ev.x, ev.y);
+      }
+      case DOWN -> {
+        if (changeListener != null) {
+          double pixelDelta = ev.x - absoluteBounds.x;
+          double instantValue = pixelDelta / absoluteBounds.width * (maxValue - minValue);
+          double newValue = clamp(instantValue, minValue, maxValue);
+          changeListener.handleEvent(new ChangeEvent<>(newValue));
+        }
+
+        lastMousePosition.set(ev.x, ev.y);
+        mouseDown = true;
+      }
+      case RELEASE -> mouseDown = false;
+    }
   }
 
   public static class SliderConfig extends ProgressConfig<SliderConfig> {
@@ -110,6 +142,7 @@ public class Slider extends Progress implements NinePatch {
     protected Spacing thumbEdgeInsets;
     protected Integer thumbWidth;
     protected Integer thumbHeight;
+    protected ChangeEvent.Handler<Double> changeListener;
 
     public SliderConfig thumbBackground(BufferedImage thumbBackground) {
       this.thumbBackground = thumbBackground;
@@ -124,6 +157,11 @@ public class Slider extends Progress implements NinePatch {
     public SliderConfig thumbSize(int thumbWidth, int thumbHeight) {
       this.thumbWidth = thumbWidth;
       this.thumbHeight = thumbHeight;
+      return this;
+    }
+
+    public SliderConfig changeListener(ChangeEvent.Handler<Double> changeListener) {
+      this.changeListener = changeListener;
       return this;
     }
   }

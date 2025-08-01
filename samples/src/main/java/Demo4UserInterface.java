@@ -45,8 +45,8 @@ public class Demo4UserInterface extends Scene {
     Application game = new Application(
       new Settings(
         "Demo 4 - Declarative UI",
-        Resolution.NATIVE,
-        WindowMode.FULLSCREEN,
+        Resolution.HD,
+        WindowMode.WINDOWED,
         Antialiasing.ON,
         TextAntialiasing.ON,
         AlphaInterpolation.SPEED,
@@ -110,8 +110,12 @@ public class Demo4UserInterface extends Scene {
               Sized.create(
                 Sized.config().width(256).intrinsicHeight(),
                 Slider.create(
-                  Slider.config().range(0, 100).fillMode(Slider.FillMode.SCALE)
-                    .thumbBackground(THUMB).thumbEdgeInsets(10, 10, 10, 10),
+                  Slider.config().range(0, 100).fillMode(Slider.FillMode.CLIP)
+                    .thumbBackground(THUMB).thumbEdgeInsets(10, 10, 10, 10)
+                    .changeListener(e -> {
+                      sliderValue = e.value;
+                      updateUI();
+                    }),
                   sliderValue
                 )
               ),
