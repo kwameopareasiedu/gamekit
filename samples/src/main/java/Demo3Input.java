@@ -61,11 +61,11 @@ public class Demo3Input extends Scene {
   @Override
   protected Widget createUI() {
     return Align.create(
-      Align.config().alignment(Alignment.CENTER, Alignment.END),
+      Align.config().horizontalAlignment(Alignment.CENTER).verticalAlignment(Alignment.END),
       Padding.create(
         Padding.config().padding(Spacing.create(48)),
         Text.create(
-          Text.config().alignment(Alignment.CENTER, Alignment.CENTER),
+          Text.config().horizontalAlignment(Alignment.CENTER).verticalAlignment(Alignment.CENTER),
           "Click the Left Mouse Button or press the Space Bar to change color"
         )
       )

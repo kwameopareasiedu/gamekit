@@ -96,11 +96,11 @@ public class Playground extends Scene {
         .crossAxisAlignment(CrossAxisAlignment.STRETCH)
         .gapSize(24),
       Text.create(
-        Text.config().alignment(Alignment.CENTER, Alignment.CENTER),
+        Text.config().horizontalAlignment(Alignment.CENTER),
         "Press the Space Bar to play/restart the audio"
       ),
       Text.create(
-        Text.config().alignment(Alignment.CENTER, Alignment.CENTER),
+        Text.config().horizontalAlignment(Alignment.CENTER),
         "Move the mouse from left to right to pan the audio"
       ),
       Row.create(

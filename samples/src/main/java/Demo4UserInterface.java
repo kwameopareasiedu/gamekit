@@ -66,7 +66,7 @@ public class Demo4UserInterface extends Scene {
       Image.create(BACKDROP),
 
       Align.create(
-        Align.config().alignment(Alignment.START, Alignment.START),
+        Align.config(),
         Padding.create(
           Padding.config().padding(Spacing.create(24, 0)),
           Sized.create(
@@ -77,11 +77,11 @@ public class Demo4UserInterface extends Scene {
       ),
 
       Align.create(
-        Align.config().alignment(Alignment.START, Alignment.CENTER),
+        Align.config().verticalAlignment(Alignment.CENTER),
         Padding.create(
           Padding.config().padding(Spacing.create(256, 8, 16, 96)),
           Theme.create(
-            Theme.config().textFont(10, Text.ITALIC),
+            Theme.config().textFontSize(10).textFontStyle(Text.ITALIC),
             Column.create(
               Column.config()
                 .mainAxisAlignment(MainAxisAlignment.START)
@@ -90,7 +90,7 @@ public class Demo4UserInterface extends Scene {
               MainMenuButton.create("Tutorial", e -> System.out.println("0: " + e.type)),
               MainMenuButton.create("New Planet", e -> System.out.println("1: " + e.type)),
               Field.create(
-                Field.config().font(24, Text.PLAIN).ninePatchSpacing(Spacing.create(12))
+                Field.config().fontSize(24).fontStyle(Text.PLAIN).edgeInsets(Spacing.create(12))
                   .padding(Spacing.create(8)).changeListener(ev -> {
                     fieldValue = ev.value;
                     updateUI();
@@ -98,13 +98,13 @@ public class Demo4UserInterface extends Scene {
                 fieldValue
               ),
               Checkbox.create(
-                Checkbox.config().value(checkboxValue).ninePatchSpacing(Spacing.create(4))
+                Checkbox.config().value(checkboxValue).iconEdgeInsets(Spacing.create(4))
                   .changeListener(ev -> {
                     checkboxValue = ev.value;
                     updateUI();
                   }),
                 Text.create(
-                  Text.config().font(20, Font.PLAIN),
+                  Text.config().fontSize(20).fontStyle(Text.PLAIN),
                   "Active"
                 )
               ),
@@ -119,8 +119,9 @@ public class Demo4UserInterface extends Scene {
               Sized.create(
                 Sized.config().width(256).height(48),
                 Progress.create(
-                  Progress.config().range(0, 100).track(PROGRESS_TRACK, Spacing.create(0))
-                    .fillMargin(Spacing.create(12, 0)).fill(PROGRESS_FILL, Spacing.create(1, 0))
+                  Progress.config().range(0, 100).trackBackground(PROGRESS_TRACK)
+                    .trackEdgeInsets(Spacing.create(0)).fillMargin(Spacing.create(12, 0))
+                    .fillBackground(PROGRESS_FILL).fillEdgeInsets(Spacing.create(1, 0))
                     .fillMode(Progress.FillMode.CLIP),
                   sliderValue
                 )
@@ -141,7 +142,7 @@ public class Demo4UserInterface extends Scene {
       ),
 
       Align.create(
-        Align.config().alignment(Alignment.CENTER, Alignment.START),
+        Align.config().horizontalAlignment(Alignment.CENTER),
         Sized.create(
           Sized.config().fractionalWidth(1).fractionalHeight(0.15),
           Image.create(
@@ -152,7 +153,7 @@ public class Demo4UserInterface extends Scene {
       ),
 
       Align.create(
-        Align.config().alignment(Alignment.CENTER, Alignment.END),
+        Align.config().horizontalAlignment(Alignment.CENTER).verticalAlignment(Alignment.END),
         Sized.create(
           Sized.config().fractionalWidth(1).fractionalHeight(0.15),
           Stack.create(
@@ -177,16 +178,16 @@ public class Demo4UserInterface extends Scene {
                   )
                 ),
                 Button.create(
-                  Button.config().ninePatchSpacing(Spacing.create(12, 12, 18, 12)),
+                  Button.config().edgeInsets(Spacing.create(12, 12, 18, 12)),
                   Text.create(
-                    Text.config().font(12, Text.BOLD),
+                    Text.config().fontSize(12).fontStyle(Text.BOLD),
                     "Create Account"
                   )
                 ),
                 Button.create(
-                  Button.config().ninePatchSpacing(Spacing.create(12, 12, 18, 12)),
+                  Button.config().edgeInsets(Spacing.create(12, 12, 18, 12)),
                   Text.create(
-                    Text.config().font(12, Text.BOLD),
+                    Text.config().fontSize(12).fontStyle(Text.BOLD),
                     "Login"
                   )
                 )
@@ -205,11 +206,11 @@ public class Demo4UserInterface extends Scene {
       super(
         new ComposeConfig() { },
         Button.create(
-          Button.config().ninePatchSpacing(Spacing.create(12, 12, 16, 12)).mouseListener(mouseListener),
+          Button.config().edgeInsets(Spacing.create(12, 12, 16, 12)).mouseListener(mouseListener),
           Padding.create(
             Padding.config().padding(Spacing.create(12, 12, 16, 12)),
             Text.create(
-              Text.config().font(20, Text.BOLD),
+              Text.config().fontSize(20).fontStyle(Text.BOLD),
               text
             )
           )
@@ -244,7 +245,7 @@ public class Demo4UserInterface extends Scene {
       super(
         new ComposeConfig() { },
         Button.create(
-          Button.config().ninePatchSpacing(Spacing.create(6, 6, 8, 6)),
+          Button.config().edgeInsets(Spacing.create(6, 6, 8, 6)),
           Padding.create(
             Padding.config().padding(Spacing.create(12, 12, 16, 12)),
             Text.create(

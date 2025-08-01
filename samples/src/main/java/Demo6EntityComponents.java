@@ -76,11 +76,11 @@ public class Demo6EntityComponents extends Scene {
   protected Widget createUI() {
     return Stack.create(
       Align.create(
-        Align.config().alignment(Alignment.CENTER, Alignment.END),
+        Align.config().horizontalAlignment(Alignment.CENTER).verticalAlignment(Alignment.END),
         Padding.create(
           Padding.config().padding(Spacing.create(24)),
           Text.create(
-            Text.config().alignment(Alignment.CENTER, Alignment.CENTER),
+            Text.config().horizontalAlignment(Alignment.CENTER),
             "Press the space bar to launch the ball"
           )
         )

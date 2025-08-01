@@ -1,9 +1,9 @@
 package pong;
 
+import dev.gamekit.components.RigidBody;
 import dev.gamekit.core.IO;
 import dev.gamekit.core.Renderer;
 import dev.gamekit.core.Scene;
-import dev.gamekit.components.RigidBody;
 import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.widgets.Align;
@@ -48,11 +48,11 @@ public class PlayScene extends Scene {
   @Override
   protected Widget createUI() {
     return Align.create(
-      Align.config().alignment(Alignment.CENTER, Alignment.START),
+      Align.config().horizontalAlignment(Alignment.CENTER),
       Padding.create(
         Padding.config().padding(Spacing.create(32)),
         Text.create(
-          Text.config().font(72, Text.BOLD).alignment(Alignment.CENTER, Alignment.START),
+          Text.config().fontSize(72).fontStyle(Text.BOLD).horizontalAlignment(Alignment.CENTER),
           "Score"
         )
       )
