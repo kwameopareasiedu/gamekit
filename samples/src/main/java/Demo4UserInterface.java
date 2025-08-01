@@ -91,7 +91,7 @@ public class Demo4UserInterface extends Scene {
               MainMenuButton.create("New Planet", e -> System.out.println("1: " + e.type)),
               Field.create(
                 Field.config().fontSize(24).fontStyle(Text.PLAIN)
-                  .horizontalAlignment(Alignment.CENTER).edgeInsets(12, 12, 12, 12)
+                  .alignment(Alignment.CENTER).edgeInsets(12, 12, 12, 12)
                   .padding(8, 8, 8, 8).changeListener(ev -> {
                     fieldValue = ev.value;
                     updateUI();

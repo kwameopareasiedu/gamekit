@@ -111,15 +111,15 @@ public class Demo5Audio extends Scene {
         .crossAxisAlignment(CrossAxisAlignment.STRETCH)
         .gapSize(8),
       Text.create(
-        Text.config().horizontalAlignment(Alignment.CENTER),
+        Text.config().alignment(Alignment.CENTER),
         "Space Bar to play/restart the audio"
       ),
       Text.create(
-        Text.config().horizontalAlignment(Alignment.CENTER),
+        Text.config().alignment(Alignment.CENTER),
         "Escape to stop the playback"
       ),
       Text.create(
-        Text.config().horizontalAlignment(Alignment.CENTER),
+        Text.config().alignment(Alignment.CENTER),
         "Move the mouse from left to right to pan the audio"
       ),
       Row.create(

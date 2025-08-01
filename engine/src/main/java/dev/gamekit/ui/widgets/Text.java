@@ -28,8 +28,7 @@ public class Text extends Leaf {
   protected Integer fontStyle;
   protected Color color;
   protected Color backgroundColor;
-  protected Alignment horizontalAlignment;
-  protected Alignment verticalAlignment;
+  protected Alignment alignment;
   protected Boolean shadowEnabled;
   protected Integer shadowOffsetX;
   protected Integer shadowOffsetY;
@@ -65,8 +64,7 @@ public class Text extends Leaf {
       Objects.equals(fontStyle, textWidget.fontStyle) &&
       Objects.equals(color, textWidget.color) &&
       Objects.equals(backgroundColor, textWidget.backgroundColor) &&
-      Objects.equals(horizontalAlignment, textWidget.horizontalAlignment) &&
-      Objects.equals(verticalAlignment, textWidget.verticalAlignment) &&
+      Objects.equals(alignment, textWidget.alignment) &&
       Objects.equals(shadowEnabled, textWidget.shadowEnabled) &&
       Objects.equals(shadowOffsetX, textWidget.shadowOffsetX) &&
       Objects.equals(shadowOffsetY, textWidget.shadowOffsetY) &&
@@ -87,10 +85,7 @@ public class Text extends Leaf {
     fontStyle = coalesce(config.fontStyle, theme.textFontStyle, PLAIN);
     color = coalesce(config.color, theme.textForegroundColor, Color.WHITE);
     backgroundColor = coalesce(config.backgroundColor, theme.textBackgroundColor, null);
-    horizontalAlignment =
-      coalesce(config.horizontalAlignment, theme.textHorizontalAlignment, Alignment.START);
-    verticalAlignment =
-      coalesce(config.verticalAlignment, theme.textVerticalAlignment, Alignment.START);
+    alignment = coalesce(config.alignment, theme.textAlignment, Alignment.START);
     shadowEnabled = coalesce(config.shadowEnabled, theme.textShadowEnabled, false);
     shadowOffsetX = coalesce(config.shadowOffsetX, theme.textShadowOffsetX, 0);
     shadowOffsetY = coalesce(config.shadowOffsetY, theme.textShadowOffsetY, 0);
@@ -110,11 +105,6 @@ public class Text extends Leaf {
     List<Double> lineOffsets = new ArrayList<>();
     int textWidth = fontMetrics.stringWidth(text);
     int textHeight = fontSize;
-
-    if (shadowEnabled) {
-      textWidth += Math.abs(shadowOffsetX);
-      textHeight += Math.abs(shadowOffsetY);
-    }
 
     intrinsicBounds.setSize(textWidth, textHeight);
 
@@ -169,18 +159,18 @@ public class Text extends Leaf {
       for (String line : lines) {
         int lineWidth = fontMetrics.stringWidth(line);
 
-        double line1Offset = switch (horizontalAlignment) {
+        double lineOffset = switch (alignment) {
           case CENTER -> computedBounds.width / 2 - lineWidth / 2.0;
           case END -> computedBounds.width - lineWidth;
           default -> 0;
         };
 
-        lineOffsets.add(line1Offset);
+        lineOffsets.add(lineOffset);
       }
     } else {
       lines.add(text);
       lineOffsets.add(
-        switch (horizontalAlignment) {
+        switch (alignment) {
           case CENTER -> computedBounds.width / 2 - intrinsicBounds.width / 2.0;
           case END -> computedBounds.width - intrinsicBounds.width;
           default -> 0.0;
@@ -293,8 +283,7 @@ public class Text extends Leaf {
     protected Integer fontSize;
     protected Color color;
     protected Color backgroundColor;
-    protected Alignment horizontalAlignment;
-    protected Alignment verticalAlignment;
+    protected Alignment alignment;
     protected Boolean shadowEnabled;
     protected Integer shadowOffsetX;
     protected Integer shadowOffsetY;
@@ -330,13 +319,8 @@ public class Text extends Leaf {
       return (T) this;
     }
 
-    public T horizontalAlignment(Alignment horizontalAlignment) {
-      this.horizontalAlignment = horizontalAlignment;
-      return (T) this;
-    }
-
-    public T verticalAlignment(Alignment verticalAlignment) {
-      this.verticalAlignment = verticalAlignment;
+    public T alignment(Alignment alignment) {
+      this.alignment = alignment;
       return (T) this;
     }
 

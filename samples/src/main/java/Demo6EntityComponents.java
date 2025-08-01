@@ -79,7 +79,7 @@ public class Demo6EntityComponents extends Scene {
         Padding.create(
           Padding.config().padding(24, 24, 24, 24),
           Text.create(
-            Text.config().horizontalAlignment(Alignment.CENTER),
+            Text.config().alignment(Alignment.CENTER),
             "Press the space bar to launch the ball"
           )
         )

@@ -51,7 +51,7 @@ public class PlayScene extends Scene {
       Padding.create(
         Padding.config().padding(32, 32, 32, 32),
         Text.create(
-          Text.config().fontSize(72).fontStyle(Text.BOLD).horizontalAlignment(Alignment.CENTER),
+          Text.config().fontSize(72).fontStyle(Text.BOLD).alignment(Alignment.CENTER),
           "Score"
         )
       )

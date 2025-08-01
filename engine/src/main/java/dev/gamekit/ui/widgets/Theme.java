@@ -27,8 +27,7 @@ public class Theme extends SingleChildParent {
   public Integer textFontStyle;
   public Color textForegroundColor;
   public Color textBackgroundColor;
-  public Alignment textHorizontalAlignment;
-  public Alignment textVerticalAlignment;
+  public Alignment textAlignment;
   public Boolean textShadowEnabled;
   public Integer textShadowOffsetX;
   public Integer textShadowOffsetY;
@@ -91,8 +90,7 @@ public class Theme extends SingleChildParent {
       Objects.equals(textFontSize, themeWidget.textFontSize) &&
       Objects.equals(textForegroundColor, themeWidget.textForegroundColor) &&
       Objects.equals(textBackgroundColor, themeWidget.textBackgroundColor) &&
-      Objects.equals(textHorizontalAlignment, themeWidget.textHorizontalAlignment) &&
-      Objects.equals(textVerticalAlignment, themeWidget.textVerticalAlignment) &&
+      Objects.equals(textAlignment, themeWidget.textAlignment) &&
       Objects.equals(textShadowEnabled, themeWidget.textShadowEnabled) &&
       Objects.equals(textShadowOffsetX, themeWidget.textShadowOffsetX) &&
       Objects.equals(textShadowOffsetY, themeWidget.textShadowOffsetY) &&
@@ -145,10 +143,7 @@ public class Theme extends SingleChildParent {
     this.textFontStyle = coalesce(config.textFontStyle, theme.textFontStyle);
     this.textForegroundColor = coalesce(config.textColor, theme.textForegroundColor);
     this.textBackgroundColor = coalesce(config.textBackgroundColor, theme.textBackgroundColor);
-    this.textHorizontalAlignment =
-      coalesce(config.textHorizontalAlignment, theme.textHorizontalAlignment);
-    this.textVerticalAlignment =
-      coalesce(config.textVerticalAlignment, theme.textVerticalAlignment);
+    this.textAlignment = coalesce(config.textAlignment, theme.textAlignment);
     this.textShadowEnabled = coalesce(config.textShadowEnabled, theme.textShadowEnabled);
     this.textShadowOffsetX = coalesce(config.textShadowOffsetX, theme.textShadowOffsetX);
     this.textShadowOffsetY = coalesce(config.textShadowOffsetY, theme.textShadowOffsetY);
@@ -217,8 +212,7 @@ public class Theme extends SingleChildParent {
     protected Integer textFontStyle;
     protected Color textColor;
     protected Color textBackgroundColor;
-    protected Alignment textHorizontalAlignment;
-    protected Alignment textVerticalAlignment;
+    protected Alignment textAlignment;
     protected Boolean textShadowEnabled;
     protected Integer textShadowOffsetX;
     protected Integer textShadowOffsetY;
@@ -303,13 +297,8 @@ public class Theme extends SingleChildParent {
       return this;
     }
 
-    public ThemeConfig textHorizontalAlignment(Alignment horizontalAlignment) {
-      this.textHorizontalAlignment = horizontalAlignment;
-      return this;
-    }
-
-    public ThemeConfig textVerticalAlignment(Alignment verticalAlignment) {
-      this.textVerticalAlignment = verticalAlignment;
+    public ThemeConfig textAlignment(Alignment textAlignment) {
+      this.textAlignment = textAlignment;
       return this;
     }
 

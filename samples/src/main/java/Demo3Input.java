@@ -64,7 +64,7 @@ public class Demo3Input extends Scene {
       Padding.create(
         Padding.config().padding(48, 48, 48, 48),
         Text.create(
-          Text.config().horizontalAlignment(Alignment.CENTER).verticalAlignment(Alignment.CENTER),
+          Text.config().alignment(Alignment.CENTER),
           "Click the Left Mouse Button or press the Space Bar to change color"
         )
       )

@@ -39,7 +39,8 @@ public class Playground extends Scene {
         Column.create(
           Column.config().crossAxisAlignment(CrossAxisAlignment.CENTER),
           Text.create(
-            Text.config().horizontalAlignment(Alignment.CENTER).shadow(true, 2, 3, Color.BLACK),
+            Text.config().alignment(Alignment.CENTER).shadow(true, 2, 3, Color.BLACK)
+              .backgroundColor(Color.DARK_GRAY),
             "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis. Suspendisse urna nibh viverra non semper suscipit posuere a pede."
           ),
           Button.create(
