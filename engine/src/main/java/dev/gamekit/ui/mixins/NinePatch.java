@@ -81,7 +81,7 @@ public interface NinePatch {
       Color originalColor = graphics.getColor();
       Stroke originalStroke = graphics.getStroke();
 
-      graphics.setColor(Color.RED);
+      graphics.setColor(Constants.DEBUG_COLOR);
       graphics.setStroke(Constants.DEBUG_STROKE);
       graphics.drawRect(
         (int) (absoluteBounds.x + edgeInsets.left),

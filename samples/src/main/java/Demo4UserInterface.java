@@ -39,6 +39,7 @@ public class Demo4UserInterface extends Scene {
 
   public Demo4UserInterface() {
     super("Main Scene");
+    Widget.DEBUG_DRAW = true;
   }
 
   public static void main(String[] args) {
@@ -89,7 +90,8 @@ public class Demo4UserInterface extends Scene {
               MainMenuButton.create("Tutorial", e -> System.out.println("0: " + e.type)),
               MainMenuButton.create("New Planet", e -> System.out.println("1: " + e.type)),
               Field.create(
-                Field.config().fontSize(24).fontStyle(Text.PLAIN).edgeInsets(12, 12, 12, 12)
+                Field.config().fontSize(24).fontStyle(Text.PLAIN)
+                  .horizontalAlignment(Alignment.CENTER).edgeInsets(12, 12, 12, 12)
                   .padding(8, 8, 8, 8).changeListener(ev -> {
                     fieldValue = ev.value;
                     updateUI();

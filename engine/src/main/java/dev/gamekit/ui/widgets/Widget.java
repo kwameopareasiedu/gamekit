@@ -174,7 +174,7 @@ public abstract class Widget {
       Color originalColor = canvasGraphics.getColor();
       Stroke originalStroke = canvasGraphics.getStroke();
 
-      canvasGraphics.setColor(Color.CYAN);
+      canvasGraphics.setColor(Constants.DEBUG_COLOR);
       canvasGraphics.setStroke(Constants.DEBUG_STROKE);
       canvasGraphics.drawRect(
         (int) absoluteBounds.x,

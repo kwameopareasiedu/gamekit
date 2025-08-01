@@ -498,10 +498,7 @@ public final class UI {
    * certain methods in the {@link UI}
    */
   public interface BridgeObject {
-    /**
-     * Gets the font metrics for the given font from the {@link Window}
-     * {@link Graphics2D graphics} object
-     */
+    /** Returns the font metrics for the given font from the {@link Window} object */
     FontMetrics getFontMetrics(Font font);
 
     /** Triggers a re-render of the {@link Widget widget} tree */
