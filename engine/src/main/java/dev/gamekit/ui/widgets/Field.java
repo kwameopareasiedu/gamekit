@@ -1,5 +1,6 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.animation.Animation;
 import dev.gamekit.core.IO;
 import dev.gamekit.core.Input;
 import dev.gamekit.ui.Constraints;
@@ -7,6 +8,7 @@ import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.events.ChangeEvent;
 import dev.gamekit.ui.events.FocusEvent;
 import dev.gamekit.ui.events.KeyCharEvent;
+import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.mixins.NinePatch;
 import dev.gamekit.utils.Bounds;
 
@@ -18,7 +20,8 @@ import java.util.Objects;
 import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link Text} widget extension which accepts text input */
-public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Handler, NinePatch {
+public class Field extends Text
+  implements FocusEvent.Handler, MouseEvent.Handler, KeyCharEvent.Handler, NinePatch {
   public static final BufferedImage DEFAULT_BG =
     IO.getResourceImage("default-sprites.png", 646, 64, 96, 32);
   public static final BufferedImage FOCUS_BG =
@@ -35,11 +38,24 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
 
   private final Bounds contentAbsoluteBounds;
   private final Bounds tempAbsoluteBounds;
+  private final Animation cursorAnimation;
+  private final Cursor cursor;
 
   public Field(FieldConfig config, String text) {
     super(config, text);
     contentAbsoluteBounds = new Bounds();
     tempAbsoluteBounds = new Bounds();
+    cursorAnimation = new Animation(500, Animation.RepeatMode.RESTART);
+    cursor = new Cursor();
+
+    cursorAnimation.setValueListener((val) -> {
+      if (val == 1.0 && focused) {
+        cursor.setVisible(!cursor.visible);
+
+        if (uiBridge != null)
+          uiBridge.triggerRender();
+      }
+    });
   }
 
   public static Field create(FieldConfig config, String text) {
@@ -76,6 +92,8 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
     focusListener = coalesce(config.focusListener, null);
     keyCharListener = coalesce(config.keyCharListener, null);
     changeListener = coalesce(config.changeListener, null);
+
+    cursorAnimation.start();
   }
 
   @Override
@@ -120,6 +138,20 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
     if (background != null)
       renderWith9PatchScaling(background, absoluteBounds, edgeInsets, g);
 
+    if (cursor.visible) {
+      Color originalColor = g.getColor();
+      g.setColor(Color.BLACK);
+
+      g.fillRect(
+        (int) (cursor.symbol == null ? contentAbsoluteBounds.x :
+          cursor.symbol.x + cursor.symbol.width),
+        (int) (cursor.symbol == null ? contentAbsoluteBounds.y : cursor.symbol.y),
+        Cursor.WIDTH, (int) contentAbsoluteBounds.height
+      );
+
+      g.setColor(originalColor);
+    }
+
     super.performRender(g);
   }
 
@@ -130,6 +162,8 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
       case BLUR -> focused = false;
     }
 
+    cursor.setVisible(focused);
+    cursorAnimation.start();
     uiBridge.triggerRender();
 
     if (focusListener != null)
@@ -154,6 +188,48 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
 
       changeListener.handleEvent(new ChangeEvent<>(newValue));
     }
+  }
+
+  @Override
+  public void handleEvent(MouseEvent ev) {
+    if (ev.type == MouseEvent.Type.DOWN) {
+      int checkedSymbols = 0;
+
+      for (int i = 0; i < symbols.size(); i++) {
+        Symbol sym = symbols.get(i);
+
+        if (sym.contains(ev.x, ev.y)) {
+          boolean mouseDownInLeftHalfOfSymbolBounds =
+            sym.x < ev.x && ev.x < sym.x + 0.5 * sym.width;
+
+          if (mouseDownInLeftHalfOfSymbolBounds) {
+            cursor.symbol = (i > 0) ? symbols.get(i - 1) : null;
+          } else {
+            cursor.symbol = sym;
+          }
+
+          break;
+        }
+
+        checkedSymbols++;
+      }
+
+      if (checkedSymbols == symbols.size()) {
+        if (!symbols.isEmpty()) {
+          Symbol lastSymbol = symbols.get(symbols.size() - 1);
+          boolean mouseDownToRightOfLastSymbolBounds = ev.x > lastSymbol.x + lastSymbol.width;
+          cursor.symbol = mouseDownToRightOfLastSymbolBounds ? lastSymbol : null;
+        } else {
+          cursor.symbol = null;
+        }
+      }
+    }
+  }
+
+  @Override
+  protected void performUnmount() {
+    super.performUnmount();
+    cursorAnimation.end();
   }
 
   public static class FieldConfig extends TextConfig<FieldConfig> {
@@ -198,6 +274,23 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
     public FieldConfig changeListener(ChangeEvent.Handler<String> changeListener) {
       this.changeListener = changeListener;
       return this;
+    }
+  }
+
+  /**
+   * Stores information related to cursor management
+   * <p>
+   * NB: <i>The cursor is always to the <b>right</b> of its current symbol and a null symbol
+   * indicates no text in the associated {@link Field} widget</i>
+   */
+  protected static class Cursor {
+    protected static final int WIDTH = 2;
+
+    protected Symbol symbol;
+    protected boolean visible;
+
+    public void setVisible(boolean visible) {
+      this.visible = visible;
     }
   }
 }

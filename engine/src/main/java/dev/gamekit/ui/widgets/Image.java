@@ -47,7 +47,7 @@ public class Image extends Leaf {
     if (config.image == null)
       throw new IllegalArgumentException("Image image cannot be null");
 
-    this.image = coalesce(config.image);
+    this.image = config.image;
     this.fit = coalesce(config.fit, ImageFit.FIT);
     this.interpolation = coalesce(config.interpolation, ImageInterpolation.DEFAULT);
 

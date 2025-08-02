@@ -7,10 +7,8 @@ import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.utils.Bounds;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
 
 import static dev.gamekit.utils.Misc.coalesce;
 
@@ -33,14 +31,13 @@ public class Text extends Leaf {
   protected Integer shadowOffsetX;
   protected Integer shadowOffsetY;
   protected Color shadowColor;
+  protected List<Symbol> symbols;
 
-  private final List<TokenDatum> tokenData;
   private Font renderFont;
   private FontMetrics fontMetrics;
 
   public Text(TextConfig<?> config, String text) {
     super(config.text(text));
-    tokenData = new ArrayList<>();
   }
 
   public static Text create(TextConfig<?> params, String text) {
@@ -73,13 +70,15 @@ public class Text extends Leaf {
 
   @Override
   protected void performInit() {
+    super.performInit();
+
     TextConfig<?> config = (TextConfig<?>) super.config;
     Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
 
     if (config.text == null)
       throw new IllegalArgumentException("Text text cannot be null");
 
-    text = coalesce(config.text);
+    text = config.text;
     font = coalesce(config.font, theme.textFont, DEFAULT_FONT);
     fontSize = coalesce(config.fontSize, theme.textFontSize, 20);
     fontStyle = coalesce(config.fontStyle, theme.textFontStyle, PLAIN);
@@ -95,14 +94,13 @@ public class Text extends Leaf {
       ? font.deriveFont(fontStyle, fontSize)
       : DEFAULT_FONT.deriveFont(fontStyle, fontSize);
     fontMetrics = uiBridge.getFontMetrics(renderFont);
-
-    super.performInit();
   }
 
   @Override
   protected void performLayout(Constraints constraints) {
     List<String> lines = new ArrayList<>();
     List<Double> lineOffsets = new ArrayList<>();
+    List<Symbol> symbols = new ArrayList<>();
     int textWidth = fontMetrics.stringWidth(text);
     int textHeight = fontSize;
 
@@ -178,8 +176,6 @@ public class Text extends Leaf {
       );
     }
 
-    tokenData.clear();
-
     for (int i = 0; i < lines.size(); i++) {
       String line = lines.get(i);
       double lineOffset = lineOffsets.get(i);
@@ -190,27 +186,25 @@ public class Text extends Leaf {
       for (String ch : lineTokens) {
         int chWidth = fontMetrics.stringWidth(ch);
 
-        tokenData.add(
-          new TokenDatum(
-            ch.charAt(0),
-            lineOffset, lineYPosition,
-            chWidth, fontSize
-          )
+        symbols.add(
+          new Symbol(ch.charAt(0), i, lineOffset, lineYPosition, chWidth, fontSize)
         );
 
         lineOffset += chWidth;
       }
     }
+
+    this.symbols = Collections.unmodifiableList(symbols);
   }
 
   @Override
   protected void performPostLayout() {
     super.performPostLayout();
 
-    for (TokenDatum tokenDatum : tokenData) {
-      tokenDatum.bounds.setPosition(
-        absoluteBounds.x + tokenDatum.bounds.x,
-        absoluteBounds.y + tokenDatum.bounds.y
+    for (Symbol symbol : symbols) {
+      symbol.setPosition(
+        absoluteBounds.x + symbol.x,
+        absoluteBounds.y + symbol.y
       );
     }
   }
@@ -237,22 +231,22 @@ public class Text extends Leaf {
     if (shadowEnabled) {
       g.setColor(shadowColor);
 
-      for (TokenDatum tokenDatum : tokenData) {
+      for (Symbol symbol : symbols) {
         g.drawString(
-          String.valueOf(tokenDatum.value),
-          (int) tokenDatum.bounds.x + shadowOffsetX,
-          (int) (tokenDatum.bounds.y + tokenDatum.bounds.height + shadowOffsetY)
+          String.valueOf(symbol.value),
+          (int) symbol.x + shadowOffsetX,
+          (int) (symbol.y + symbol.height + shadowOffsetY)
         );
       }
     }
 
     g.setColor(color);
 
-    for (TokenDatum tokenDatum : tokenData) {
+    for (Symbol symbol : symbols) {
       g.drawString(
-        String.valueOf(tokenDatum.value),
-        (int) tokenDatum.bounds.x,
-        (int) (tokenDatum.bounds.y + tokenDatum.bounds.height)
+        String.valueOf(symbol.value),
+        (int) symbol.x,
+        (int) (symbol.y + symbol.height)
       );
     }
 
@@ -260,12 +254,12 @@ public class Text extends Leaf {
       g.setColor(Constants.DEBUG_COLOR);
       g.setStroke(Constants.DEBUG_STROKE);
 
-      for (TokenDatum tokenDatum : tokenData) {
+      for (Symbol symbol : symbols) {
         g.drawRect(
-          (int) tokenDatum.bounds.x,
-          (int) tokenDatum.bounds.y,
-          (int) tokenDatum.bounds.width,
-          (int) tokenDatum.bounds.height
+          (int) symbol.x,
+          (int) symbol.y,
+          (int) symbol.width,
+          (int) symbol.height
         );
       }
     }
@@ -338,14 +332,15 @@ public class Text extends Leaf {
     }
   }
 
-  /** Stores character token information useful for certain subclasses to operate efficiently */
-  public static class TokenDatum {
-    public final Bounds bounds;
+  /** A store for a character symbol and its absolute bounds */
+  protected static class Symbol extends Bounds {
     public final char value;
+    public final int index;
 
-    public TokenDatum(char value, double x, double y, double w, double h) {
-      this.bounds = new Bounds(x, y, w, h);
+    private Symbol(char value, int index, double x, double y, double w, double h) {
+      super(x, y, w, h);
       this.value = value;
+      this.index = index;
     }
   }
 }

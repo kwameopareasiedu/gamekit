@@ -86,9 +86,9 @@ public class Progress extends Leaf implements NinePatch {
       coalesce(config.fillEdgeInsets, theme.progressFillEdgeInsets, new Spacing(8));
     this.fillMargin = coalesce(config.fillMargin, theme.progressFillMargin, new Spacing(0));
     this.fillMode = coalesce(config.fillMode, theme.progressFillMode, FillMode.SCALE);
-    this.minValue = coalesce(config.minValue);
-    this.maxValue = coalesce(config.maxValue);
-    this.value = coalesce(config.value);
+    this.minValue = config.minValue;
+    this.maxValue = config.maxValue;
+    this.value = config.value;
 
     valueRatio = (value - minValue) / (maxValue - minValue);
   }
