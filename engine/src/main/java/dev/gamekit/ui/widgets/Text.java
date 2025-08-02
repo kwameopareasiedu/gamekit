@@ -176,10 +176,14 @@ public class Text extends Leaf {
       );
     }
 
+    int charCount = 0;
+
     for (int i = 0; i < lines.size(); i++) {
       String line = lines.get(i);
-      double lineOffset = lineOffsets.get(i);
+      if (line.isEmpty())
+        continue;
 
+      double lineOffset = lineOffsets.get(i);
       String[] lineTokens = line.split("");
       double lineYPosition = i * fontSize;
 
@@ -187,10 +191,15 @@ public class Text extends Leaf {
         int chWidth = fontMetrics.stringWidth(ch);
 
         symbols.add(
-          new Symbol(ch.charAt(0), i, lineOffset, lineYPosition, chWidth, fontSize)
+          new Symbol(
+            ch.charAt(0), charCount,
+            lineOffset, lineYPosition,
+            chWidth, fontSize
+          )
         );
 
         lineOffset += chWidth;
+        charCount++;
       }
     }
 

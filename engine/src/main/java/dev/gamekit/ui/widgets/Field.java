@@ -129,6 +129,11 @@ public class Field extends Text
     absoluteBounds.set(contentAbsoluteBounds);
     super.performPostLayout();
     absoluteBounds.set(tempAbsoluteBounds);
+
+    // Update cursor position when symbols change
+    cursor.symbol = !symbols.isEmpty() && cursor.symbol != null
+      ? symbols.get(Math.min(cursor.symbol.index, symbols.size() - 1))
+      : null;
   }
 
   @Override
