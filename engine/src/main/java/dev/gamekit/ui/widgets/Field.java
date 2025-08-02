@@ -5,23 +5,23 @@ import dev.gamekit.core.IO;
 import dev.gamekit.core.Input;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Spacing;
-import dev.gamekit.ui.events.ChangeEvent;
-import dev.gamekit.ui.events.FocusEvent;
-import dev.gamekit.ui.events.KeyCharEvent;
-import dev.gamekit.ui.events.MouseEvent;
+import dev.gamekit.ui.events.*;
 import dev.gamekit.ui.mixins.NinePatch;
 import dev.gamekit.utils.Bounds;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
+import static dev.gamekit.utils.Math.clamp;
 import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link Text} widget extension which accepts text input */
 public class Field extends Text
-  implements FocusEvent.Handler, MouseEvent.Handler, KeyCharEvent.Handler, NinePatch {
+  implements NinePatch, FocusEvent.Handler, MouseEvent.Handler,
+  KeyCharEvent.Handler, KeyCodeEvent.Handler {
   public static final BufferedImage DEFAULT_BG =
     IO.getResourceImage("default-sprites.png", 646, 64, 96, 32);
   public static final BufferedImage FOCUS_BG =
@@ -39,18 +39,18 @@ public class Field extends Text
   private final Bounds contentAbsoluteBounds;
   private final Bounds tempAbsoluteBounds;
   private final Animation cursorAnimation;
-  private final Cursor cursor;
+  private final TextModel textModel;
 
   public Field(FieldConfig config, String text) {
     super(config, text);
     contentAbsoluteBounds = new Bounds();
     tempAbsoluteBounds = new Bounds();
     cursorAnimation = new Animation(500, Animation.RepeatMode.RESTART);
-    cursor = new Cursor();
+    textModel = new TextModel();
 
     cursorAnimation.setValueListener((val) -> {
       if (val == 1.0 && focused) {
-        cursor.setVisible(!cursor.visible);
+        textModel.toggleCursorVisibility();
 
         if (uiBridge != null)
           uiBridge.triggerRender();
@@ -109,6 +109,8 @@ public class Field extends Text
       constraints.constrainWidth(intrinsicBounds.width),
       constraints.constrainHeight(intrinsicBounds.height)
     );
+
+    textModel.updateSymbols(symbols);
   }
 
   @Override
@@ -129,11 +131,6 @@ public class Field extends Text
     absoluteBounds.set(contentAbsoluteBounds);
     super.performPostLayout();
     absoluteBounds.set(tempAbsoluteBounds);
-
-    // Update cursor position when symbols change
-    cursor.symbol = !symbols.isEmpty() && cursor.symbol != null
-      ? symbols.get(Math.min(cursor.symbol.index, symbols.size() - 1))
-      : null;
   }
 
   @Override
@@ -143,15 +140,16 @@ public class Field extends Text
     if (background != null)
       renderWith9PatchScaling(background, absoluteBounds, edgeInsets, g);
 
-    if (cursor.visible) {
+    if (textModel.cursorVisible) {
       Color originalColor = g.getColor();
       g.setColor(Color.BLACK);
 
+      Symbol cursorSymbol = textModel.getCursorSymbol();
+
       g.fillRect(
-        (int) (cursor.symbol == null ? contentAbsoluteBounds.x :
-          cursor.symbol.x + cursor.symbol.width),
-        (int) (cursor.symbol == null ? contentAbsoluteBounds.y : cursor.symbol.y),
-        Cursor.WIDTH, (int) contentAbsoluteBounds.height
+        (int) (cursorSymbol == null ? contentAbsoluteBounds.x : cursorSymbol.x + cursorSymbol.width),
+        (int) (cursorSymbol == null ? contentAbsoluteBounds.y : cursorSymbol.y),
+        TextModel.CURSOR_WIDTH, (int) contentAbsoluteBounds.height
       );
 
       g.setColor(originalColor);
@@ -167,7 +165,7 @@ public class Field extends Text
       case BLUR -> focused = false;
     }
 
-    cursor.setVisible(focused);
+    textModel.setCursorVisibility(focused);
     cursorAnimation.start();
     uiBridge.triggerRender();
 
@@ -176,58 +174,53 @@ public class Field extends Text
   }
 
   @Override
+  public void handleEvent(MouseEvent ev) {
+    if (ev.type == MouseEvent.Type.DOWN)
+      textModel.updateCursorPosition(ev.x, ev.y);
+  }
+
+  @Override
+  public void handleEvent(KeyCodeEvent ev) {
+    switch (ev.keyCode) {
+      case Input.KEY_LEFT -> {
+        textModel.offsetCursor(-1);
+        textModel.setCursorVisibility(true);
+        uiBridge.triggerRender();
+      }
+      case Input.KEY_RIGHT -> {
+        textModel.offsetCursor(1);
+        textModel.setCursorVisibility(true);
+        uiBridge.triggerRender();
+      }
+      case Input.KEY_HOME -> {
+        textModel.offsetCursor(Integer.MIN_VALUE);
+        textModel.setCursorVisibility(true);
+        uiBridge.triggerRender();
+      }
+      case Input.KEY_END -> {
+        textModel.offsetCursor(Integer.MAX_VALUE);
+        textModel.setCursorVisibility(true);
+        uiBridge.triggerRender();
+      }
+    }
+  }
+
+  @Override
   public void handleEvent(KeyCharEvent ev) {
     if (keyCharListener != null)
       keyCharListener.handleEvent(ev);
 
     if (!ev.isHandled() && changeListener != null) {
-      int charKeyCode = KeyEvent.getExtendedKeyCodeForChar(ev.charPressed);
+      boolean updatedTextModel;
 
-      String newValue = switch (charKeyCode) {
-        case Input.KEY_BACK_SPACE -> !text.isEmpty() ? text.substring(0, text.length() - 1) : text;
-        default -> {
-          boolean charIsPrintable = 32 <= charKeyCode && charKeyCode <= 126;
-          yield charIsPrintable ? text + ev.charPressed : text;
-        }
-      };
-
-      changeListener.handleEvent(new ChangeEvent<>(newValue));
-    }
-  }
-
-  @Override
-  public void handleEvent(MouseEvent ev) {
-    if (ev.type == MouseEvent.Type.DOWN) {
-      int checkedSymbols = 0;
-
-      for (int i = 0; i < symbols.size(); i++) {
-        Symbol sym = symbols.get(i);
-
-        if (sym.contains(ev.x, ev.y)) {
-          boolean mouseDownInLeftHalfOfSymbolBounds =
-            sym.x < ev.x && ev.x < sym.x + 0.5 * sym.width;
-
-          if (mouseDownInLeftHalfOfSymbolBounds) {
-            cursor.symbol = (i > 0) ? symbols.get(i - 1) : null;
-          } else {
-            cursor.symbol = sym;
-          }
-
-          break;
-        }
-
-        checkedSymbols++;
+      switch (ev.charPressed) {
+        case Input.KEY_BACK_SPACE -> updatedTextModel = textModel.leftDeleteAtCursor();
+        case Input.KEY_DELETE -> updatedTextModel = textModel.rightDeleteAtCursor();
+        default -> updatedTextModel = textModel.insertSymbolAtCursor(ev.charPressed);
       }
 
-      if (checkedSymbols == symbols.size()) {
-        if (!symbols.isEmpty()) {
-          Symbol lastSymbol = symbols.get(symbols.size() - 1);
-          boolean mouseDownToRightOfLastSymbolBounds = ev.x > lastSymbol.x + lastSymbol.width;
-          cursor.symbol = mouseDownToRightOfLastSymbolBounds ? lastSymbol : null;
-        } else {
-          cursor.symbol = null;
-        }
-      }
+      if (updatedTextModel)
+        changeListener.handleEvent(new ChangeEvent<>(textModel.getTextFromSymbols()));
     }
   }
 
@@ -283,19 +276,150 @@ public class Field extends Text
   }
 
   /**
-   * Stores information related to cursor management
+   * {@link TextModel} is a document model for {@link Field} widgets which manages the
+   * text symbols and manipulations of these symbols based on a cursor.
+   * <p>
+   * Actions in the {@link Field} are submitted to this model which updates the symbols and cursor,
+   * returning the resulting text from the symbols.
    * <p>
    * NB: <i>The cursor is always to the <b>right</b> of its current symbol and a null symbol
    * indicates no text in the associated {@link Field} widget</i>
    */
-  protected static class Cursor {
-    protected static final int WIDTH = 2;
+  public static class TextModel {
+    public static final int CURSOR_WIDTH = 2;
+    public static final int CURSOR_ORIGIN_INDEX = -1;
+    public static final int PRINTABLE_ASCII_START = 32;
+    public static final int PRINTABLE_ASCII_END = 126;
 
-    protected Symbol symbol;
-    protected boolean visible;
+    private final List<Symbol> symbols;
+    private boolean cursorVisible;
+    private int cursorIndex;
+    private final StringBuilder textBuilder;
 
-    public void setVisible(boolean visible) {
-      this.visible = visible;
+    public TextModel() {
+      symbols = new ArrayList<>();
+      cursorVisible = false;
+      cursorIndex = CURSOR_ORIGIN_INDEX;
+      textBuilder = new StringBuilder();
+    }
+
+    /** Sets whether the cursor should be visible or not */
+    public void setCursorVisibility(boolean visible) {
+      this.cursorVisible = visible;
+    }
+
+    /** Toggles the cursor visibility */
+    public void toggleCursorVisibility() {
+      this.cursorVisible = !cursorVisible;
+    }
+
+    public void updateSymbols(List<Symbol> symbols) {
+      this.symbols.clear();
+      this.symbols.addAll(symbols);
+    }
+
+    /**
+     * When the mouse is down in the associated {@link Field}, this method updates the cursor
+     * position by determining which symbol is the closest to the event location
+     */
+    public void updateCursorPosition(int mouseX, int mouseY) {
+      boolean mousePointInSymbolBounds = false;
+
+      for (int symIdx = 0; symIdx < symbols.size(); symIdx++) {
+        Symbol sym = symbols.get(symIdx);
+
+        if (sym.contains(mouseX, mouseY)) {
+          boolean mouseDownInLeftHalfOfSymbolBounds =
+            sym.x < mouseX && mouseX < sym.x + 0.5 * sym.width;
+
+          cursorIndex = mouseDownInLeftHalfOfSymbolBounds
+            ? (symIdx > 0) ? symIdx - 1 : CURSOR_ORIGIN_INDEX
+            : symIdx;
+
+          mousePointInSymbolBounds = true;
+          break;
+        }
+      }
+
+      if (!mousePointInSymbolBounds) {
+        if (!symbols.isEmpty()) {
+          Symbol lastSymbol = symbols.get(symbols.size() - 1);
+
+          boolean mousePointToRightOfLastSymbolBounds =
+            mouseX > lastSymbol.x + lastSymbol.width;
+
+          cursorIndex = mousePointToRightOfLastSymbolBounds
+            ? symbols.size() - 1
+            : CURSOR_ORIGIN_INDEX;
+        } else {
+          cursorIndex = CURSOR_ORIGIN_INDEX;
+        }
+      }
+    }
+
+    /**
+     * Inserts a character symbol at the cursor. Returns {@code true} if the character is a
+     * printable ASCII character and was successfully inserted and {@code false} otherwise
+     */
+    public boolean insertSymbolAtCursor(char ch) {
+      boolean charIsPrintable = PRINTABLE_ASCII_START <= ch && ch <= PRINTABLE_ASCII_END;
+
+      if (!charIsPrintable)
+        return false;
+
+      cursorIndex++;
+      symbols.add(cursorIndex, new Symbol(ch, 0, 0, 0, 0));
+      return true;
+    }
+
+    /** Moves the cursor by an offset without modifying the symbols */
+    public void offsetCursor(int offset) {
+      cursorIndex = clamp(cursorIndex + offset, CURSOR_ORIGIN_INDEX, symbols.size() - 1);
+    }
+
+    /**
+     * Deletes the symbol at the cursor position and moves the cursor one unit to the left.
+     * Returns {@code true} if the internal symbols were changed otherwise {@code false}
+     */
+    public boolean leftDeleteAtCursor() {
+      if (cursorIndex == CURSOR_ORIGIN_INDEX)
+        return false;
+
+      symbols.remove(cursorIndex);
+      cursorIndex--;
+      return true;
+    }
+
+    /**
+     * Deletes the symbol one unit after the cursor position. Returns {@code true} if the
+     * internal symbols were changed otherwise {@code false}
+     */
+    public boolean rightDeleteAtCursor() {
+      if (cursorIndex == symbols.size() - 1)
+        return false;
+
+      symbols.remove(cursorIndex + 1);
+      return true;
+    }
+
+    /** Returns the symbol at the cursor */
+    public Symbol getCursorSymbol() {
+      if (cursorIndex == CURSOR_ORIGIN_INDEX)
+        return null;
+
+      return symbols.get(cursorIndex);
+    }
+
+    /** Computes the text from internal symbol list */
+    public String getTextFromSymbols() {
+      textBuilder.setLength(0);
+
+      if (!symbols.isEmpty()) {
+        for (Symbol sym : symbols)
+          textBuilder.append(sym.value);
+      }
+
+      return textBuilder.toString();
     }
   }
 }

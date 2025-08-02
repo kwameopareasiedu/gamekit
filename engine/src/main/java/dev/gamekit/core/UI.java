@@ -2,10 +2,7 @@ package dev.gamekit.core;
 
 import dev.gamekit.settings.Settings;
 import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.events.FocusEvent;
-import dev.gamekit.ui.events.InputEvent;
-import dev.gamekit.ui.events.KeyCharEvent;
-import dev.gamekit.ui.events.MouseEvent;
+import dev.gamekit.ui.events.*;
 import dev.gamekit.ui.widgets.MultiChildParent;
 import dev.gamekit.ui.widgets.Parent;
 import dev.gamekit.ui.widgets.SingleChildParent;
@@ -331,13 +328,19 @@ public final class UI {
       }
     }
 
-    this.mousePosition.set(mousePosition);
-
-    // Generate a key char event if a key has been pressed
+    // Generate a key char event if a character key has been pressed
     if (Input.getPressedCharacter() != 0)
       eventStore.keyCharEvent = new KeyCharEvent(
         Input.getPressedCharacter()
       );
+
+    // Generate a key code event if an action key has been pressed
+    if (Input.getPressedKeyCode() != 0)
+      eventStore.keyCodeEvent = new KeyCodeEvent(
+        Input.getPressedKeyCode()
+      );
+
+    this.mousePosition.set(mousePosition);
   }
 
   /** Dispatches generated {@link InputEvent} to widgets */
@@ -429,6 +432,14 @@ public final class UI {
         eventHandler.handleEvent(eventStore.keyCharEvent);
     }
 
+    // Dispatch key code event
+    if (eventStore.keyCodeEvent != null) {
+      if (focusWidget != null &&
+        !eventStore.keyCodeEvent.isHandled() &&
+        focusWidget instanceof KeyCodeEvent.Handler eventHandler)
+        eventHandler.handleEvent(eventStore.keyCodeEvent);
+    }
+
     previousHitTestList.clear();
     previousHitTestList.addAll(currentHitTestList);
     lastActiveWidget = null;
@@ -517,6 +528,7 @@ public final class UI {
     public FocusEvent focusEvent;
     public FocusEvent blurEvent;
     public KeyCharEvent keyCharEvent;
+    public KeyCodeEvent keyCodeEvent;
 
     public void clear() {
       mouseMotionEvent = null;
@@ -529,6 +541,7 @@ public final class UI {
       focusEvent = null;
       blurEvent = null;
       keyCharEvent = null;
+      keyCodeEvent = null;
     }
   }
 }

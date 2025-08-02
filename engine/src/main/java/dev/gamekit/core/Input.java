@@ -221,6 +221,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   private final Position absoluteMousePosition;
   private final Position relativeMousePosition;
   private char characterPressed = '\0';
+  private int keyCodePressed = 0;
   private boolean frozen = false;
 
   private Input() {
@@ -269,6 +270,10 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
     return INSTANCE.characterPressed;
   }
 
+  public synchronized static int getPressedKeyCode() {
+    return INSTANCE.keyCodePressed;
+  }
+
   public synchronized static Position getMousePosition() {
     Window.Info info = Window.getInfo();
     double scaleRatio = info.displayScaleRatio();
@@ -312,7 +317,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
     );
 
     INSTANCE.characterPressed = '\0';
-
+    INSTANCE.keyCodePressed = 0;
     INSTANCE.frozen = false;
   }
 
@@ -336,6 +341,8 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
     if (keyCode >= 0 && keyCode < KEY_COUNT)
       keyStates[keyCode].update(false);
+
+    keyCodePressed = e.getKeyCode();
   }
 
   @Override

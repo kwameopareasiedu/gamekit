@@ -176,8 +176,6 @@ public class Text extends Leaf {
       );
     }
 
-    int charCount = 0;
-
     for (int i = 0; i < lines.size(); i++) {
       String line = lines.get(i);
       if (line.isEmpty())
@@ -192,14 +190,13 @@ public class Text extends Leaf {
 
         symbols.add(
           new Symbol(
-            ch.charAt(0), charCount,
+            ch.charAt(0),
             lineOffset, lineYPosition,
             chWidth, fontSize
           )
         );
 
         lineOffset += chWidth;
-        charCount++;
       }
     }
 
@@ -342,14 +339,12 @@ public class Text extends Leaf {
   }
 
   /** A store for a character symbol and its absolute bounds */
-  protected static class Symbol extends Bounds {
+  public static class Symbol extends Bounds {
     public final char value;
-    public final int index;
 
-    private Symbol(char value, int index, double x, double y, double w, double h) {
+    public Symbol(char value, double x, double y, double w, double h) {
       super(x, y, w, h);
       this.value = value;
-      this.index = index;
     }
   }
 }
