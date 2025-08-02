@@ -330,6 +330,8 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
     if (keyCode >= 0 && keyCode < KEY_COUNT)
       keyStates[keyCode].update(true);
+
+    keyCodePressed = e.getKeyCode();
   }
 
   @Override
@@ -341,8 +343,6 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
     if (keyCode >= 0 && keyCode < KEY_COUNT)
       keyStates[keyCode].update(false);
-
-    keyCodePressed = e.getKeyCode();
   }
 
   @Override

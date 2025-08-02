@@ -19,7 +19,7 @@ import java.util.Objects;
 
 /** {@link UI} manages the user interface within a {@link Scene} */
 public final class UI {
-  private static final int MAX_RENDERS_PER_TRIGGER = 8;
+  private static final int MAX_RENDER_PASSES = 8;
   private static final Logger LOGGER = LogManager.getLogger(UI.class);
   private static UI instance;
 
@@ -38,7 +38,7 @@ public final class UI {
   private Widget lastFocusWidget;
   private Widget lastActiveWidget;
   private boolean needsLayout = false;
-  private int renderCount;
+  private int renderPasses = MAX_RENDER_PASSES;
 
   static UI getInstance() {
     return instance;
@@ -69,7 +69,6 @@ public final class UI {
     this.mousePosition = new Position();
     this.canvasImage = new BufferedImage(dw, dh, BufferedImage.TYPE_INT_ARGB);
     this.canvasGraphics = canvasImage.createGraphics();
-    this.renderCount = MAX_RENDERS_PER_TRIGGER;
 
     settings.antialiasing.apply(canvasGraphics);
     settings.textAntialiasing.apply(canvasGraphics);
@@ -118,9 +117,9 @@ public final class UI {
 
   /** Called to draw the {@link Widget} tree to the {@link Window} UI layer */
   void draw() {
-    if (tree != null && renderCount > 0) {
+    if (tree != null && renderPasses > 0) {
       LOGGER.debug("Rendering UI");
-      renderCount--;
+      renderPasses--;
       drawTree();
     }
   }
@@ -133,7 +132,7 @@ public final class UI {
 
   /** Triggers a re-render of the current widget tree */
   private void triggerRender() {
-    renderCount = MAX_RENDERS_PER_TRIGGER;
+    renderPasses = MAX_RENDER_PASSES;
   }
 
   /**
@@ -464,7 +463,7 @@ public final class UI {
     uiGraphics.clearRect(0, 0, displayWidth, displayHeight);
     uiGraphics.drawImage(canvasImage, 0, 0, displayWidth, displayHeight, null);
 
-    renderCount--;
+    renderPasses--;
   }
 
   private void traverseTree(
