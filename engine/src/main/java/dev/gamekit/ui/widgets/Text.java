@@ -83,7 +83,7 @@ public class Text extends Leaf {
     font = coalesce(config.font, theme.textFont, DEFAULT_FONT);
     fontSize = coalesce(config.fontSize, theme.textFontSize, 20);
     fontStyle = coalesce(config.fontStyle, theme.textFontStyle, PLAIN);
-    color = coalesce(config.color, theme.textForegroundColor, Color.WHITE);
+    color = coalesce(config.color, theme.textColor, Color.WHITE);
     backgroundColor = coalesce(config.backgroundColor, theme.textBackgroundColor, null);
     alignment = coalesce(config.alignment, theme.textAlignment, Alignment.START);
     shadowEnabled = coalesce(config.shadowEnabled, theme.textShadowEnabled, false);

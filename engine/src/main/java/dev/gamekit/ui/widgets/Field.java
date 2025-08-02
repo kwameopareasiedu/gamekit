@@ -67,13 +67,12 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
     FieldConfig config = (FieldConfig) super.config;
     Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
 
-    color = coalesce(config.color, theme.textForegroundColor, Color.BLACK);
-    edgeInsets =
-      coalesce(config.edgeInsets, theme.fieldEdgeInsets, new Spacing(2));
+    color = coalesce(config.color, theme.textColor, Color.BLACK);
+    edgeInsets = coalesce(config.edgeInsets, theme.fieldEdgeInsets, new Spacing(2));
     defaultBackground =
       coalesce(config.defaultBackground, theme.fieldDefaultBackground, DEFAULT_BG);
     focusBackground = coalesce(config.focusBackground, theme.fieldFocusBackground, FOCUS_BG);
-    padding = coalesce(config.padding, theme.fieldPadding, new Spacing());
+    padding = coalesce(config.padding, theme.fieldPadding, new Spacing(4));
     focusListener = coalesce(config.focusListener, null);
     keyCharListener = coalesce(config.keyCharListener, null);
     changeListener = coalesce(config.changeListener, null);
@@ -81,12 +80,7 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
 
   @Override
   protected void performLayout(Constraints constraints) {
-    super.performLayout(
-      new Constraints(
-        constraints.minWidth(), constraints.maxWidth() - padding.getHorizontal(),
-        constraints.minHeight(), constraints.maxHeight() - padding.getVertical()
-      )
-    );
+    super.performLayout(constraints);
 
     intrinsicBounds.setSize(
       intrinsicBounds.width + padding.getHorizontal(),
@@ -101,35 +95,32 @@ public class Field extends Text implements FocusEvent.Handler, KeyCharEvent.Hand
 
   @Override
   protected void performPostLayout() {
-    contentAbsoluteBounds.set(absoluteBounds);
-
-    double absoluteContentX = contentAbsoluteBounds.x + padding.left;
-    double absoluteContentY = contentAbsoluteBounds.y + padding.top;
-    double absoluteContentWidth = contentAbsoluteBounds.width - padding.getHorizontal();
-    double absoluteContentHeight = contentAbsoluteBounds.height - padding.getVertical();
+    double contentAbsoluteX = absoluteBounds.x + padding.left;
+    double contentAbsoluteY = absoluteBounds.y + padding.top;
+    double contentAbsoluteWidth = absoluteBounds.width - padding.getHorizontal();
+    double contentAbsoluteHeight = absoluteBounds.height - padding.getVertical();
 
     contentAbsoluteBounds.set(
-      absoluteContentX,
-      absoluteContentY,
-      absoluteContentWidth,
-      absoluteContentHeight
+      contentAbsoluteX,
+      contentAbsoluteY,
+      contentAbsoluteWidth,
+      contentAbsoluteHeight
     );
+
+    tempAbsoluteBounds.set(absoluteBounds);
+    absoluteBounds.set(contentAbsoluteBounds);
+    super.performPostLayout();
+    absoluteBounds.set(tempAbsoluteBounds);
   }
 
   @Override
   protected void performRender(Graphics2D g) {
-    BufferedImage background = defaultBackground;
-
-    if (focused)
-      background = focusBackground;
+    BufferedImage background = !focused ? defaultBackground : focusBackground;
 
     if (background != null)
       renderWith9PatchScaling(background, absoluteBounds, edgeInsets, g);
 
-    tempAbsoluteBounds.set(absoluteBounds);
-    absoluteBounds.set(contentAbsoluteBounds);
     super.performRender(g);
-    absoluteBounds.set(tempAbsoluteBounds);
   }
 
   @Override

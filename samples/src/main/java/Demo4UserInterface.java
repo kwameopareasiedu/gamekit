@@ -90,9 +90,8 @@ public class Demo4UserInterface extends Scene {
               MainMenuButton.create("Tutorial", e -> System.out.println("0: " + e.type)),
               MainMenuButton.create("New Planet", e -> System.out.println("1: " + e.type)),
               Field.create(
-                Field.config().fontSize(24).fontStyle(Text.PLAIN)
-                  .alignment(Alignment.CENTER).edgeInsets(12, 12, 12, 12)
-                  .padding(8, 8, 8, 8).changeListener(ev -> {
+                Field.config().fontSize(28).fontStyle(Text.PLAIN).edgeInsets(12, 12, 12, 12)
+                  .padding(12, 12, 12, 12).changeListener(ev -> {
                     fieldValue = ev.value;
                     updateUI();
                   }),

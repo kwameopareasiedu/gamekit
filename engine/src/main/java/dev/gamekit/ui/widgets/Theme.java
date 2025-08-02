@@ -25,7 +25,7 @@ public class Theme extends SingleChildParent {
   public Font textFont;
   public Integer textFontSize;
   public Integer textFontStyle;
-  public Color textForegroundColor;
+  public Color textColor;
   public Color textBackgroundColor;
   public Alignment textAlignment;
   public Boolean textShadowEnabled;
@@ -88,7 +88,7 @@ public class Theme extends SingleChildParent {
       Objects.equals(textFont, themeWidget.textFont) &&
       Objects.equals(textFontStyle, themeWidget.textFontStyle) &&
       Objects.equals(textFontSize, themeWidget.textFontSize) &&
-      Objects.equals(textForegroundColor, themeWidget.textForegroundColor) &&
+      Objects.equals(textColor, themeWidget.textColor) &&
       Objects.equals(textBackgroundColor, themeWidget.textBackgroundColor) &&
       Objects.equals(textAlignment, themeWidget.textAlignment) &&
       Objects.equals(textShadowEnabled, themeWidget.textShadowEnabled) &&
@@ -141,7 +141,7 @@ public class Theme extends SingleChildParent {
     this.textFont = coalesce(config.textFont, theme.textFont);
     this.textFontSize = coalesce(config.textFontSize, theme.textFontSize);
     this.textFontStyle = coalesce(config.textFontStyle, theme.textFontStyle);
-    this.textForegroundColor = coalesce(config.textColor, theme.textForegroundColor);
+    this.textColor = coalesce(config.textColor, theme.textColor);
     this.textBackgroundColor = coalesce(config.textBackgroundColor, theme.textBackgroundColor);
     this.textAlignment = coalesce(config.textAlignment, theme.textAlignment);
     this.textShadowEnabled = coalesce(config.textShadowEnabled, theme.textShadowEnabled);
