@@ -71,33 +71,41 @@ public class Image extends Leaf {
     Shape originalClip = null;
 
     switch (fit) {
-      case FIT, CROP -> {
+      case FIT -> {
+        double widthRatio = absoluteBounds.width / computedBounds.width;
+        double heightRatio = absoluteBounds.height / computedBounds.height;
+        double scale = computedBounds.width > computedBounds.height ? heightRatio : widthRatio;
+        int scaledWidth = (int) (computedBounds.width * scale);
+        int scaledHeight = (int) (computedBounds.height * scale);
+
+        dx1 = absoluteBounds.x + (absoluteBounds.width - scaledWidth) / 2;
+        dy1 = absoluteBounds.y + (absoluteBounds.height - scaledHeight) / 2;
+        dx2 = dx1 + scaledWidth;
+        dy2 = dy1 + scaledHeight;
+      }
+      case CROP -> {
         double widthRatio = absoluteBounds.width / intrinsicBounds.width;
         double heightRatio = absoluteBounds.height / intrinsicBounds.height;
-
-        double scaleRatio = fit == ImageFit.FIT ?
-          (intrinsicBounds.width > intrinsicBounds.height ? heightRatio : widthRatio) :
-          (intrinsicBounds.width > intrinsicBounds.height ? widthRatio : heightRatio);
-
+        double scaleRatio = intrinsicBounds.width > intrinsicBounds.height
+          ? widthRatio : heightRatio;
         int scaledWidth = (int) (intrinsicBounds.width * scaleRatio);
         int scaledHeight = (int) (intrinsicBounds.height * scaleRatio);
+
         dx1 = absoluteBounds.x + (absoluteBounds.width - scaledWidth) / 2;
         dy1 = absoluteBounds.y + (absoluteBounds.height - scaledHeight) / 2;
         dx2 = dx1 + scaledWidth;
         dy2 = dy1 + scaledHeight;
 
-        if (fit == ImageFit.CROP) {
-          originalClip = g.getClip();
+        originalClip = g.getClip();
 
-          g.setClip(
-            (int) absoluteBounds.x,
-            (int) absoluteBounds.y,
-            (int) absoluteBounds.width,
-            (int) absoluteBounds.height
-          );
+        g.setClip(
+          (int) absoluteBounds.x,
+          (int) absoluteBounds.y,
+          (int) absoluteBounds.width,
+          (int) absoluteBounds.height
+        );
 
-          clipChanged = true;
-        }
+        clipChanged = true;
       }
       case STRETCH -> {
         dx1 = absoluteBounds.x;

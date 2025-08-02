@@ -19,6 +19,9 @@ import static dev.gamekit.utils.Math.clamp;
 import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link Text} widget extension which accepts text input */
+// TODO: Implement sliding window for text rendering
+// TODO: Implement text selection
+// TODO: Implement key char and key code modifier detection
 public class Field extends Text
   implements NinePatch, FocusEvent.Handler, MouseEvent.Handler,
   KeyCharEvent.Handler, KeyCodeEvent.Handler {

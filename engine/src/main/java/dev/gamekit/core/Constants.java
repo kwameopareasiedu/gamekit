@@ -9,7 +9,7 @@ public final class Constants {
   public static final int PIXELS_PER_METER = 128;
 
   public static final Color TRANSPARENT_COLOR = new Color(0x0000000, true);
-  public static final Color DEBUG_COLOR = Color.RED;
+  public static final Color DEBUG_COLOR = Color.GREEN;
   public static final BasicStroke DEBUG_STROKE =
     new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 

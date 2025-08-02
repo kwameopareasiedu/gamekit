@@ -2,7 +2,6 @@
 
 ## Road Map
 
-- More UI widgets (Input, Checkbox, Slider)
 - Text widget spanning to allow different text attributes for different segments of text
 - Dynamic lighting
 - Networked multiplayer

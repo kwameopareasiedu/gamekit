@@ -19,7 +19,7 @@ import java.util.Objects;
 
 /** {@link UI} manages the user interface within a {@link Scene} */
 public final class UI {
-  private static final int MAX_RENDER_PASSES = 8;
+  private static final int MAX_RENDER_PASSES = 4;
   private static final Logger LOGGER = LogManager.getLogger(UI.class);
   private static UI instance;
 
