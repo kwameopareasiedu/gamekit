@@ -1,8 +1,8 @@
 package dev.gamekit.ui.events;
 
 /**
- * Abstract base class for mouse related events. Contains an {@code (x, y)} for the screen
- * location the event took place.
+ * Event class for mouse related events. Contains an {@code (x, y)} for the screen location the
+ * event took place.
  */
 public class MouseEvent extends InputEvent {
   public final Type type;
@@ -28,9 +28,8 @@ public class MouseEvent extends InputEvent {
     EXIT
   }
 
-  /** Callback interface for a {@link MouseEvent} handler */
-  public interface Listener {
-    /** Called to handle the {@link MouseEvent} event */
-    void handleEvent(MouseEvent event);
+  /** Handler interface for {@link MouseEvent mouse events} */
+  public interface Handler extends InputEvent.Handler {
+    void handleEvent(MouseEvent ev);
   }
 }

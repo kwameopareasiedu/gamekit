@@ -2,7 +2,7 @@ package dev.gamekit.ui;
 
 import static dev.gamekit.utils.Math.clamp;
 
-/** An immutable record for width and height range values */
+/** An immutable record for size and height range values */
 public record Constraints(double minWidth, double maxWidth, double minHeight, double maxHeight) {
   public Constraints {
     minWidth = Math.max(minWidth, 0);
@@ -11,12 +11,12 @@ public record Constraints(double minWidth, double maxWidth, double minHeight, do
     maxHeight = Math.max(maxHeight, 0);
   }
 
-  /** Constraints the given width to respect {@link #minWidth} and {@link #maxWidth} */
+  /** Constrains the given size to respect {@link #minWidth} and {@link #maxWidth} */
   public double constrainWidth(double width) {
     return clamp(width, minWidth, maxWidth);
   }
 
-  /** Constraints the given height to respect {@link #minHeight} and {@link #maxHeight} */
+  /** Constrains the given height to respect {@link #minHeight} and {@link #maxHeight} */
   public double constrainHeight(double height) {
     return clamp(height, minHeight, maxHeight);
   }
@@ -24,7 +24,7 @@ public record Constraints(double minWidth, double maxWidth, double minHeight, do
   @Override
   public String toString() {
     return String.format(
-      getClass().getName() + "[%.2f<=width<=%.2f,%.2f<=height<=%.2f]",
+      getClass().getName() + "[%.2f<=size<=%.2f,%.2f<=height<=%.2f]",
       minWidth, maxWidth, minHeight, maxHeight
     );
   }

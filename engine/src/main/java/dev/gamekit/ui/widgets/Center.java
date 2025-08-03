@@ -6,9 +6,8 @@ import dev.gamekit.ui.enums.Alignment;
 public class Center extends Align {
   public Center(Widget child) {
     super(
-      new Config()
-        .verticalAlignment(Alignment.CENTER)
-        .horizontalAlignment(Alignment.CENTER),
+      config().horizontalAlignment(Alignment.CENTER)
+        .verticalAlignment(Alignment.CENTER),
       child
     );
   }

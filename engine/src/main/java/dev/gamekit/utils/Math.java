@@ -46,4 +46,9 @@ public final class Math {
   public static double lerp(double from, double to, double rate) {
     return from + rate * (to - from);
   }
+
+  /** Computes the sign of a number */
+  public static int sign(Number value) {
+    return value.doubleValue() >= 0 ? 1 : -1;
+  }
 }

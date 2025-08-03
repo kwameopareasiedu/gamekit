@@ -24,7 +24,7 @@ public class UiTest {
     assertEquals(100, spacing.getVertical());
     assertEquals(100, spacing.getHorizontal());
 
-    spacing.set(100, 50);
+    spacing.set(50, 100);
     assertEquals(50, spacing.top);
     assertEquals(100, spacing.right);
     assertEquals(50, spacing.bottom);

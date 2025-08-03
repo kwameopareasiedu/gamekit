@@ -1,19 +1,26 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.core.Constants;
 import dev.gamekit.core.Scene;
+import dev.gamekit.core.UI;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.utils.Bounds;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 /**
- * A widget is an abstract representation of a portion of a {@link Scene Scene's} user interface.
+ * A widget is an abstract representation of a portion of a {@link Scene scene's} user interface.
  * <p>
- * Subclasses must implement the {@link #performLayout} and {@link #performRender(Graphics2D)} to
- * compute their position and size
+ * Widgets are used to describe all aspects of a user interface, including physical aspects such
+ * as text and buttons to layout effects like padding and alignment.
+ * <p>
+ * Widgets form a hierarchy based on composition. Each widget nests inside its parent and can
+ * receive context from the parent.
+ * <p>
+ * To create a user interface in a scene, you override its {@code createUI} method and return the
+ * desired widget hierarchy.
  * <p>
  * Widget layout is based on the
  * <a href="https://docs.flutter.dev/ui/layout/constraints">box-constraint</a>
@@ -23,62 +30,87 @@ import java.awt.image.BufferedImage;
 public abstract class Widget {
   public static boolean DEBUG_DRAW = false;
 
-  private static final BasicStroke DEBUG_OUTLINE_STROKE = new BasicStroke(
-    1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND
-  );
-
   protected final Logger logger = LogManager.getLogger(getClass());
   protected final Bounds absoluteBounds;
   protected final Bounds computedBounds;
   protected final Bounds intrinsicBounds;
-  protected final Bounds clipBounds;
+  protected UI.BridgeObject uiBridge;
   protected Constraints constraints;
+  protected WidgetConfig config;
   protected Widget parent;
 
-  public Widget() {
-    absoluteBounds = new Bounds(0, 0, 0, 0);
-    computedBounds = new Bounds(0, 0, 0, 0);
-    intrinsicBounds = new Bounds(0, 0, 0, 0);
-    clipBounds = new Bounds(0, 0, 0, 0);
-    parent = null;
+  public Widget(WidgetConfig config) {
+    if (config == null)
+      throw new IllegalArgumentException("Widget config cannot be null");
+
+    this.config = config;
+    this.absoluteBounds = new Bounds(0, 0, 0, 0);
+    this.computedBounds = new Bounds(0, 0, 0, 0);
+    this.intrinsicBounds = new Bounds(0, 0, 0, 0);
+    this.parent = null;
   }
 
-  public Bounds getComputedBounds() { return computedBounds; }
-
-  public Widget getParent() { return parent; }
-
-  public void setParent(Widget parent) {
-    this.parent = parent;
+  /** Returns the {@link #parent} of this widget */
+  public Widget getParent() {
+    return parent;
   }
 
-  /**
-   * Delegate method which returns {@code true} if this widget has the same state as {@code widget}
-   */
+  /** Delegate method which determines if this widget's state matches another {@code widget} */
   public abstract boolean stateEquals(Widget widget);
 
   /**
-   * Called after the widget has been inserted into the widget tree and {@link #parent} is set.
-   * This is useful if the widget needs to access some ancestors for additional information.
+   * Called to initialize the widget after it has been inserted into the widget tree and
+   * {@link #parent} has been set.
+   * <p>
+   * If the widget is updated some time after first initialization, this method is called
+   * afterward to re-initialize the widget.
+   * <p>
+   * A common use-case is to look up ancestors for additional information (E.g. Theme look-up)
    * <p>
    * Since this method is marked as {@code final}, subclasses should override the
-   * {@link #performMounted()} method instead to perform any post-mount operations
+   * {@link #performInit} method instead to perform any post-mount operations
    */
-  public final void mounted() {
-    performMounted();
+  public final void init(UI.BridgeObject uiBridge) {
+    this.uiBridge = uiBridge;
+    performInit();
   }
 
-  /** Delegate method which runs post-mounted logic */
-  protected void performMounted() { /* No-op */ }
+  /** Delegate method which performs initialization logic in subclasses */
+  protected void performInit() { /* No-op */ }
 
   /**
-   * Computes the layout for the widget
+   * During UI updates, the engine checks which widgets need to be replaced or just updated by
+   * comparing the types and states.
+   * <p>
+   * For widgets that only need state updates, this method is called with the updated widget
+   * containing the new state.
+   * <p>
+   * It is guaranteed that the type of the incoming widget will be the same as this widget so it
+   * is safe to cast the incoming widget to this widget's class.
+   * <p>
+   * {@link #init} method is called afterward to re-initialize the widget.
+   * <p>
+   * Since this method is marked as {@code final}, subclasses should override the
+   * {@link #performUpdate} method instead to perform any state updates
+   */
+  public final void update(Widget widget) {
+    this.config = widget.config;
+    performUpdate(widget);
+    init(uiBridge);
+  }
+
+  /** Delegate method performs the state update for this widget */
+  protected void performUpdate(Widget widget) { /* No-op */ }
+
+  /**
+   * Computes the size of the widget and the relative position(s) of its child/children
    * <p>
    * This is called by either the parent widget or window and receives the {@link Constraints}
-   * from its parent or the window, and the resulting computed size must always respect this
-   * constraint
+   * from its parent or the window, and the resulting computed size <b>must</b> always respect
+   * this constraint
    * <p>
    * The goal of this method is to set the {@link #computedBounds} which controls where on the
-   * screen the widget is rendered.
+   * screen the widget is rendered
    * <p>
    * Since this method is marked as {@code final}, subclasses should override the
    * {@link #performLayout} method instead to perform their layout
@@ -89,19 +121,23 @@ public abstract class Widget {
   }
 
   /**
-   * Delegate method which performs the actual layout and is passed the constraints from
-   * {@link #layout(Constraints)}.
+   * Delegate method which performs the actual layout and is passed the constraints from the
+   * {@link #layout} method.
    */
   protected abstract void performLayout(Constraints constraints);
 
   /**
    * Performs post-layout logic
    * <p>
-   * This exists because {@link #layout(Constraints)} uses a depth-first approach in traversing
+   * This exists because the engine calls {@link #layout} in a depth-first manner in traversing
    * this widget tree.
    * <p>
-   * With this approach, certain data (e.g. computed bounds position and parent computed bounds)
-   * may not be available until after the scene's UI widget tree has been completely laid out
+   * This means a widget's {@link #layout} method will not complete until its entire widget
+   * subtree has completed and hence certain data (e.g. relative position and that of the parent)
+   * will not be available until after the scene's UI widget tree has been completely laid out.
+   * <p>
+   * After complete scene layout, this method is called to perform computations that depend on
+   * the data computed during {@link #layout}
    * <p>
    * Since this method is marked as {@code final}, subclasses should override the
    * {@link #performPostLayout} method instead to perform any post layout logic
@@ -114,46 +150,29 @@ public abstract class Widget {
   protected void performPostLayout() { /* No-op */ }
 
   /**
-   * Renders the widget unto the provided {@link BufferedImage}
-   * <p>
-   * This method is {@code final} and delegates the actual drawing to
-   * {@link #performRender(Graphics2D)}.
+   * Renders the widget with the provided {@link Graphics2D} object
    * <p>
    * Since this method is marked as {@code final}, subclasses should override the
-   * {@link #performRender(Graphics2D)} method instead to perform rendering
+   * {@link #performRender} method instead to perform rendering
    */
   public final void render(Graphics2D canvasGraphics) {
-    if (parent != null) {
-      Bounds.intersect(absoluteBounds, parent.absoluteBounds, clipBounds);
-
-      canvasGraphics.setClip(
-        (int) clipBounds.x,
-        (int) clipBounds.y,
-        (int) clipBounds.width,
-        (int) clipBounds.height
-      );
-    } else {
-      canvasGraphics.setClip(
-        (int) absoluteBounds.x,
-        (int) absoluteBounds.y,
-        (int) absoluteBounds.width,
-        (int) absoluteBounds.height
-      );
-    }
-
     performRender(canvasGraphics);
 
-    canvasGraphics.setClip(null);
-
     if (DEBUG_DRAW) {
-      canvasGraphics.setColor(Color.CYAN);
-      canvasGraphics.setStroke(DEBUG_OUTLINE_STROKE);
+      Color originalColor = canvasGraphics.getColor();
+      Stroke originalStroke = canvasGraphics.getStroke();
+
+      canvasGraphics.setColor(Constants.DEBUG_COLOR);
+      canvasGraphics.setStroke(Constants.DEBUG_STROKE);
       canvasGraphics.drawRect(
         (int) absoluteBounds.x,
         (int) absoluteBounds.y,
         (int) absoluteBounds.width,
         (int) absoluteBounds.height
       );
+
+      canvasGraphics.setColor(originalColor);
+      canvasGraphics.setStroke(originalStroke);
     }
   }
 
@@ -163,7 +182,23 @@ public abstract class Widget {
    */
   protected abstract void performRender(Graphics2D g);
 
-  /** Determines if point (x, y) falls within the absolute bounds of this widget */
+  /**
+   * Called before the widget is removed from the widget tree during UI reconciliation or during
+   * the scene's disposal.
+   * <p>
+   * This is a good place to clean up any resources and stop animations used by the widget.
+   * <p>
+   * Since this method is marked as {@code final}, subclasses should override the
+   * {@link #performUnmount} method instead to perform rendering
+   */
+  public final void unmount() {
+    performUnmount();
+  }
+
+  /** Delegate method for subclasses to perform unmount operations */
+  protected void performUnmount() { /* No-op */ }
+
+  /** Determines if the point {@code (x,y)} falls within the absolute bounds of this widget */
   public boolean hitTest(double x, double y) {
     double absoluteRight = absoluteBounds.x + absoluteBounds.width;
     double absoluteBottom = absoluteBounds.y + absoluteBounds.height;
@@ -171,6 +206,10 @@ public abstract class Widget {
       absoluteBounds.y <= y && y <= absoluteBottom;
   }
 
+  /**
+   * Computes the absolute bounds, starting with the computed size and walking up its ancestry,
+   * to determine the absolute position
+   */
   protected void computeAbsoluteBounds() {
     double absoluteX = computedBounds.x;
     double absoluteY = computedBounds.y;
@@ -211,4 +250,7 @@ public abstract class Widget {
 
     return null;
   }
+
+  /** Base class for all widget constructor configurations */
+  public static abstract class WidgetConfig { }
 }

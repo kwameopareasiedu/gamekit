@@ -14,8 +14,6 @@ import dev.gamekit.ui.widgets.*;
 import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.utils.Position;
 import dev.gamekit.utils.Vector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -34,7 +32,6 @@ import java.util.Objects;
  * </ul>
  */
 public class Demo5Audio extends Scene {
-  private static final Logger LOGGER = LogManager.getLogger();
   private static final BufferedImage SPEAKER_IMG = IO.getResourceImage("speaker.png");
   private static final String MUSIC_KEY = "music";
 
@@ -103,7 +100,7 @@ public class Demo5Audio extends Scene {
 
   @Override
   protected void render() {
-    Renderer.clear(Color.DARK_GRAY);
+    Renderer.clear(Color.BLACK);
   }
 
   @Override
@@ -134,14 +131,20 @@ public class Demo5Audio extends Scene {
           Opacity.config().opacity(pan < 0 ? 1 : 1 - pan),
           Scaled.create(
             Scaled.config().scale(0.5),
-            Image.create(SPEAKER_IMG)
+            Image.create(
+              Image.config().interpolation(ImageInterpolation.BICUBIC),
+              SPEAKER_IMG
+            )
           )
         ),
         Opacity.create(
           Opacity.config().opacity(pan > 0 ? 1 : 1 + pan),
           Scaled.create(
             Scaled.config().scale(0.5),
-            Image.create(SPEAKER_IMG)
+            Image.create(
+              Image.config().interpolation(ImageInterpolation.BICUBIC),
+              SPEAKER_IMG
+            )
           )
         )
       )

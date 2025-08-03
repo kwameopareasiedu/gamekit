@@ -1,10 +1,8 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.core.Constants;
+import dev.gamekit.core.IO;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Spacing;
-import dev.gamekit.ui.events.InputEvent;
-import dev.gamekit.ui.events.InputEventHandler;
 import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.mixins.NinePatch;
 
@@ -14,34 +12,42 @@ import java.util.Objects;
 
 import static dev.gamekit.utils.Misc.coalesce;
 
-/**
- * A {@link SingleChildParent} which uses the 9-patch algorithm to render a {@link BufferedImage}
- * as a background to its descendants
- */
-public class Panel extends SingleChildParent implements NinePatch, InputEventHandler {
+/** A {@link SingleChildParent} which uses the 9-patch algorithm to render a background */
+public class Panel extends SingleChildParent implements NinePatch, MouseEvent.Handler {
+  public static final BufferedImage DEFAULT_BG =
+    IO.getResourceImage("default-sprites.png", 470, 64, 120, 120);
+
   protected BufferedImage background;
-  protected Spacing ninePatchBorder;
+  protected Spacing edgeInsets;
 
-  private final Config config;
-
-  public Panel(Config config, Widget child) {
-    super(child);
-    this.config = config;
+  public Panel(PanelConfig config, Widget child) {
+    super(config, child);
   }
 
-  public static Panel create(Config config, Widget child) {
+  public static Panel create(PanelConfig config, Widget child) {
     return new Panel(config, child);
   }
 
-  public static Config config() {
-    return new Config();
+  public static PanelConfig config() {
+    return new PanelConfig();
   }
 
   @Override
-  protected void performMounted() {
-    this.background = coalesce(config.background, Constants.DEFAULT_PANEL_BG);
-    this.ninePatchBorder = coalesce(config.ninePatchBorder, new Spacing());
-    super.performMounted();
+  public boolean stateEquals(Widget widget) {
+    return widget instanceof Panel panelWidget &&
+      Objects.equals(background, panelWidget.background)
+      && Objects.equals(edgeInsets, panelWidget.edgeInsets);
+  }
+
+  @Override
+  protected void performInit() {
+    PanelConfig config = (PanelConfig) super.config;
+    Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
+
+    this.background = coalesce(config.background, theme.panelBackground, DEFAULT_BG);
+    this.edgeInsets = coalesce(config.edgeInsets, theme.panelEdgeInsets, new Spacing());
+
+    super.performInit();
   }
 
   @Override
@@ -70,68 +76,25 @@ public class Panel extends SingleChildParent implements NinePatch, InputEventHan
   public void renderAppearance(Graphics2D g) {
     super.renderAppearance(g);
 
-    renderNinePatch(
-      background,
-      absoluteBounds,
-      ninePatchBorder,
-      g
-    );
+    renderWith9PatchScaling(background, absoluteBounds, edgeInsets, g);
   }
 
   @Override
-  public boolean stateEquals(Widget widget) {
-    if (widget instanceof Panel panelWidget) {
-      return Objects.equals(background, panelWidget.background)
-        && Objects.equals(ninePatchBorder, panelWidget.ninePatchBorder);
-    }
-
-    return false;
-  }
-
-  @Override
-  public MouseEvent.Listener getMouseListener() {
-    return null;
-  }
-
-  @Override
-  public void setMouseEntered(boolean mouseEntered) {/* No-op */}
-
-  @Override
-  public void setMousePressed(boolean mouseEntered) {/* No-op */}
-
-  @Override
-  public void handleEvent(InputEvent event) {
+  public void handleEvent(MouseEvent event) {
     event.setHandled();
   }
 
-  public static class Config {
-    public BufferedImage background;
-    public Spacing ninePatchBorder;
+  public static class PanelConfig extends SingleChildParentConfig {
+    protected BufferedImage background;
+    protected Spacing edgeInsets;
 
-    Config() { }
-
-    public Config background(BufferedImage background) {
+    public PanelConfig background(BufferedImage background) {
       this.background = background;
       return this;
     }
 
-    public Config ninePatch(Spacing border) {
-      this.ninePatchBorder = border;
-      return this;
-    }
-
-    public Config ninePatch(int all) {
-      this.ninePatchBorder = new Spacing(all);
-      return this;
-    }
-
-    public Config ninePatch(int horizontal, int vertical) {
-      this.ninePatchBorder = new Spacing(horizontal, vertical);
-      return this;
-    }
-
-    public Config ninePatch(int top, int right, int bottom, int left) {
-      this.ninePatchBorder = new Spacing(top, right, bottom, left);
+    public PanelConfig edgeInsets(int top, int right, int bottom, int left) {
+      this.edgeInsets = new Spacing(top, right, bottom, left);
       return this;
     }
   }

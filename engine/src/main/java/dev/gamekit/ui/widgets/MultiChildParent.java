@@ -8,19 +8,21 @@ import java.util.List;
 public abstract class MultiChildParent extends Parent {
   protected final List<Widget> children;
 
-  public MultiChildParent(Widget... children) {
+  public MultiChildParent(MultiChildParentConfig config, Widget... children) {
+    super(config);
+
     for (Widget child : children) {
       if (child == null)
         throw new IllegalArgumentException("MultiChildParent child cannot be null");
     }
 
     this.children = new ArrayList<>(List.of(children));
-    this.children.forEach(c -> c.setParent(this));
+    this.children.forEach(c -> c.parent = this);
   }
 
   @Override
-  protected void performMounted() {
-    children.forEach(Widget::mounted);
+  protected void performInit() {
+    children.forEach(c -> c.init(uiBridge));
   }
 
   @Override
@@ -34,6 +36,11 @@ public abstract class MultiChildParent extends Parent {
     children.forEach(child -> child.render(g));
   }
 
+  @Override
+  protected void performUnmount() {
+    children.forEach(Widget::unmount);
+  }
+
   public List<Widget> getChildren() { return children; }
 
   public final void updateChild(int index, Widget newChild) {
@@ -44,8 +51,10 @@ public abstract class MultiChildParent extends Parent {
           children.size(), index
         )
       );
-    children.get(index).setParent(null);
+    children.get(index).parent = null;
     children.set(index, newChild);
-    children.get(index).setParent(this);
+    children.get(index).parent = this;
   }
+
+  public static abstract class MultiChildParentConfig extends ParentConfig { }
 }

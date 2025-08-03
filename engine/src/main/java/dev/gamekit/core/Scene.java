@@ -63,6 +63,8 @@ public abstract class Scene extends Entity {
       super._render();
       Renderer.commit();
     }
+
+    ui.render();
   }
 
   /** Called by {@link Application} to draw the scene to the {@link Window} */
@@ -78,6 +80,7 @@ public abstract class Scene extends Entity {
   void _dispose() {
     logger.debug("Disposing scene");
     super._dispose();
+    ui.unmount();
     dispose();
   }
 }

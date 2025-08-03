@@ -15,7 +15,7 @@ import static dev.gamekit.utils.Math.*;
 /**
  * The {@link RigidBody} component enables physics-based motion for the entity.
  * <p>
- * During its {@link #update()} phase and after a physics simulation step is complete, this
+ * During its {@link #update} phase and after a physics simulation step is complete, this
  * component will update the attached entity's {@link Transform} component's position and rotation
  */
 public class RigidBody extends Component {
@@ -99,7 +99,7 @@ public class RigidBody extends Component {
   }
 
   /**
-   * Creates a rectangle with the specified {@code width} and {@code height} and attaches it to
+   * Creates a rectangle with the specified {@code size} and {@code height} and attaches it to
    * this {@link RigidBody} via a {@link BodyFixture}
    * <p>
    * After creation, the new {@link Rectangle} and {@link BodyFixture} are passed to the {@code
@@ -114,7 +114,7 @@ public class RigidBody extends Component {
   }
 
   /**
-   * Creates a rectangle with the specified {@code width} and {@code height} and attaches it to
+   * Creates a rectangle with the specified {@code size} and {@code height} and attaches it to
    * this {@link RigidBody} via a {@link BodyFixture} without additional tuning
    * @see #addRectFixture(double, double, FixtureTuner)
    */

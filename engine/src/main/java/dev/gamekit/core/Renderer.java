@@ -48,14 +48,14 @@ public final class Renderer {
     return call;
   }
 
-  /** Fills a <b>center-origin</b> rect at (x, y) with width and height */
+  /** Fills a <b>center-origin</b> rect at (x, y) with size and height */
   public static DrawRect fillRect(int x, int y, int width, int height) {
     DrawRect call = new DrawRect(x, y, width, height, true);
     BUFFER.add(call);
     return call;
   }
 
-  /** Draws a <b>center-origin</b> rect at (x, y) with width and height */
+  /** Draws a <b>center-origin</b> rect at (x, y) with size and height */
   public static DrawRect drawRect(int x, int y, int width, int height) {
     DrawRect call = new DrawRect(x, y, width, height, false);
     BUFFER.add(call);
@@ -63,7 +63,7 @@ public final class Renderer {
   }
 
   /**
-   * Fills a <b>center-origin</b> rounded rect at (x, y) with width, height, arc width and height
+   * Fills a <b>center-origin</b> rounded rect at (x, y) with size, height, arc size and height
    */
   public static DrawRoundRect fillRoundRect(
     int x, int y, int width, int height, int arcWidth, int arcHeight
@@ -74,7 +74,7 @@ public final class Renderer {
   }
 
   /**
-   * Draws a <b>center-origin</b> rounded rect at (x, y) with width, height, arc width and height
+   * Draws a <b>center-origin</b> rounded rect at (x, y) with size, height, arc size and height
    */
   public static DrawRoundRect drawRoundRect(
     int x, int y, int width, int height, int arcWidth, int arcHeight
@@ -84,14 +84,14 @@ public final class Renderer {
     return call;
   }
 
-  /** Fills a <b>center-origin</b> oval at (x, y) with width and height */
+  /** Fills a <b>center-origin</b> oval at (x, y) with size and height */
   public static DrawOval fillOval(int x, int y, int width, int height) {
     DrawOval call = new DrawOval(x, y, width, height, true);
     BUFFER.add(call);
     return call;
   }
 
-  /** Draws a <b>center-origin</b> oval at (x, y) with width and height */
+  /** Draws a <b>center-origin</b> oval at (x, y) with size and height */
   public static DrawOval drawOval(int x, int y, int width, int height) {
     DrawOval call = new DrawOval(x, y, width, height, false);
     BUFFER.add(call);
@@ -112,7 +112,7 @@ public final class Renderer {
     return call;
   }
 
-  /** Draws a scaled <b>center-origin</b> {@link BufferedImage} at (x, y) with width and height */
+  /** Draws a scaled <b>center-origin</b> {@link BufferedImage} at (x, y) with size and height */
   public static DrawImage drawImage(BufferedImage img, int x, int y, int width, int height) {
     DrawImage call = new DrawImage(img, x, y, width, height);
     BUFFER.add(call);

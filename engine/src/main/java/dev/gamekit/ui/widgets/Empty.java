@@ -9,8 +9,17 @@ import java.awt.*;
  * {@code null} would have been preferable
  */
 public class Empty extends Leaf {
+  public Empty(LeafConfig config) {
+    super(config);
+  }
+
   public static Empty create() {
-    return new Empty();
+    return new Empty(new LeafConfig() { });
+  }
+
+  @Override
+  public boolean stateEquals(Widget widget) {
+    return widget instanceof Empty;
   }
 
   @Override
@@ -23,9 +32,4 @@ public class Empty extends Leaf {
 
   @Override
   protected void performRender(Graphics2D g) { /* No-op */ }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    return widget instanceof Empty;
-  }
 }

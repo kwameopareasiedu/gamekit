@@ -12,29 +12,36 @@ import static dev.gamekit.utils.Misc.coalesce;
 public class Opacity extends SingleChildParent {
   protected double opacity;
 
-  private final Config config;
   private AlphaComposite composite;
 
-  public Opacity(Config config, Widget child) {
-    super(child);
-    this.config = config;
+  public Opacity(OpacityConfig config, Widget child) {
+    super(config, child);
   }
 
-  public static Opacity create(Config config, Widget child) {
+  public static Opacity create(OpacityConfig config, Widget child) {
     return new Opacity(config, child);
   }
 
-  public static Config config() {
-    return new Config();
+  public static OpacityConfig config() {
+    return new OpacityConfig();
   }
 
   @Override
-  protected void performMounted() {
+  public boolean stateEquals(Widget widget) {
+    return widget instanceof Opacity opacityWidget &&
+      Objects.equals(opacity, opacityWidget.opacity);
+  }
+
+  @Override
+  protected void performInit() {
+    OpacityConfig config = (OpacityConfig) super.config;
+
     this.opacity = clamp(coalesce(config.opacity, 1.0), 0, 1);
-    this.composite = AlphaComposite.getInstance(
-      AlphaComposite.SRC_OVER, (float) this.opacity
-    );
-    super.performMounted();
+
+    if (this.composite == null || this.composite.getAlpha() != opacity)
+      this.composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) this.opacity);
+
+    super.performInit();
   }
 
   @Override
@@ -66,27 +73,16 @@ public class Opacity extends SingleChildParent {
 
   @Override
   protected void performRender(Graphics2D g) {
-    Composite c = g.getComposite();
+    Composite originalComposite = g.getComposite();
     g.setComposite(composite);
     super.performRender(g);
-    g.setComposite(c);
+    g.setComposite(originalComposite);
   }
 
-  @Override
-  public boolean stateEquals(Widget widget) {
-    if (widget instanceof Opacity opacityWidget) {
-      return Objects.equals(opacity, opacityWidget.opacity);
-    }
+  public static class OpacityConfig extends SingleChildParentConfig {
+    protected Double opacity;
 
-    return false;
-  }
-
-  public static class Config {
-    Double opacity;
-
-    Config() { }
-
-    public Config opacity(double opacity) {
+    public OpacityConfig opacity(double opacity) {
       this.opacity = opacity;
       return this;
     }

@@ -21,4 +21,7 @@ public abstract class InputEvent {
    * Handled events are no longer propagated to ancestor widgets
    */
   public void setHandled() { this.handled = true; }
+
+  /** Base class for handlers of {@link InputEvent input events} */
+  public interface Handler {}
 }

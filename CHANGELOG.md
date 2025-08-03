@@ -2,12 +2,10 @@
 
 ## Road Map
 
-- More UI widgets (Input, Checkbox, Slider)
 - Text widget spanning to allow different text attributes for different segments of text
 - Dynamic lighting
 - Networked multiplayer
-- Minimum size computation in widgets
-- Sized widget minimum size configuration
+- Save/Load system
 - Maven plugin for CLI tasks like packaging
 
 ## UNRELEASED
@@ -15,6 +13,27 @@
 ### Added
 
 ### Changed
+
+### Deprecated
+
+### Removed
+
+## 0.6.0-SNAPSHOT-1
+
+### Added
+
+- Added `Field` widget which is a `Text` widget extension which accepts text input
+- Added `Checkbox` widget which is a `SingleChildParent` input component which toggles between two
+  states
+- Added `Progress` widget which is a `Leaf` widget which displays a progress bar
+- Added `Slider` widget which is a `Progress` widget extension which adjusts a value by moving a
+  slider
+
+### Changed
+
+- Changed signature of `public void mounted()` lifecycle method in `Widget` class to
+  `public void init(UI.BridgeObject)`
+- Renamed `public void updateState(Widget)` in `Widget` to `public void update(Widget)`
 
 ### Deprecated
 
@@ -29,7 +48,7 @@
 - Added `RigidBody` which is a `Component` that enables physics-based motion for an entity
 - Added `Physics` class which manages the physics world updates and collision processing
 - Added component lifecycle processing to `Entity` class
-- Added `public <T extends Component> findComponent(Class<T> clazz)` to `Entity` class which finds 
+- Added `public <T extends Component> findComponent(Class<T> clazz)` to `Entity` class which finds
   a specific component on and `Entity`
 - Added `public void mounted()` lifecycle method to `Widget` class
 - Added `Theme` widget which is a `SingleChildParent` which theme variables to its descendants

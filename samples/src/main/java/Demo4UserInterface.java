@@ -1,12 +1,16 @@
-import dev.gamekit.core.*;
+import dev.gamekit.core.Application;
+import dev.gamekit.core.IO;
+import dev.gamekit.core.Scene;
 import dev.gamekit.settings.*;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
+import dev.gamekit.ui.enums.ImageFit;
 import dev.gamekit.ui.enums.MainAxisAlignment;
 import dev.gamekit.ui.events.MouseEvent;
-import dev.gamekit.ui.widgets.Button;
-import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.ui.widgets.*;
+import dev.gamekit.ui.widgets.Button;
+import dev.gamekit.ui.widgets.Checkbox;
+import dev.gamekit.ui.widgets.Image;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -23,18 +27,28 @@ public class Demo4UserInterface extends Scene {
   private static final BufferedImage BACKDROP = IO.getResourceImage("planetfall-artwork.jpg");
   private static final BufferedImage LOGO = IO.getResourceImage("planetfall-logo.png");
   private static final BufferedImage SCRIM = IO.getResourceImage("transparent-black.png");
+  private static final BufferedImage THUMB = IO.getResourceImage("slider-thumb.png");
+  private static final BufferedImage PROGRESS_TRACK =
+    IO.getResourceImage("progress.png", 0, 4, 48, 8);
+  private static final BufferedImage PROGRESS_FILL =
+    IO.getResourceImage("progress.png", 50, 4, 4, 8);
+
+  private String fieldValue = "Hello";
+  private boolean checkboxValue = false;
+  private double sliderValue = 65;
 
   public Demo4UserInterface() {
     super("Main Scene");
+    Widget.DEBUG_DRAW = true;
   }
 
   public static void main(String[] args) {
     Application game = new Application(
       new Settings(
         "Demo 4 - Declarative UI",
-        Resolution.NATIVE,
-        WindowMode.FULLSCREEN,
-        Antialiasing.OFF,
+        Resolution.HD,
+        WindowMode.WINDOWED,
+        Antialiasing.ON,
         TextAntialiasing.ON,
         AlphaInterpolation.SPEED,
         ImageInterpolation.NEAREST,
@@ -52,9 +66,9 @@ public class Demo4UserInterface extends Scene {
       Image.create(BACKDROP),
 
       Align.create(
-        Align.config().horizontalAlignment(Alignment.START).verticalAlignment(Alignment.START),
+        Align.config(),
         Padding.create(
-          Padding.config().padding(24, 0),
+          Padding.config().padding(0, 24, 0, 24),
           Sized.create(
             Sized.config().width(480).height(480),
             Image.create(LOGO)
@@ -63,11 +77,11 @@ public class Demo4UserInterface extends Scene {
       ),
 
       Align.create(
-        Align.config().horizontalAlignment(Alignment.START).verticalAlignment(Alignment.CENTER),
+        Align.config().verticalAlignment(Alignment.CENTER),
         Padding.create(
           Padding.config().padding(256, 8, 16, 96),
           Theme.create(
-            Theme.config().textFontSize(10).textFontStyle(Font.BOLD).textFontStyle(Font.ITALIC),
+            Theme.config().textFontSize(10).textFontStyle(Text.ITALIC),
             Column.create(
               Column.config()
                 .mainAxisAlignment(MainAxisAlignment.START)
@@ -75,9 +89,47 @@ public class Demo4UserInterface extends Scene {
                 .gapSize(24),
               MainMenuButton.create("Tutorial", e -> System.out.println("0: " + e.type)),
               MainMenuButton.create("New Planet", e -> System.out.println("1: " + e.type)),
-              MainMenuButton.create("New Campaign", null),
-              MainMenuButton.create("Load Game", null),
-              MainMenuButton.create("Online Multiplayer", null),
+              Field.create(
+                Field.config().fontSize(28).fontStyle(Text.PLAIN).edgeInsets(12, 12, 12, 12)
+                  .padding(12, 12, 12, 12).changeListener(ev -> {
+                    fieldValue = ev.value;
+                    updateUI();
+                  }),
+                fieldValue
+              ),
+              Checkbox.create(
+                Checkbox.config().value(checkboxValue).iconEdgeInsets(4, 4, 4, 4)
+                  .changeListener(ev -> {
+                    checkboxValue = ev.value;
+                    updateUI();
+                  }),
+                Text.create(
+                  Text.config().fontSize(32).fontStyle(Text.PLAIN),
+                  "Active"
+                )
+              ),
+              Sized.create(
+                Sized.config().width(256).intrinsicHeight(),
+                Slider.create(
+                  Slider.config().range(0, 100).fillMode(Slider.FillMode.CLIP)
+                    .thumbBackground(THUMB).thumbEdgeInsets(10, 10, 10, 10)
+                    .changeListener(e -> {
+                      sliderValue = e.value;
+                      updateUI();
+                    }),
+                  sliderValue
+                )
+              ),
+              Sized.create(
+                Sized.config().width(256).height(48),
+                Progress.create(
+                  Progress.config().range(0, 100).trackBackground(PROGRESS_TRACK)
+                    .trackEdgeInsets(0, 0, 0, 0).fillMargin(0, 12, 0, 12)
+                    .fillBackground(PROGRESS_FILL).fillEdgeInsets(0, 1, 0, 1)
+                    .fillMode(Progress.FillMode.CLIP),
+                  sliderValue
+                )
+              ),
               Column.create(
                 Column.config()
                   .mainAxisAlignment(MainAxisAlignment.START)
@@ -94,21 +146,27 @@ public class Demo4UserInterface extends Scene {
       ),
 
       Align.create(
-        Align.config().verticalAlignment(Alignment.START),
+        Align.config().horizontalAlignment(Alignment.CENTER),
         Sized.create(
           Sized.config().fractionalWidth(1).fractionalHeight(0.15),
-          Image.create(SCRIM)
+          Image.create(
+            Image.config().fit(ImageFit.CROP),
+            SCRIM
+          )
         )
       ),
 
       Align.create(
-        Align.config().verticalAlignment(Alignment.END),
+        Align.config().horizontalAlignment(Alignment.CENTER).verticalAlignment(Alignment.END),
         Sized.create(
           Sized.config().fractionalWidth(1).fractionalHeight(0.15),
           Stack.create(
             Sized.create(
               Sized.config().fractionalWidth(1).fractionalHeight(1),
-              Image.create(SCRIM)
+              Image.create(
+                Image.config().fit(ImageFit.STRETCH),
+                SCRIM
+              )
             ),
             Sized.create(
               Sized.config().fractionalWidth(1).fractionalHeight(1),
@@ -124,16 +182,16 @@ public class Demo4UserInterface extends Scene {
                   )
                 ),
                 Button.create(
-                  Button.config().ninePatch(12, 12, 18, 12),
+                  Button.config().edgeInsets(12, 12, 18, 12),
                   Text.create(
-                    Text.config().fontSize(12).fontStyle(Font.BOLD),
+                    Text.config().fontSize(12).fontStyle(Text.BOLD),
                     "Create Account"
                   )
                 ),
                 Button.create(
-                  Button.config().ninePatch(12, 12, 18, 12),
+                  Button.config().edgeInsets(12, 12, 18, 12),
                   Text.create(
-                    Text.config().fontSize(12).fontStyle(Font.BOLD),
+                    Text.config().fontSize(12).fontStyle(Text.BOLD),
                     "Login"
                   )
                 )
@@ -146,16 +204,17 @@ public class Demo4UserInterface extends Scene {
   }
 
   static class MainMenuButton extends Compose {
-    protected final String text;
+    protected String text;
 
-    public MainMenuButton(String text, MouseEvent.Listener mouseListener) {
+    public MainMenuButton(String text, MouseEvent.Handler mouseListener) {
       super(
+        new ComposeConfig() { },
         Button.create(
-          Button.config().ninePatch(12, 12, 16, 12).mouseListener(mouseListener),
+          Button.config().edgeInsets(12, 12, 16, 12).mouseListener(mouseListener),
           Padding.create(
             Padding.config().padding(12, 12, 16, 12),
             Text.create(
-              Text.config().fontSize(20).fontStyle(Font.BOLD),
+              Text.config().fontSize(20).fontStyle(Text.BOLD),
               text
             )
           )
@@ -165,31 +224,34 @@ public class Demo4UserInterface extends Scene {
       this.text = text;
     }
 
-    public static MainMenuButton create(
-      String text,
-      MouseEvent.Listener mouseListener) {
+    public static MainMenuButton create(String text, MouseEvent.Handler mouseListener) {
       return new MainMenuButton(text, mouseListener);
     }
 
     @Override
     public boolean stateEquals(Widget widget) {
-      if (widget instanceof MainMenuButton mainMenuButton) {
+      if (widget instanceof MainMenuButton mainMenuButton)
         return Objects.equals(text, mainMenuButton.text);
-      }
 
       return false;
+    }
+
+    @Override
+    protected void performUpdate(Widget widget) {
+      this.text = ((MainMenuButton) widget).text;
     }
   }
 
   static class SubMenuButton extends Compose {
-    protected final String text;
+    protected String text;
 
     public SubMenuButton(String text) {
       super(
+        new ComposeConfig() { },
         Button.create(
-          Button.config().ninePatch(6, 6, 8, 6),
+          Button.config().edgeInsets(6, 6, 8, 6),
           Padding.create(
-            Padding.config().padding(6, 6, 8, 6),
+            Padding.config().padding(12, 12, 16, 12),
             Text.create(
               Text.config(),
               text
@@ -207,11 +269,15 @@ public class Demo4UserInterface extends Scene {
 
     @Override
     public boolean stateEquals(Widget widget) {
-      if (widget instanceof SubMenuButton subMenuButton) {
+      if (widget instanceof SubMenuButton subMenuButton)
         return Objects.equals(text, subMenuButton.text);
-      }
 
       return false;
+    }
+
+    @Override
+    protected void performUpdate(Widget widget) {
+      this.text = ((SubMenuButton) widget).text;
     }
   }
 }

@@ -12,26 +12,33 @@ public class Align extends SingleChildParent {
   protected Alignment horizontalAlignment;
   protected Alignment verticalAlignment;
 
-  private final Config config;
-
-  public Align(Config config, Widget child) {
-    super(child);
-    this.config = config;
+  public Align(AlignConfig config, Widget child) {
+    super(config, child);
   }
 
-  public static Align create(Config config, Widget child) {
+  public static Align create(AlignConfig config, Widget child) {
     return new Align(config, child);
   }
 
-  public static Config config() {
-    return new Config();
+  public static AlignConfig config() {
+    return new AlignConfig();
   }
 
   @Override
-  protected void performMounted() {
+  public boolean stateEquals(Widget widget) {
+    return widget instanceof Align alignWidget &&
+      Objects.equals(horizontalAlignment, alignWidget.horizontalAlignment)
+      && Objects.equals(verticalAlignment, alignWidget.verticalAlignment);
+  }
+
+  @Override
+  protected void performInit() {
+    AlignConfig config = (AlignConfig) super.config;
+
     this.horizontalAlignment = coalesce(config.horizontalAlignment, Alignment.START);
     this.verticalAlignment = coalesce(config.verticalAlignment, Alignment.START);
-    super.performMounted();
+
+    super.performInit();
   }
 
   @Override
@@ -68,28 +75,16 @@ public class Align extends SingleChildParent {
     child.computedBounds.setPosition(hOffset, vOffset);
   }
 
-  @Override
-  public boolean stateEquals(Widget widget) {
-    if (widget instanceof Align alignWidget) {
-      return Objects.equals(horizontalAlignment, alignWidget.horizontalAlignment)
-        && Objects.equals(verticalAlignment, alignWidget.verticalAlignment);
-    }
+  public static class AlignConfig extends SingleChildParentConfig {
+    protected Alignment horizontalAlignment;
+    protected Alignment verticalAlignment;
 
-    return false;
-  }
-
-  public static class Config {
-    Alignment horizontalAlignment;
-    Alignment verticalAlignment;
-
-    Config() { }
-
-    public Config horizontalAlignment(Alignment horizontalAlignment) {
+    public AlignConfig horizontalAlignment(Alignment horizontalAlignment) {
       this.horizontalAlignment = horizontalAlignment;
       return this;
     }
 
-    public Config verticalAlignment(Alignment verticalAlignment) {
+    public AlignConfig verticalAlignment(Alignment verticalAlignment) {
       this.verticalAlignment = verticalAlignment;
       return this;
     }

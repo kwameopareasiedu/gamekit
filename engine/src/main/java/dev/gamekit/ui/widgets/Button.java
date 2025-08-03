@@ -1,9 +1,8 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.core.Constants;
+import dev.gamekit.core.IO;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.Spacing;
-import dev.gamekit.ui.events.InputEventHandler;
 import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.mixins.NinePatch;
 
@@ -13,46 +12,60 @@ import java.util.Objects;
 
 import static dev.gamekit.utils.Misc.coalesce;
 
-/** A {@link Widget} which can be clicked to trigger an event */
-public class Button extends SingleChildParent implements NinePatch, InputEventHandler {
-  protected Spacing ninePatchBorder;
+/** A {@link Widget} which can be clicked to trigger an action */
+public class Button extends SingleChildParent implements NinePatch, MouseEvent.Handler {
+  public static final BufferedImage DEFAULT_BG =
+    IO.getResourceImage("default-sprites.png", 64, 64, 350, 120);
+  public static final BufferedImage HOVER_BG =
+    IO.getResourceImage("default-sprites.png", 64, 232, 350, 120);
+  public static final BufferedImage PRESSED_BG =
+    IO.getResourceImage("default-sprites.png", 64, 400, 350, 120);
+
   protected BufferedImage defaultBackground;
   protected BufferedImage hoverBackground;
   protected BufferedImage pressedBackground;
-  protected MouseEvent.Listener mouseListener;
+  protected Spacing edgeInsets;
+  protected MouseEvent.Handler mouseListener;
   protected boolean mouseEntered;
   protected boolean mousePressed;
 
-  private final Config config;
-
-  public Button(Config config, Widget child) {
-    super(child);
-    this.config = config;
+  public Button(ButtonConfig config, Widget child) {
+    super(config, child);
   }
 
-  public static Button create(Config config, Widget child) {
+  public static Button create(ButtonConfig config, Widget child) {
     return new Button(config, child);
   }
 
-  public static Config config() {
-    return new Config();
+  public static ButtonConfig config() {
+    return new ButtonConfig();
   }
 
   @Override
-  protected void performMounted() {
+  public boolean stateEquals(Widget widget) {
+    return widget instanceof Button buttonWidget &&
+      Objects.equals(defaultBackground, buttonWidget.defaultBackground) &&
+      Objects.equals(hoverBackground, buttonWidget.hoverBackground) &&
+      Objects.equals(pressedBackground, buttonWidget.pressedBackground) &&
+      Objects.equals(edgeInsets, buttonWidget.edgeInsets);
+  }
+
+  @Override
+  protected void performInit() {
+    ButtonConfig config = (ButtonConfig) super.config;
     Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
 
-    this.ninePatchBorder =
-      coalesce(config.ninePatchBorder, theme.buttonNinePatchBorder, new Spacing(24));
+    this.edgeInsets =
+      coalesce(config.edgeInsets, theme.buttonEdgeInsets, new Spacing(24));
     this.defaultBackground =
-      coalesce(config.defaultBackground, theme.buttonDefaultBackground, Constants.DEFAULT_BUTTON_BG);
+      coalesce(config.defaultBackground, theme.buttonDefaultBackground, DEFAULT_BG);
     this.hoverBackground =
-      coalesce(config.hoverBackground, theme.buttonHoverBackground, Constants.HOVER_BUTTON_BG);
+      coalesce(config.hoverBackground, theme.buttonHoverBackground, HOVER_BG);
     this.pressedBackground =
-      coalesce(config.pressedBackground, theme.buttonPressedBackground, Constants.PRESSED_BUTTON_BG);
+      coalesce(config.pressedBackground, theme.buttonPressedBackground, PRESSED_BG);
     this.mouseListener = coalesce(config.mouseListener, null);
 
-    super.performMounted();
+    super.performInit();
   }
 
   @Override
@@ -79,93 +92,63 @@ public class Button extends SingleChildParent implements NinePatch, InputEventHa
 
   @Override
   protected void renderAppearance(Graphics2D g) {
-    super.renderAppearance(g);
-
     BufferedImage bgImage = defaultBackground;
 
-    if (mousePressed) {
+    if (mousePressed)
       bgImage = pressedBackground;
-    } else if (mouseEntered) {
+    else if (mouseEntered)
       bgImage = hoverBackground;
-    }
 
-    if (bgImage != null && ninePatchBorder != null) {
-      super.renderAppearance(g);
-      renderNinePatch(bgImage, absoluteBounds, ninePatchBorder, g);
-    }
+    if (bgImage != null && edgeInsets != null)
+      renderWith9PatchScaling(bgImage, absoluteBounds, edgeInsets, g);
   }
 
   @Override
-  public boolean stateEquals(Widget widget) {
-    if (widget instanceof Button buttonWidget) {
-      return Objects.equals(defaultBackground, buttonWidget.defaultBackground) &&
-        Objects.equals(hoverBackground, buttonWidget.hoverBackground) &&
-        Objects.equals(pressedBackground, buttonWidget.pressedBackground);
+  public void handleEvent(MouseEvent event) {
+    switch (event.type) {
+      case ENTER -> mouseEntered = true;
+      case DOWN -> mousePressed = true;
+      case RELEASE -> mousePressed = false;
+      case EXIT -> {
+        mouseEntered = false;
+        mousePressed = false;
+      }
     }
 
-    return false;
+    uiBridge.triggerRender();
+
+    if (mouseListener != null)
+      mouseListener.handleEvent(event);
   }
 
-  @Override
-  public MouseEvent.Listener getMouseListener() {
-    return mouseListener;
-  }
+  public static class ButtonConfig extends SingleChildParentConfig {
+    protected BufferedImage defaultBackground;
+    protected BufferedImage hoverBackground;
+    protected BufferedImage pressedBackground;
+    protected Spacing edgeInsets;
+    protected MouseEvent.Handler mouseListener;
 
-  @Override
-  public void setMouseEntered(boolean mouseEntered) {
-    this.mouseEntered = mouseEntered;
-  }
-
-  @Override
-  public void setMousePressed(boolean mousePressed) {
-    this.mousePressed = mousePressed;
-  }
-
-  public static class Config {
-    Spacing ninePatchBorder;
-    BufferedImage defaultBackground;
-    BufferedImage hoverBackground;
-    BufferedImage pressedBackground;
-    MouseEvent.Listener mouseListener;
-
-    Config() { }
-
-    public Config ninePatch(Spacing border) {
-      this.ninePatchBorder = border;
-      return this;
-    }
-
-    public Config ninePatch(int all) {
-      this.ninePatchBorder = new Spacing(all);
-      return this;
-    }
-
-    public Config ninePatch(int horizontal, int vertical) {
-      this.ninePatchBorder = new Spacing(horizontal, vertical);
-      return this;
-    }
-
-    public Config ninePatch(int top, int right, int bottom, int left) {
-      this.ninePatchBorder = new Spacing(top, right, bottom, left);
-      return this;
-    }
-
-    public Config defaultBackground(BufferedImage defaultBackground) {
+    public ButtonConfig defaultBackground(BufferedImage defaultBackground) {
       this.defaultBackground = defaultBackground;
       return this;
     }
 
-    public Config hoverBackground(BufferedImage hoverBackground) {
+    public ButtonConfig hoverBackground(BufferedImage hoverBackground) {
       this.hoverBackground = hoverBackground;
       return this;
     }
 
-    public Config pressedBackground(BufferedImage pressedBackground) {
+    public ButtonConfig pressedBackground(BufferedImage pressedBackground) {
       this.pressedBackground = pressedBackground;
       return this;
     }
 
-    public Config mouseListener(MouseEvent.Listener mouseListener) {
+    public ButtonConfig edgeInsets(int top, int right, int bottom, int left) {
+      this.edgeInsets = new Spacing(top, right, bottom, left);
+      return this;
+    }
+
+    public ButtonConfig mouseListener(MouseEvent.Handler mouseListener) {
       this.mouseListener = mouseListener;
       return this;
     }

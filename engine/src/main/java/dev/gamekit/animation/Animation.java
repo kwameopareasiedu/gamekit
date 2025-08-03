@@ -75,7 +75,7 @@ public class Animation {
 
   /**
    * Stops and resets this animation by changing its state to {@link State#STOPPED} and its value
-   * to {@code 0}. Stopped animations can be restarted by calling {@link #start()}
+   * to {@code 0}. Stopped animations can be restarted by calling {@link #start}
    */
   public void stop() {
     state = State.STOPPED;

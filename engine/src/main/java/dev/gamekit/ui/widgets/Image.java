@@ -12,38 +12,46 @@ import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link Leaf} which renders a {@link BufferedImage} to the screen */
 public class Image extends Leaf {
-  protected final BufferedImage image;
+  protected BufferedImage image;
   protected ImageFit fit;
   protected ImageInterpolation interpolation;
 
-  private final Config config;
-
-  public Image(Config config, BufferedImage image) {
-    if (image == null)
-      throw new IllegalArgumentException("Image cannot be null");
-
-    this.config = config;
-    this.image = image;
+  public Image(ImageConfig config, BufferedImage image) {
+    super(config.image(image));
   }
 
-  public static Image create(Config config, BufferedImage image) {
+  public static Image create(ImageConfig config, BufferedImage image) {
     return new Image(config, image);
   }
 
   public static Image create(BufferedImage image) {
-    return new Image(new Config(), image);
+    return new Image(new ImageConfig(), image);
   }
 
-  public static Config config() {
-    return new Config();
+  public static ImageConfig config() {
+    return new ImageConfig();
   }
 
   @Override
-  protected void performMounted() {
-    super.performMounted();
+  public boolean stateEquals(Widget widget) {
+    return widget instanceof Image imageWidget &&
+      Objects.equals(image, imageWidget.image) &&
+      Objects.equals(fit, imageWidget.fit) &&
+      Objects.equals(interpolation, imageWidget.interpolation);
+  }
 
+  @Override
+  protected void performInit() {
+    ImageConfig config = (ImageConfig) super.config;
+
+    if (config.image == null)
+      throw new IllegalArgumentException("Image image cannot be null");
+
+    this.image = config.image;
     this.fit = coalesce(config.fit, ImageFit.FIT);
     this.interpolation = coalesce(config.interpolation, ImageInterpolation.DEFAULT);
+
+    super.performInit();
   }
 
   @Override
@@ -59,33 +67,57 @@ public class Image extends Leaf {
   @Override
   protected void performRender(Graphics2D g) {
     double dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
+    boolean clipChanged = false;
+    Shape originalClip = null;
 
     switch (fit) {
-      case FIT, CROP -> {
-        double widthRatio = absoluteBounds.width / intrinsicBounds.width;
-        double heightRatio = absoluteBounds.height / intrinsicBounds.height;
+      case FIT -> {
+        double widthRatio = absoluteBounds.width / computedBounds.width;
+        double heightRatio = absoluteBounds.height / computedBounds.height;
+        double scale = computedBounds.width > computedBounds.height ? heightRatio : widthRatio;
+        int scaledWidth = (int) (computedBounds.width * scale);
+        int scaledHeight = (int) (computedBounds.height * scale);
 
-        double scaleRatio = fit == ImageFit.FIT ?
-          intrinsicBounds.width > intrinsicBounds.height ? widthRatio : heightRatio :
-          intrinsicBounds.width <= intrinsicBounds.height ? widthRatio : heightRatio;
-
-        int scaledWidth = (int) (intrinsicBounds.width * scaleRatio);
-        int scaledHeight = (int) (intrinsicBounds.height * scaleRatio);
         dx1 = absoluteBounds.x + (absoluteBounds.width - scaledWidth) / 2;
         dy1 = absoluteBounds.y + (absoluteBounds.height - scaledHeight) / 2;
         dx2 = dx1 + scaledWidth;
         dy2 = dy1 + scaledHeight;
       }
+      case CROP -> {
+        double widthRatio = absoluteBounds.width / intrinsicBounds.width;
+        double heightRatio = absoluteBounds.height / intrinsicBounds.height;
+        double scaleRatio = intrinsicBounds.width > intrinsicBounds.height
+          ? widthRatio : heightRatio;
+        int scaledWidth = (int) (intrinsicBounds.width * scaleRatio);
+        int scaledHeight = (int) (intrinsicBounds.height * scaleRatio);
+
+        dx1 = absoluteBounds.x + (absoluteBounds.width - scaledWidth) / 2;
+        dy1 = absoluteBounds.y + (absoluteBounds.height - scaledHeight) / 2;
+        dx2 = dx1 + scaledWidth;
+        dy2 = dy1 + scaledHeight;
+
+        originalClip = g.getClip();
+
+        g.setClip(
+          (int) absoluteBounds.x,
+          (int) absoluteBounds.y,
+          (int) absoluteBounds.width,
+          (int) absoluteBounds.height
+        );
+
+        clipChanged = true;
+      }
       case STRETCH -> {
-        dx2 = absoluteBounds.width;
-        dy2 = absoluteBounds.height;
+        dx1 = absoluteBounds.x;
+        dy1 = absoluteBounds.y;
+        dx2 = dx1 + absoluteBounds.width;
+        dy2 = dy1 + absoluteBounds.height;
       }
     }
 
     ImageInterpolation originalInterpolation = ImageInterpolation.from(g);
 
-    if (interpolation != ImageInterpolation.DEFAULT)
-      interpolation.apply(g);
+    interpolation.apply(g);
 
     g.drawImage(
       image, (int) dx1, (int) dy1, (int) dx2, (int) dy2,
@@ -93,30 +125,27 @@ public class Image extends Leaf {
     );
 
     originalInterpolation.apply(g);
+
+    if (clipChanged)
+      g.setClip(originalClip);
   }
 
-  @Override
-  public boolean stateEquals(Widget widget) {
-    if (widget instanceof Image imageWidget) {
-      return Objects.equals(image, imageWidget.image)
-        && Objects.equals(fit, imageWidget.fit);
+  public static class ImageConfig extends LeafConfig {
+    protected BufferedImage image;
+    protected ImageFit fit;
+    protected ImageInterpolation interpolation;
+
+    private ImageConfig image(BufferedImage image) {
+      this.image = image;
+      return this;
     }
 
-    return false;
-  }
-
-  public static class Config {
-    ImageFit fit;
-    ImageInterpolation interpolation;
-
-    Config() { }
-
-    public Config fit(ImageFit fit) {
+    public ImageConfig fit(ImageFit fit) {
       this.fit = fit;
       return this;
     }
 
-    public Config interpolation(ImageInterpolation interpolation) {
+    public ImageConfig interpolation(ImageInterpolation interpolation) {
       this.interpolation = interpolation;
       return this;
     }
