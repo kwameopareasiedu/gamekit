@@ -196,12 +196,12 @@ public class Field extends Text
         uiBridge.triggerRender();
       }
       case Input.KEY_HOME -> {
-        textModel.offsetCursor(Integer.MIN_VALUE);
+        textModel.offsetCursor(-symbols.size());
         textModel.setCursorVisibility(true);
         uiBridge.triggerRender();
       }
       case Input.KEY_END -> {
-        textModel.offsetCursor(Integer.MAX_VALUE);
+        textModel.offsetCursor(symbols.size());
         textModel.setCursorVisibility(true);
         uiBridge.triggerRender();
       }

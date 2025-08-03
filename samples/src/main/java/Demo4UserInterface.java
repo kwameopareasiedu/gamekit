@@ -39,15 +39,15 @@ public class Demo4UserInterface extends Scene {
 
   public Demo4UserInterface() {
     super("Main Scene");
-    Widget.DEBUG_DRAW = true;
+    //    Widget.DEBUG_DRAW = true;
   }
 
   public static void main(String[] args) {
     Application game = new Application(
       new Settings(
         "Demo 4 - Declarative UI",
-        Resolution.NATIVE,
-        WindowMode.FULLSCREEN,
+        Resolution.HD,
+        WindowMode.WINDOWED,
         Antialiasing.ON,
         TextAntialiasing.ON,
         AlphaInterpolation.SPEED,

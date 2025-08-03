@@ -19,7 +19,6 @@ import java.util.Objects;
 
 /** {@link UI} manages the user interface within a {@link Scene} */
 public final class UI {
-  private static final int MAX_RENDER_PASSES = 4;
   private static final Logger LOGGER = LogManager.getLogger(UI.class);
   private static UI instance;
 
@@ -37,8 +36,9 @@ public final class UI {
   private Widget activeWidget;
   private Widget lastFocusWidget;
   private Widget lastActiveWidget;
-  private boolean needsLayout = false;
-  private int renderPasses = MAX_RENDER_PASSES;
+  private boolean needsUpdate = false;
+  private boolean needsRender = false;
+  private boolean needsDraw = false;
 
   static UI getInstance() {
     return instance;
@@ -80,15 +80,6 @@ public final class UI {
     UI.instance = this;
   }
 
-  /** Triggers a layout update during the next frame */
-  void triggerUpdate() {
-    needsLayout = true;
-  }
-
-  void clear() {
-    drawTree();
-  }
-
   /** Set the initial widget tree */
   void setWidgetTree(Widget tree) {
     this.tree = tree;
@@ -101,26 +92,58 @@ public final class UI {
     }
   }
 
+  /** Triggers a layout update during the next frame */
+  void triggerUpdate() {
+    needsUpdate = true;
+  }
+
+  /** Triggers a re-render of the current widget tree */
+  void triggerRender() {
+    needsRender = true;
+  }
+
+  void clear() {
+    canvasGraphics.setBackground(Constants.TRANSPARENT_COLOR);
+    canvasGraphics.clearRect(0, 0, canvasImage.getWidth(), canvasImage.getHeight());
+  }
+
   /**
    * Called to update updates the UI state. This involves recomputing layout, generating input
    * events and dispatching them
    */
   void update() {
-    if (tree != null && needsLayout) {
-      LOGGER.debug("Laying out UI");
+    if (tree != null && needsUpdate) {
+      LOGGER.debug("Updating UI");
       updateTree();
+      needsUpdate = false;
     }
 
     generateInputEvents();
     dispatchInputEvents();
   }
 
-  /** Called to draw the {@link Widget} tree to the {@link Window} UI layer */
-  void draw() {
-    if (tree != null && renderPasses > 0) {
+  /**
+   * Called to render the UI unto the canvas which is drawn to the {@link Window} by the render
+   * thread at a later time
+   */
+  void render() {
+    if (tree != null && needsRender && !needsDraw) {
       LOGGER.debug("Rendering UI");
-      renderPasses--;
+
+      canvasGraphics.setBackground(Constants.TRANSPARENT_COLOR);
+      canvasGraphics.clearRect(0, 0, canvasImage.getWidth(), canvasImage.getHeight());
+
+      tree.render(canvasGraphics);
+      needsRender = false;
+      needsDraw = true;
+    }
+  }
+
+  /** Called by the render thread to draw the canvas to the {@link Window} UI layer */
+  void draw() {
+    if (needsDraw) {
       drawTree();
+      needsDraw = false;
     }
   }
 
@@ -128,11 +151,6 @@ public final class UI {
   void unmount() {
     if (tree != null)
       tree.unmount();
-  }
-
-  /** Triggers a re-render of the current widget tree */
-  private void triggerRender() {
-    renderPasses = MAX_RENDER_PASSES;
   }
 
   /**
@@ -198,8 +216,6 @@ public final class UI {
       tree.postLayout();
       triggerRender();
     }
-
-    needsLayout = false;
   }
 
   /** Monitors {@link Input} and generates events for input actions */
@@ -453,17 +469,9 @@ public final class UI {
     int displayWidth = windowInfo.displayWidth();
     int displayHeight = windowInfo.displayHeight();
 
-    canvasGraphics.setBackground(Constants.TRANSPARENT_COLOR);
-    canvasGraphics.clearRect(0, 0, displayWidth, displayHeight);
-
-    if (tree != null)
-      tree.render(canvasGraphics);
-
     uiGraphics.setBackground(Constants.TRANSPARENT_COLOR);
     uiGraphics.clearRect(0, 0, displayWidth, displayHeight);
     uiGraphics.drawImage(canvasImage, 0, 0, displayWidth, displayHeight, null);
-
-    renderPasses--;
   }
 
   private void traverseTree(
