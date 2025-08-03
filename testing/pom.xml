@@ -24,7 +24,7 @@
     <dependency>
       <groupId>dev.gamekit</groupId>
       <artifactId>engine</artifactId>
-      <version>0.6.0</version>
+      <version>0.6.0-SNAPSHOT-1</version>
     </dependency>
   </dependencies>
 
