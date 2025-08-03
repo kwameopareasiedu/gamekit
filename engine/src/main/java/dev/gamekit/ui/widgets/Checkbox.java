@@ -123,15 +123,10 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
 
   @Override
   public void handleEvent(MouseEvent ev) {
-    switch (ev.type) {
-      case CLICK -> {
-        if (changeListener != null)
-          changeListener.handleEvent(new ChangeEvent<>(!toggled));
-      }
-      case EXIT -> { }
+    if (ev.type == MouseEvent.Type.CLICK && changeListener != null) {
+      changeListener.handleEvent(new ChangeEvent<>(!toggled));
+      uiBridge.triggerRender();
     }
-
-    uiBridge.triggerRender();
   }
 
   public static class CheckboxConfig extends SingleChildParentConfig {

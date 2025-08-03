@@ -17,7 +17,7 @@ public abstract class MultiChildParent extends Parent {
     }
 
     this.children = new ArrayList<>(List.of(children));
-    this.children.forEach(c -> c.setParent(this));
+    this.children.forEach(c -> c.parent = this);
   }
 
   @Override
@@ -51,9 +51,9 @@ public abstract class MultiChildParent extends Parent {
           children.size(), index
         )
       );
-    children.get(index).setParent(null);
+    children.get(index).parent = null;
     children.set(index, newChild);
-    children.get(index).setParent(this);
+    children.get(index).parent = this;
   }
 
   public static abstract class MultiChildParentConfig extends ParentConfig { }

@@ -39,7 +39,7 @@ public class Demo4UserInterface extends Scene {
 
   public Demo4UserInterface() {
     super("Main Scene");
-    //    Widget.DEBUG_DRAW = true;
+    Widget.DEBUG_DRAW = true;
   }
 
   public static void main(String[] args) {

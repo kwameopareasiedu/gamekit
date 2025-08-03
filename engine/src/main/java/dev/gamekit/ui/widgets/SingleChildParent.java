@@ -13,7 +13,7 @@ public abstract class SingleChildParent extends Parent {
       throw new IllegalArgumentException("Child of SingleChildParent cannot be null");
 
     this.child = child;
-    child.setParent(this);
+    child.parent = this;
   }
 
   @Override
@@ -40,9 +40,9 @@ public abstract class SingleChildParent extends Parent {
   public Widget getChild() { return child; }
 
   public final void updateChild(Widget newChild) {
-    child.setParent(null);
+    child.parent = null;
     child = newChild;
-    newChild.setParent(this);
+    newChild.parent = this;
   }
 
   public abstract static class SingleChildParentConfig extends ParentConfig { }

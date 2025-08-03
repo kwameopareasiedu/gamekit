@@ -34,7 +34,6 @@ public abstract class Widget {
   protected final Bounds absoluteBounds;
   protected final Bounds computedBounds;
   protected final Bounds intrinsicBounds;
-  protected final Bounds clipBounds;
   protected UI.BridgeObject uiBridge;
   protected Constraints constraints;
   protected WidgetConfig config;
@@ -48,23 +47,12 @@ public abstract class Widget {
     this.absoluteBounds = new Bounds(0, 0, 0, 0);
     this.computedBounds = new Bounds(0, 0, 0, 0);
     this.intrinsicBounds = new Bounds(0, 0, 0, 0);
-    this.clipBounds = new Bounds(0, 0, 0, 0);
     this.parent = null;
-  }
-
-  /** Returns the {@link #computedBounds} of this widget */
-  public Bounds getComputedBounds() {
-    return computedBounds;
   }
 
   /** Returns the {@link #parent} of this widget */
   public Widget getParent() {
     return parent;
-  }
-
-  /** Sets the {@link #parent} of this widget */
-  public void setParent(Widget parent) {
-    this.parent = parent;
   }
 
   /** Delegate method which determines if this widget's state matches another {@code widget} */
@@ -77,7 +65,7 @@ public abstract class Widget {
    * If the widget is updated some time after first initialization, this method is called
    * afterward to re-initialize the widget.
    * <p>
-   * A common use-case is to look up ancestors for additional information (E.g. Theme look up)
+   * A common use-case is to look up ancestors for additional information (E.g. Theme look-up)
    * <p>
    * Since this method is marked as {@code final}, subclasses should override the
    * {@link #performInit} method instead to perform any post-mount operations
@@ -122,7 +110,7 @@ public abstract class Widget {
    * this constraint
    * <p>
    * The goal of this method is to set the {@link #computedBounds} which controls where on the
-   * screen the widget is rendered.
+   * screen the widget is rendered
    * <p>
    * Since this method is marked as {@code final}, subclasses should override the
    * {@link #performLayout} method instead to perform their layout
@@ -196,7 +184,7 @@ public abstract class Widget {
 
   /**
    * Called before the widget is removed from the widget tree during UI reconciliation or during
-   * a scene dispose.
+   * the scene's disposal.
    * <p>
    * This is a good place to clean up any resources and stop animations used by the widget.
    * <p>
