@@ -74,8 +74,8 @@ public abstract class Application {
   }
 
   /** Schedule a task to be executed immediately after the end of the current frame. */
-  public void scheduleTask(Task task) {
-    scheduleTask(task, 0);
+  public void runLater(Task task) {
+    runLater(task, 0);
   }
 
   /**
@@ -83,7 +83,7 @@ public abstract class Application {
    * <p>
    * If {@code timeoutMs} is zero, {@code task} is executed immediately after the current frame
    */
-  public void scheduleTask(Task task, long timeoutMs) {
+  public void runLater(Task task, long timeoutMs) {
     if (timeoutMs < 0)
       throw new IllegalArgumentException("Timeout cannot be negative");
 
@@ -94,7 +94,7 @@ public abstract class Application {
    * Schedule an {@link Animation} to run. Animations are updated before the scene's
    * {@code onUpdate()} to ensure current values are available to the scene's next update cycle
    */
-  public void scheduleAnimation(Animation animation) {
+  public void runAnimation(Animation animation) {
     if (!animations.contains(animation))
       animations.add(animation);
   }

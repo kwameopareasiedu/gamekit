@@ -39,7 +39,7 @@ public abstract class Entity {
     if (!children.contains(child)) {
       logger.debug("Adding {} to {}", child.name, name);
 
-      Application.getInstance().scheduleTask(() -> {
+      Application.getInstance().runLater(() -> {
         children.add(child);
         child.setParent(this);
         child._start();
@@ -51,7 +51,7 @@ public abstract class Entity {
     if (children.contains(child)) {
       logger.debug("Removing {} from {}", child.name, name);
 
-      Application.getInstance().scheduleTask(() -> {
+      Application.getInstance().runLater(() -> {
         children.remove(child);
         child.setParent(null);
         child._dispose();

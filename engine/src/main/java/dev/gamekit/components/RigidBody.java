@@ -206,9 +206,9 @@ public class RigidBody extends Component {
   protected void dispose() {
     super.dispose();
 
-    Application.getInstance().scheduleTask(() -> {
-      Physics.removeBody(body);
-    });
+    Application.getInstance().runLater(
+      () -> Physics.removeBody(body)
+    );
   }
 
   /** Interface for an object which tunes a {@link BodyFixture} */

@@ -34,7 +34,11 @@
 - Changed signature of `public void mounted()` lifecycle method in `Widget` class to
   `public void init(UI.BridgeObject)`
 - Renamed `public void updateState(Widget)` in `Widget` to `public void update(Widget)`
-- Renamed `Constants.FRAME_TIME_MS` to `Constants.FRAME_INTERVAL_MS`
+- Renamed `FRAME_TIME_MS` to `FRAME_INTERVAL_MS` in `Constants` class
+- Renamed `DRAW_TIME_MS` to `DRAW_INTERVAL_MS` in `Constants` class
+- Renamed `void scheduleTask(Task task)` to `void runLater(Task task)` in `Application` class
+- Renamed `void scheduleAnimation(Animation task)` to `void runAnimation(Animation task)` in
+  `Application` class
 
 ### Deprecated
 

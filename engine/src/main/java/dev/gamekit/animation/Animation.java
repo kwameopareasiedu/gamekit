@@ -61,7 +61,7 @@ public class Animation {
   /** Starts / Restarts this animation and changes its state to {@link State#RUNNING} */
   public void start() {
     if (state == State.IDLE)
-      Application.getInstance().scheduleAnimation(this);
+      Application.getInstance().runAnimation(this);
 
     state = State.RUNNING;
     value = 0;
