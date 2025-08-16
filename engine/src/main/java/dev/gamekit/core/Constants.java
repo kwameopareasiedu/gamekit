@@ -4,8 +4,8 @@ import java.awt.*;
 
 /** Constants store for engine */
 public final class Constants {
-  public static final long FRAME_TIME_MS = 1000 / 240;
-  public static final long RENDER_TIME_MS = 1000 / 90;
+  public static final long FRAME_INTERVAL_MS = 1000 / 240;
+  public static final long DRAW_INTERVAL_MS = 1000 / 60;
   public static final int PIXELS_PER_METER = 128;
 
   public static final Color TRANSPARENT_COLOR = new Color(0x0000000, true);

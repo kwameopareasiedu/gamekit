@@ -53,8 +53,8 @@ public abstract class Application {
     this.timeouts = new ArrayList<>();
     this.newTimeouts = new ArrayList<>();
     this.animations = new ArrayList<>();
-    this.audioThread = new WorkerThread("audio", Constants.FRAME_TIME_MS, Audio::update);
-    this.drawThread = new WorkerThread("draw", Constants.RENDER_TIME_MS, this::draw);
+    this.audioThread = new WorkerThread("audio", Constants.FRAME_INTERVAL_MS, Audio::update);
+    this.drawThread = new WorkerThread("draw", Constants.DRAW_INTERVAL_MS, this::draw);
     this.isRunning = true;
   }
 
@@ -123,8 +123,8 @@ public abstract class Application {
         lastFrameTime = currentFrameTime;
         frameTimeAccumulator += timeDiff;
 
-        while (frameTimeAccumulator >= Constants.FRAME_TIME_MS) {
-          frameTimeAccumulator -= Constants.FRAME_TIME_MS;
+        while (frameTimeAccumulator >= Constants.FRAME_INTERVAL_MS) {
+          frameTimeAccumulator -= Constants.FRAME_INTERVAL_MS;
           Input.freeze();
           update();
           Input.reset();

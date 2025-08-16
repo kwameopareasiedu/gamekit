@@ -53,22 +53,22 @@ public class Paddle extends Entity {
     switch (type) {
       case LEFT -> {
         if (Input.isKeyPressed(Input.KEY_S)) {
-          double newY = transformTrait.getY() - 0.001 * MOVE_SPEED * Constants.FRAME_TIME_MS;
+          double newY = transformTrait.getY() - 0.001 * MOVE_SPEED * Constants.FRAME_INTERVAL_MS;
           newY = clamp(newY, -MAX_TRANSLATE_DISTANCE, MAX_TRANSLATE_DISTANCE);
           physicalTrait.setPosition(transformTrait.getX(), newY);
         } else if (Input.isKeyPressed(Input.KEY_W)) {
-          double newY = transformTrait.getY() + 0.001 * MOVE_SPEED * Constants.FRAME_TIME_MS;
+          double newY = transformTrait.getY() + 0.001 * MOVE_SPEED * Constants.FRAME_INTERVAL_MS;
           newY = clamp(newY, -MAX_TRANSLATE_DISTANCE, MAX_TRANSLATE_DISTANCE);
           physicalTrait.setPosition(transformTrait.getX(), newY);
         }
       }
       case RIGHT -> {
         if (Input.isKeyPressed(Input.KEY_DOWN)) {
-          double newY = transformTrait.getY() - 0.001 * MOVE_SPEED * Constants.FRAME_TIME_MS;
+          double newY = transformTrait.getY() - 0.001 * MOVE_SPEED * Constants.FRAME_INTERVAL_MS;
           newY = clamp(newY, -MAX_TRANSLATE_DISTANCE, MAX_TRANSLATE_DISTANCE);
           physicalTrait.setPosition(transformTrait.getX(), newY);
         } else if (Input.isKeyPressed(Input.KEY_UP)) {
-          double newY = transformTrait.getY() + 0.001 * MOVE_SPEED * Constants.FRAME_TIME_MS;
+          double newY = transformTrait.getY() + 0.001 * MOVE_SPEED * Constants.FRAME_INTERVAL_MS;
           newY = clamp(newY, -MAX_TRANSLATE_DISTANCE, MAX_TRANSLATE_DISTANCE);
           physicalTrait.setPosition(transformTrait.getX(), newY);
         }

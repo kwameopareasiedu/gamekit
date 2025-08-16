@@ -34,6 +34,7 @@
 - Changed signature of `public void mounted()` lifecycle method in `Widget` class to
   `public void init(UI.BridgeObject)`
 - Renamed `public void updateState(Widget)` in `Widget` to `public void update(Widget)`
+- Renamed `Constants.FRAME_TIME_MS` to `Constants.FRAME_INTERVAL_MS`
 
 ### Deprecated
 

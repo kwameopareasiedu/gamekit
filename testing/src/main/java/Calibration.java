@@ -14,7 +14,7 @@ public class Calibration extends Scene {
   private static final int WORLD_WIDTH = 2400;
   private static final int WORLD_HEIGHT = 1400;
   private static final BufferedImage SPRITE = IO.getResourceImage("zainar.png");
-  private static final double INTERVAL = Constants.FRAME_TIME_MS / 1000.0;
+  private static final double INTERVAL = Constants.FRAME_INTERVAL_MS / 1000.0;
   private static final double FREQ = 0.5;
 
   private double time;

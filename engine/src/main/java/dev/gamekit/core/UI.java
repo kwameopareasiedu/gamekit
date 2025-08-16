@@ -132,8 +132,8 @@ public final class UI {
 
       canvasGraphics.setBackground(Constants.TRANSPARENT_COLOR);
       canvasGraphics.clearRect(0, 0, canvasImage.getWidth(), canvasImage.getHeight());
-
       tree.render(canvasGraphics);
+
       needsRender = false;
       needsDraw = true;
     }
@@ -142,7 +142,16 @@ public final class UI {
   /** Called by the render thread to draw the canvas to the {@link Window} UI layer */
   void draw() {
     if (needsDraw) {
-      drawTree();
+      Window win = Window.getInstance();
+      Window.Info windowInfo = Window.getInfo();
+      Graphics2D uiGraphics = win.getUiGraphics();
+      int displayWidth = windowInfo.displayWidth();
+      int displayHeight = windowInfo.displayHeight();
+
+      uiGraphics.setBackground(Constants.TRANSPARENT_COLOR);
+      uiGraphics.clearRect(0, 0, displayWidth, displayHeight);
+      uiGraphics.drawImage(canvasImage, 0, 0, displayWidth, displayHeight, null);
+
       needsDraw = false;
     }
   }
@@ -459,19 +468,6 @@ public final class UI {
     previousHitTestList.addAll(currentHitTestList);
     lastActiveWidget = null;
     lastFocusWidget = null;
-  }
-
-  /** Draws the widget tree to the {@link Window} UI buffer */
-  private void drawTree() {
-    Window win = Window.getInstance();
-    Window.Info windowInfo = Window.getInfo();
-    Graphics2D uiGraphics = win.getUiGraphics();
-    int displayWidth = windowInfo.displayWidth();
-    int displayHeight = windowInfo.displayHeight();
-
-    uiGraphics.setBackground(Constants.TRANSPARENT_COLOR);
-    uiGraphics.clearRect(0, 0, displayWidth, displayHeight);
-    uiGraphics.drawImage(canvasImage, 0, 0, displayWidth, displayHeight, null);
   }
 
   private void traverseTree(

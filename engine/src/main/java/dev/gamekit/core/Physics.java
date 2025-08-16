@@ -50,7 +50,7 @@ public final class Physics {
    * @see org.dyn4j.world.AbstractPhysicsWorld#update(double)
    */
   static void update() {
-    double elapsedTime = Constants.FRAME_TIME_MS / 1000.0;
+    double elapsedTime = Constants.FRAME_INTERVAL_MS / 1000.0;
     WORLD.update(elapsedTime);
   }
 
