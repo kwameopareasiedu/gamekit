@@ -32,6 +32,11 @@ public abstract class Entity {
     return parent;
   }
 
+  /**
+   * Adds a child to this entity, if it isn't already.
+   * <p>
+   * This also invokes the child's {@link Scene#_start} method
+   */
   public void addChild(Entity child) {
     if (child.parent != null)
       throw new IllegalStateException("Child already has parent");
@@ -47,6 +52,11 @@ public abstract class Entity {
     }
   }
 
+  /**
+   * Removes a child from this entity, if it is part of its children.
+   * <p>
+   * This also invokes the child's {@link Scene#_dispose} method
+   */
   public void removeChild(Entity child) {
     if (children.contains(child)) {
       logger.debug("Removing {} from {}", child.name, name);

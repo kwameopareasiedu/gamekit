@@ -66,7 +66,7 @@ public final class Camera {
   public static double getY() { return y; }
 
   /** Applies the camera's position and zoom to the current window's transform matrix */
-  static void applyTransformation() {
+  static void updateWindow() {
     Window window = Window.getInstance();
     Window.Info windowInfo = Window.getInfo();
     int centerX = windowInfo.displayCenterX();
