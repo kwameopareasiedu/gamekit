@@ -28,6 +28,8 @@
 - Added `Progress` widget which is a `Leaf` widget which displays a progress bar
 - Added `Slider` widget which is a `Progress` widget extension which adjusts a value by moving a
   slider
+- Added `static void drawPolygon(int[])` and `static void fillPolygon(int[])` methods to
+  `Renderer` class
 
 ### Changed
 

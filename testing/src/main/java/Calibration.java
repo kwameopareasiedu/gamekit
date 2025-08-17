@@ -2,7 +2,6 @@ import dev.gamekit.core.*;
 import dev.gamekit.settings.Resolution;
 import dev.gamekit.settings.Settings;
 import dev.gamekit.settings.WindowMode;
-import dev.gamekit.core.Constants;
 import dev.gamekit.utils.Position;
 
 import java.awt.*;
@@ -19,9 +18,14 @@ public class Calibration extends Scene {
 
   private double time;
   private int x = 0, y = 0;
+  private final int[] polygonPoints;
+  private final int[] filledPolygonPoints;
 
   public Calibration() {
     super("Calibration Test");
+
+    polygonPoints = new int[]{ 90, -190, 110, -110, 50, -99 };
+    filledPolygonPoints = new int[]{ 9, -19, 11, -11, 5, -10 };
   }
 
   public static void main(String[] args) {
@@ -77,6 +81,9 @@ public class Calibration extends Scene {
     // Bottom right quadrant
     Renderer.fillCircle(100, -100, 20).withColor(Color.BLUE);
     Renderer.drawCircle(100, -100, 25).withColor(Color.BLUE);
+
+    Renderer.drawPolygon(polygonPoints).withColor(Color.ORANGE);
+    Renderer.fillPolygon(filledPolygonPoints).withColor(Color.PINK);
 
     for (int i = 0; i <= WORLD_WIDTH / 2; i += 50) {
       Renderer.drawHorizontalLine(0, 10, i).withColor(Color.CYAN);

@@ -35,7 +35,7 @@ public abstract class Entity {
   /**
    * Adds a child to this entity, if it isn't already.
    * <p>
-   * This also invokes the child's {@link Scene#_start} method
+   * This also invokes the child's {@link Entity#_start} method
    */
   public void addChild(Entity child) {
     if (child.parent != null)

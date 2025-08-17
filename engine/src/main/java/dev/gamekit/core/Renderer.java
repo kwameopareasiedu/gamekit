@@ -119,6 +119,20 @@ public final class Renderer {
     return call;
   }
 
+  /** Draws a polygon */
+  public static DrawPolygon drawPolygon(int[] points) {
+    DrawPolygon call = new DrawPolygon(points, false);
+    BUFFER.add(call);
+    return call;
+  }
+
+  /** Fills a polygon shape */
+  public static DrawPolygon fillPolygon(int[] points) {
+    DrawPolygon call = new DrawPolygon(points, true);
+    BUFFER.add(call);
+    return call;
+  }
+
   static boolean isCommitted() {
     return committed;
   }
