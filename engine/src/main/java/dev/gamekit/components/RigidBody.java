@@ -151,6 +151,12 @@ public class RigidBody extends Component {
   @Override
   protected void start() {
     super.start();
+
+    // Start the body at the entity's position and rotation
+    Transform tx = entity.findComponent(Transform.class);
+    body.translate(tx.getX(), tx.getY());
+    body.rotate(degToRad(tx.getRotation()));
+
     Physics.addBody(body);
   }
 

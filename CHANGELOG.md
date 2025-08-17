@@ -30,6 +30,7 @@
   slider
 - Added `static void drawPolygon(int[])` and `static void fillPolygon(int[])` methods to
   `Renderer` class
+- Added `Sprite` which is a `Component` that renders an image appearance for an entity
 
 ### Changed
 
@@ -41,6 +42,8 @@
 - Renamed `void scheduleTask(Task task)` to `void runLater(Task task)` in `Application` class
 - Renamed `void scheduleAnimation(Animation task)` to `void runAnimation(Animation task)` in
   `Application` class
+- Modified `RigidBody` component to initialize with the entity's `Transform` component's
+  position and rotation
 
 ### Deprecated
 
@@ -51,7 +54,8 @@
 ### Added
 
 - Added abstract `Component` which is the base class for all entity component
-- Added `Transform` which is a `Component` that contains position, rotation and scale parameters
+- Added `Transform` which is a `Component` that contains position and rotation parameters for an
+  entity
 - Added `RigidBody` which is a `Component` that enables physics-based motion for an entity
 - Added `Physics` class which manages the physics world updates and collision processing
 - Added component lifecycle processing to `Entity` class
