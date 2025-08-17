@@ -2,8 +2,8 @@ package dev.gamekit.graphics;
 
 import java.awt.*;
 
-/** {@link DrawOval} renders a <b>center-origin</b> oval to the window */
-public class DrawOval extends DrawShape {
+/** {@link DrawOval} is a draw call which renders a <b>center-origin</b> oval */
+public class DrawOval extends DrawShape<DrawOval> {
   private final int x, y;
   private final int width;
   private final int height;

@@ -2,8 +2,8 @@ package dev.gamekit.graphics;
 
 import java.awt.*;
 
-/** {@link DrawRoundRect} renders a <b>center-origin</b> rounded rectangle to the window */
-public class DrawRoundRect extends DrawShape {
+/** {@link DrawRoundRect} is a draw call which renders a <b>center-origin</b> rounded rect */
+public class DrawRoundRect extends DrawShape<DrawRoundRect> {
   private final int x, y;
   private final int width;
   private final int height;

@@ -2,8 +2,8 @@ package dev.gamekit.graphics;
 
 import java.awt.*;
 
-/** {@link DrawLine} renders a line to the window */
-public class DrawLine extends DrawShape {
+/** {@link DrawLine} is a draw call which renders a line */
+public class DrawLine extends DrawShape<DrawLine> {
   private final int x1, y1, x2, y2;
 
   public DrawLine(int x1, int y1, int x2, int y2) {

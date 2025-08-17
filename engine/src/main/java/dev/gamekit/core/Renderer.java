@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * thread to draw on the current {@link Window}
  */
 public final class Renderer {
-  private static final ArrayList<DrawCall> BUFFER;
+  private static final ArrayList<DrawCall<?>> BUFFER;
   private static boolean committed;
   private static boolean completed;
 
@@ -119,14 +119,20 @@ public final class Renderer {
     return call;
   }
 
-  /** Draws a polygon */
+  /**
+   * Draws a polygon from a list of points which must even in the format {@code [px1, py1, px2,
+   * py2, ..., pxn, pyn]
+   */
   public static DrawPolygon drawPolygon(int[] points) {
     DrawPolygon call = new DrawPolygon(points, false);
     BUFFER.add(call);
     return call;
   }
 
-  /** Fills a polygon shape */
+  /**
+   * Fills a polygon from a list of points which must even in the format {@code [px1, py1, px2,
+   * py2, ..., pxn, pyn]
+   */
   public static DrawPolygon fillPolygon(int[] points) {
     DrawPolygon call = new DrawPolygon(points, true);
     BUFFER.add(call);
@@ -147,7 +153,7 @@ public final class Renderer {
 
   /** Applies accumulated draw calls to the provided {@link Graphics2D} object */
   static void draw(Graphics2D g) {
-    for (DrawCall call : BUFFER)
+    for (DrawCall<?> call : BUFFER)
       call.apply(g);
 
     completed = true;

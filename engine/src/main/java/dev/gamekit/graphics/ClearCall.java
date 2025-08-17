@@ -6,7 +6,7 @@ import dev.gamekit.utils.Bounds;
 import java.awt.*;
 
 /** {@link ClearCall} clears the visible bounds of the window */
-public class ClearCall extends DrawCall {
+public class ClearCall extends DrawCall<ClearCall> {
   private final Color color;
 
   public ClearCall(Color color) {

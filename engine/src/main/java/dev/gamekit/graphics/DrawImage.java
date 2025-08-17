@@ -3,8 +3,8 @@ package dev.gamekit.graphics;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-/** {@link DrawImage} renders an image to the window */
-public class DrawImage extends DrawCall {
+/** {@link DrawImage} renders a <b>center-origin</b> image to the window */
+public class DrawImage extends DrawCall<DrawImage> {
   private final BufferedImage image;
   private final int x, y;
   private final int width;

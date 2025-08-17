@@ -2,37 +2,60 @@ package dev.gamekit.graphics;
 
 import java.awt.*;
 
-/** {@link DrawShape} is an abstract draw call to render a shape to the window */
-public abstract class DrawShape extends DrawCall {
-  protected Color color, prevColor;
-  protected Stroke stroke, prevStroke;
-  protected Paint paint, prevPaint;
-  protected Shape clip, prevClip;
+/** {@link DrawShape} is an abstract draw call to render a shape */
+@SuppressWarnings("unchecked")
+public abstract class DrawShape<T extends DrawShape<T>> extends DrawCall<DrawShape<T>> {
+  protected Color color;
+  protected Color prevColor;
+  protected Stroke stroke;
+  protected Stroke prevStroke;
+  protected Paint paint;
+  protected Paint prevPaint;
+  protected Shape clip;
+  protected Shape prevClip;
 
-  public final DrawShape withStroke(Stroke stroke) {
+  /**
+   * A modifier which applies an outline {@link Stroke} to the {@link Graphics2D} object.
+   * <p>
+   * This method returns the object on which it was called for further chaining
+   */
+  public final T withStroke(Stroke stroke) {
     this.stroke = stroke;
-    return this;
+    return (T) this;
   }
 
-  public final DrawShape withPaint(Paint paint) {
+  /**
+   * A modifier which applies a pattern {@link Paint} to the {@link Graphics2D} object.
+   * <p>
+   * This method returns the object on which it was called for further chaining
+   */
+  public final T withPaint(Paint paint) {
     this.paint = paint;
-    return this;
+    return (T) this;
   }
 
-  public final DrawShape withColor(Color color) {
+  /**
+   * A modifier which applies a foreground color to the {@link Graphics2D} object.
+   * <p>
+   * This method returns the object on which it was called for further chaining
+   */
+  public final T withColor(Color color) {
     this.color = color;
-    return this;
+    return (T) this;
   }
 
-  public final DrawShape withClip(int x, int y, int width, int height) {
+  /**
+   * A modifier which applies a {@link Shape clip region} to the {@link Graphics2D} object.
+   * <p>
+   * This method returns the object on which it was called for further chaining
+   */
+  public final T withClip(int x, int y, int width, int height) {
     this.clip = new Rectangle(x, y, width, height);
-    return this;
+    return (T) this;
   }
 
   @Override
   protected final void setup(Graphics2D g) {
-    super.setup(g);
-
     prevStroke = g.getStroke();
     prevPaint = g.getPaint();
     prevColor = g.getColor();
@@ -48,8 +71,6 @@ public abstract class DrawShape extends DrawCall {
 
   @Override
   protected final void cleanup(Graphics2D g) {
-    super.cleanup(g);
-
     g.setStroke(prevStroke);
     g.setPaint(prevPaint);
     g.setColor(prevColor);
