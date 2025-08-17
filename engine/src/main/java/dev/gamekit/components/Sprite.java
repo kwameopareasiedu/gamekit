@@ -8,11 +8,11 @@ import dev.gamekit.utils.Bounds;
 
 import java.awt.image.BufferedImage;
 
-/** The {@link Sprite} renders a {@link BufferedImage} appearance  for an {@link Entity} */
+/** {@link Sprite} renders a {@link BufferedImage} appearance  for an {@link Entity} */
 public class Sprite extends Component {
-  private BufferedImage image;
+  protected BufferedImage image;
   protected ImageInterpolation interpolation;
-  private final Bounds bounds;
+  protected final Bounds bounds;
 
   public Sprite(BufferedImage image, ImageInterpolation interpolation) {
     if (image == null)
