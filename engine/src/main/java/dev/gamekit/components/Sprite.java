@@ -37,7 +37,7 @@ public class Sprite extends Component {
       (int) posX, (int) posY,
       (int) bounds.width,
       (int) bounds.height
-    );
+    ).withInterpolation(interpolation);
   }
 
   /** Updates this {@link Sprite sprite's} image */

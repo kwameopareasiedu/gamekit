@@ -17,6 +17,9 @@ import static dev.gamekit.utils.Math.*;
  * <p>
  * During its {@link #update} phase and after a physics simulation step is complete, this
  * component will update the attached entity's {@link Transform} component's position and rotation
+ * <p>
+ * Once a {@link RigidBody} is added to an entity, position and rotation changes should be done
+ * with the rigidbody component and not the {@link Transform} component
  */
 public class RigidBody extends Component {
   public static boolean DEBUG_DRAW = false;
@@ -150,8 +153,6 @@ public class RigidBody extends Component {
 
   @Override
   protected void start() {
-    super.start();
-
     // Start the body at the entity's position and rotation
     Transform tx = entity.findComponent(Transform.class);
     body.translate(tx.getX(), tx.getY());
@@ -162,8 +163,6 @@ public class RigidBody extends Component {
 
   @Override
   protected void update() {
-    super.update();
-
     Transform tx = entity.findComponent(Transform.class);
     Vector2 center = body.getWorldCenter();
     tx.setPosition(center.x, center.y);
@@ -172,8 +171,6 @@ public class RigidBody extends Component {
 
   @Override
   protected void render() {
-    super.render();
-
     if (DEBUG_DRAW) {
       Vector2 bodyCenter = body.getWorldCenter();
       int bodyCenterX = toInt(bodyCenter.x * Constants.PIXELS_PER_METER);
@@ -210,8 +207,6 @@ public class RigidBody extends Component {
 
   @Override
   protected void dispose() {
-    super.dispose();
-
     Application.getInstance().runLater(
       () -> Physics.removeBody(body)
     );

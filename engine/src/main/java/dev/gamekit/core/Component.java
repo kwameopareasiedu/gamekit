@@ -24,20 +24,20 @@ public abstract class Component {
    * NB: <i>The value of {@link #entity} is set before this method is called and can safely be
    * accessed here.</i>
    */
-  protected void start() { }
+  protected void start() { /* No-op */ }
 
   /** Called to update the component */
-  protected void update() { }
+  protected void update() { /* No-op */ }
 
   /** Called to render the component */
-  protected void render() { }
+  protected void render() { /* No-op */ }
 
   /**
    * Called to dispose the component
    * <p>
    * NB: <i>The value of {@link #entity} can still be accessed here</i>
    */
-  protected void dispose() { }
+  protected void dispose() { /* No-op */ }
 
   /** Called <b>once</b> by the host {@link Entity} to initialize the component */
   void _start(Entity entity) {

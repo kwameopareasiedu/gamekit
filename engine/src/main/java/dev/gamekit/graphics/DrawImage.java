@@ -44,15 +44,9 @@ public class DrawImage extends DrawCall<DrawImage> {
 
   @Override
   protected void draw(Graphics2D g) {
-    ImageInterpolation originalInterpolation = ImageInterpolation.from(g);
-    interpolation.apply(g);
-
     int x0 = x - width / 2, y0 = y + height / 2;
     int x1 = x0 + width, y1 = y0 - height;
     g.drawImage(image, x0, -y0, x1, -y1, 0, 0, image.getWidth(), image.getHeight(), null);
-
-    if (originalInterpolation != null)
-      originalInterpolation.apply(g);
   }
 
   @Override
