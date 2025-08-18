@@ -34,6 +34,10 @@
 - Added interpolation support to `DrawImage` draw call
 - Added `AnimatedSprite` which is a `Sprite` component extension that renders an animated sprite
   sheet
+- Added abstract `Collider` which is a `Component` which defines the physics shape of an entity for
+  the purposes of physics collision detection
+- Added abstract `CircleCollider` which is a `Collider` with a circle shape
+- Added abstract `BoxCollider` which is a `Collider` with a rectangular shape
 
 ### Changed
 
@@ -47,10 +51,18 @@
   `Application` class
 - Modified `RigidBody` component to initialize with the entity's `Transform` component's
   position and rotation
+- Changed `Physics.CollisionListener` from an interface to and abstract class
+- Modified `Entity` to allow for addition of more than one instances of a component type except
+  the `Transform` component
 
 ### Deprecated
 
 ### Removed
+
+- Removed `void addCircleFixture(double, FixtureTuner)` from `RigidBody` class
+- Removed `void addCircleFixture(double)` from `RigidBody` class
+- Removed `void addRectFixture(double, double, FixtureTuner)` from `RigidBody` class
+- Removed `void addRectFixture(double, double)` from `RigidBody` class
 
 ## 0.5.0-SNAPSHOT-1
 

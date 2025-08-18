@@ -7,7 +7,7 @@ import dev.gamekit.utils.Vector;
 /**
  * {@link Transform} represents the position and rotation of an {@link Entity}.
  * <p>
- * An entity will always have one instance of a {@link Transform} component.
+ * An entity will always and can only have one instance of a {@link Transform} component.
  */
 public class Transform extends Component {
   private final Vector position;

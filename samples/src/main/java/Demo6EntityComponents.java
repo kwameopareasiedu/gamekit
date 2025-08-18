@@ -1,5 +1,4 @@
-import dev.gamekit.components.RigidBody;
-import dev.gamekit.components.Transform;
+import dev.gamekit.components.*;
 import dev.gamekit.core.*;
 import dev.gamekit.core.Component;
 import dev.gamekit.settings.Antialiasing;
@@ -50,6 +49,7 @@ public class Demo6EntityComponents extends Scene {
   @Override
   protected void start() {
     RigidBody.DEBUG_DRAW = true;
+    Collider.DEBUG_DRAW = true;
     addChild(new Wall(Wall.Type.TOP));
     addChild(new Wall(Wall.Type.RIGHT));
     addChild(new Wall(Wall.Type.BOTTOM));
@@ -113,10 +113,12 @@ public class Demo6EntityComponents extends Scene {
       rb.setUserData(identifier);
       // Set the position of this rigid body
       rb.setPosition(tx[0], tx[1]);
-      // Add a rectangle fixture/shape to the rigid body
-      rb.addRectFixture(tx[2], tx[3]);
+
+      // Create a BoxCollider
+      BoxCollider box1 = new BoxCollider(tx[2], tx[3]);
+
       // Return a list of components for the Wall entity
-      return List.of(rb);
+      return List.of(rb, box1);
     }
 
     public enum Type {
@@ -149,25 +151,27 @@ public class Demo6EntityComponents extends Scene {
 
       // Attach an id to the rigid body (For identification in collision)
       rb.setUserData("Ball");
-      // Add a circle fixture/shape to the rigid body
-      rb.addCircleFixture(radius, (fx, circle) -> {
-        // Set the circle shape's density
-        fx.setDensity(15);
-        // Set coefficient of restitution to 0.5
-        fx.setRestitution(0.5);
-      });
-
       // Apply an instantaneous impulse to the rigid body
       rb.applyImpulse(-2, -0.5);
       // Apply a rotational torque to the rigid body
       rb.applyTorque(3);
-
       // Add a collision listener to be notified when this rigid body collides with another
-      rb.addCollisionListener((selfBody, selfFixture, otherBody, otherFixture) -> {
-        logger.debug("Ball collided with {}", otherBody.getUserData());
+      rb.addCollisionListener(new Physics.CollisionListener() {
+        @Override
+        public void onCollisionEnter(Collider.BodyAttachedFixture otherFixture) {
+          logger.debug("Ball collided with {}", otherFixture.getUserData());
+        }
       });
 
-      return List.of(rb);
+
+      // Add a circle fixture/shape to the rigid body
+      CircleCollider circle1 = new CircleCollider(radius);
+      // Set the circle shape's density
+      circle1.setDensity(15);
+      // Set coefficient of restitution to 0.5
+      circle1.setRestitution(0.5);
+
+      return List.of(rb, circle1);
     }
 
     @Override

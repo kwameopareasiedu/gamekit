@@ -80,6 +80,25 @@ public abstract class Entity {
     return null;
   }
 
+  /**
+   * Returns a list of {@link Component components} of the specified class
+   * <p>
+   * NB: Care must be taken when using this method since it creates a new {@link List} object
+   * every time
+   */
+  public <T extends Component> List<T> findComponents(Class<T> clazz) {
+    List<T> out = new ArrayList<>();
+
+    for (Component component : components) {
+      if (clazz.isInstance(component)) {
+        //noinspection unchecked
+        out.add((T) component);
+      }
+    }
+
+    return out;
+  }
+
   /** Called during {@link #start} to get the components of the entity */
   protected List<Component> getComponents() {
     return null;
@@ -107,9 +126,9 @@ public abstract class Entity {
 
     if (components != null) {
       for (Component component : components) {
-        if (this.components.stream().anyMatch(c -> c.getClass().isInstance(component)))
+        if (component instanceof Transform)
           throw new IllegalArgumentException(
-            "Entity cannot have more than one type of a Component"
+            "Entity cannot have more than one Transform component"
           );
 
         this.components.add(component);
