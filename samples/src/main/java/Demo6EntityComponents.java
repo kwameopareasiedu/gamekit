@@ -1,4 +1,7 @@
-import dev.gamekit.components.*;
+import dev.gamekit.components.BoxCollider;
+import dev.gamekit.components.CircleCollider;
+import dev.gamekit.components.Collider;
+import dev.gamekit.components.RigidBody;
 import dev.gamekit.core.*;
 import dev.gamekit.core.Component;
 import dev.gamekit.settings.Antialiasing;
@@ -11,6 +14,8 @@ import dev.gamekit.utils.Vector;
 import org.dyn4j.geometry.MassType;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -50,11 +55,8 @@ public class Demo6EntityComponents extends Scene {
   protected void start() {
     RigidBody.DEBUG_DRAW = true;
     Collider.DEBUG_DRAW = true;
-    addChild(new Wall(Wall.Type.TOP));
-    addChild(new Wall(Wall.Type.RIGHT));
-    addChild(new Wall(Wall.Type.BOTTOM));
-    addChild(new Wall(Wall.Type.LEFT));
 
+    addChild(new BoxFrame());
     addChild(ball);
   }
 
@@ -87,51 +89,38 @@ public class Demo6EntityComponents extends Scene {
     );
   }
 
-  public static class Wall extends Entity {
-    private static final double[][] TYPE_TRANSFORM = new double[][]{
+  public static class BoxFrame extends Entity {
+    private static final double[][] WALL_TRANSFORMS = new double[][]{
       new double[]{ 0, 256, 768, 16.0 },
       new double[]{ 377.6, 0, 16.0, 526.08 },
       new double[]{ 0, -256, 768, 16.0 },
       new double[]{ -377.6, 0, 16.0, 526.08 },
     };
 
-    private final Type type;
-
-    public Wall(Type type) {
-      super(String.format("Wall %s", type.toString()));
-      this.type = type;
+    public BoxFrame() {
+      super("Box Frame");
     }
 
     @Override
     protected List<Component> getComponents() {
+      List<Component> components = new ArrayList<>();
+
       // Create a RigidBody component
       RigidBody rb = new RigidBody();
-      double[] tx = TYPE_TRANSFORM[type.toIndex()];
-      String identifier = String.format("Wall %s", type);
+      // Add the rigid body to the components
+      components.add(rb);
 
-      // Attach an id to the rigid body (For identification in collision)
-      rb.setUserData(identifier);
-      // Set the position of this rigid body
-      rb.setPosition(tx[0], tx[1]);
-
-      // Create a BoxCollider
-      BoxCollider box1 = new BoxCollider(tx[2], tx[3]);
+      Arrays.stream(WALL_TRANSFORMS).forEach(tx -> {
+        // Create a BoxCollider with width and height
+        BoxCollider wallCollider = new BoxCollider(tx[2], tx[3]);
+        // Offset the box collider
+        wallCollider.setOffset(tx[0], tx[1]);
+        // Add the box collider to the components
+        components.add(wallCollider);
+      });
 
       // Return a list of components for the Wall entity
-      return List.of(rb, box1);
-    }
-
-    public enum Type {
-      TOP, RIGHT, BOTTOM, LEFT;
-
-      int toIndex() {
-        return switch (this) {
-          case TOP -> 0;
-          case RIGHT -> 1;
-          case BOTTOM -> 2;
-          case LEFT -> 3;
-        };
-      }
+      return components;
     }
   }
 
@@ -149,6 +138,7 @@ public class Demo6EntityComponents extends Scene {
         MassType.NORMAL, new Vector(), 1, 1
       );
 
+      rb.setGravityScale(0.5);
       // Attach an id to the rigid body (For identification in collision)
       rb.setUserData("Ball");
       // Apply an instantaneous impulse to the rigid body
@@ -163,22 +153,23 @@ public class Demo6EntityComponents extends Scene {
         }
       });
 
-
       // Add a circle fixture/shape to the rigid body
-      CircleCollider circle1 = new CircleCollider(radius);
+      CircleCollider circle = new CircleCollider(radius);
       // Set the circle shape's density
-      circle1.setDensity(15);
+      circle.setDensity(15);
       // Set coefficient of restitution to 0.5
-      circle1.setRestitution(0.5);
+      circle.setRestitution(0.5);
+      // Set friction to 0.5
+      circle.setFriction(0.5);
 
-      return List.of(rb, circle1);
+      return List.of(rb, circle);
     }
 
-    @Override
-    protected void render() {
-      Transform tx = findComponent(Transform.class);
-      Renderer.fillCircle((int) (tx.getX()), (int) (tx.getY()), (int) radius)
-        .withColor(Color.RED);
-    }
+    //    @Override
+    //    protected void render() {
+    //      Transform tx = findComponent(Transform.class);
+    //      Renderer.fillCircle((int) (tx.getX()), (int) (tx.getY()), (int) radius)
+    //        .withColor(Color.RED);
+    //    }
   }
 }

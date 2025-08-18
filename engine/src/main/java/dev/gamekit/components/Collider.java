@@ -59,7 +59,7 @@ public abstract class Collider extends Component {
       Transform tx = entity.findComponent(Transform.class);
       int bodyCenterX = toInt(tx.getX());
       int bodyCenterY = toInt(tx.getY());
-      double bodyRotationDeg = tx.getRotation();
+      double bodyRotationDeg = -tx.getRotation();
       Convex shape = fixture.getShape();
       Vector2 shapeCenter = shape.getCenter();
       int shapeCenterX = toInt(tx.getX() + (shapeCenter.x) * Constants.PIXELS_PER_METER);

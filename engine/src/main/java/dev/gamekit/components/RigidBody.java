@@ -122,6 +122,7 @@ public class RigidBody extends Component {
     // Find all colliders and add their fixtures
     List<Collider> colliders = entity.findComponents(Collider.class);
     colliders.forEach(collider -> collider.fixture.addToBody(body));
+    body.updateMass();
 
     Physics.addBody(body);
   }
