@@ -124,18 +124,6 @@ public final class Renderer {
   }
 
   /**
-   * Draws a scaled <b>center-origin</b> {@link BufferedImage} at {@code (x, y)} with size,
-   * height and an {@link ImageInterpolation interpolation}
-   */
-  public static DrawImage drawImage(
-    BufferedImage img, int x, int y, int width, int height, ImageInterpolation interpolation
-  ) {
-    DrawImage call = new DrawImage(img, x, y, width, height, interpolation);
-    BUFFER.add(call);
-    return call;
-  }
-
-  /**
    * Draws a polygon from a list of points which must even in the format {@code [px1, py1, px2,
    * py2, ..., pxn, pyn]
    */

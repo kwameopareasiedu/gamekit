@@ -32,8 +32,6 @@
   `Renderer` class
 - Added `Sprite` which is a `Component` that renders an image appearance for an entity
 - Added interpolation support to `DrawImage` draw call
-- Added `void drawImage(BufferedImage, int, int, int, int, ImageInterpolation)` method overload
-  to `Renderer` class
 - Added `AnimatedSprite` which is a `Sprite` component extension that renders an animated sprite
   sheet
 

@@ -11,21 +11,35 @@ public class DrawImage extends DrawCall<DrawImage> {
   private final int x, y;
   private final int width;
   private final int height;
-  private final ImageInterpolation interpolation;
 
-  public DrawImage(
-    BufferedImage image, int x, int y, int width, int height, ImageInterpolation interpolation
-  ) {
+  private ImageInterpolation interpolation;
+  private ImageInterpolation prevInterpolation;
+
+  public DrawImage(BufferedImage image, int x, int y, int width, int height) {
     this.image = image;
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
-    this.interpolation = interpolation;
   }
 
-  public DrawImage(BufferedImage image, int x, int y, int width, int height) {
-    this(image, x, y, width, height, ImageInterpolation.DEFAULT);
+  /**
+   * A modifier which sets an {@link ImageInterpolation} strategy to the {@link Graphics2D} object.
+   * <p>
+   * This method returns the object on which it was called for further chaining
+   */
+  public final DrawImage withInterpolation(ImageInterpolation interpolation) {
+    this.interpolation = interpolation;
+    return this;
+  }
+
+  @Override
+  protected void setup(Graphics2D g) {
+    if (interpolation != null) {
+      prevInterpolation = ImageInterpolation.from(g);
+
+      interpolation.apply(g);
+    }
   }
 
   @Override
@@ -39,5 +53,11 @@ public class DrawImage extends DrawCall<DrawImage> {
 
     if (originalInterpolation != null)
       originalInterpolation.apply(g);
+  }
+
+  @Override
+  protected void cleanup(Graphics2D g) {
+    if (prevInterpolation != null)
+      prevInterpolation.apply(g);
   }
 }
