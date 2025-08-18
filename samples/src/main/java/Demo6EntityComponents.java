@@ -89,10 +89,10 @@ public class Demo6EntityComponents extends Scene {
 
   public static class Wall extends Entity {
     private static final double[][] TYPE_TRANSFORM = new double[][]{
-      new double[]{ 0, 2, 6, 0.125 },
-      new double[]{ 2.95, 0, 0.125, 4.11 },
-      new double[]{ 0, -2, 6, 0.125 },
-      new double[]{ -2.95, 0, 0.125, 4.11 },
+      new double[]{ 0, 256, 768, 16.0 },
+      new double[]{ 377.6, 0, 16.0, 526.08 },
+      new double[]{ 0, -256, 768, 16.0 },
+      new double[]{ -377.6, 0, 16.0, 526.08 },
     };
 
     private final Type type;
@@ -134,7 +134,7 @@ public class Demo6EntityComponents extends Scene {
   }
 
   public static class Ball extends Entity {
-    private final double radius = 0.1;
+    private final double radius = 12.8;
 
     public Ball() {
       super("Ball");
@@ -172,14 +172,9 @@ public class Demo6EntityComponents extends Scene {
 
     @Override
     protected void render() {
-      super.render();
       Transform tx = findComponent(Transform.class);
-
-      Renderer.fillCircle(
-        (int) (tx.getX() * Constants.PIXELS_PER_METER),
-        (int) (tx.getY() * Constants.PIXELS_PER_METER),
-        (int) (radius * Constants.PIXELS_PER_METER)
-      ).withColor(Color.RED);
+      Renderer.fillCircle((int) (tx.getX()), (int) (tx.getY()), (int) radius)
+        .withColor(Color.RED);
     }
   }
 }

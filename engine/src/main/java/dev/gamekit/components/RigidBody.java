@@ -57,7 +57,8 @@ public class RigidBody extends Component {
 
   /** Sets the world position of this {@link RigidBody} */
   public void setPosition(double x, double y) {
-    body.getTransform().setTranslation(x, y);
+    double ppm = Constants.PIXELS_PER_METER;
+    body.getTransform().setTranslation(x / ppm, y / ppm);
   }
 
   /** Sets the global rotation of this {@link RigidBody} about its center */
@@ -72,9 +73,11 @@ public class RigidBody extends Component {
    * {@code (sx, sy)} is required
    */
   public void setRotation(double deg, double rx, double ry, double sx, double sy) {
+    double ppm = Constants.PIXELS_PER_METER;
+
     body.getTransform().setRotation(0);
-    body.getTransform().setTranslation(sx, sy);
-    body.rotate(-degToRad(deg), rx, ry);
+    body.getTransform().setTranslation(sx / ppm, sy / ppm);
+    body.rotate(-degToRad(deg), rx / ppm, ry / ppm);
   }
 
   /**
@@ -85,7 +88,9 @@ public class RigidBody extends Component {
    * {@code tuner} for configuration before they are added to this {@link RigidBody}
    */
   public void addCircleFixture(double radius, FixtureTuner<Circle> tuner) {
-    Circle circle = new Circle(radius);
+    double ppm = Constants.PIXELS_PER_METER;
+
+    Circle circle = new Circle(radius / ppm);
     BodyFixture fx = new BodyFixture(circle);
     tuner.tuneFixture(fx, circle);
     body.addFixture(fx);
@@ -109,7 +114,9 @@ public class RigidBody extends Component {
    * tuner} for configuration before they are added to this {@link RigidBody}
    */
   public void addRectFixture(double width, double height, FixtureTuner<Rectangle> tuner) {
-    Rectangle rect = new Rectangle(width, height);
+    double ppm = Constants.PIXELS_PER_METER;
+
+    Rectangle rect = new Rectangle(width / ppm, height / ppm);
     BodyFixture fx = new BodyFixture(rect);
     tuner.tuneFixture(fx, rect);
     body.addFixture(fx);
@@ -153,46 +160,44 @@ public class RigidBody extends Component {
 
   @Override
   protected void start() {
-    // Start the body at the entity's position and rotation
-    Transform tx = entity.findComponent(Transform.class);
-    body.translate(tx.getX(), tx.getY());
-    body.rotate(degToRad(tx.getRotation()));
-
     Physics.addBody(body);
   }
 
   @Override
   protected void update() {
+    double ppm = Constants.PIXELS_PER_METER;
     Transform tx = entity.findComponent(Transform.class);
     Vector2 center = body.getWorldCenter();
-    tx.setPosition(center.x, center.y);
+
+    tx.setPosition(center.x * ppm, center.y * ppm);
     tx.setRotation(radToDeg(body.getTransform().getRotationAngle()));
   }
 
   @Override
   protected void render() {
     if (DEBUG_DRAW) {
+      double ppm = Constants.PIXELS_PER_METER;
       Vector2 bodyCenter = body.getWorldCenter();
-      int bodyCenterX = toInt(bodyCenter.x * Constants.PIXELS_PER_METER);
-      int bodyCenterY = toInt(bodyCenter.y * Constants.PIXELS_PER_METER);
+      int bodyCenterX = toInt(bodyCenter.x * ppm);
+      int bodyCenterY = toInt(bodyCenter.y * ppm);
       double bodyRotation = radToDeg(-body.getTransform().getRotationAngle());
 
       for (BodyFixture fx : body.getFixtures()) {
         Convex shape = fx.getShape();
         Vector2 shapeCenter = shape.getCenter();
-        int shapeCenterX = toInt((bodyCenter.x + shapeCenter.x) * Constants.PIXELS_PER_METER);
-        int shapeCenterY = toInt((bodyCenter.y + shapeCenter.y) * Constants.PIXELS_PER_METER);
+        int shapeCenterX = toInt((bodyCenter.x + shapeCenter.x) * ppm);
+        int shapeCenterY = toInt((bodyCenter.y + shapeCenter.y) * ppm);
 
         if (shape instanceof Circle circle) {
-          int radius = toInt(circle.getRadius() * Constants.PIXELS_PER_METER);
+          int radius = toInt(circle.getRadius() * ppm);
 
           Renderer.drawCircle(shapeCenterX, shapeCenterY, radius)
             .withColor(Color.CYAN).withRotation(bodyCenterX, bodyCenterY, bodyRotation);
           Renderer.drawVerticalLine(shapeCenterX, shapeCenterY, shapeCenterY + radius)
             .withRotation(bodyCenterX, bodyCenterY, bodyRotation);
         } else if (shape instanceof Rectangle rect) {
-          int width = toInt(rect.getWidth() * Constants.PIXELS_PER_METER);
-          int height = toInt(rect.getHeight() * Constants.PIXELS_PER_METER);
+          int width = toInt(rect.getWidth() * ppm);
+          int height = toInt(rect.getHeight() * ppm);
 
           Renderer.drawRect(shapeCenterX, shapeCenterY, width, height)
             .withColor(Color.CYAN).withRotation(bodyCenterX, bodyCenterY, bodyRotation);
