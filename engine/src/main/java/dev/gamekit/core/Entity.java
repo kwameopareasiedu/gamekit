@@ -150,8 +150,8 @@ public abstract class Entity {
 
   /** Called by the parent {@link Entity} to render the entity */
   void _render() {
-    components.forEach(Component::_render);
     render();
+    components.forEach(Component::_render);
     children.forEach(Entity::_render);
   }
 

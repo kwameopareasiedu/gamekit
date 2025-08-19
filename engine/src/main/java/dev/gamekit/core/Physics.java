@@ -12,7 +12,9 @@ import java.util.HashMap;
 /** {@link Physics} handles updates of the {@link World} object on the main application thread */
 public final class Physics {
   private static final World<Body> WORLD;
-  private static final HashMap<Body, CollisionListener> COLLISION_LISTENER_MAP;
+  private static final HashMap<String, CollisionListener> COLLISION_LISTENER_MAP;
+
+  private static boolean updateListeners = false;
 
   static {
     WORLD = new World<>();
@@ -24,25 +26,19 @@ public final class Physics {
         if (COLLISION_LISTENER_MAP.isEmpty())
           return true;
 
-        Body body1 = collision.getBody1();
-        Body body2 = collision.getBody2();
-        BodyFixture fx1 = collision.getFixture1();
-        BodyFixture fx2 = collision.getFixture2();
+        Collider.BodyAttachedFixture fx1 = (Collider.BodyAttachedFixture) collision.getFixture1();
+        Collider.BodyAttachedFixture fx2 = (Collider.BodyAttachedFixture) collision.getFixture2();
 
-        if (COLLISION_LISTENER_MAP.containsKey(body1)) {
-          CollisionListener listener = COLLISION_LISTENER_MAP.get(body1);
-          listener.handleCollision(
-            (Collider.BodyAttachedFixture) fx1,
-            (Collider.BodyAttachedFixture) fx2
-          );
+        if (COLLISION_LISTENER_MAP.containsKey(fx1.id)) {
+          CollisionListener listener = COLLISION_LISTENER_MAP.get(fx1.id);
+          listener.handleCollision(fx2);
+          updateListeners = true;
         }
 
-        if (COLLISION_LISTENER_MAP.containsKey(body2)) {
-          CollisionListener listener = COLLISION_LISTENER_MAP.get(body2);
-          listener.handleCollision(
-            (Collider.BodyAttachedFixture) fx2,
-            (Collider.BodyAttachedFixture) fx1
-          );
+        if (COLLISION_LISTENER_MAP.containsKey(fx2.id)) {
+          CollisionListener listener = COLLISION_LISTENER_MAP.get(fx2.id);
+          listener.handleCollision(fx1);
+          updateListeners = true;
         }
 
         return true;
@@ -60,7 +56,13 @@ public final class Physics {
     double elapsedTime = Constants.FRAME_INTERVAL_MS / 1000.0;
     WORLD.update(elapsedTime);
 
-    COLLISION_LISTENER_MAP.forEach((body, listener) -> listener.update());
+    if (updateListeners) {
+      COLLISION_LISTENER_MAP.forEach(
+        (body, listener) -> listener.update()
+      );
+
+      updateListeners = false;
+    }
   }
 
   /** Adds a {@link Body} to the physics world for simulation */
@@ -70,30 +72,23 @@ public final class Physics {
 
   /** Removes a {@link Body} from the physics world */
   public static void removeBody(Body body) {
-    COLLISION_LISTENER_MAP.remove(body);
     WORLD.removeBody(body);
   }
 
-  /**
-   * Registers a collision listener for the specified {@link Body}.
-   * <p>
-   * If a listener is already registered for the body, it will be replaced.
-   */
-  public static void addCollisionListener(Body body, CollisionListener listener) {
-    COLLISION_LISTENER_MAP.put(body, listener);
+  /** Registers a collision listener with the specified id, replacing any existing listener */
+  public static void addCollisionListener(String id, CollisionListener listener) {
+    COLLISION_LISTENER_MAP.put(id, listener);
   }
 
   /** Removes a collision listener for the specified {@link Body} */
-  public static void removeCollisionListener(Body body, CollisionListener listener) {
-    COLLISION_LISTENER_MAP.remove(body, listener);
+  public static void removeCollisionListener(String id, CollisionListener listener) {
+    COLLISION_LISTENER_MAP.remove(id, listener);
   }
 
   /** Abstract interface for handling physics collisions */
   public static abstract class CollisionListener {
-    private final HashMap<String, Collider.BodyAttachedFixture> prevFixtureMap
-      = new HashMap<>();
-    private final HashMap<String, Collider.BodyAttachedFixture> currentFixtureMap
-      = new HashMap<>();
+    private final HashMap<String, Collider.BodyAttachedFixture> prevFixtureMap = new HashMap<>();
+    private final HashMap<String, Collider.BodyAttachedFixture> currentFixtureMap = new HashMap<>();
 
     void update() {
       for (String id : prevFixtureMap.keySet()) {
@@ -108,12 +103,12 @@ public final class Physics {
     }
 
     /** Called when a collision occurs and is passed the bodies and fixtures of the collision */
-    void handleCollision(
-      Collider.BodyAttachedFixture ignore, Collider.BodyAttachedFixture otherFixture
-    ) {
-      if (prevFixtureMap.containsKey(otherFixture.id)) {
+    void handleCollision(Collider.BodyAttachedFixture otherFixture) {
+      if (!prevFixtureMap.containsKey(otherFixture.id)) {
         onCollisionEnter(otherFixture);
-      } else onCollisionStay(otherFixture);
+      } else {
+        onCollisionStay(otherFixture);
+      }
 
       currentFixtureMap.put(otherFixture.id, otherFixture);
     }

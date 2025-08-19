@@ -42,12 +42,9 @@ public class RigidBody extends Component {
     body.setMass(new Mass(new Vector2(massCenter.x, massCenter.y), mass, inertia));
   }
 
-  /**
-   * Sets custom user data to this {@link RigidBody} which can be used to identify this
-   * {@link RigidBody} in collision listeners
-   */
-  public void setUserData(Object data) {
-    body.setUserData(data);
+  /** Sets the {@link RigidBody}'s metadata */
+  public void setMetaData(Object metadata) {
+    body.setUserData(metadata);
   }
 
   /**
@@ -107,24 +104,24 @@ public class RigidBody extends Component {
     body.applyTorque(torque);
   }
 
-  /**
-   * Attaches a collision listener to this {@link RigidBody}. When this {@link RigidBody}
-   * collides with other rigid bodies, this listener is invoked with the details of the collision
-   * <p>
-   * <i>The listener is automatically removed when the host entity is disposed</i>
-   */
-  public void addCollisionListener(Physics.CollisionListener listener) {
-    Physics.addCollisionListener(body, listener);
-  }
-
   @Override
   protected void start() {
-    // Find all colliders and add their fixtures
+    // Find all colliders and add their fixtures to the body
     List<Collider> colliders = entity.findComponents(Collider.class);
     colliders.forEach(collider -> collider.fixture.addToBody(body));
+
     body.updateMass();
 
     Physics.addBody(body);
+
+    // Register all non-null collider collision listeners
+    colliders.forEach(collider -> {
+      if (collider.collisionListener != null) {
+        Physics.addCollisionListener(
+          collider.fixture.id, collider.collisionListener
+        );
+      }
+    });
   }
 
   @Override
@@ -148,6 +145,18 @@ public class RigidBody extends Component {
 
   @Override
   protected void dispose() {
+    // Find all colliders and unregister their collision listeners
+    List<Collider> colliders = entity.findComponents(Collider.class);
+    colliders.forEach(collider -> collider.fixture.addToBody(body));
+
+    colliders.forEach(collider -> {
+      if (collider.collisionListener != null) {
+        Physics.removeCollisionListener(
+          collider.fixture.id, collider.collisionListener
+        );
+      }
+    });
+
     Physics.removeBody(body);
   }
 }

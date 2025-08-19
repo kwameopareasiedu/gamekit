@@ -1,7 +1,4 @@
-import dev.gamekit.components.BoxCollider;
-import dev.gamekit.components.CircleCollider;
-import dev.gamekit.components.Collider;
-import dev.gamekit.components.RigidBody;
+import dev.gamekit.components.*;
 import dev.gamekit.core.*;
 import dev.gamekit.core.Component;
 import dev.gamekit.settings.Antialiasing;
@@ -113,6 +110,8 @@ public class Demo6EntityComponents extends Scene {
       Arrays.stream(WALL_TRANSFORMS).forEach(tx -> {
         // Create a BoxCollider with width and height
         BoxCollider wallCollider = new BoxCollider(tx[2], tx[3]);
+        // Set metadata (for collision identification)
+        wallCollider.setMetaData("Wall");
         // Offset the box collider
         wallCollider.setOffset(tx[0], tx[1]);
         // Add the box collider to the components
@@ -140,36 +139,41 @@ public class Demo6EntityComponents extends Scene {
 
       rb.setGravityScale(0.5);
       // Attach an id to the rigid body (For identification in collision)
-      rb.setUserData("Ball");
+      rb.setMetaData("Ball");
       // Apply an instantaneous impulse to the rigid body
-      rb.applyImpulse(-2, -0.5);
+      rb.applyImpulse(0, -0.5);
       // Apply a rotational torque to the rigid body
-      rb.applyTorque(3);
-      // Add a collision listener to be notified when this rigid body collides with another
-      rb.addCollisionListener(new Physics.CollisionListener() {
-        @Override
-        public void onCollisionEnter(Collider.BodyAttachedFixture otherFixture) {
-          logger.debug("Ball collided with {}", otherFixture.getUserData());
-        }
-      });
+      rb.applyTorque(0);
 
-      // Add a circle fixture/shape to the rigid body
+      // Add a circle fixture
       CircleCollider circle = new CircleCollider(radius);
       // Set the circle shape's density
       circle.setDensity(15);
       // Set coefficient of restitution to 0.5
-      circle.setRestitution(0.5);
+      circle.setRestitution(0);
       // Set friction to 0.5
-      circle.setFriction(0.5);
+      circle.setFriction(1);
+      // Register a collision listener to be notified when this fixture collides with another
+      circle.setCollisionListener(new Physics.CollisionListener() {
+        @Override
+        public void onCollisionEnter(Collider.BodyAttachedFixture otherFixture) {
+          logger.debug("Ball collided with {}", otherFixture.getUserData());
+        }
+
+        @Override
+        public void onCollisionExit(Collider.BodyAttachedFixture otherFixture) {
+          logger.debug("Ball no longer colliding with {}", otherFixture.getUserData());
+        }
+      });
 
       return List.of(rb, circle);
     }
 
-    //    @Override
-    //    protected void render() {
-    //      Transform tx = findComponent(Transform.class);
-    //      Renderer.fillCircle((int) (tx.getX()), (int) (tx.getY()), (int) radius)
-    //        .withColor(Color.RED);
-    //    }
+    @Override
+    protected void render() {
+      Transform tx = findComponent(Transform.class);
+      Renderer.fillCircle((int) (tx.getX()), (int) (tx.getY()), (int) radius)
+        .withColor(Color.RED);
+    }
   }
 }

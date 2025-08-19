@@ -38,7 +38,9 @@ public abstract class AudioClip {
 
     if (loop) {
       clip.loop(Clip.LOOP_CONTINUOUSLY);
-    } else clip.start();
+    } else {
+      clip.start();
+    }
   }
 
   public void resume() { clip.start(); }

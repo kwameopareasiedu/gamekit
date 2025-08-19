@@ -2,6 +2,7 @@ package dev.gamekit.components;
 
 import dev.gamekit.core.Component;
 import dev.gamekit.core.Constants;
+import dev.gamekit.core.Physics;
 import dev.gamekit.core.Renderer;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
@@ -23,14 +24,31 @@ public abstract class Collider extends Component {
   public static boolean DEBUG_DRAW = false;
 
   protected final BodyAttachedFixture fixture;
+  protected Physics.CollisionListener collisionListener;
 
   public Collider(BodyAttachedFixture fixture) {
     this.fixture = fixture;
   }
 
+  /**
+   * Sets the metadata object
+   * @see org.dyn4j.dynamics.BodyFixture#setUserData(Object)
+   */
+  public void setMetaData(Object metadata) {
+    fixture.setUserData(metadata);
+  }
+
   /** Sets the local offset of this fixture relative to the entity */
   public void setOffset(double x, double y) {
     fixture.getShape().translate(x / Constants.PIXELS_PER_METER, y / Constants.PIXELS_PER_METER);
+  }
+
+  /**
+   * Sets a {@link Physics.CollisionListener} to be notified when this collider collides with
+   * another collider
+   */
+  public void setCollisionListener(Physics.CollisionListener collisionListener) {
+    this.collisionListener = collisionListener;
   }
 
   /** @see org.dyn4j.dynamics.BodyFixture#setDensity(double) */
@@ -60,10 +78,11 @@ public abstract class Collider extends Component {
       int bodyCenterX = toInt(tx.getX());
       int bodyCenterY = toInt(tx.getY());
       double bodyRotationDeg = -tx.getRotation();
+
       Convex shape = fixture.getShape();
       Vector2 shapeCenter = shape.getCenter();
-      int shapeCenterX = toInt(tx.getX() + (shapeCenter.x) * Constants.PIXELS_PER_METER);
-      int shapeCenterY = toInt(tx.getY() + (shapeCenter.y) * Constants.PIXELS_PER_METER);
+      int shapeCenterX = toInt(tx.getX() + shapeCenter.x * Constants.PIXELS_PER_METER);
+      int shapeCenterY = toInt(tx.getY() + shapeCenter.y * Constants.PIXELS_PER_METER);
 
       if (shape instanceof Circle circle) {
         int radius = toInt(circle.getRadius() * Constants.PIXELS_PER_METER);
@@ -81,6 +100,8 @@ public abstract class Collider extends Component {
         Renderer.drawVerticalLine(shapeCenterX, shapeCenterY, shapeCenterY + height / 2)
           .withRotation(bodyCenterX, bodyCenterY, bodyRotationDeg);
       }
+
+      Renderer.fillCircle(shapeCenterX, shapeCenterY, 2).withColor(Color.ORANGE);
     }
   }
 

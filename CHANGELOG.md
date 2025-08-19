@@ -63,6 +63,7 @@
 - Removed `void addCircleFixture(double)` from `RigidBody` class
 - Removed `void addRectFixture(double, double, FixtureTuner)` from `RigidBody` class
 - Removed `void addRectFixture(double, double)` from `RigidBody` class
+- Removed `void addCollisionListener(Physics.CollisionListener)` from `RigidBody` class
 
 ## 0.5.0-SNAPSHOT-1
 

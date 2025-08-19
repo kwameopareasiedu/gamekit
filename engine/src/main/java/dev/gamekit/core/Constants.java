@@ -6,7 +6,7 @@ import java.awt.*;
 public final class Constants {
   public static final long FRAME_INTERVAL_MS = 1000 / 240;
   public static final long DRAW_INTERVAL_MS = 1000 / 60;
-  public static final int PIXELS_PER_METER = 128;
+  public static final double PIXELS_PER_METER = 128.0;
 
   public static final Color TRANSPARENT_COLOR = new Color(0x0000000, true);
   public static final Color DEBUG_COLOR = Color.GREEN;
