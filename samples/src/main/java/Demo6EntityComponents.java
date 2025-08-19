@@ -88,7 +88,7 @@ public class Demo6EntityComponents extends Scene {
 
   public static class BoxFrame extends Entity {
     private static final double[][] WALL_TRANSFORMS = new double[][]{
-//      new double[]{ 0, 256, 768, 16.0 },
+      new double[]{ 0, 256, 768, 16.0 },
       new double[]{ 377.6, 0, 16.0, 526.08 },
       new double[]{ 0, -256, 768, 16.0 },
       new double[]{ -377.6, 0, 16.0, 526.08 },
@@ -117,8 +117,8 @@ public class Demo6EntityComponents extends Scene {
         // Add the box collider to the components
         components.add(wallCollider);
 
-//        if (tx == WALL_TRANSFORMS[0])
-//          wallCollider.setSensor(true);
+        if (tx == WALL_TRANSFORMS[0])
+          wallCollider.setSensor(true);
       });
 
       // Return a list of components for the Wall entity
@@ -156,16 +156,17 @@ public class Demo6EntityComponents extends Scene {
       circle.setRestitution(0.5);
       // Set friction to 0.5
       circle.setFriction(0.5);
-      // Register a collision listener to be notified when this fixture collides with another
+      // Register a collision listener to be notified when this collider collides with another
+      // collider
       circle.setCollisionListener(new Physics.CollisionListener() {
         @Override
         public void onCollisionEnter(Collider.BodyAttachedFixture otherFixture) {
-          logger.debug("Ball collided with {}", otherFixture.getUserData());
+          logger.debug("Ball collided with {}", otherFixture.getMetaData());
         }
 
         @Override
         public void onCollisionExit(Collider.BodyAttachedFixture otherFixture) {
-          logger.debug("Ball no longer colliding with {}", otherFixture.getUserData());
+          logger.debug("Ball no longer colliding with {}", otherFixture.getMetaData());
         }
       });
 

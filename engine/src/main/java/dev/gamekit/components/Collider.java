@@ -130,5 +130,13 @@ public abstract class Collider extends Component {
       this.body = body;
       body.addFixture(this);
     }
+
+    /**
+     * Returns the metadata object
+     * @see BodyFixture#getUserData()
+     */
+    public Object getMetaData() {
+      return super.getUserData();
+    }
   }
 }
