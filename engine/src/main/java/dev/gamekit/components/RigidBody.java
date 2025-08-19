@@ -21,8 +21,9 @@ import static dev.gamekit.utils.Math.*;
  * During its {@link #update} phase and after a physics simulation step is complete, this
  * component will update the attached entity's {@link Transform} component's position and rotation
  * <p>
- * Once a {@link RigidBody} is added to an entity, position and rotation changes should be done
- * with the {@link RigidBody} component and not the {@link Transform} component
+ * <strong>NB</strong>: Once a {@link RigidBody} is added to an entity, position and rotation
+ * changes <strong>must</strong> be done with the {@link RigidBody} component and not directly
+ * on the {@link Transform} component
  */
 public class RigidBody extends Component {
   public static boolean DEBUG_DRAW = false;
@@ -127,18 +128,18 @@ public class RigidBody extends Component {
   @Override
   protected void update() {
     Transform tx = entity.findComponent(Transform.class);
-    Vector2 center = body.getWorldCenter();
-
-    tx.setPosition(center.x * Constants.PIXELS_PER_METER, center.y * Constants.PIXELS_PER_METER);
+    tx.setPosition(
+      body.getTransform().getTranslationX() * Constants.PIXELS_PER_METER,
+      body.getTransform().getTranslationY() * Constants.PIXELS_PER_METER
+    );
     tx.setRotation(radToDeg(body.getTransform().getRotationAngle()));
   }
 
   @Override
   protected void render() {
     if (DEBUG_DRAW) {
-      Vector2 bodyCenter = body.getWorldCenter();
-      int bodyCenterX = toInt(bodyCenter.x * Constants.PIXELS_PER_METER);
-      int bodyCenterY = toInt(bodyCenter.y * Constants.PIXELS_PER_METER);
+      int bodyCenterX = toInt(body.getTransform().getTranslationX() * Constants.PIXELS_PER_METER);
+      int bodyCenterY = toInt(body.getTransform().getTranslationY() * Constants.PIXELS_PER_METER);
       Renderer.fillCircle(bodyCenterX, bodyCenterY, 3).withColor(Color.RED);
     }
   }

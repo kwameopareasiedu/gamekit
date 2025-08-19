@@ -61,7 +61,7 @@ public class Demo6EntityComponents extends Scene {
   protected void update() {
     if (Input.isKeyDown(Input.KEY_SPACE)) {
       RigidBody ballRb = ball.findComponent(RigidBody.class);
-      ballRb.applyImpulse(-1.5 + rnd.nextDouble(3), -2 + rnd.nextDouble(4));
+      ballRb.applyImpulse(-1.5 + rnd.nextDouble(3), 0.5 + rnd.nextDouble(2));
     }
   }
 
@@ -88,7 +88,7 @@ public class Demo6EntityComponents extends Scene {
 
   public static class BoxFrame extends Entity {
     private static final double[][] WALL_TRANSFORMS = new double[][]{
-      new double[]{ 0, 256, 768, 16.0 },
+//      new double[]{ 0, 256, 768, 16.0 },
       new double[]{ 377.6, 0, 16.0, 526.08 },
       new double[]{ 0, -256, 768, 16.0 },
       new double[]{ -377.6, 0, 16.0, 526.08 },
@@ -117,8 +117,8 @@ public class Demo6EntityComponents extends Scene {
         // Add the box collider to the components
         components.add(wallCollider);
 
-        if (tx == WALL_TRANSFORMS[0])
-          wallCollider.setSensor(true);
+//        if (tx == WALL_TRANSFORMS[0])
+//          wallCollider.setSensor(true);
       });
 
       // Return a list of components for the Wall entity

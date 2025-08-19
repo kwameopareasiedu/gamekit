@@ -79,8 +79,8 @@ public abstract class Collider extends Component {
   protected void render() {
     if (DEBUG_DRAW) {
       Transform tx = entity.findComponent(Transform.class);
-      int bodyCenterX = toInt(tx.getX());
-      int bodyCenterY = toInt(tx.getY());
+      int centerX = toInt(tx.getX());
+      int centerY = toInt(tx.getY());
       double bodyRotationDeg = -tx.getRotation();
 
       Convex shape = fixture.getShape();
@@ -93,22 +93,21 @@ public abstract class Collider extends Component {
         int radius = toInt(circle.getRadius() * Constants.PIXELS_PER_METER);
 
         Renderer.drawCircle(shapeCenterX, shapeCenterY, radius)
-          .withColor(Color.CYAN).withStroke(stroke)
-          .withRotation(bodyCenterX, bodyCenterY, bodyRotationDeg);
+          .withColor(Color.CYAN).withStroke(stroke).withRotation(centerX, centerY, bodyRotationDeg);
         Renderer.drawVerticalLine(shapeCenterX, shapeCenterY, shapeCenterY + radius)
-          .withRotation(bodyCenterX, bodyCenterY, bodyRotationDeg);
+          .withRotation(centerX, centerY, bodyRotationDeg);
       } else if (shape instanceof Rectangle rect) {
         int width = toInt(rect.getWidth() * Constants.PIXELS_PER_METER);
         int height = toInt(rect.getHeight() * Constants.PIXELS_PER_METER);
 
         Renderer.drawRect(shapeCenterX, shapeCenterY, width, height)
-          .withColor(Color.CYAN).withStroke(stroke)
-          .withRotation(bodyCenterX, bodyCenterY, bodyRotationDeg);
+          .withColor(Color.CYAN).withStroke(stroke).withRotation(centerX, centerY, bodyRotationDeg);
         Renderer.drawVerticalLine(shapeCenterX, shapeCenterY, shapeCenterY + height / 2)
-          .withRotation(bodyCenterX, bodyCenterY, bodyRotationDeg);
+          .withRotation(centerX, centerY, bodyRotationDeg);
       }
 
-      Renderer.fillCircle(shapeCenterX, shapeCenterY, 2).withColor(Color.ORANGE);
+      Renderer.fillCircle(shapeCenterX, shapeCenterY, 2).withColor(Color.ORANGE)
+        .withRotation(centerX, centerY, bodyRotationDeg);
     }
   }
 
