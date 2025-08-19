@@ -28,14 +28,15 @@ public final class Physics {
 
         Collider.BodyAttachedFixture fx1 = (Collider.BodyAttachedFixture) collision.getFixture1();
         Collider.BodyAttachedFixture fx2 = (Collider.BodyAttachedFixture) collision.getFixture2();
+        boolean fixturesAreBothSensors = fx1.isSensor() && fx2.isSensor();
 
-        if (COLLISION_LISTENER_MAP.containsKey(fx1.id)) {
+        if (!fixturesAreBothSensors && COLLISION_LISTENER_MAP.containsKey(fx1.id)) {
           CollisionListener listener = COLLISION_LISTENER_MAP.get(fx1.id);
           listener.handleCollision(fx2);
           updateListeners = true;
         }
 
-        if (COLLISION_LISTENER_MAP.containsKey(fx2.id)) {
+        if (!fixturesAreBothSensors && COLLISION_LISTENER_MAP.containsKey(fx2.id)) {
           CollisionListener listener = COLLISION_LISTENER_MAP.get(fx2.id);
           listener.handleCollision(fx1);
           updateListeners = true;

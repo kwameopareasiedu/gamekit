@@ -61,7 +61,7 @@ public class Demo6EntityComponents extends Scene {
   protected void update() {
     if (Input.isKeyDown(Input.KEY_SPACE)) {
       RigidBody ballRb = ball.findComponent(RigidBody.class);
-      ballRb.applyImpulse(rnd.nextDouble(6) - 3, 5 + rnd.nextDouble(1.5));
+      ballRb.applyImpulse(-1.5 + rnd.nextDouble(3), -2 + rnd.nextDouble(4));
     }
   }
 
@@ -116,6 +116,9 @@ public class Demo6EntityComponents extends Scene {
         wallCollider.setOffset(tx[0], tx[1]);
         // Add the box collider to the components
         components.add(wallCollider);
+
+        if (tx == WALL_TRANSFORMS[0])
+          wallCollider.setSensor(true);
       });
 
       // Return a list of components for the Wall entity
@@ -141,18 +144,18 @@ public class Demo6EntityComponents extends Scene {
       // Attach an id to the rigid body (For identification in collision)
       rb.setMetaData("Ball");
       // Apply an instantaneous impulse to the rigid body
-      rb.applyImpulse(0, -0.5);
+      rb.applyImpulse(-2, 0.5);
       // Apply a rotational torque to the rigid body
-      rb.applyTorque(0);
+      rb.applyTorque(3);
 
       // Add a circle fixture
       CircleCollider circle = new CircleCollider(radius);
       // Set the circle shape's density
       circle.setDensity(15);
       // Set coefficient of restitution to 0.5
-      circle.setRestitution(0);
+      circle.setRestitution(0.5);
       // Set friction to 0.5
-      circle.setFriction(1);
+      circle.setFriction(0.5);
       // Register a collision listener to be notified when this fixture collides with another
       circle.setCollisionListener(new Physics.CollisionListener() {
         @Override

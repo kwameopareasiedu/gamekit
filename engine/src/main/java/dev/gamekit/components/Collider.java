@@ -21,6 +21,10 @@ import static dev.gamekit.utils.Math.toInt;
  * detection
  */
 public abstract class Collider extends Component {
+  private static final Stroke SENSOR_STROKE = new BasicStroke(
+    1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{ 10, 2 }, 0
+  );
+
   public static boolean DEBUG_DRAW = false;
 
   protected final BodyAttachedFixture fixture;
@@ -83,12 +87,14 @@ public abstract class Collider extends Component {
       Vector2 shapeCenter = shape.getCenter();
       int shapeCenterX = toInt(tx.getX() + shapeCenter.x * Constants.PIXELS_PER_METER);
       int shapeCenterY = toInt(tx.getY() + shapeCenter.y * Constants.PIXELS_PER_METER);
+      Stroke stroke = fixture.isSensor() ? SENSOR_STROKE : null;
 
       if (shape instanceof Circle circle) {
         int radius = toInt(circle.getRadius() * Constants.PIXELS_PER_METER);
 
         Renderer.drawCircle(shapeCenterX, shapeCenterY, radius)
-          .withColor(Color.CYAN).withRotation(bodyCenterX, bodyCenterY, bodyRotationDeg);
+          .withColor(Color.CYAN).withStroke(stroke)
+          .withRotation(bodyCenterX, bodyCenterY, bodyRotationDeg);
         Renderer.drawVerticalLine(shapeCenterX, shapeCenterY, shapeCenterY + radius)
           .withRotation(bodyCenterX, bodyCenterY, bodyRotationDeg);
       } else if (shape instanceof Rectangle rect) {
@@ -96,7 +102,8 @@ public abstract class Collider extends Component {
         int height = toInt(rect.getHeight() * Constants.PIXELS_PER_METER);
 
         Renderer.drawRect(shapeCenterX, shapeCenterY, width, height)
-          .withColor(Color.CYAN).withRotation(bodyCenterX, bodyCenterY, bodyRotationDeg);
+          .withColor(Color.CYAN).withStroke(stroke)
+          .withRotation(bodyCenterX, bodyCenterY, bodyRotationDeg);
         Renderer.drawVerticalLine(shapeCenterX, shapeCenterY, shapeCenterY + height / 2)
           .withRotation(bodyCenterX, bodyCenterY, bodyRotationDeg);
       }
