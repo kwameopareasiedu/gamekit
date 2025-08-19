@@ -14,8 +14,6 @@ public final class Physics {
   private static final World<Body> WORLD;
   private static final HashMap<String, CollisionListener> COLLISION_LISTENER_MAP;
 
-  private static boolean updateListeners = false;
-
   static {
     WORLD = new World<>();
     COLLISION_LISTENER_MAP = new HashMap<>();
@@ -33,13 +31,11 @@ public final class Physics {
         if (!fixturesAreBothSensors && COLLISION_LISTENER_MAP.containsKey(fx1.id)) {
           CollisionListener listener = COLLISION_LISTENER_MAP.get(fx1.id);
           listener.handleCollision(fx2);
-          updateListeners = true;
         }
 
         if (!fixturesAreBothSensors && COLLISION_LISTENER_MAP.containsKey(fx2.id)) {
           CollisionListener listener = COLLISION_LISTENER_MAP.get(fx2.id);
           listener.handleCollision(fx1);
-          updateListeners = true;
         }
 
         return true;
@@ -55,14 +51,11 @@ public final class Physics {
    */
   static void update() {
     double elapsedTime = Constants.FRAME_INTERVAL_MS / 1000.0;
-    WORLD.update(elapsedTime);
 
-    if (updateListeners) {
+    if (WORLD.update(elapsedTime)) {
       COLLISION_LISTENER_MAP.forEach(
         (body, listener) -> listener.update()
       );
-
-      updateListeners = false;
     }
   }
 
