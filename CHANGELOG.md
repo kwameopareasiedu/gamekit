@@ -54,6 +54,7 @@
 - Changed `Physics.CollisionListener` from an interface to and abstract class
 - Modified `Entity` to allow for addition of more than one instances of a component type except
   the `Transform` component
+- Changed engine rotations from degree-based to radian-based
 
 ### Deprecated
 
@@ -64,6 +65,8 @@
 - Removed `void addRectFixture(double, double, FixtureTuner)` from `RigidBody` class
 - Removed `void addRectFixture(double, double)` from `RigidBody` class
 - Removed `void addCollisionListener(Physics.CollisionListener)` from `RigidBody` class
+- Removed `static int toInt(double)` from `Math` class
+- Removed `static int toInt(float)` from `Math` class
 
 ## 0.5.0-SNAPSHOT-1
 
