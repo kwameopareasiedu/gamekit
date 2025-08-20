@@ -15,8 +15,6 @@ import org.dyn4j.geometry.Vector2;
 import java.awt.*;
 import java.util.UUID;
 
-import static dev.gamekit.utils.Math.toInt;
-
 /**
  * {@link Collider} defines the physics shape of an entity for the purposes of physics collision
  * detection
@@ -81,18 +79,18 @@ public abstract class Collider extends Component {
     if (DEBUG_DRAW) {
       Transform tx = entity.findComponent(Transform.class);
       Vector globalPosition = tx.getGlobalPosition();
-      int positionX = toInt(globalPosition.x);
-      int positionY = toInt(globalPosition.y);
+      int positionX = (int) globalPosition.x;
+      int positionY = (int) globalPosition.y;
       double rotation = tx.getGlobalRotation();
 
       Convex shape = fixture.getShape();
       Vector2 shapeCenter = shape.getCenter();
-      int shapePositionX = toInt(globalPosition.x + shapeCenter.x * Constants.PIXELS_PER_METER);
-      int shapePositionY = toInt(globalPosition.y + shapeCenter.y * Constants.PIXELS_PER_METER);
+      int shapePositionX = (int) (globalPosition.x + shapeCenter.x * Constants.PIXELS_PER_METER);
+      int shapePositionY = (int) (globalPosition.y + shapeCenter.y * Constants.PIXELS_PER_METER);
       Stroke stroke = fixture.isSensor() ? SENSOR_STROKE : null;
 
       if (shape instanceof Circle circle) {
-        int radius = toInt(circle.getRadius() * Constants.PIXELS_PER_METER);
+        int radius = (int) (circle.getRadius() * Constants.PIXELS_PER_METER);
 
         Renderer.drawCircle(shapePositionX, shapePositionY, radius)
           .withColor(Color.CYAN).withStroke(stroke)
@@ -100,8 +98,8 @@ public abstract class Collider extends Component {
         Renderer.drawVerticalLine(shapePositionX, shapePositionY, shapePositionY + radius)
           .withRotation(positionX, positionY, rotation);
       } else if (shape instanceof Rectangle rect) {
-        int width = toInt(rect.getWidth() * Constants.PIXELS_PER_METER);
-        int height = toInt(rect.getHeight() * Constants.PIXELS_PER_METER);
+        int width = (int) (rect.getWidth() * Constants.PIXELS_PER_METER);
+        int height = (int) (rect.getHeight() * Constants.PIXELS_PER_METER);
 
         Renderer.drawRect(shapePositionX, shapePositionY, width, height)
           .withColor(Color.CYAN).withStroke(stroke)

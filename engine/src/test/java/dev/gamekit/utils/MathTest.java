@@ -16,12 +16,6 @@ public class MathTest {
   }
 
   @Test
-  public void toIntTest() {
-    assertEquals(4, Math.toInt(4.0));
-    assertEquals(10, Math.toInt(10f));
-  }
-
-  @Test
   public void clampTest() {
     assertEquals(5, Math.clamp(5, 0, 10));
     assertEquals(10, Math.clamp(15.0, 0, 10));

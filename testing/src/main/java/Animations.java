@@ -13,8 +13,6 @@ import dev.gamekit.ui.widgets.Widget;
 
 import java.awt.*;
 
-import static dev.gamekit.utils.Math.toInt;
-
 public class Animations extends Scene {
 
   private final Animation bounceAnimation = new Animation(
@@ -49,7 +47,7 @@ public class Animations extends Scene {
   @Override
   public void render() {
     Renderer.clear(Color.BLACK);
-    Renderer.fillCircle(0, toInt(-200 * animationValue) + 150, 50).withColor(Color.CYAN);
+    Renderer.fillCircle(0, (int) (-200 * animationValue) + 150, 50).withColor(Color.CYAN);
   }
 
   @Override

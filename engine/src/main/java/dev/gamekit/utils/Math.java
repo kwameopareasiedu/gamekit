@@ -7,14 +7,6 @@ public final class Math {
 
   private Math() { }
 
-  public static int toInt(float number) {
-    return (int) number;
-  }
-
-  public static int toInt(double number) {
-    return toInt((float) number);
-  }
-
   /** Clamps a double to be within the range of {@code min} and {@code max} */
   public static double clamp(double val, double min, double max) {
     return java.lang.Math.min(max, java.lang.Math.max(min, val));
@@ -45,10 +37,5 @@ public final class Math {
   /** Linearly interpolates between two values using a specified rate */
   public static double lerp(double from, double to, double rate) {
     return from + rate * (to - from);
-  }
-
-  /** Computes the sign of a number */
-  public static int sign(Number value) {
-    return value.doubleValue() >= 0 ? 1 : -1;
   }
 }
