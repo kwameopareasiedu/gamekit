@@ -4,6 +4,7 @@ import dev.gamekit.core.Component;
 import dev.gamekit.core.Constants;
 import dev.gamekit.core.Physics;
 import dev.gamekit.core.Renderer;
+import dev.gamekit.utils.Vector;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.geometry.Circle;
@@ -79,35 +80,38 @@ public abstract class Collider extends Component {
   protected void render() {
     if (DEBUG_DRAW) {
       Transform tx = entity.findComponent(Transform.class);
-      int centerX = toInt(tx.getX());
-      int centerY = toInt(tx.getY());
-      double bodyRotationDeg = -tx.getRotation();
+      Vector globalPosition = tx.getGlobalPosition();
+      int positionX = toInt(globalPosition.x);
+      int positionY = toInt(globalPosition.y);
+      double rotationDeg = tx.getGlobalRotation();
 
       Convex shape = fixture.getShape();
       Vector2 shapeCenter = shape.getCenter();
-      int shapeCenterX = toInt(tx.getX() + shapeCenter.x * Constants.PIXELS_PER_METER);
-      int shapeCenterY = toInt(tx.getY() + shapeCenter.y * Constants.PIXELS_PER_METER);
+      int shapePositionX = toInt(globalPosition.x + shapeCenter.x * Constants.PIXELS_PER_METER);
+      int shapePositionY = toInt(globalPosition.y + shapeCenter.y * Constants.PIXELS_PER_METER);
       Stroke stroke = fixture.isSensor() ? SENSOR_STROKE : null;
 
       if (shape instanceof Circle circle) {
         int radius = toInt(circle.getRadius() * Constants.PIXELS_PER_METER);
 
-        Renderer.drawCircle(shapeCenterX, shapeCenterY, radius)
-          .withColor(Color.CYAN).withStroke(stroke).withRotation(centerX, centerY, bodyRotationDeg);
-        Renderer.drawVerticalLine(shapeCenterX, shapeCenterY, shapeCenterY + radius)
-          .withRotation(centerX, centerY, bodyRotationDeg);
+        Renderer.drawCircle(shapePositionX, shapePositionY, radius)
+          .withColor(Color.CYAN).withStroke(stroke)
+          .withRotation(positionX, positionY, rotationDeg);
+        Renderer.drawVerticalLine(shapePositionX, shapePositionY, shapePositionY + radius)
+          .withRotation(positionX, positionY, rotationDeg);
       } else if (shape instanceof Rectangle rect) {
         int width = toInt(rect.getWidth() * Constants.PIXELS_PER_METER);
         int height = toInt(rect.getHeight() * Constants.PIXELS_PER_METER);
 
-        Renderer.drawRect(shapeCenterX, shapeCenterY, width, height)
-          .withColor(Color.CYAN).withStroke(stroke).withRotation(centerX, centerY, bodyRotationDeg);
-        Renderer.drawVerticalLine(shapeCenterX, shapeCenterY, shapeCenterY + height / 2)
-          .withRotation(centerX, centerY, bodyRotationDeg);
+        Renderer.drawRect(shapePositionX, shapePositionY, width, height)
+          .withColor(Color.CYAN).withStroke(stroke)
+          .withRotation(positionX, positionY, rotationDeg);
+        Renderer.drawVerticalLine(shapePositionX, shapePositionY, shapePositionY + height / 2)
+          .withRotation(positionX, positionY, rotationDeg);
       }
 
-      Renderer.fillCircle(shapeCenterX, shapeCenterY, 2).withColor(Color.ORANGE)
-        .withRotation(centerX, centerY, bodyRotationDeg);
+      Renderer.fillCircle(shapePositionX, shapePositionY, 2).withColor(Color.ORANGE)
+        .withRotation(positionX, positionY, rotationDeg);
     }
   }
 

@@ -27,9 +27,6 @@ import java.util.Random;
  * </ul>
  */
 public class Demo6EntityComponents extends Scene {
-  private final Ball ball = new Ball();
-  private final Random rnd = new Random();
-
   public Demo6EntityComponents() {
     super("Main Scene");
   }
@@ -54,15 +51,7 @@ public class Demo6EntityComponents extends Scene {
     Collider.DEBUG_DRAW = true;
 
     addChild(new BoxFrame());
-    addChild(ball);
-  }
-
-  @Override
-  protected void update() {
-    if (Input.isKeyDown(Input.KEY_SPACE)) {
-      RigidBody ballRb = ball.findComponent(RigidBody.class);
-      ballRb.applyImpulse(-1.5 + rnd.nextDouble(3), 0.5 + rnd.nextDouble(2));
-    }
+    addChild(new Ball());
   }
 
   @Override
@@ -88,11 +77,15 @@ public class Demo6EntityComponents extends Scene {
 
   public static class BoxFrame extends Entity {
     private static final double[][] WALL_TRANSFORMS = new double[][]{
-      new double[]{ 0, 256, 768, 16.0 },
-      new double[]{ 377.6, 0, 16.0, 526.08 },
-      new double[]{ 0, -256, 768, 16.0 },
-      new double[]{ -377.6, 0, 16.0, 526.08 },
+      new double[]{ 0, 0, 512, 16 },
+      new double[]{ 0, 256, 512, 16 },
+      new double[]{ 256, 0, 16, 512 },
+      new double[]{ 0, -256, 512, 16 },
+      new double[]{ -256, 0, 16, 512 },
     };
+
+    private double rotation = 0;
+    private RigidBody rbRef;
 
     public BoxFrame() {
       super("Box Frame");
@@ -103,7 +96,7 @@ public class Demo6EntityComponents extends Scene {
       List<Component> components = new ArrayList<>();
 
       // Create a RigidBody component
-      RigidBody rb = new RigidBody();
+      RigidBody rb = rbRef = new RigidBody();
       // Add the rigid body to the components
       components.add(rb);
 
@@ -124,9 +117,17 @@ public class Demo6EntityComponents extends Scene {
       // Return a list of components for the Wall entity
       return components;
     }
+
+    @Override
+    protected void update() {
+      double rotationRate = 0.05;
+      rotation = (rotation + rotationRate) % 360;
+      rbRef.setRotation(rotation);
+    }
   }
 
   public static class Ball extends Entity {
+    private final Random rnd = new Random();
     private final double radius = 12.8;
 
     public Ball() {
@@ -143,10 +144,13 @@ public class Demo6EntityComponents extends Scene {
       rb.setGravityScale(0.5);
       // Attach an id to the rigid body (For identification in collision)
       rb.setMetaData("Ball");
-      // Apply an instantaneous impulse to the rigid body
-      rb.applyImpulse(-2, 0.5);
-      // Apply a rotational torque to the rigid body
-      rb.applyTorque(3);
+
+      Application.getInstance().runLater(() -> {
+        // Apply an instantaneous impulse to the rigid body
+        rb.applyImpulse(-2, 0.5);
+        // Apply a rotational torque to the rigid body
+        rb.applyTorque(3);
+      }, 100);
 
       // Add a circle fixture
       CircleCollider circle = new CircleCollider(radius);
@@ -174,10 +178,51 @@ public class Demo6EntityComponents extends Scene {
     }
 
     @Override
+    protected void start() {
+      addChild(new BallChild());
+    }
+
+    @Override
+    protected void update() {
+      if (Input.isKeyDown(Input.KEY_SPACE)) {
+        RigidBody rb = findComponent(RigidBody.class);
+        rb.applyImpulse(-1.5 + rnd.nextDouble(3), 0.5 + rnd.nextDouble(2));
+      }
+    }
+
+    @Override
     protected void render() {
       Transform tx = findComponent(Transform.class);
-      Renderer.fillCircle((int) (tx.getX()), (int) (tx.getY()), (int) radius)
-        .withColor(Color.RED);
+      Vector globalPosition = tx.getGlobalPosition();
+      int posX = (int) (globalPosition.x);
+      int posY = (int) (globalPosition.y);
+      Renderer.fillCircle(posX, posY, (int) radius).withColor(Color.RED)
+        .withRotation(posX, posY, tx.getGlobalRotation());
+    }
+  }
+
+  public static class BallChild extends Entity {
+    public BallChild() {
+      super("Ball Child");
+    }
+
+    @Override
+    protected void start() {
+      findComponent(Transform.class).setGlobalPosition(10, 10);
+    }
+
+    @Override
+    protected void render() {
+      Transform tx = findComponent(Transform.class);
+      Vector globalPosition = tx.getGlobalPosition();
+      double radius = 5;
+      int posX = (int) (globalPosition.x);
+      int posY = (int) (globalPosition.y);
+
+      Renderer.fillCircle(posX, posY, (int) radius).withColor(Color.YELLOW)
+        .withRotation(posX, posY, tx.getGlobalRotation());
+      Renderer.drawVerticalLine(posX, posY, posY + (int) radius).withColor(Color.RED)
+        .withRotation(posX, posY, tx.getGlobalRotation());
     }
   }
 }

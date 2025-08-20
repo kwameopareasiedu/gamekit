@@ -7,57 +7,116 @@ import dev.gamekit.utils.Vector;
 /**
  * {@link Transform} represents the position and rotation of an {@link Entity}.
  * <p>
- * An entity will always and can only have one instance of a {@link Transform} component.
+ * An entity will always and can only have one instance of a {@link Transform} component
  */
 public class Transform extends Component {
-  private final Vector position;
   private final Vector localPosition;
-  private double rotation;
+  private final Vector globalPosition;
+  private double localRotation;
+  private double globalRotation;
 
   public Transform() {
-    position = new Vector();
     localPosition = new Vector();
-    rotation = 0;
+    globalPosition = new Vector();
+    localRotation = 0;
+    globalRotation = 0;
   }
 
-  public double getX() {
-    return position.x;
-  }
-
-  public double getY() {
-    return position.y;
-  }
-
-  /**
-   * Sets the position and computes the local position based on the host {@link Entity entity's}
-   * parent (if any)
-   */
-  public void setPosition(double x, double y) {
-    position.set(x, y);
+  @Override
+  protected void start() {
     Entity entityParent = entity.getParent();
 
     if (entityParent != null) {
       Transform parentTransform = entityParent.findComponent(Transform.class);
+      Vector parentGlobalPosition = parentTransform.globalPosition;
 
-      if (parentTransform != null) {
-        double parentTransformX = parentTransform.getX();
-        double parentTransformY = parentTransform.getY();
-        localPosition.set(x - parentTransformX, y - parentTransformY);
-      } else {
-        localPosition.set(x, y);
-      }
+      globalPosition.set(
+        parentGlobalPosition.x + localPosition.x,
+        parentGlobalPosition.y + localPosition.y
+      );
+
+      parentGlobalPosition.rotatePoint(globalPosition, parentTransform.globalRotation);
+
+      globalRotation = parentTransform.globalRotation;
     } else {
-      localPosition.set(x, y);
+      globalPosition.set(localPosition);
+      globalRotation = localRotation;
     }
   }
 
-  /** Returns the transform's rotation <b>in degrees</b> */
-  public double getRotation() {
-    return rotation;
+  @Override
+  protected void update() {
+    Entity parentEntity = entity.getParent();
+
+    // Start from the local position and rotation
+    globalPosition.set(localPosition);
+    globalRotation = localRotation;
+
+    while (parentEntity != null) {
+      // Recursively add the local position and rotations of the parent
+      Transform parentTransform = parentEntity.findComponent(Transform.class);
+
+      globalPosition.set(
+        globalPosition.x += parentTransform.localPosition.x,
+        globalPosition.y += parentTransform.localPosition.y
+      );
+
+      parentTransform.globalPosition.rotatePoint(
+        globalPosition,
+        parentTransform.globalRotation
+      );
+
+      globalRotation += parentTransform.localRotation;
+
+      // Don't forget to move up the hierarchy
+      parentEntity = parentEntity.getParent();
+    }
   }
 
-  /** Set the transform's rotation <b>in degrees</b> */
-  public void setRotation(double deg) {
-    this.rotation = deg;
+  /** Returns the local position */
+  public Vector getLocalPosition() {
+    return localPosition;
+  }
+
+  /** Sets the local position */
+  public void setLocalPosition(double x, double y) {
+    localPosition.set(x, y);
+  }
+
+  /** Returns the global position */
+  public Vector getGlobalPosition() {
+    return globalPosition;
+  }
+
+  /** Sets the global position and updates the local position */
+  public void setGlobalPosition(double x, double y) {
+    double offsetX = x - globalPosition.x;
+    double offsetY = y - globalPosition.y;
+
+    localPosition.set(
+      localPosition.x + offsetX,
+      localPosition.y + offsetY
+    );
+  }
+
+  /** Returns the local rotation <b>in degrees</b> */
+  public double getLocalRotation() {
+    return localRotation;
+  }
+
+  /** Set the local rotation */
+  public void setLocalRotation(double deg) {
+    localRotation = deg;
+  }
+
+  /** Returns the global rotation <i>in degrees</i> */
+  public double getGlobalRotation() {
+    return globalRotation;
+  }
+
+  /** Set the global rotation */
+  public void setGlobalRotation(double deg) {
+    double offset = deg - localRotation;
+    localRotation += offset;
   }
 }

@@ -31,6 +31,18 @@ public class Vector {
     return v1n.x * v2n.x + v1n.y * v2n.y;
   }
 
+  @Override
+  public String toString() {
+    return String.format(getClass().getName() + "[x=%.2f,y=%.2f]", x, y);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj instanceof Vector posObject
+      && x == posObject.x
+      && y == posObject.y;
+  }
+
   public void set(double x, double y) {
     this.x = x;
     this.y = y;
@@ -52,15 +64,16 @@ public class Vector {
     return new Vector(x / mag, y / mag);
   }
 
-  @Override
-  public String toString() {
-    return String.format(getClass().getName() + "[x=%.2f,y=%.2f]", x, y);
-  }
+  /** Rotates another {@link Vector} about this one, modifying it with the result */
+  public void rotatePoint(Vector point, double deg) {
+    double rad = Math.degToRad(deg);
+    double sin = java.lang.Math.sin(rad);
+    double cos = java.lang.Math.cos(rad);
 
-  @Override
-  public boolean equals(Object obj) {
-    return obj instanceof Vector posObject
-      && x == posObject.x
-      && y == posObject.y;
+    double px = point.x - x;
+    double py = point.y - y;
+
+    point.x = cos * px + sin * py + x;
+    point.y = -sin * px + cos * py + y;
   }
 }

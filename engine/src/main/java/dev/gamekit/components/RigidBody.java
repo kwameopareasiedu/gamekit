@@ -13,7 +13,8 @@ import org.dyn4j.geometry.Vector2;
 import java.awt.*;
 import java.util.List;
 
-import static dev.gamekit.utils.Math.*;
+import static dev.gamekit.utils.Math.degToRad;
+import static dev.gamekit.utils.Math.radToDeg;
 
 /**
  * {@link RigidBody} enables physics-based motion for the entity.
@@ -128,19 +129,20 @@ public class RigidBody extends Component {
   @Override
   protected void update() {
     Transform tx = entity.findComponent(Transform.class);
-    tx.setPosition(
+    tx.setGlobalPosition(
       body.getTransform().getTranslationX() * Constants.PIXELS_PER_METER,
       body.getTransform().getTranslationY() * Constants.PIXELS_PER_METER
     );
-    tx.setRotation(radToDeg(body.getTransform().getRotationAngle()));
+    tx.setGlobalRotation(-radToDeg(body.getTransform().getRotationAngle()));
   }
 
   @Override
   protected void render() {
     if (DEBUG_DRAW) {
-      int bodyCenterX = toInt(body.getTransform().getTranslationX() * Constants.PIXELS_PER_METER);
-      int bodyCenterY = toInt(body.getTransform().getTranslationY() * Constants.PIXELS_PER_METER);
-      Renderer.fillCircle(bodyCenterX, bodyCenterY, 3).withColor(Color.RED);
+      Transform tx = entity.findComponent(Transform.class);
+      Vector globalPosition = tx.getGlobalPosition();
+      Renderer.fillCircle((int) globalPosition.x, (int) globalPosition.y, 3)
+        .withColor(Color.RED);
     }
   }
 

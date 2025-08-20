@@ -14,6 +14,7 @@ import java.util.List;
  * An {@link Entity} has lifecycle methods which are called by the engine to set up, update,
  * render and dispose themselves.
  */
+@SuppressWarnings("unchecked")
 public abstract class Entity {
   protected final String name;
   protected final Logger logger = LogManager.getLogger(getClass());
@@ -71,9 +72,12 @@ public abstract class Entity {
 
   /** Returns a {@link Component} of the specified class else {@code null} */
   public <T extends Component> T findComponent(Class<T> clazz) {
+    // Optimization for finding the Transform component
+    if (clazz == Transform.class)
+      return (T) components.get(0);
+
     for (Component component : components) {
       if (clazz.isInstance(component))
-        //noinspection unchecked
         return (T) component;
     }
 
@@ -90,10 +94,8 @@ public abstract class Entity {
     List<T> out = new ArrayList<>();
 
     for (Component component : components) {
-      if (clazz.isInstance(component)) {
-        //noinspection unchecked
+      if (clazz.isInstance(component))
         out.add((T) component);
-      }
     }
 
     return out;
@@ -133,10 +135,10 @@ public abstract class Entity {
 
         this.components.add(component);
       }
-
-      for (Component component : this.components)
-        component._start(this);
     }
+
+    for (Component component : this.components)
+      component._start(this);
 
     start();
   }

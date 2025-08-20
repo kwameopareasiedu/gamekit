@@ -5,6 +5,7 @@ import dev.gamekit.core.Entity;
 import dev.gamekit.core.Renderer;
 import dev.gamekit.settings.ImageInterpolation;
 import dev.gamekit.utils.Bounds;
+import dev.gamekit.utils.Vector;
 
 import java.awt.image.BufferedImage;
 
@@ -30,13 +31,12 @@ public class Sprite extends Component {
   @Override
   protected void render() {
     Transform tx = entity.findComponent(Transform.class);
-    double posX = tx.getX() + bounds.x;
-    double posY = tx.getY() + bounds.y;
+    Vector globalPosition = tx.getGlobalPosition();
 
     Renderer.drawImage(image,
-      (int) posX, (int) posY,
-      (int) bounds.width,
-      (int) bounds.height
+      (int) (globalPosition.x + bounds.x),
+      (int) (globalPosition.y + bounds.y),
+      (int) bounds.width, (int) bounds.height
     ).withInterpolation(interpolation);
   }
 
