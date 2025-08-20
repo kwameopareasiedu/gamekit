@@ -5,7 +5,7 @@ import dev.gamekit.core.Entity;
 import dev.gamekit.utils.Vector;
 
 /**
- * {@link Transform} represents the position and rotation of an {@link Entity}.
+ * {@link Transform} represents the position and rotation (in radian) of an {@link Entity}.
  * <p>
  * An entity will always and can only have one instance of a {@link Transform} component
  */
@@ -99,24 +99,24 @@ public class Transform extends Component {
     );
   }
 
-  /** Returns the local rotation <b>in degrees</b> */
+  /** Returns the local rotation (radian) */
   public double getLocalRotation() {
     return localRotation;
   }
 
-  /** Set the local rotation */
-  public void setLocalRotation(double deg) {
-    localRotation = deg;
+  /** Set the local rotation (radian) */
+  public void setLocalRotation(double rad) {
+    localRotation = rad;
   }
 
-  /** Returns the global rotation <i>in degrees</i> */
+  /** Returns the global rotation (radian) */
   public double getGlobalRotation() {
     return globalRotation;
   }
 
-  /** Set the global rotation */
-  public void setGlobalRotation(double deg) {
-    double offset = deg - localRotation;
+  /** Set the global rotation (radian) */
+  public void setGlobalRotation(double rad) {
+    double offset = rad - localRotation;
     localRotation += offset;
   }
 }

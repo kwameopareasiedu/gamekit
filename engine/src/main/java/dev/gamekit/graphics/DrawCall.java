@@ -2,8 +2,6 @@ package dev.gamekit.graphics;
 
 import java.awt.*;
 
-import static dev.gamekit.utils.Math.degToRad;
-
 /** {@link DrawCall} is an instruction to the renderer to render something */
 @SuppressWarnings("unchecked")
 public abstract class DrawCall<T extends DrawCall<T>> {
@@ -34,14 +32,14 @@ public abstract class DrawCall<T extends DrawCall<T>> {
   }
 
   /**
-   * A modifier which applies a rotation {@code deg} about the point {@code (x, y)}.
+   * A modifier which applies a rotation of {@code rad} radian about the point {@code (x, y)}.
    * <p>
    * This method returns the object on which it was called for further chaining
    */
-  public T withRotation(int x, int y, double deg) {
+  public T withRotation(int x, int y, double rad) {
     rotationPointX = x;
     rotationPointY = y;
-    rotationAngle = degToRad(deg);
+    rotationAngle = rad;
     return (T) this;
   }
 

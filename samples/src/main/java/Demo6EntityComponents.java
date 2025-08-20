@@ -120,8 +120,8 @@ public class Demo6EntityComponents extends Scene {
 
     @Override
     protected void update() {
-      double rotationRate = 0.05;
-      rotation = (rotation + rotationRate) % 360;
+      double rotationRate = 0.001;
+      rotation = (rotation + rotationRate) % (2 * Math.PI);
       rbRef.setRotation(rotation);
     }
   }

@@ -64,9 +64,11 @@ public class Vector {
     return new Vector(x / mag, y / mag);
   }
 
-  /** Rotates another {@link Vector} about this one, modifying it with the result */
-  public void rotatePoint(Vector point, double deg) {
-    double rad = Math.degToRad(deg);
+  /**
+   * Rotates another {@link Vector} about this one by {@code rad} radian in the clockwise
+   * direction, modifying it with the result
+   */
+  public void rotatePoint(Vector point, double rad) {
     double sin = java.lang.Math.sin(rad);
     double cos = java.lang.Math.cos(rad);
 

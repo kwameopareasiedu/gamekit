@@ -13,9 +13,6 @@ import org.dyn4j.geometry.Vector2;
 import java.awt.*;
 import java.util.List;
 
-import static dev.gamekit.utils.Math.degToRad;
-import static dev.gamekit.utils.Math.radToDeg;
-
 /**
  * {@link RigidBody} enables physics-based motion for the entity.
  * <p>
@@ -65,18 +62,18 @@ public class RigidBody extends Component {
     );
   }
 
-  /** Sets the global rotation of this {@link RigidBody} about its center */
-  public void setRotation(double deg) {
-    body.getTransform().setRotation(-degToRad(deg));
+  /** Sets the global rotation (radian) of this {@link RigidBody} about its center */
+  public void setRotation(double rad) {
+    body.getTransform().setRotation(-rad);
   }
 
   /**
-   * Sets the global rotation of this {@link RigidBody} about a point {@code (rx, ry)}
+   * Sets the global rotation (radian) of this {@link RigidBody} about a point {@code (rx, ry)}
    * <p>
    * Rotating about a non-center point changes the position, so the starting position
    * {@code (sx, sy)} is required
    */
-  public void setRotation(double deg, double rx, double ry, double sx, double sy) {
+  public void setRotation(double rad, double rx, double ry, double sx, double sy) {
     body.getTransform().setRotation(0);
 
     body.getTransform().setTranslation(
@@ -84,7 +81,8 @@ public class RigidBody extends Component {
       sy / Constants.PIXELS_PER_METER
     );
 
-    body.rotate(-degToRad(deg),
+    body.rotate(
+      -rad,
       rx / Constants.PIXELS_PER_METER,
       ry / Constants.PIXELS_PER_METER
     );
@@ -133,7 +131,7 @@ public class RigidBody extends Component {
       body.getTransform().getTranslationX() * Constants.PIXELS_PER_METER,
       body.getTransform().getTranslationY() * Constants.PIXELS_PER_METER
     );
-    tx.setGlobalRotation(-radToDeg(body.getTransform().getRotationAngle()));
+    tx.setGlobalRotation(-body.getTransform().getRotationAngle());
   }
 
   @Override

@@ -83,7 +83,7 @@ public abstract class Collider extends Component {
       Vector globalPosition = tx.getGlobalPosition();
       int positionX = toInt(globalPosition.x);
       int positionY = toInt(globalPosition.y);
-      double rotationDeg = tx.getGlobalRotation();
+      double rotation = tx.getGlobalRotation();
 
       Convex shape = fixture.getShape();
       Vector2 shapeCenter = shape.getCenter();
@@ -96,22 +96,22 @@ public abstract class Collider extends Component {
 
         Renderer.drawCircle(shapePositionX, shapePositionY, radius)
           .withColor(Color.CYAN).withStroke(stroke)
-          .withRotation(positionX, positionY, rotationDeg);
+          .withRotation(positionX, positionY, rotation);
         Renderer.drawVerticalLine(shapePositionX, shapePositionY, shapePositionY + radius)
-          .withRotation(positionX, positionY, rotationDeg);
+          .withRotation(positionX, positionY, rotation);
       } else if (shape instanceof Rectangle rect) {
         int width = toInt(rect.getWidth() * Constants.PIXELS_PER_METER);
         int height = toInt(rect.getHeight() * Constants.PIXELS_PER_METER);
 
         Renderer.drawRect(shapePositionX, shapePositionY, width, height)
           .withColor(Color.CYAN).withStroke(stroke)
-          .withRotation(positionX, positionY, rotationDeg);
+          .withRotation(positionX, positionY, rotation);
         Renderer.drawVerticalLine(shapePositionX, shapePositionY, shapePositionY + height / 2)
-          .withRotation(positionX, positionY, rotationDeg);
+          .withRotation(positionX, positionY, rotation);
       }
 
       Renderer.fillCircle(shapePositionX, shapePositionY, 2).withColor(Color.ORANGE)
-        .withRotation(positionX, positionY, rotationDeg);
+        .withRotation(positionX, positionY, rotation);
     }
   }
 
