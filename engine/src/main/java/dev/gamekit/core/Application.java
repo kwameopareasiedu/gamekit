@@ -222,7 +222,7 @@ public abstract class Application {
 
       Camera.reset();
       currentScene = nextScene;
-      currentScene._start();
+      currentScene._start(null);
       nextScene = null;
     }
   }

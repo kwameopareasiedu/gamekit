@@ -38,6 +38,13 @@
   the purposes of physics collision detection
 - Added abstract `CircleCollider` which is a `Collider` with a circle shape
 - Added abstract `BoxCollider` which is a `Collider` with a rectangular shape
+- Added `void stop()` lifecycle method on `Entity` class, which is called before it is removed from
+  the parent entity or the scene
+- Added `void restart()` lifecycle method on `Entity` class, which is called when a previously
+  inactivated entity is added to a parent entity or the scene
+- Added `void destroy()` method to `Entity` which schedules it for destruction at the end of the
+  current frame
+- Added `Entity.State getState()` method to `Entity` which returns the current state of the entity
 
 ### Changed
 

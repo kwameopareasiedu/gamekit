@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * {@link Entity} represents objects that exist in the game world. An entity can also contain and
@@ -16,39 +17,61 @@ import java.util.List;
  */
 @SuppressWarnings("unchecked")
 public abstract class Entity {
+  @SuppressWarnings("unused")
+  public final String id = UUID.randomUUID().toString();
+
   protected final String name;
   protected final Logger logger = LogManager.getLogger(getClass());
   protected final ArrayList<Entity> children;
   protected final ArrayList<Component> components;
   protected Entity parent;
 
+  private State state;
+
   public Entity(String name) {
     this.name = name;
+    state = State.NEW;
     children = new ArrayList<>();
     components = new ArrayList<>();
     components.add(new Transform());
   }
 
+  /** Returns the parent entity */
   public Entity getParent() {
     return parent;
+  }
+
+  /** Returns the current state */
+  public State getState() {
+    return state;
   }
 
   /**
    * Adds a child to this entity, if it isn't already.
    * <p>
-   * This also invokes the child's {@link Entity#_start} method
+   * This also invokes the child's {@link Entity#_start} method if it is new or
+   * {@link Entity#_restart} if it was previously inactivated.
    */
   public void addChild(Entity child) {
     if (child.parent != null)
-      throw new IllegalStateException("Child already has parent");
+      throw new IllegalStateException("Cannot add child with parent. Remove from parent first");
+
+    switch (child.state) {
+      case DOOMED, DEAD -> throw new IllegalStateException("Cannot add a doomed or dead child");
+      case ACTIVE ->
+        throw new IllegalStateException("Cannot add active child. Remove from parent first");
+    }
 
     if (!children.contains(child)) {
       logger.debug("Adding {} to {}", child.name, name);
 
       Application.getInstance().runLater(() -> {
+        switch (child.state) {
+          case NEW -> child._start(this);
+          case INACTIVE -> child._restart(this);
+        }
+
         children.add(child);
-        child.setParent(this);
-        child._start();
       });
     }
   }
@@ -63,9 +86,8 @@ public abstract class Entity {
       logger.debug("Removing {} from {}", child.name, name);
 
       Application.getInstance().runLater(() -> {
+        child._stop();
         children.remove(child);
-        child.setParent(null);
-        child._dispose();
       });
     }
   }
@@ -101,6 +123,20 @@ public abstract class Entity {
     return out;
   }
 
+  /**
+   * Schedules the entity for removal at the end of the current frame and immediately sets the
+   * state to {@link State#DOOMED}
+   */
+  public void destroy() {
+    stop();
+    state = State.DOOMED;
+
+    Application.getInstance().runLater(() -> {
+      _dispose();
+      parent.children.remove(this);
+    });
+  }
+
   /** Called during {@link #start} to get the components of the entity */
   protected List<Component> getComponents() {
     return null;
@@ -109,21 +145,25 @@ public abstract class Entity {
   /** Called to set up the entity */
   protected void start() { }
 
+  /** Called to restart the entity after being added to a new parent */
+  protected void restart() { }
+
   /** Called to update the entity */
   protected void update() { }
 
   /** Called to render the entity */
   protected void render() { }
 
+  /** Called to stop the entity before removing it from the current parent */
+  protected void stop() { }
+
   /** Called to dispose the entity */
   protected void dispose() { }
 
-  void setParent(Entity parent) {
-    this.parent = parent;
-  }
-
   /** Called <b>once</b> by the parent {@link Entity} to initialize the entity */
-  void _start() {
+  void _start(Entity parent) {
+    this.parent = parent;
+
     List<Component> newComponents = getComponents();
 
     if (newComponents != null) {
@@ -137,20 +177,49 @@ public abstract class Entity {
       component._start(this);
 
     start();
+
+    state = State.ACTIVE;
+  }
+
+  /**
+   * Called by the parent {@link Entity} after being added to it, but if {@link #_stop} was
+   * previously called.
+   * <p>
+   * This can be used to re-initialize the entity with the new parent
+   */
+  void _restart(Entity newParent) {
+    this.parent = newParent;
+    restart();
+    state = State.ACTIVE;
   }
 
   /** Called by the parent {@link Entity} to update the entity */
   void _update() {
-    components.forEach(Component::_update);
-    update();
-    children.forEach(Entity::_update);
+    if (state == State.ACTIVE) {
+      components.forEach(Component::_update);
+      update();
+      children.forEach(Entity::_update);
+    }
   }
 
   /** Called by the parent {@link Entity} to render the entity */
   void _render() {
-    render();
-    components.forEach(Component::_render);
-    children.forEach(Entity::_render);
+    if (state == State.ACTIVE) {
+      render();
+      components.forEach(Component::_render);
+      children.forEach(Entity::_render);
+    }
+  }
+
+  /**
+   * Called by the parent {@link Entity} before it is removed from its children.
+   * <p>
+   * The entity will not be destroyed, but will no longer run lifecycle methods
+   */
+  void _stop() {
+    stop();
+    parent = null;
+    state = State.INACTIVE;
   }
 
   /** Called <b>once</b> by the parent {@link Entity} to dispose the entity */
@@ -158,6 +227,31 @@ public abstract class Entity {
     children.forEach(Entity::_dispose);
     components.forEach(Component::_dispose);
     dispose();
+
     parent = null;
+    state = State.DEAD;
+  }
+
+  /** Represents the state an {@link Entity} can be in */
+  public enum State {
+    /** Represents a newly created instance of an {@link Entity} */
+    NEW,
+    /**
+     * Represents an {@link Entity} which has been added to another entity or the scene. Only
+     * entities in this state can run update/render lifecycle methods
+     */
+    ACTIVE,
+    /**
+     * Represents an {@link Entity} which was previously a child of another entity or the scene
+     * but has been removed. The entity is not destroyed, but doesn't run any lifecycle methods
+     */
+    INACTIVE,
+    /**
+     * Represents an {@link Entity} which has been marked for destruction at the end of the current
+     * frame
+     */
+    DOOMED,
+    /** Represents an {@link Entity} which has been destroyed */
+    DEAD
   }
 }

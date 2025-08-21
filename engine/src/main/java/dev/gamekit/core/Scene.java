@@ -24,6 +24,11 @@ public abstract class Scene extends Entity {
     ui = new UI(this);
   }
 
+  @Override
+  public final void destroy() {
+    throw new IllegalStateException("Destroy cannot be called on scene");
+  }
+
   /** Called to create the UI {@link Widget} tree of the scene */
   protected Widget createUI() {
     return null;
@@ -41,9 +46,9 @@ public abstract class Scene extends Entity {
 
   /** Called <b>once</b> by {@link Application} to initialize the scene */
   @Override
-  void _start() {
+  void _start(Entity parent) {
     logger.debug("Starting scene");
-    super._start();
+    super._start(parent);
     ui.setWidgetTree(createUI());
   }
 
