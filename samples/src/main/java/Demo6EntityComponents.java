@@ -23,7 +23,7 @@ import java.util.Random;
  *   <li>Create an ball {@link Entity}</li>
  *   <li>Attach a {@link RigidBody} component to the ball</li>
  *   <li>Detect mouse input to add an impulse to the ball</li>
- *   <li>Overrides the {@link Entity#render()}} method to render the scene</li>
+ *   <li>Overrides the {@link Entity#render}} method to render the scene</li>
  * </ul>
  */
 public class Demo6EntityComponents extends Scene {

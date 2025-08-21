@@ -26,7 +26,7 @@ public abstract class Component {
   }
 
   /**
-   * Called before {@link #start()} to run validation logic on the components.
+   * Called before {@link #start} to run validation logic on the components.
    * <p>
    * This method should throw an exception with an appropriate description if validation failed
    * and <b>must not</b> modify the provided list.
@@ -55,9 +55,9 @@ public abstract class Component {
   protected void dispose() { /* No-op */ }
 
   /**
-   * Called <b>once</b> by the host {@link Entity} before {@link #_start(Entity)} with the list
-   * of new components from {@link Entity#getComponents()} for validation before adding the
-   * components to the entity.
+   * Called <b>once</b> by the host {@link Entity} before {@link #_start} with the list of new
+   * components from {@link Entity#getComponents} for validation before adding the components to
+   * the entity.
    * <p>
    * If validation logic fails, this method should throw an exception with an appropriate
    * description

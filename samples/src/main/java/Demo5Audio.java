@@ -28,7 +28,7 @@ import java.util.Objects;
  *     linear {@link AudioAttenuation attenuation}
  *   </li>
  *   <li>Detects mouse input using {@link Input} to start/restart/stop the audio playback</li>
- *   <li>Overrides the {@link Scene#createUI()}} method to construct a simple user interface</li>
+ *   <li>Overrides the {@link Scene#createUI}} method to construct a simple user interface</li>
  * </ul>
  */
 public class Demo5Audio extends Scene {

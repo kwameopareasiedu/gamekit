@@ -17,7 +17,7 @@ import static dev.gamekit.utils.Math.cycle;
  * following actions:
  * <ul>
  *   <li>Creates an {@link Application application}</li>
- *   <li>Overrides the {@link Scene#render()}} method to draw</li>
+ *   <li>Overrides the {@link Scene#render}} method to draw</li>
  *   <li>Detects mouse input using {@link Input} to change the color</li>
  *   <li>Uses the {@link Renderer} to draw box with the current color</li>
  * </ul>

@@ -20,7 +20,7 @@ import java.util.Objects;
  * This demo shows how to build user interfaces and performs the following actions:
  * <ul>
  *   <li>Creates an {@link Application application}</li>
- *   <li>Overrides the {@link Scene#createUI()}} method to construct the user interface</li>
+ *   <li>Overrides the {@link Scene#createUI} method to construct the user interface</li>
  * </ul>
  */
 public class Demo4UserInterface extends Scene {

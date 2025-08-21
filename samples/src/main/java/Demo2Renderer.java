@@ -9,7 +9,7 @@ import java.awt.*;
  * following actions:
  * <ul>
  *   <li>Creates an {@link Application application}</li>
- *   <li>Overrides the {@link Scene#render()} method to draw</li>
+ *   <li>Overrides the {@link Scene#render} method to draw</li>
  *   <li>Uses the {@link Renderer} to clear the screen to dark gray</li>
  *   <li>Uses the {@link Renderer} to draw a red box</li>
  * </ul>

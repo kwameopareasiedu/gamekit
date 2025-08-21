@@ -18,7 +18,7 @@ import java.util.List;
  * <p>
  * It runs a fixed-step game update loop which protects against lag spikes. It also loads scenes,
  * schedule animations and timeouts and quit the running instance. Use
- * {@link Application#getInstance()} to get the current instance from anywhere in your project
+ * {@link Application#getInstance} to get the current instance from anywhere in your project
  * to access its methods.
  * <p>
  */

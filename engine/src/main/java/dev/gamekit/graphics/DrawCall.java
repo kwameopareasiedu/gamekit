@@ -43,12 +43,12 @@ public abstract class DrawCall<T extends DrawCall<T>> {
     return (T) this;
   }
 
-  /** Overridable method called before {@link #draw(Graphics2D)} to perform pre-draw setup */
+  /** Overridable method called before {@link #draw} to perform pre-draw setup */
   protected void setup(Graphics2D g) { /* No-op */ }
 
   /** Abstract method which should perform the draw call's rendering logic */
   protected abstract void draw(Graphics2D g);
 
-  /** Overridable method called after {@link #draw(Graphics2D)} to perform post-draw cleanup */
+  /** Overridable method called after {@link #draw} to perform post-draw cleanup */
   protected void cleanup(Graphics2D g) { /* No-op */ }
 }
