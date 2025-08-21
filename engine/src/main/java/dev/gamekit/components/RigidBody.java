@@ -1,9 +1,7 @@
 package dev.gamekit.components;
 
+import dev.gamekit.core.*;
 import dev.gamekit.core.Component;
-import dev.gamekit.core.Constants;
-import dev.gamekit.core.Physics;
-import dev.gamekit.core.Renderer;
 import dev.gamekit.utils.Vector;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.geometry.Mass;
@@ -102,6 +100,40 @@ public class RigidBody extends Component {
    */
   public void applyTorque(double torque) {
     body.applyTorque(torque);
+  }
+
+  @Override
+  public void validate(Entity entity, List<Component> components) {
+    for (Component component : components) {
+      if (component instanceof RigidBody) {
+        // Ensure only one RigidBody on the entity
+        if (component != this) {
+          throw new IllegalArgumentException(
+            "Entity cannot have more than one RigidBody component"
+          );
+        }
+
+        // Ensure no entity ancestor has a RigidBody component
+        Entity parentEntity = entity.getParent();
+        String descendantClassName = entity.getClass().getName();
+
+        while (parentEntity != null) {
+          if (parentEntity.findComponent(RigidBody.class) != null) {
+            String ancestorClassName = parentEntity.getClass().getName();
+
+            throw new IllegalArgumentException(
+              String.format(
+                "Entities with a RigidBody component [%s] cannot have descendants [%s] which " +
+                  "also have a RigidBody component",
+                ancestorClassName, descendantClassName
+              )
+            );
+          }
+
+          parentEntity = parentEntity.getParent();
+        }
+      }
+    }
   }
 
   @Override

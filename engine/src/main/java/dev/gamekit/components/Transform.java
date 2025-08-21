@@ -4,6 +4,8 @@ import dev.gamekit.core.Component;
 import dev.gamekit.core.Entity;
 import dev.gamekit.utils.Vector;
 
+import java.util.List;
+
 /**
  * {@link Transform} represents the position and rotation (in radian) of an {@link Entity}.
  * <p>
@@ -20,6 +22,17 @@ public class Transform extends Component {
     globalPosition = new Vector();
     localRotation = 0;
     globalRotation = 0;
+  }
+
+  @Override
+  public void validate(Entity ignored, List<Component> components) {
+    for (Component component : components) {
+      if (component instanceof Transform) {
+        throw new IllegalArgumentException(
+          "Entity cannot have more than one Transform component"
+        );
+      }
+    }
   }
 
   @Override
