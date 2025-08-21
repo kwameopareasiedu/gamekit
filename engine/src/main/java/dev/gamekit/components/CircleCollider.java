@@ -6,6 +6,12 @@ import org.dyn4j.geometry.Circle;
 /** {@link CircleCollider} defines a circular {@link Collider} for an entity */
 public class CircleCollider extends Collider {
   public CircleCollider(double radius) {
-    super(new BodyAttachedFixture(new Circle(radius / Constants.PIXELS_PER_METER)));
+    super(
+      new ColliderFixture(
+        new Circle(
+          radius / Constants.PIXELS_PER_METER
+        )
+      )
+    );
   }
 }

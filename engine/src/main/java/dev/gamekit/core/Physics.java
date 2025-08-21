@@ -24,8 +24,8 @@ public final class Physics {
         if (COLLISION_LISTENER_MAP.isEmpty())
           return true;
 
-        Collider.BodyAttachedFixture fx1 = (Collider.BodyAttachedFixture) collision.getFixture1();
-        Collider.BodyAttachedFixture fx2 = (Collider.BodyAttachedFixture) collision.getFixture2();
+        Collider.ColliderFixture fx1 = (Collider.ColliderFixture) collision.getFixture1();
+        Collider.ColliderFixture fx2 = (Collider.ColliderFixture) collision.getFixture2();
         boolean fixturesAreBothSensors = fx1.isSensor() && fx2.isSensor();
 
         if (!fixturesAreBothSensors && COLLISION_LISTENER_MAP.containsKey(fx1.id)) {
@@ -81,36 +81,36 @@ public final class Physics {
 
   /** Abstract interface for handling physics collisions */
   public static abstract class CollisionListener {
-    private final HashMap<String, Collider.BodyAttachedFixture> prevFixtureMap = new HashMap<>();
-    private final HashMap<String, Collider.BodyAttachedFixture> currentFixtureMap = new HashMap<>();
+    private final HashMap<String, Collider> prevColliderMap = new HashMap<>();
+    private final HashMap<String, Collider> currentColliderMap = new HashMap<>();
 
     void update() {
-      for (String id : prevFixtureMap.keySet()) {
-        if (!currentFixtureMap.containsKey(id)) {
-          onCollisionExit(prevFixtureMap.get(id));
+      for (String id : prevColliderMap.keySet()) {
+        if (!currentColliderMap.containsKey(id)) {
+          onCollisionExit(prevColliderMap.get(id));
         }
       }
 
-      prevFixtureMap.clear();
-      prevFixtureMap.putAll(currentFixtureMap);
-      currentFixtureMap.clear();
+      prevColliderMap.clear();
+      prevColliderMap.putAll(currentColliderMap);
+      currentColliderMap.clear();
     }
 
     /** Called when a collision occurs and is passed the bodies and fixtures of the collision */
-    void handleCollision(Collider.BodyAttachedFixture otherFixture) {
-      if (!prevFixtureMap.containsKey(otherFixture.id)) {
-        onCollisionEnter(otherFixture);
+    void handleCollision(Collider.ColliderFixture otherFixture) {
+      if (!prevColliderMap.containsKey(otherFixture.id)) {
+        onCollisionEnter(otherFixture.getCollider());
       } else {
-        onCollisionStay(otherFixture);
+        onCollisionStay(otherFixture.getCollider());
       }
 
-      currentFixtureMap.put(otherFixture.id, otherFixture);
+      currentColliderMap.put(otherFixture.id, otherFixture.getCollider());
     }
 
-    public void onCollisionEnter(Collider.BodyAttachedFixture otherFixture) { }
+    public void onCollisionEnter(Collider otherCollider) { }
 
-    public void onCollisionStay(Collider.BodyAttachedFixture otherFixture) { }
+    public void onCollisionStay(Collider otherCollider) { }
 
-    public void onCollisionExit(Collider.BodyAttachedFixture otherFixture) { }
+    public void onCollisionExit(Collider otherCollider) { }
   }
 }

@@ -41,7 +41,7 @@ public class RigidBody extends Component {
     body.setMass(new Mass(new Vector2(massCenter.x, massCenter.y), mass, inertia));
   }
 
-  /** Sets the {@link RigidBody}'s metadata */
+  /** Sets a custom object with user-defined attributes as the metadata */
   public void setMetaData(Object metadata) {
     body.setUserData(metadata);
   }
@@ -108,20 +108,10 @@ public class RigidBody extends Component {
   protected void start() {
     // Find all colliders and add their fixtures to the body
     List<Collider> colliders = entity.findComponents(Collider.class);
-    colliders.forEach(collider -> collider.fixture.addToBody(body));
+    colliders.forEach(collider -> body.addFixture(collider.fixture));
 
     body.updateMass();
-
     Physics.addBody(body);
-
-    // Register all non-null collider collision listeners
-    colliders.forEach(collider -> {
-      if (collider.collisionListener != null) {
-        Physics.addCollisionListener(
-          collider.fixture.id, collider.collisionListener
-        );
-      }
-    });
   }
 
   @Override
@@ -146,18 +136,6 @@ public class RigidBody extends Component {
 
   @Override
   protected void dispose() {
-    // Find all colliders and unregister their collision listeners
-    List<Collider> colliders = entity.findComponents(Collider.class);
-    colliders.forEach(collider -> collider.fixture.addToBody(body));
-
-    colliders.forEach(collider -> {
-      if (collider.collisionListener != null) {
-        Physics.removeCollisionListener(
-          collider.fixture.id, collider.collisionListener
-        );
-      }
-    });
-
     Physics.removeBody(body);
   }
 }

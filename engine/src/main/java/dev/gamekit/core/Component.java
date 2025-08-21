@@ -18,6 +18,11 @@ public abstract class Component {
   /** The host {@link Entity entity} the component is attached to */
   protected Entity entity;
 
+  /** Returns the {@link Entity} of this component */
+  public Entity getEntity() {
+    return entity;
+  }
+
   /**
    * Called when attached to an {@link Entity} to set up the component
    * <p>

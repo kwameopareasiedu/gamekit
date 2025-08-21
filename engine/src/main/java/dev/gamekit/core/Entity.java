@@ -1,5 +1,6 @@
 package dev.gamekit.core;
 
+import dev.gamekit.components.RigidBody;
 import dev.gamekit.components.Transform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -125,13 +126,45 @@ public abstract class Entity {
   /** Called <b>once</b> by the parent {@link Entity} to initialize the entity */
   void _start() {
     List<Component> components = getComponents();
+    boolean hasRigidBody = false;
 
     if (components != null) {
       for (Component component : components) {
-        if (component instanceof Transform)
+        if (component instanceof Transform) {
           throw new IllegalArgumentException(
             "Entity cannot have more than one Transform component"
           );
+        }
+
+        if (component instanceof RigidBody) {
+          if (!hasRigidBody) {
+            // Ensure no ancestor has a RigidBody component
+            Entity tempParent = parent;
+            String descendantClassName = getClass().getName();
+
+            while (tempParent != null) {
+              if (tempParent.findComponent(RigidBody.class) != null) {
+                String ancestorClassName = tempParent.getClass().getName();
+
+                throw new IllegalArgumentException(
+                  String.format(
+                    "Entities with a RigidBody component [%s] cannot have descendants [%s] which " +
+                      "also have a RigidBody component",
+                    ancestorClassName, descendantClassName
+                  )
+                );
+              }
+
+              tempParent = tempParent.parent;
+            }
+
+            hasRigidBody = true;
+          } else {
+            throw new IllegalArgumentException(
+              "Entity cannot have more than one RigidBody component"
+            );
+          }
+        }
 
         this.components.add(component);
       }

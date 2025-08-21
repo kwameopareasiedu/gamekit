@@ -7,7 +7,7 @@ import org.dyn4j.geometry.Rectangle;
 public class BoxCollider extends Collider {
   public BoxCollider(double width, double height) {
     super(
-      new BodyAttachedFixture(
+      new ColliderFixture(
         new Rectangle(
           width / Constants.PIXELS_PER_METER,
           height / Constants.PIXELS_PER_METER

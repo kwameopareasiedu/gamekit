@@ -164,13 +164,13 @@ public class Demo6EntityComponents extends Scene {
       // collider
       circle.setCollisionListener(new Physics.CollisionListener() {
         @Override
-        public void onCollisionEnter(Collider.BodyAttachedFixture otherFixture) {
-          logger.debug("Ball collided with {}", otherFixture.getMetaData());
+        public void onCollisionEnter(Collider otherCollider) {
+          logger.debug("Ball collided with {}", otherCollider.getMetaData());
         }
 
         @Override
-        public void onCollisionExit(Collider.BodyAttachedFixture otherFixture) {
-          logger.debug("Ball no longer colliding with {}", otherFixture.getMetaData());
+        public void onCollisionExit(Collider otherCollider) {
+          logger.debug("Ball no longer colliding with {}", otherCollider.getMetaData());
         }
       });
 

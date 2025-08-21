@@ -88,7 +88,7 @@ public class Transform extends Component {
     return globalPosition;
   }
 
-  /** Sets the global position and updates the local position */
+  /** Sets the global position */
   public void setGlobalPosition(double x, double y) {
     double offsetX = x - globalPosition.x;
     double offsetY = y - globalPosition.y;
