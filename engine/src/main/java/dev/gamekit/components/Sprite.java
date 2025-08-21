@@ -30,13 +30,18 @@ public class Sprite extends Component {
 
   @Override
   protected void render() {
-    Transform tx = entity.findComponent(Transform.class);
-    Vector globalPosition = tx.getGlobalPosition();
+    Transform transform = entity.findComponent(Transform.class);
+    Vector globalPosition = transform.getGlobalPosition();
 
-    Renderer.drawImage(image,
+    Renderer.drawImage(
+      image,
       (int) (globalPosition.x + bounds.x),
       (int) (globalPosition.y + bounds.y),
       (int) bounds.width, (int) bounds.height
+    ).withRotation(
+      (int) (globalPosition.x),
+      (int) (globalPosition.y),
+      transform.getGlobalRotation()
     ).withInterpolation(interpolation);
   }
 
@@ -48,6 +53,15 @@ public class Sprite extends Component {
   /** Updates this {@link Sprite sprite's} interpolation setting */
   public void setInterpolation(ImageInterpolation interpolation) {
     this.interpolation = interpolation;
+  }
+
+  /**
+   * Sets the height based on the width and given aspect.
+   * <p>
+   * NB: <i>This should be called after {@link #setSize}</i>
+   */
+  public void setAspectRatio(double aspect) {
+    setSize(bounds.width, bounds.width / aspect);
   }
 
   /** Updates the center offset portion of the {@link #bounds} */

@@ -2,6 +2,8 @@ package dev.gamekit.utils;
 
 /** Represents an (x,y) position */
 public class Vector {
+  public static final double HALF_PI = 0.5 * java.lang.Math.PI;
+
   public double x;
   public double y;
 
@@ -19,16 +21,25 @@ public class Vector {
     this(position.x, position.y);
   }
 
+  /** Computes the squared distance between two vectors */
   public static double squaredDistance(Vector v1, Vector v2) {
     double x2mx1 = v1.x - v2.x;
     double y2my1 = v1.y - v2.y;
     return x2mx1 * x2mx1 + y2my1 * y2my1;
   }
 
+  /** Computes the dot product between two vectors */
   public static double dot(Vector v1, Vector v2) {
     Vector v1n = v1.getNormalized();
     Vector v2n = v2.getNormalized();
     return v1n.x * v2n.x + v1n.y * v2n.y;
+  }
+
+  /** Computes angle (radian) between two vectors starting from {@code v1} to {@code v2} */
+  public static double angle(Vector v1, Vector v2) {
+    double diffY = v2.y - v1.y;
+    double diffX = v2.x - v1.x;
+    return java.lang.Math.atan2(diffY, diffX) + HALF_PI;
   }
 
   @Override

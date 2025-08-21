@@ -45,6 +45,7 @@
 - Added `void destroy()` method to `Entity` which schedules it for destruction at the end of the
   current frame
 - Added `Entity.State getState()` method to `Entity` which returns the current state of the entity
+- Added `static double angle(Vector, Vector)` to `Vector` class
 
 ### Changed
 
