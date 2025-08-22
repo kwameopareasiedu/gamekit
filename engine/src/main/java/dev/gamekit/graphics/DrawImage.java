@@ -37,7 +37,6 @@ public class DrawImage extends DrawCall<DrawImage> {
   protected void setup(Graphics2D g) {
     if (interpolation != null) {
       prevInterpolation = ImageInterpolation.from(g);
-
       interpolation.apply(g);
     }
   }

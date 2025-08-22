@@ -2,7 +2,7 @@ package dev.gamekit.utils;
 
 /** Represents an (x,y) position */
 public class Vector {
-  public static final double HALF_PI = 0.5 * java.lang.Math.PI;
+  public static final double TWO_PI = 2 * java.lang.Math.PI;
 
   public double x;
   public double y;
@@ -35,11 +35,19 @@ public class Vector {
     return v1n.x * v2n.x + v1n.y * v2n.y;
   }
 
-  /** Computes angle (radian) between two vectors starting from {@code v1} to {@code v2} */
+  /**
+   * Computes angle (radian) between two vectors starting from {@code v1} to {@code v2} in a
+   * clockwise direction
+   */
   public static double angle(Vector v1, Vector v2) {
-    double diffY = v2.y - v1.y;
     double diffX = v2.x - v1.x;
-    return java.lang.Math.atan2(diffY, diffX) + HALF_PI;
+    double diffY = v2.y - v1.y;
+    double angle = java.lang.Math.atan2(diffX, diffY);
+
+    if (angle < 0)
+      angle = TWO_PI + angle;
+
+    return angle;
   }
 
   @Override

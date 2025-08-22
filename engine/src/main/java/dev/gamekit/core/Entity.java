@@ -132,8 +132,8 @@ public abstract class Entity {
     state = State.DOOMED;
 
     Application.getInstance().runLater(() -> {
-      _dispose();
       parent.children.remove(this);
+      _dispose();
     });
   }
 

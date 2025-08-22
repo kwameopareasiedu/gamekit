@@ -129,7 +129,7 @@ public class Transform extends Component {
 
   /** Set the global rotation (radian) */
   public void setGlobalRotation(double rad) {
-    double offset = rad - localRotation;
+    double offset = rad - globalRotation;
     localRotation += offset;
   }
 }
