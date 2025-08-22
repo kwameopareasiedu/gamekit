@@ -5,6 +5,7 @@ import dev.gamekit.core.Constants;
 import dev.gamekit.core.Physics;
 import dev.gamekit.core.Renderer;
 import dev.gamekit.utils.Vector;
+import org.dyn4j.collision.CategoryFilter;
 import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.geometry.Circle;
 import org.dyn4j.geometry.Convex;
@@ -59,6 +60,20 @@ public abstract class Collider extends Component {
    */
   public void setCollisionListener(Physics.CollisionListener collisionListener) {
     this.collisionListener = collisionListener;
+  }
+
+  /**
+   * Set the collision category this collider resides in, and a layer mask which this collider
+   * can collide with.
+   * @see org.dyn4j.collision.CategoryFilter
+   */
+  public void setCollisionFilter(long category, long mask) {
+    fixture.setFilter(new CategoryFilter(category, mask));
+  }
+
+  /** @see #setCollisionFilter(long, long) */
+  public void setCollisionFilter(CategoryFilter filter) {
+    fixture.setFilter(filter);
   }
 
   /** @see org.dyn4j.dynamics.BodyFixture#setDensity(double) */

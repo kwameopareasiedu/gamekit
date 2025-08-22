@@ -90,10 +90,9 @@ public abstract class Application {
     if (timeoutMs < 0)
       throw new IllegalArgumentException("Timeout cannot be negative");
 
-    Timeout t = new Timeout(timeoutMs, task);
-    newTimeouts.add(t);
-
-    return t;
+    Timeout timeout = new Timeout(timeoutMs, task);
+    newTimeouts.add(timeout);
+    return timeout;
   }
 
   /**
