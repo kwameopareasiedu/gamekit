@@ -55,8 +55,9 @@
 - Renamed `public void updateState(Widget)` in `Widget` to `public void update(Widget)`
 - Renamed `FRAME_TIME_MS` to `FRAME_INTERVAL_MS` in `Constants` class
 - Renamed `DRAW_TIME_MS` to `DRAW_INTERVAL_MS` in `Constants` class
-- Renamed `void scheduleTask(Task task)` to `void runLater(Task task)` in `Application` class
-- Renamed `void scheduleAnimation(Animation task)` to `void runAnimation(Animation task)` in
+- Changed signature of `void scheduleTask(Task task)` to `Timeout scheduleTask(Task task)` in
+  `Application` class
+- Renamed `void scheduleAnimation(Animation task)` to `void playAnimation(Animation task)` in
   `Application` class
 - Modified `RigidBody` component to initialize with the entity's `Transform` component's
   position and rotation

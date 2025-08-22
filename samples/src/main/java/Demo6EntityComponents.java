@@ -145,7 +145,7 @@ public class Demo6EntityComponents extends Scene {
       // Attach an id to the rigid body (For identification in collision)
       rb.setMetaData("Ball");
 
-      Application.getInstance().runLater(() -> {
+      Application.getInstance().scheduleTask(() -> {
         // Apply an instantaneous impulse to the rigid body
         rb.applyImpulse(-2, 0.5);
         // Apply a rotational torque to the rigid body

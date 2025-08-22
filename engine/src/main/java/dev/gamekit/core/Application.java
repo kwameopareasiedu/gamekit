@@ -73,28 +73,37 @@ public abstract class Application {
     logger.debug("Primed next scene: {}", scene.name);
   }
 
-  /** Schedule a task to be executed immediately after the end of the current frame. */
-  public void runLater(Task task) {
-    runLater(task, 0);
+  /**
+   * Schedule and returns a {@link Timeout task} to be executed immediately after the end of the
+   * current frame
+   */
+  public Timeout scheduleTask(Task task) {
+    return scheduleTask(task, 0);
   }
 
   /**
-   * Schedule a task to be executed after some timeout in <b>milliseconds</b>.
+   * Schedule and returns a {@link Timeout task} to be executed after a specified time.
    * <p>
    * If {@code timeoutMs} is zero, {@code task} is executed immediately after the current frame
    */
-  public void runLater(Task task, long timeoutMs) {
+  public Timeout scheduleTask(Task task, long timeoutMs) {
     if (timeoutMs < 0)
       throw new IllegalArgumentException("Timeout cannot be negative");
 
-    newTimeouts.add(new Timeout(timeoutMs, task));
+    Timeout t = new Timeout(timeoutMs, task);
+    newTimeouts.add(t);
+
+    return t;
   }
 
   /**
    * Schedule an {@link Animation} to run. Animations are updated before the scene's
    * {@code onUpdate()} to ensure current values are available to the scene's next update cycle
+   * <p>
+   * NB: <i>Animations call this method internal when they start, so there is no need to
+   * explicitly invoke this</i>
    */
-  public void runAnimation(Animation animation) {
+  public void playAnimation(Animation animation) {
     if (!animations.contains(animation))
       animations.add(animation);
   }

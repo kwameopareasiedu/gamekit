@@ -65,7 +65,7 @@ public abstract class Entity {
     if (!children.contains(child)) {
       logger.debug("Adding {} to {}", child.name, name);
 
-      Application.getInstance().runLater(() -> {
+      Application.getInstance().scheduleTask(() -> {
         switch (child.state) {
           case NEW -> child._start(this);
           case INACTIVE -> child._restart(this);
@@ -85,7 +85,7 @@ public abstract class Entity {
     if (children.contains(child)) {
       logger.debug("Removing {} from {}", child.name, name);
 
-      Application.getInstance().runLater(() -> {
+      Application.getInstance().scheduleTask(() -> {
         child._stop();
         children.remove(child);
       });
@@ -131,7 +131,7 @@ public abstract class Entity {
     stop();
     state = State.DOOMED;
 
-    Application.getInstance().runLater(() -> {
+    Application.getInstance().scheduleTask(() -> {
       parent.children.remove(this);
       _dispose();
     });

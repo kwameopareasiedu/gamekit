@@ -18,7 +18,15 @@ public class Timeout {
     this.task = task;
   }
 
-  public boolean isCompleted() { return completed; }
+  /** Returns the completed status */
+  public boolean isCompleted() {
+    return completed;
+  }
+
+  /** Cancels the timeout and prevents the {@link #task} from being executed */
+  public void cancel() {
+    completed = true;
+  }
 
   /**
    * Called internally by the application to update the timeout by decrementing its duration till
