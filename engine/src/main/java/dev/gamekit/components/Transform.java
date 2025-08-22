@@ -37,53 +37,12 @@ public class Transform extends Component {
 
   @Override
   protected void start() {
-    Entity entityParent = entity.getParent();
-
-    if (entityParent != null) {
-      Transform parentTransform = entityParent.findComponent(Transform.class);
-      Vector parentGlobalPosition = parentTransform.globalPosition;
-
-      globalPosition.set(
-        parentGlobalPosition.x + localPosition.x,
-        parentGlobalPosition.y + localPosition.y
-      );
-
-      parentGlobalPosition.rotatePoint(globalPosition, parentTransform.globalRotation);
-
-      globalRotation = parentTransform.globalRotation;
-    } else {
-      globalPosition.set(localPosition);
-      globalRotation = localRotation;
-    }
+    updateGlobalProperties();
   }
 
   @Override
   protected void update() {
-    Entity parentEntity = entity.getParent();
-
-    // Start from the local position and rotation
-    globalPosition.set(localPosition);
-    globalRotation = localRotation;
-
-    while (parentEntity != null) {
-      // Recursively add the local position and rotations of the parent
-      Transform parentTransform = parentEntity.findComponent(Transform.class);
-
-      globalPosition.set(
-        globalPosition.x += parentTransform.localPosition.x,
-        globalPosition.y += parentTransform.localPosition.y
-      );
-
-      parentTransform.globalPosition.rotatePoint(
-        globalPosition,
-        parentTransform.globalRotation
-      );
-
-      globalRotation += parentTransform.localRotation;
-
-      // Don't forget to move up the hierarchy
-      parentEntity = parentEntity.getParent();
-    }
+    updateGlobalProperties();
   }
 
   /** Returns the local position */
@@ -131,5 +90,33 @@ public class Transform extends Component {
   public void setGlobalRotation(double rad) {
     double offset = rad - globalRotation;
     localRotation += offset;
+  }
+
+  /** Recursively walks up ancestry to update global position and rotation */
+  private void updateGlobalProperties() {
+    Entity parentEntity = entity.getParent();
+
+    // Start from the local position and rotation
+    globalPosition.set(localPosition);
+    globalRotation = localRotation;
+
+    while (parentEntity != null) {
+      Transform parentTransform = parentEntity.findComponent(Transform.class);
+
+      globalPosition.set(
+        globalPosition.x += parentTransform.localPosition.x,
+        globalPosition.y += parentTransform.localPosition.y
+      );
+
+      parentTransform.globalPosition.rotatePoint(
+        globalPosition,
+        parentTransform.globalRotation
+      );
+
+      globalRotation += parentTransform.localRotation;
+
+      // Don't forget to move up the hierarchy
+      parentEntity = parentEntity.getParent();
+    }
   }
 }
