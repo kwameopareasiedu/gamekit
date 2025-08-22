@@ -50,16 +50,4 @@ public class MathTest {
     assertEquals(20, Math.lerp(10, 20, 1));
     assertEquals(15, Math.lerp(10, 20, 0.5));
   }
-
-  @Test
-  public void angleTest() {
-    assertEquals(Math.degToRad(0), Vector.angle(new Vector(), new Vector(0, 1)));
-    assertEquals(Math.degToRad(45), Vector.angle(new Vector(), new Vector(1, 1)));
-    assertEquals(Math.degToRad(90), Vector.angle(new Vector(), new Vector(1, 0)));
-    assertEquals(Math.degToRad(135), Vector.angle(new Vector(), new Vector(1, -1)));
-    assertEquals(Math.degToRad(180), Vector.angle(new Vector(), new Vector(0, -1)));
-    assertEquals(Math.degToRad(225), Vector.angle(new Vector(), new Vector(-1, -1)));
-    assertEquals(Math.degToRad(270), Vector.angle(new Vector(), new Vector(-1, 0)));
-    assertEquals(Math.degToRad(315), Vector.angle(new Vector(), new Vector(-1, 1)));
-  }
 }

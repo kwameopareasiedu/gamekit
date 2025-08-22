@@ -46,6 +46,7 @@
   current frame
 - Added `Entity.State getState()` method to `Entity` which returns the current state of the entity
 - Added `static double angle(Vector, Vector)` to `Vector` class
+- Added `static Vector from(double, double)` to `Vector` class
 
 ### Changed
 

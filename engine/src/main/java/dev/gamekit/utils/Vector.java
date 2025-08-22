@@ -36,8 +36,8 @@ public class Vector {
   }
 
   /**
-   * Computes angle (radian) between two vectors starting from {@code v1} to {@code v2} in a
-   * clockwise direction
+   * Computes the angle (radian, from 0 to 2π) between two vectors starting from {@code v1} to
+   * {@code v2} in a clockwise direction starting from the positive y-axis
    */
   public static double angle(Vector v1, Vector v2) {
     double diffX = v2.x - v1.x;
@@ -48,6 +48,17 @@ public class Vector {
       angle = TWO_PI + angle;
 
     return angle;
+  }
+
+  /**
+   * Creates a new vector from the magnitude and angle (radian, which must be clockwise from
+   * the positive y-axis and between 0 and 2π)
+   */
+  public static Vector from(double magnitude, double rad) {
+    return new Vector(
+      magnitude * java.lang.Math.sin(rad),
+      magnitude * java.lang.Math.cos(rad)
+    );
   }
 
   @Override
