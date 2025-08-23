@@ -110,8 +110,18 @@ public class Animation {
       if ((value >= 1 && rate > 0) || (value <= 0 && rate < 0)) {
         switch (repeatMode) {
           case NONE -> stop();
-          case RESTART -> value = 0;
-          case ALTERNATE -> rate *= -1;
+          case RESTART -> {
+            value = 0;
+
+            if (stateListener != null)
+              stateListener.onStateChanged(State.RESTARTED);
+          }
+          case ALTERNATE -> {
+            rate *= -1;
+
+            if (stateListener != null)
+              stateListener.onStateChanged(State.REVERSED);
+          }
         }
       }
     }
@@ -123,6 +133,10 @@ public class Animation {
     IDLE,
     /** Indicates a started animation */
     RUNNING,
+    /** Pseudo-state indicating an animation has restarted */
+    RESTARTED,
+    /** Pseudo-state indicating an animation whose direction changes */
+    REVERSED,
     /** Indicates a stopped animation which can be restarted */
     STOPPED,
     /** Indicates an ended animation which cannot be restarted */
@@ -131,14 +145,11 @@ public class Animation {
 
   /** Indicates how an animation behaves when it reaches its end */
   public enum RepeatMode {
-    /**
-     * Indicates a running animation not repeat and transition to {@link State#ENDED} when at its
-     * end
-     */
+    /** Indicates an animation stops when at its end */
     NONE,
-    /** Indicates a running animation start over when at its end */
+    /** Indicates an animation start over when at its end */
     RESTART,
-    /** Indicates a running animation changes direction when at its end */
+    /** Indicates an animation changes direction when at its end */
     ALTERNATE
   }
 

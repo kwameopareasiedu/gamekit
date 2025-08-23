@@ -47,6 +47,8 @@
 - Added `Entity.State getState()` method to `Entity` which returns the current state of the entity
 - Added `static double angle(Vector, Vector)` to `Vector` class
 - Added `static Vector from(double, double)` to `Vector` class
+- Added `Animation.State.RESTARTED` and `Animation.State.REVERSED` pseudo states which are 
+  passed to a registered state listener when an animation restarts or reverses respectively
 
 ### Changed
 

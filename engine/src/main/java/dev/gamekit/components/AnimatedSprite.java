@@ -2,52 +2,51 @@ package dev.gamekit.components;
 
 import dev.gamekit.animation.Animation;
 import dev.gamekit.settings.ImageInterpolation;
+import dev.gamekit.utils.Task;
 
 import java.awt.image.BufferedImage;
 
 import static dev.gamekit.utils.Math.cycle;
 
-/**
- * {@link AnimatedSprite} extends {@link Sprite} to render an animated sprite sheet
- * <p>
- * When creating an {@link AnimatedSprite}, the {@code spriteCoordinates} parameter should be of
- * the format {@code [x1, y1, x2, y2, ..., xn, yn]}, where each {@code (x, y)} pair represents
- * the top-left point of the individual sprites in the sprite sheet
- */
+/** {@link AnimatedSprite} extends {@link Sprite} to render an animated sprite sheet */
 public class AnimatedSprite extends Sprite {
-  protected final BufferedImage[] sprites;
   protected final Animation animation;
 
+  protected Task completedCallback;
+  protected BufferedImage[] sprites;
   protected int imageIndex = 0;
 
+  /**
+   * Creates a new {@link AnimatedSprite}.
+   * <p>
+   * The {@code coordinates} should be of the format {@code [x1, y1, x2, y2, ..., xn,yn]}, where
+   * each  {@code (x, y)} pair represents the top-left point of the individual sprites in the
+   * sprite sheet
+   */
   public AnimatedSprite(
     BufferedImage spriteSheet,
-    ImageInterpolation interpolation,
     double durationMs,
     int spriteWidth,
     int spriteHeight,
-    int... spriteCoordinates
+    int[] coordinates,
+    boolean loop
   ) {
-    super(spriteSheet, interpolation);
+    super(spriteSheet, ImageInterpolation.DEFAULT);
 
-    if (spriteCoordinates.length % 2 != 0)
-      throw new IllegalArgumentException("Sprite coordinates must be an even array");
-
-    if (spriteCoordinates.length < 4)
-      throw new IllegalArgumentException("At least two (2) pairs of sprite coordinates required");
-
-    sprites = new BufferedImage[spriteCoordinates.length / 2];
-
-    for (int i = 0; i < spriteCoordinates.length; i += 2) {
-      int spriteX = spriteCoordinates[i];
-      int spriteY = spriteCoordinates[i + 1];
-      sprites[i / 2] = spriteSheet.getSubimage(spriteX, spriteY, spriteWidth, spriteHeight);
-    }
+    setSpriteSheet(spriteSheet, spriteWidth, spriteHeight, coordinates);
 
     animation = new Animation(durationMs / sprites.length, Animation.RepeatMode.RESTART);
 
-    animation.setValueListener(value -> {
-      if (value == 1) {
+    animation.setStateListener(state -> {
+      if (state == Animation.State.RESTARTED) {
+        if (imageIndex == sprites.length - 1 && !loop) {
+          if (completedCallback != null)
+            completedCallback.run();
+
+          animation.stop();
+          return;
+        }
+
         imageIndex = cycle(imageIndex + 1, 0, sprites.length - 1);
         image = sprites[imageIndex];
       }
@@ -56,26 +55,36 @@ public class AnimatedSprite extends Sprite {
     image = sprites[0];
   }
 
-  public AnimatedSprite(
+  /**
+   * Updates the sprite sheet and computes the sprites based on the given {@code spriteWidth},
+   * {@code spriteHeight} and {@code coordinates}. Each coordinates pair represents the top-left
+   * corner of a sprite in the sprite sheet
+   */
+  public void setSpriteSheet(
     BufferedImage spriteSheet,
-    double durationMs,
     int spriteWidth,
     int spriteHeight,
-    int... spriteCoordinates
+    int... coordinates
   ) {
-    this(
-      spriteSheet,
-      ImageInterpolation.DEFAULT,
-      durationMs,
-      spriteWidth,
-      spriteHeight,
-      spriteCoordinates
-    );
+    if (coordinates.length % 2 != 0)
+      throw new IllegalArgumentException("Sprite coordinates must be an even array");
+
+    if (coordinates.length < 4)
+      throw new IllegalArgumentException("At least two (2) pairs of sprite coordinates required");
+
+    sprites = new BufferedImage[coordinates.length / 2];
+
+    for (int i = 0; i < coordinates.length; i += 2) {
+      int spriteX = coordinates[i];
+      int spriteY = coordinates[i + 1];
+      sprites[i / 2] = spriteSheet.getSubimage(spriteX, spriteY, spriteWidth, spriteHeight);
+    }
   }
 
-  /** No-op for {@link AnimatedSprite} */
-  @Override
-  public void setImage(BufferedImage image) { /* No-op */}
+  /** Sets a callback listener which is notified when the <b>non-looping</b> animation ends */
+  public void setCompletedCallback(Task completedCallback) {
+    this.completedCallback = completedCallback;
+  }
 
   @Override
   protected void start() {

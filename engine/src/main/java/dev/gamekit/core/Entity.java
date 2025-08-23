@@ -130,6 +130,7 @@ public abstract class Entity {
   public void destroy() {
     stop();
     state = State.DOOMED;
+    logger.debug("Destroying {} from {}", name, parent.name);
 
     Application.getInstance().scheduleTask(() -> {
       parent.children.remove(this);
