@@ -2,6 +2,7 @@ package dev.gamekit.animation;
 
 import dev.gamekit.core.Application;
 import dev.gamekit.core.Constants;
+import dev.gamekit.utils.ValueCallback;
 
 import static dev.gamekit.utils.Math.clamp;
 
@@ -15,8 +16,8 @@ import static dev.gamekit.utils.Math.clamp;
 public class Animation {
   private final RepeatMode repeatMode;
   private final AnimationCurve curve;
-  private StateListener stateListener;
-  private ValueListener valueListener;
+  private ValueCallback<State> stateListener;
+  private ValueCallback<Double> valueListener;
   private State state;
   private double rate;
   private double value;
@@ -40,20 +41,29 @@ public class Animation {
     value = 0;
   }
 
-  public State getState() { return state; }
+  /** Returns the current state */
+  public State getState() {
+    return state;
+  }
 
+  /**
+   * Returns the current value (0 - 1).
+   * <p>
+   * If an {@link AnimationCurve} is attached, this returns the result of
+   * {@link AnimationCurve#get} called with the value
+   */
   public double getValue() {
     return curve != null ? curve.get(value) : value;
   }
 
   /** Sets the state listener and returns this animation */
-  public Animation setStateListener(StateListener listener) {
+  public Animation setStateListener(ValueCallback<State> listener) {
     this.stateListener = listener;
     return this;
   }
 
   /** Sets the value listener and returns this animation */
-  public Animation setValueListener(ValueListener listener) {
+  public Animation setValueListener(ValueCallback<Double> listener) {
     this.valueListener = listener;
     return this;
   }
@@ -67,10 +77,10 @@ public class Animation {
     value = 0;
 
     if (stateListener != null)
-      stateListener.onStateChanged(state);
+      stateListener.run(state);
 
     if (valueListener != null)
-      valueListener.onValueChanged(value);
+      valueListener.run(value);
   }
 
   /**
@@ -81,7 +91,7 @@ public class Animation {
     state = State.STOPPED;
 
     if (stateListener != null)
-      stateListener.onStateChanged(state);
+      stateListener.run(state);
   }
 
   /**
@@ -92,9 +102,10 @@ public class Animation {
     state = State.ENDED;
 
     if (stateListener != null)
-      stateListener.onStateChanged(state);
+      stateListener.run(state);
   }
 
+  /** Returns {@code true} if the animation is ended and false otherwise */
   public boolean isEnded() {
     return state == State.ENDED;
   }
@@ -105,7 +116,7 @@ public class Animation {
       value = clamp(value + 0.001 * rate * Constants.FRAME_INTERVAL_MS, 0, 1);
 
       if (valueListener != null)
-        valueListener.onValueChanged(getValue());
+        valueListener.run(getValue());
 
       if ((value >= 1 && rate > 0) || (value <= 0 && rate < 0)) {
         switch (repeatMode) {
@@ -114,13 +125,13 @@ public class Animation {
             value = 0;
 
             if (stateListener != null)
-              stateListener.onStateChanged(State.RESTARTED);
+              stateListener.run(State.RESTARTED);
           }
           case ALTERNATE -> {
             rate *= -1;
 
             if (stateListener != null)
-              stateListener.onStateChanged(State.REVERSED);
+              stateListener.run(State.REVERSED);
           }
         }
       }
@@ -151,17 +162,5 @@ public class Animation {
     RESTART,
     /** Indicates an animation changes direction when at its end */
     ALTERNATE
-  }
-
-  /** Callback interface for {@link Animation} state changes */
-  public interface StateListener {
-    /** Called with the new {@link State} of the animation */
-    void onStateChanged(State state);
-  }
-
-  /** Callback interface for {@link Animation} value changes */
-  public interface ValueListener {
-    /** Called with the new value of the animation */
-    void onValueChanged(double value);
   }
 }

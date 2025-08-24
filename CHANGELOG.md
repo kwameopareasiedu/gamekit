@@ -47,8 +47,10 @@
 - Added `Entity.State getState()` method to `Entity` which returns the current state of the entity
 - Added `static double angle(Vector, Vector)` to `Vector` class
 - Added `static Vector from(double, double)` to `Vector` class
-- Added `Animation.State.RESTARTED` and `Animation.State.REVERSED` pseudo states which are 
+- Added `Animation.State.RESTARTED` and `Animation.State.REVERSED` pseudo states which are
   passed to a registered state listener when an animation restarts or reverses respectively
+- Added `ValueCallback<T>` class which is a single abstract method interfaces whose `run` method
+  accepts a single variable of type `T`
 
 ### Changed
 
@@ -67,6 +69,7 @@
 - Modified `Entity` to allow for addition of more than one instances of a component type except
   the `Transform` component
 - Changed engine rotations from degree-based to radian-based
+- Renamed `Task` class to `VoidCallback` and updated usages
 
 ### Deprecated
 

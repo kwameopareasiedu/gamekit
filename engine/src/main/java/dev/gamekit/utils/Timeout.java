@@ -2,20 +2,20 @@ package dev.gamekit.utils;
 
 import dev.gamekit.core.Constants;
 
-/** Timeout executes a specified {@link Task} after its duration has elapsed. */
+/** Timeout executes a specified {@link VoidCallback} after its duration has elapsed. */
 public class Timeout {
   boolean completed;
   long durationMs;
-  Task task;
+  VoidCallback callback;
 
-  public Timeout(long durationMs, Task task) {
+  public Timeout(long durationMs, VoidCallback callback) {
     if (durationMs < 0)
       throw new RuntimeException("Timeout duration cannot be negative");
-    if (task == null)
+    if (callback == null)
       throw new RuntimeException("Timeout task cannot be null");
     this.durationMs = durationMs;
     this.completed = false;
-    this.task = task;
+    this.callback = callback;
   }
 
   /** Returns the completed status */
@@ -23,23 +23,25 @@ public class Timeout {
     return completed;
   }
 
-  /** Cancels the timeout and prevents the {@link #task} from being executed */
+  /** Cancels the timeout and prevents the {@link #callback} from being executed */
   public void cancel() {
     completed = true;
   }
 
   /**
    * Called internally by the application to update the timeout by decrementing its duration till
-   * it reaches 0. When the duration reaches zero, then the task's {@link Task#run} method is
-   * executed.
+   * it reaches 0. When the duration reaches zero, then the task's {@link VoidCallback#run} method
+   * is executed.
    */
   public void update() {
     if (!completed) {
-      durationMs = java.lang.Math.max(0, durationMs - Constants.FRAME_INTERVAL_MS);
+      durationMs = java.lang.Math.max(
+        0, durationMs - Constants.FRAME_INTERVAL_MS
+      );
 
       if (durationMs == 0) {
         completed = true;
-        task.run();
+        callback.run();
       }
     }
   }

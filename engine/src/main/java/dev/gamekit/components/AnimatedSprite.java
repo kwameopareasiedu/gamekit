@@ -2,7 +2,7 @@ package dev.gamekit.components;
 
 import dev.gamekit.animation.Animation;
 import dev.gamekit.settings.ImageInterpolation;
-import dev.gamekit.utils.Task;
+import dev.gamekit.utils.VoidCallback;
 
 import java.awt.image.BufferedImage;
 
@@ -12,7 +12,7 @@ import static dev.gamekit.utils.Math.cycle;
 public class AnimatedSprite extends Sprite {
   protected final Animation animation;
 
-  protected Task completedCallback;
+  protected VoidCallback completedCallback;
   protected BufferedImage[] sprites;
   protected int imageIndex = 0;
 
@@ -82,7 +82,7 @@ public class AnimatedSprite extends Sprite {
   }
 
   /** Sets a callback listener which is notified when the <b>non-looping</b> animation ends */
-  public void setCompletedCallback(Task completedCallback) {
+  public void setCompletedCallback(VoidCallback completedCallback) {
     this.completedCallback = completedCallback;
   }
 

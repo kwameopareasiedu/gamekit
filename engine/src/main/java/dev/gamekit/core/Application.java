@@ -2,8 +2,8 @@ package dev.gamekit.core;
 
 import dev.gamekit.animation.Animation;
 import dev.gamekit.settings.Settings;
-import dev.gamekit.utils.Task;
 import dev.gamekit.utils.Timeout;
+import dev.gamekit.utils.VoidCallback;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -74,32 +74,33 @@ public abstract class Application {
   }
 
   /**
-   * Schedule and returns a {@link Timeout task} to be executed immediately after the end of the
+   * Schedule and returns a {@link Timeout timeout} to be executed immediately after the end of the
    * current frame
    */
-  public Timeout scheduleTask(Task task) {
-    return scheduleTask(task, 0);
+  public Timeout scheduleTask(VoidCallback callback) {
+    return scheduleTask(callback, 0);
   }
 
   /**
    * Schedule and returns a {@link Timeout task} to be executed after a specified time.
    * <p>
    * If {@code timeoutMs} is zero, {@code task} is executed immediately after the current frame
+   * @see #scheduleTask(VoidCallback)
    */
-  public Timeout scheduleTask(Task task, long timeoutMs) {
+  public Timeout scheduleTask(VoidCallback callback, long timeoutMs) {
     if (timeoutMs < 0)
       throw new IllegalArgumentException("Timeout cannot be negative");
 
-    Timeout timeout = new Timeout(timeoutMs, task);
+    Timeout timeout = new Timeout(timeoutMs, callback);
     newTimeouts.add(timeout);
     return timeout;
   }
 
   /**
-   * Schedule an {@link Animation} to run. Animations are updated before the scene's
-   * {@code onUpdate()} to ensure current values are available to the scene's next update cycle
+   * Schedule an {@link Animation} to play. Animations are updated before {@link Scene#update}
+   * to ensure current values are available to the scene's next update cycle.
    * <p>
-   * NB: <i>Animations call this method internal when they start, so there is no need to
+   * NB: <i>{@link Animation#start} calls this method internally, so there is no need to
    * explicitly invoke this</i>
    */
   public void playAnimation(Animation animation) {
@@ -277,7 +278,8 @@ public abstract class Application {
 
         while (frameTimeAccumulator >= frameTimeMs) {
           frameTimeAccumulator -= frameTimeMs;
-          try { runnable.run(); } catch (Exception ignored) { }
+          try { runnable.run(); } //
+          catch (Exception ignored) { }
         }
 
         try { Thread.sleep(1); } //
