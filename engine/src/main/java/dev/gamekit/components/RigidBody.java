@@ -32,7 +32,7 @@ public class RigidBody extends Component {
     body.setMassType(MassType.INFINITE);
   }
 
-  /** Creates a {@link RigidBody} with infinite mass (I.e. static object) */
+  /** Creates a {@link RigidBody} with a defined mass and inertia (I.e. dynamic object) */
   public RigidBody(MassType massType, Vector massCenter, double mass, double inertia) {
     body = new Body();
     body.setMassType(massType);

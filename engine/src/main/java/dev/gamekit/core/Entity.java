@@ -128,14 +128,16 @@ public abstract class Entity {
    * state to {@link State#DOOMED}
    */
   public void destroy() {
-    stop();
-    state = State.DOOMED;
-    logger.debug("Destroying {} from {}", name, parent.name);
+    if (state == State.ACTIVE) {
+      stop();
+      state = State.DOOMED;
+      logger.debug("Destroying {}", name);
 
-    Application.getInstance().scheduleTask(() -> {
-      parent.children.remove(this);
-      _dispose();
-    });
+      Application.getInstance().scheduleTask(() -> {
+        parent.children.remove(this);
+        _dispose();
+      });
+    }
   }
 
   /** Called during {@link #start} to get the components of the entity */

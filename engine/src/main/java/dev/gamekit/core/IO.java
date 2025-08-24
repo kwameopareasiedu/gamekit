@@ -40,11 +40,10 @@ public final class IO {
   /** Read and cache an image <b>resource file</b> */
   public static BufferedImage getResourceImage(String resPath) {
     try {
-      LOGGER.debug("Loading resource image at {}", resPath);
-
       if (CACHE.containsKey(resPath))
         return (BufferedImage) CACHE.get(resPath);
 
+      LOGGER.debug("Loading resource image at {}", resPath);
       BufferedImage image = ImageIO.read(getResourceStream(resPath));
       CACHE.put(resPath, image);
       return image;
@@ -73,11 +72,10 @@ public final class IO {
   /** Read and cache a font <b>resource file</b> */
   public static Font getResourceFont(String resPath) {
     try {
-      LOGGER.debug("Loading resource font at {}", resPath);
-
       if (CACHE.containsKey(resPath))
         return (Font) CACHE.get(resPath);
 
+      LOGGER.debug("Loading resource font at {}", resPath);
       Font font = Font.createFont(Font.TRUETYPE_FONT,
         getResourceStream(resPath));
       CACHE.put(resPath, font);
