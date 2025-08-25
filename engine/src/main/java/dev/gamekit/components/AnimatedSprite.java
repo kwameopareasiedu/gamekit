@@ -3,7 +3,6 @@ package dev.gamekit.components;
 import dev.gamekit.animation.Animation;
 import dev.gamekit.settings.ImageInterpolation;
 import dev.gamekit.utils.ValueCallback;
-import dev.gamekit.utils.VoidCallback;
 
 import java.awt.image.BufferedImage;
 
@@ -11,8 +10,7 @@ import static dev.gamekit.utils.Math.cycle;
 
 /** {@link AnimatedSprite} extends {@link Sprite} to render an animated sprite sheet */
 public class AnimatedSprite extends Sprite implements ValueCallback<Animation.State> {
-  protected VoidCallback completedCallback;
-  protected ValueCallback<Animation.State> animationStateCallback;
+  protected ValueCallback<Animation.State> stateListener;
   protected BufferedImage[] sprites;
   protected int imageIndex = 0;
   protected boolean looping;
@@ -105,33 +103,28 @@ public class AnimatedSprite extends Sprite implements ValueCallback<Animation.St
       animation.start();
   }
 
-  /** Sets a callback listener which is notified when the internal animation state ends */
-  public void setAnimationStateCallback(ValueCallback<Animation.State> animationStateCallback) {
-    this.animationStateCallback = animationStateCallback;
-  }
-
-  /** Sets a callback listener which is notified when the <b>non-looping</b> animation ends */
-  public void setCompletedCallback(VoidCallback completedCallback) {
-    this.completedCallback = completedCallback;
+  /** Sets a listener which is notified when the internal animation state changes */
+  public void setStateListener(ValueCallback<Animation.State> stateListener) {
+    this.stateListener = stateListener;
   }
 
   @Override
   public void run(Animation.State state) {
     if (state == Animation.State.RESTARTED) {
-      if (imageIndex == this.sprites.length - 1 && !this.looping) {
-        if (completedCallback != null)
-          completedCallback.run();
+      if (imageIndex == sprites.length - 1 && !this.looping) {
+        if (stateListener != null)
+          stateListener.run(Animation.State.ENDED);
 
         animation.stop();
         return;
       }
 
-      imageIndex = cycle(imageIndex + 1, 0, this.sprites.length - 1);
-      image = this.sprites[imageIndex];
-    }
+      imageIndex = cycle(imageIndex + 1, 0, sprites.length - 1);
+      image = sprites[imageIndex];
 
-    if (animationStateCallback != null)
-      animationStateCallback.run(state);
+      if (imageIndex == 0 && stateListener != null)
+        stateListener.run(Animation.State.RESTARTED);
+    }
   }
 
   @Override

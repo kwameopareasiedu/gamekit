@@ -158,9 +158,7 @@ public class RigidBody extends Component {
     List<Collider> colliders = entity.findComponents(Collider.class);
     colliders.forEach(collider -> body.addFixture(collider.fixture));
 
-    logger.debug("{} center before: {}", entity.name, body.getWorldCenter());
     body.updateMass();
-    logger.debug("{} center after: {}", entity.name, body.getWorldCenter());
     Physics.addBody(body);
   }
 
