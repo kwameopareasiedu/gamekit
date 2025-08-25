@@ -10,40 +10,19 @@ import java.awt.image.BufferedImage;
 import static dev.gamekit.utils.Math.cycle;
 
 /** {@link AnimatedSprite} extends {@link Sprite} to render an animated sprite sheet */
-public class AnimatedSprite extends Sprite {
-  protected final Animation animation;
-
+public class AnimatedSprite extends Sprite implements ValueCallback<Animation.State> {
   protected VoidCallback completedCallback;
   protected ValueCallback<Animation.State> animationStateCallback;
   protected BufferedImage[] sprites;
   protected int imageIndex = 0;
   protected boolean looping;
 
+  private Animation animation;
+
   /** Creates a new {@link AnimatedSprite} with the given sprites */
   public AnimatedSprite(BufferedImage[] sprites, double durationMs, boolean looping) {
     super(sprites[0], ImageInterpolation.DEFAULT);
-
-    setSpriteSheet(sprites, looping);
-
-    animation = new Animation(durationMs / sprites.length, Animation.RepeatMode.RESTART);
-
-    animation.setStateListener(state -> {
-      if (state == Animation.State.RESTARTED) {
-        if (imageIndex == this.sprites.length - 1 && !this.looping) {
-          if (completedCallback != null)
-            completedCallback.run();
-
-          animation.stop();
-          return;
-        }
-
-        imageIndex = cycle(imageIndex + 1, 0, this.sprites.length - 1);
-        image = this.sprites[imageIndex];
-      }
-
-      if (animationStateCallback != null)
-        animationStateCallback.run(state);
-    });
+    setSpriteSheet(sprites, durationMs, looping);
   }
 
   /**
@@ -55,32 +34,14 @@ public class AnimatedSprite extends Sprite {
    */
   public AnimatedSprite(
     BufferedImage spriteSheet,
-    double durationMs,
     int spriteWidth,
     int spriteHeight,
     int[] coordinates,
+    double durationMs,
     boolean looping
   ) {
     super(spriteSheet, ImageInterpolation.DEFAULT);
-
-    setSpriteSheet(spriteSheet, spriteWidth, spriteHeight, coordinates, looping);
-
-    animation = new Animation(durationMs / sprites.length, Animation.RepeatMode.RESTART);
-
-    animation.setStateListener(state -> {
-      if (state == Animation.State.RESTARTED) {
-        if (imageIndex == sprites.length - 1 && !this.looping) {
-          if (completedCallback != null)
-            completedCallback.run();
-
-          animation.stop();
-          return;
-        }
-
-        imageIndex = cycle(imageIndex + 1, 0, sprites.length - 1);
-        image = sprites[imageIndex];
-      }
-    });
+    setSpriteSheet(spriteSheet, spriteWidth, spriteHeight, coordinates, durationMs, looping);
   }
 
   /**
@@ -93,6 +54,7 @@ public class AnimatedSprite extends Sprite {
     int spriteWidth,
     int spriteHeight,
     int[] coordinates,
+    double durationMs,
     boolean looping
   ) {
     if (coordinates.length % 2 != 0)
@@ -101,7 +63,7 @@ public class AnimatedSprite extends Sprite {
     if (coordinates.length < 4)
       throw new IllegalArgumentException("At least two (2) pairs of sprite coordinates required");
 
-    sprites = new BufferedImage[coordinates.length / 2];
+    BufferedImage[] sprites = new BufferedImage[coordinates.length / 2];
 
     for (int i = 0; i < coordinates.length; i += 2) {
       int spriteX = coordinates[i];
@@ -109,14 +71,11 @@ public class AnimatedSprite extends Sprite {
       sprites[i / 2] = spriteSheet.getSubimage(spriteX, spriteY, spriteWidth, spriteHeight);
     }
 
-    this.looping = looping;
-
-    imageIndex = 0;
-    image = sprites[0];
+    setSpriteSheet(sprites, durationMs, looping);
   }
 
   /** Updates the generated sprites directly */
-  public void setSpriteSheet(BufferedImage[] sprites, boolean looping) {
+  public void setSpriteSheet(BufferedImage[] sprites, double durationMs, boolean looping) {
     if (sprites == null)
       throw new IllegalArgumentException("Sprites cannot be null");
 
@@ -125,9 +84,25 @@ public class AnimatedSprite extends Sprite {
 
     this.sprites = sprites;
     this.looping = looping;
+    this.image = sprites[0];
+    this.imageIndex = 0;
 
-    imageIndex = 0;
-    image = sprites[0];
+    Animation.State prevAnimationState = null;
+
+    if (animation != null) {
+      prevAnimationState = animation.getState();
+      animation.end();
+    }
+
+    animation = new Animation(
+      durationMs / sprites.length,
+      Animation.RepeatMode.RESTART
+    );
+
+    animation.setStateListener(this);
+
+    if (prevAnimationState == Animation.State.RUNNING)
+      animation.start();
   }
 
   /** Sets a callback listener which is notified when the internal animation state ends */
@@ -138,6 +113,25 @@ public class AnimatedSprite extends Sprite {
   /** Sets a callback listener which is notified when the <b>non-looping</b> animation ends */
   public void setCompletedCallback(VoidCallback completedCallback) {
     this.completedCallback = completedCallback;
+  }
+
+  @Override
+  public void run(Animation.State state) {
+    if (state == Animation.State.RESTARTED) {
+      if (imageIndex == this.sprites.length - 1 && !this.looping) {
+        if (completedCallback != null)
+          completedCallback.run();
+
+        animation.stop();
+        return;
+      }
+
+      imageIndex = cycle(imageIndex + 1, 0, this.sprites.length - 1);
+      image = this.sprites[imageIndex];
+    }
+
+    if (animationStateCallback != null)
+      animationStateCallback.run(state);
   }
 
   @Override

@@ -51,6 +51,7 @@
   passed to a registered state listener when an animation restarts or reverses respectively
 - Added `ValueCallback<T>` class which is a single abstract method interfaces whose `run` method
   accepts a single variable of type `T`
+- Added state machine package to engine module
 
 ### Changed
 
