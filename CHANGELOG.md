@@ -70,6 +70,8 @@
   the `Transform` component
 - Changed engine rotations from degree-based to radian-based
 - Renamed `Task` class to `VoidCallback` and updated usages
+- Added `void setLinearVelocity(double, double)` to `RigidBody` class
+- Added `void applyForce(double, double)` to `RigidBody` class
 
 ### Deprecated
 

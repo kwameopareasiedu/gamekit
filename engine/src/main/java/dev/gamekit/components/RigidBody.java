@@ -87,6 +87,22 @@ public class RigidBody extends Component {
   }
 
   /**
+   * Sets the linear velocity of this {@link RigidBody}
+   * @see org.dyn4j.dynamics.PhysicsBody#setLinearVelocity(double, double)
+   */
+  public void setLinearVelocity(double x, double y) {
+    body.setLinearVelocity(x, y);
+  }
+
+  /**
+   * Applies a linear force vector to this {@link RigidBody}
+   * @see org.dyn4j.dynamics.PhysicsBody#applyForce(Vector2)
+   */
+  public void applyForce(double x, double y) {
+    body.applyForce(new Vector2(x, y));
+  }
+
+  /**
    * Applies a linear impulse vector to this {@link RigidBody}
    * @see org.dyn4j.dynamics.PhysicsBody#applyImpulse(Vector2)
    */
@@ -142,7 +158,9 @@ public class RigidBody extends Component {
     List<Collider> colliders = entity.findComponents(Collider.class);
     colliders.forEach(collider -> body.addFixture(collider.fixture));
 
+    logger.debug("{} center before: {}", entity.name, body.getWorldCenter());
     body.updateMass();
+    logger.debug("{} center after: {}", entity.name, body.getWorldCenter());
     Physics.addBody(body);
   }
 

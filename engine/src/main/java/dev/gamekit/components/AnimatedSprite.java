@@ -15,6 +15,31 @@ public class AnimatedSprite extends Sprite {
   protected VoidCallback completedCallback;
   protected BufferedImage[] sprites;
   protected int imageIndex = 0;
+  protected boolean looping;
+
+  /** Creates a new {@link AnimatedSprite} with the given sprites */
+  public AnimatedSprite(BufferedImage[] sprites, double durationMs, boolean looping) {
+    super(sprites[0], ImageInterpolation.DEFAULT);
+
+    setSpriteSheet(sprites, looping);
+
+    animation = new Animation(durationMs / sprites.length, Animation.RepeatMode.RESTART);
+
+    animation.setStateListener(state -> {
+      if (state == Animation.State.RESTARTED) {
+        if (imageIndex == sprites.length - 1 && !this.looping) {
+          if (completedCallback != null)
+            completedCallback.run();
+
+          animation.stop();
+          return;
+        }
+
+        imageIndex = cycle(imageIndex + 1, 0, sprites.length - 1);
+        image = sprites[imageIndex];
+      }
+    });
+  }
 
   /**
    * Creates a new {@link AnimatedSprite}.
@@ -29,17 +54,17 @@ public class AnimatedSprite extends Sprite {
     int spriteWidth,
     int spriteHeight,
     int[] coordinates,
-    boolean loop
+    boolean looping
   ) {
     super(spriteSheet, ImageInterpolation.DEFAULT);
 
-    setSpriteSheet(spriteSheet, spriteWidth, spriteHeight, coordinates);
+    setSpriteSheet(spriteSheet, spriteWidth, spriteHeight, coordinates, looping);
 
     animation = new Animation(durationMs / sprites.length, Animation.RepeatMode.RESTART);
 
     animation.setStateListener(state -> {
       if (state == Animation.State.RESTARTED) {
-        if (imageIndex == sprites.length - 1 && !loop) {
+        if (imageIndex == sprites.length - 1 && !this.looping) {
           if (completedCallback != null)
             completedCallback.run();
 
@@ -51,8 +76,6 @@ public class AnimatedSprite extends Sprite {
         image = sprites[imageIndex];
       }
     });
-
-    image = sprites[0];
   }
 
   /**
@@ -64,7 +87,8 @@ public class AnimatedSprite extends Sprite {
     BufferedImage spriteSheet,
     int spriteWidth,
     int spriteHeight,
-    int... coordinates
+    int[] coordinates,
+    boolean looping
   ) {
     if (coordinates.length % 2 != 0)
       throw new IllegalArgumentException("Sprite coordinates must be an even array");
@@ -79,6 +103,27 @@ public class AnimatedSprite extends Sprite {
       int spriteY = coordinates[i + 1];
       sprites[i / 2] = spriteSheet.getSubimage(spriteX, spriteY, spriteWidth, spriteHeight);
     }
+
+    this.looping = looping;
+
+    imageIndex = 0;
+    image = sprites[0];
+  }
+
+  /** Updates the generated sprites directly */
+  public void setSpriteSheet(BufferedImage[] sprites, boolean looping) {
+    if (sprites == null)
+      throw new IllegalArgumentException("Sprites cannot be null");
+
+    if (sprites.length == 0)
+      throw new IllegalArgumentException("At least one sprite is required");
+
+    this.sprites = sprites;
+
+    this.looping = looping;
+
+    imageIndex = 0;
+    image = sprites[0];
   }
 
   /** Sets a callback listener which is notified when the <b>non-looping</b> animation ends */

@@ -19,8 +19,8 @@ import java.util.UUID;
 public abstract class Entity {
   @SuppressWarnings("unused")
   public final String id = UUID.randomUUID().toString();
+  public final String name;
 
-  protected final String name;
   protected final Logger logger = LogManager.getLogger(getClass());
   protected final ArrayList<Entity> children;
   protected final ArrayList<Component> components;
