@@ -2,6 +2,7 @@ package dev.gamekit.components;
 
 import dev.gamekit.animation.Animation;
 import dev.gamekit.settings.ImageInterpolation;
+import dev.gamekit.utils.ValueCallback;
 import dev.gamekit.utils.VoidCallback;
 
 import java.awt.image.BufferedImage;
@@ -13,6 +14,7 @@ public class AnimatedSprite extends Sprite {
   protected final Animation animation;
 
   protected VoidCallback completedCallback;
+  protected ValueCallback<Animation.State> animationStateCallback;
   protected BufferedImage[] sprites;
   protected int imageIndex = 0;
   protected boolean looping;
@@ -27,7 +29,7 @@ public class AnimatedSprite extends Sprite {
 
     animation.setStateListener(state -> {
       if (state == Animation.State.RESTARTED) {
-        if (imageIndex == sprites.length - 1 && !this.looping) {
+        if (imageIndex == this.sprites.length - 1 && !this.looping) {
           if (completedCallback != null)
             completedCallback.run();
 
@@ -35,9 +37,12 @@ public class AnimatedSprite extends Sprite {
           return;
         }
 
-        imageIndex = cycle(imageIndex + 1, 0, sprites.length - 1);
-        image = sprites[imageIndex];
+        imageIndex = cycle(imageIndex + 1, 0, this.sprites.length - 1);
+        image = this.sprites[imageIndex];
       }
+
+      if (animationStateCallback != null)
+        animationStateCallback.run(state);
     });
   }
 
@@ -119,11 +124,15 @@ public class AnimatedSprite extends Sprite {
       throw new IllegalArgumentException("At least one sprite is required");
 
     this.sprites = sprites;
-
     this.looping = looping;
 
     imageIndex = 0;
     image = sprites[0];
+  }
+
+  /** Sets a callback listener which is notified when the internal animation state ends */
+  public void setAnimationStateCallback(ValueCallback<Animation.State> animationStateCallback) {
+    this.animationStateCallback = animationStateCallback;
   }
 
   /** Sets a callback listener which is notified when the <b>non-looping</b> animation ends */
