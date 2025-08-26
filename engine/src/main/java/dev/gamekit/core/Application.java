@@ -34,6 +34,7 @@ public abstract class Application {
   private final List<Timeout> newTimeouts;
   private final List<Animation> animations;
   private final WorkerThread audioThread;
+  private final WorkerThread physicsThread;
   private final WorkerThread drawThread;
   private boolean isRunning;
   private Scene currentScene;
@@ -54,6 +55,7 @@ public abstract class Application {
     this.newTimeouts = new ArrayList<>();
     this.animations = new ArrayList<>();
     this.audioThread = new WorkerThread("audio", Constants.FRAME_INTERVAL_MS, Audio::update);
+    this.physicsThread = new WorkerThread("physics", Constants.FRAME_INTERVAL_MS, Physics::update);
     this.drawThread = new WorkerThread("draw", Constants.DRAW_INTERVAL_MS, this::draw);
     this.isRunning = true;
   }
@@ -172,12 +174,12 @@ public abstract class Application {
 
     window.show();
     audioThread.start();
+    physicsThread.start();
     drawThread.start();
   }
 
   /** Called in each frame to update the current scene */
   private void update() {
-    Physics.update();
     animations.forEach(Animation::update);
     timeouts.forEach(Timeout::update);
 
@@ -244,10 +246,13 @@ public abstract class Application {
       currentScene._dispose();
 
     audioThread.interrupt();
-    audioThread.join(1000);
+    audioThread.join(330);
+
+    physicsThread.interrupt();
+    physicsThread.join(330);
 
     drawThread.interrupt();
-    drawThread.join(1000);
+    drawThread.join(330);
 
     Audio.dispose();
     IO.dispose();

@@ -61,6 +61,18 @@ public class Vector {
     );
   }
 
+  /** Returns a new vector which is the sum of all input vectors */
+  public static Vector sum(Vector... vectors) {
+    double x = 0, y = 0;
+
+    for (Vector v : vectors) {
+      x += v.x;
+      y += v.y;
+    }
+
+    return new Vector(x, y);
+  }
+
   @Override
   public String toString() {
     return String.format(getClass().getName() + "[x=%.2f,y=%.2f]", x, y);

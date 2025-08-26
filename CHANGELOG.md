@@ -52,6 +52,7 @@
 - Added `ValueCallback<T>` class which is a single abstract method interfaces whose `run` method
   accepts a single variable of type `T`
 - Added state machine package to engine module
+- Added `static Vector sum(Vector...)` which returns a vector summing all input vectors
 
 ### Changed
 
