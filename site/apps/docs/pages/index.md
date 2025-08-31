@@ -12,6 +12,7 @@ small to medium-sized games.
 GameKit is distributed as a **Maven** dependency. To include it in your project, add its dependency to your `pom.xml`
 
 ```xml
+
 <project>
     <repositories>
         <repository>
@@ -34,7 +35,7 @@ GameKit is distributed as a **Maven** dependency. To include it in your project,
 Replace **`{VERSION}`** with the intended version. Find all
 versions on the [releases](https://github.com/kwameopareasiedu/gamekit/releases) page.
 
-## A Simple Sample
+## Getting Started
 
 It's very easy to get started with GameKit. The sample below launches a 1280x720 window with a red square drawn:
 
@@ -68,3 +69,7 @@ public class HelloGameKit extends Scene {
   }
 }
 ```
+
+## Tutorials
+
+Now that you've tested the waters, let's go for a deep dive into GameKit with the [tutorials](/tutorials)
