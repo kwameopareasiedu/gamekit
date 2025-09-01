@@ -286,6 +286,19 @@ public class RendererScene extends Scene {
 }
 ```
 
+## Scene Camera
+
+The static `Camera` class gives you the ability to pan and zoom around in your game world. This is useful for features
+like player/object tracking.
+
+The `Camera` class is incredibly simple to use. The table below shows all the available methods of `Camera`:
+
+| Method                         | Description                                                                             |
+|--------------------------------|-----------------------------------------------------------------------------------------|
+| `Camera.lookAt`                | Positions the camera such that the given coordinates appear in the center of the window |
+| `Camera.setZoom`               | Sets the zoom level of the camera                                                       |
+| `Camera.screenToWorldPosition` | Converts a point in screen coordinates to a point in world coordinates                  |
+
 ## Loading Assets
 
 While building your game, chances are, you'd need to import images, audio, fonts or other external resources. GameKit
@@ -362,7 +375,7 @@ public class InputSample extends Scene {
     } else if (Input.isButtonReleased(Input.BUTTON_LMB)) {
       logger.debug("Left Mouse Button released");
     }
-    
+
     if (Input.isKeyDown(Input.KEY_SPACE)) {
       logger.debug("Space Bar pressed");
     } else if (Input.isKeyPressed(Input.BUTTON_LMB)) {
@@ -405,17 +418,17 @@ import dev.gamekit.core.Audio;
 
 public class AudioSample extends Scene {
   private static final String MUSIC_CLIP_KEY = "music";
-  
+
   private boolean playing = false;
 
   public AudioSample() {
     super("Main Scene");
-    
+
     Audio.preload(
       MUSIC_CLIP_KEY,
       new AudioClip2D(
-        "sample.wav", 
-        AudioGroup.MUSIC, 
+        "sample.wav",
+        AudioGroup.MUSIC,
         1 // Max volume (0 - 1)
       )
     );
@@ -446,7 +459,5 @@ public class AudioSample extends Scene {
 
 As stated earlier, this is just an introduction to GameKit's audio system. Visit the full
 documentation [here](/audio).
-
-## Scene Camera
 
 ## User Interface

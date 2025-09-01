@@ -21,7 +21,7 @@ h2 {
   font-weight: 700;
 
   &:not(:first-child) {
-    margin-top: 28px;
+    margin-top: 48px;
   }
 }
 

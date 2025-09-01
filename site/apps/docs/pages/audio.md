@@ -219,7 +219,7 @@ Audio shapes are represented by the abstract `AudioShape` class. You can extend 
 
 GameKit ships with the concrete `AudioShape.CIRCLE` shape implementation.
 
-#### Attenuation
+#### Attenuation Function
 
 Attenuation for spatial audio is the falloff in perceived volume of an audio source as the listener moves away from it.
 Mathematically, it is a function which maps the distance between the source and listener to a volume value.
