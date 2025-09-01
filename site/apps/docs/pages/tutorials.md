@@ -192,7 +192,7 @@ anything to the screen is handled by the static `Renderer` class.
 Anytime the renderer is used, it adds a draw call to the render queue. **Draw calls** are objects which instructs the
 render thread to draw something to the window.
 
-The table below shows all the available methods of the renderer:
+The table below shows all the available methods of `Renderer`:
 
 | Method                        | Description                                                           |
 |-------------------------------|-----------------------------------------------------------------------|
@@ -281,3 +281,35 @@ public class RendererScene extends Scene {
   }
 }
 ```
+
+## Loading Assets
+
+While building your game, chances are, you'd need to import images, audio, fonts or other external resources. GameKit
+allows you to do this via the static `IO` class.
+
+`IO` caches resources it loads, making subsequent queries instantaneous, which improves overall performance of your
+game.
+
+`IO` also keeps references to any open streams, which it closes when the application exits. While this is
+convenient, it's good practice to close streams manually when done.
+
+> _Since we are using Java here, you need to ensure that your external directory is added to the classpath. For Maven
+> projects, this is the `src/main/java/resources/` directory which should already be added.
+> Check your IDE settings to make sure._
+
+The table below shows all the available methods of the `IO`:
+
+| Method                 | Description                                                                                                    |
+|------------------------|----------------------------------------------------------------------------------------------------------------|
+| `IO.getResourceStream` | Opens and returns a stream to a resource file                                                                  |
+| `IO.getResourceImage`  | Loads and caches an image resource file. This method is overloaded to return a slice of an image resource file |
+| `IO.getResourceFont`   | Loads and caches a font resource file                                                                          |
+
+
+## Handling Input
+
+## Audio Playback
+
+## Scene Camera
+
+## User Interface

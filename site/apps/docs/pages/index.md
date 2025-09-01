@@ -72,4 +72,4 @@ public class HelloGameKit extends Scene {
 
 ## Tutorials
 
-Now that you've tested the waters, let's go for a deep dive into GameKit with the [tutorials](/tutorials)
+Now that you've tested the waters, let's go for a deep dive into GameKit with the [tutorials](/tutorials).
