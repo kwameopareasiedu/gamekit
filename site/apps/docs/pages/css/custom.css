@@ -47,5 +47,16 @@ pre {
 }
 
 img {
-  margin: 0 auto!important;
+  margin: 0 auto !important;
+}
+
+blockquote {
+  background-color: #fff7f2;
+  font-style: italic;
+  border-left-color: darkorange;
+  padding: 8px 10px;
+}
+
+blockquote > * {
+  margin-bottom: 0;
 }

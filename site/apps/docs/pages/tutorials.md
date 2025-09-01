@@ -177,8 +177,8 @@ This is where the `Entity` class comes in.
 An `Entity` represents an independent object that exists within a scene/game world. Entities have similar lifecycle
 methods as scenes, and are managed by a scene or their parent entities.
 
-> _Fun fact: A scene is actually a special kind of entity with the ability to render a user interface (more on this
-> later) and is managed by the `Application`._
+> Fun fact: A scene is actually a special kind of entity with the ability to render a user interface (more on this
+> later) and is managed by the `Application`.
 
 ### Entity Parents
 
@@ -297,9 +297,10 @@ game.
 `IO` also keeps references to any open streams, which it closes when the application exits. While this is
 convenient, it's good practice to close streams manually when done.
 
-> _Since we are using Java here, you need to ensure that your external directory is added to the classpath. For Maven
-> projects, this is the `src/main/java/resources/` directory which should already be added.
-> Check your IDE settings to make sure._
+> Since we are using Java here, you need to ensure that your external directory is added to the classpath.
+>
+> For Maven projects, this is the `src/main/java/resources/` directory which should already be added, however, be sure
+> to check your IDE settings.
 
 The table below shows all the available methods of `IO`:
 
@@ -373,9 +374,9 @@ public class InputSample extends Scene {
 }
 ```
 
-## Audio Playback
+## Working With Audio
 
-> _This is an introduction to GameKit's audio subsystem. Visit the full documentation [here](/audio)_.
+> This is an introduction to GameKit's audio system. Visit the full documentation [here](/audio).
 
 Music and sound effects add more life to your game, which improves player immersion. GameKit supports audio playback in
 a simple yet powerful manner.
@@ -443,7 +444,7 @@ public class AudioSample extends Scene {
 
 ### Full Documentation
 
-As stated earlier, this is just an introduction to GameKit's audio subsystem. Visit the full
+As stated earlier, this is just an introduction to GameKit's audio system. Visit the full
 documentation [here](/audio).
 
 ## Scene Camera
