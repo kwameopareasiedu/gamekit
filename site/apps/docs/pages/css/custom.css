@@ -30,6 +30,13 @@ h3 {
   font-weight: 600;
 }
 
+h3,
+h4,
+h5,
+h6 {
+  color: darkblue;
+}
+
 code {
   color: darkorange;
   border-radius: 3px;
@@ -37,4 +44,8 @@ code {
 
 pre {
   border-radius: 3px;
+}
+
+img {
+  margin: 0 auto!important;
 }
