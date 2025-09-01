@@ -375,6 +375,77 @@ public class InputSample extends Scene {
 
 ## Audio Playback
 
+> _This is an introduction to GameKit's audio subsystem. Visit the full documentation [here](/audio)_.
+
+Music and sound effects add more life to your game, which improves player immersion. GameKit supports audio playback in
+a simple yet powerful manner.
+
+GameKit supports both 2D (non-spatial) audio and 3D (spatial) audio.
+
+2D audio is great for background music and UI element feedback, while 3D audio works best for sounds which sound
+differently depending on their location in your game world. (E.g. camp fireplace and explosions)
+
+The general workflow for audio in GameKit is as follows:
+
+- Preload audio file into an audio clip
+- Assign audio clip to an audio group
+- Begin/Pause/Stop playback of your clip within your game
+
+The sample below illustrates this process. Here we preload a resource file "sample.wav", then we use the space bar press
+to start/stop playback.
+
+```java
+import dev.gamekit.audio.AudioClip2D;
+import dev.gamekit.audio.AudioGroup;
+import dev.gamekit.core.Application;
+import dev.gamekit.core.Input;
+import dev.gamekit.core.Scene;
+import dev.gamekit.core.Audio;
+
+public class AudioSample extends Scene {
+  private static final String MUSIC_CLIP_KEY = "music";
+  
+  private boolean playing = false;
+
+  public AudioSample() {
+    super("Main Scene");
+    
+    Audio.preload(
+      MUSIC_CLIP_KEY,
+      new AudioClip2D(
+        "sample.wav", 
+        AudioGroup.MUSIC, 
+        1 // Max volume (0 - 1)
+      )
+    );
+  }
+
+  public static void main(String[] args) {
+    Application game = new Application("Audio Sample") { };
+    game.loadScene(new AudioSample());
+    game.run();
+  }
+
+  @Override
+  protected void update() {
+    if (Input.isKeyDown(Input.KEY_SPACE)) {
+      if (!playing) {
+        Audio.get(MUSIC_CLIP_KEY).play();
+        playing = true;
+      } else {
+        Audio.get(MUSIC_CLIP_KEY).stop()
+        playing = false;
+      }
+    }
+  }
+}
+```
+
+### Full Documentation
+
+As stated earlier, this is just an introduction to GameKit's audio subsystem. Visit the full
+documentation [here](/audio).
+
 ## Scene Camera
 
 ## User Interface
