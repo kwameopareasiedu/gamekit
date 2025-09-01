@@ -88,6 +88,55 @@ public class AudioSample extends Scene {
 }
 ```
 
+## Audio Groups
+
+Audio groups are the answer to the question **_"How do I control the properties of multiple audio clips at once?"_**.
+By requiring an audio group on every audio clip, the volume and muted status of all clips in the group can be
+controlled.
+
+The most practical example is implementation of a sound settings interface within your game.
+
+GameKit ships with two (2) default audio groups: `AudioGroup.MUSIC` and `AudioGroup.EFFECTS`. However, you can create
+more by extending the `AudioGroup` class.
+
+An example on creating a new audio group for, say voice narrations, is shown below:
+
+```java
+import dev.gamekit.audio.AudioGroup;
+
+/** An audio group called "Narration" with an initial max volume of 50% */
+public class NarrationAudioGroup extends AudioGroup {
+  public static final NarrationAudioGroup INSTANCE = new NarrationAudioGroup();
+
+  private NarrationAudioGroup() {
+    super("Narration", 0.5);
+  }
+}
+```
+
+The new audio group can then be used on audio clips. **It is important to use the same instance of the audio group**.
+
+```java
+new AudioClip2D("test.wav", NarrationAudioGroup.INSTANCE, 0.75);
+new AudioClip3D("test.wav", NarrationAudioGroup.INSTANCE, 1, AudioAttenuation.LINEAR, new AudioShapeCircle(5, 30));
+```
+
+### Adjusting Group Properties
+
+Withing your game (E.g. the sound settings page), you can adjust and audio groups by calling methods on them as shown in
+the sample below:
+
+```java
+// Set the max volume of the AudioGroup.MUSIC group to 100%
+AudioGroup.MUSIC.setMaxVolume(1);
+
+// Set the max volume of the AudioGroup.EFFECTS group to 40%
+AudioGroup.EFFECTS.setMaxVolume(0.4);
+
+// Mute the NarrationAudioGroup.INSTANCE group
+NarrationAudioGroup.INSTANCE.setMuted(true);
+```
+
 ## Spatial vs Non-Spatial
 
 GameKit's audio is grouped into two categories:
@@ -103,7 +152,7 @@ background music, UI sound effects and narration voice-overs.
 In GameKit, non-spatial audio is represented by the `AudioClip2D` class which extends the abstract `AudioClip`.
 
 The snippet below creates a new non-spatial audio clip from the _test.wav_ resource file with the `AudioGroup.MUSIC`
-group (more on this later) and a max volume of 75%.
+group and a max volume of 75%.
 
 ```java
 new AudioClip2D("test.wav", AudioGroup.MUSIC, 0.75);
@@ -119,15 +168,13 @@ Spatial audio is great for sound-emitting objects in your game world, which are 
 explosions, characters, etc.)
 
 The snippet below creates a new spatial audio clip from the _test.wav_ resource file with the `AudioGroup.EFFECTS`
-group, a max volume of 100%, a linear attenuation and a circular shape with min and max distances of 5 and 30
+group, a max volume of 100%, a linear attenuation within a circular shape with min and max distances of 5 and 30
 respectively.
 
 ```java
-new AudioClip2D("test.wav", AudioGroup.EFFECTS, 1, AudioAttenuation.LINEAR, new AudioShapeCircle(5, 30));
+new AudioClip3D("test.wav", AudioGroup.EFFECTS, 1, AudioAttenuation.LINEAR, new AudioShapeCircle(5, 30));
 ```
 
-## Audio Groups
+#### Attenuation
 
-## Attenuation
-
-## Audio Shapes
+#### Audio Shapes
