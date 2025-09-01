@@ -34,9 +34,11 @@ h3 {
 h4 {
   font-size: 20px;
   font-weight: 600;
-  color: #003800;
 }
 
+h4, h5, h6 {
+  color: #003800;
+}
 
 code {
   color: darkorange;
@@ -60,4 +62,14 @@ blockquote {
 
 blockquote > * {
   margin-bottom: 0;
+}
+
+.caption-image-container {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.caption-image-container small {
+  font-style: italic;
 }

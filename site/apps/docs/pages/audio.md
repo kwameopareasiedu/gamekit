@@ -31,18 +31,18 @@ import dev.gamekit.core.Scene;
 public class AudioSample extends Scene {
   private static final String BG_MUSIC_KEY = "music";
   private static final String EXPLOSION_SFX_KEY = "explosion";
-  
+
   private boolean playing = false;
 
   public AudioSample() {
     super("Main Scene");
-    
+
     // Non-spatial (2D) audio
     Audio.preload(
       BG_MUSIC_KEY,
       new AudioClip2D("bg-music.wav", AudioGroup.MUSIC, 1)
     );
-    
+
     // Spatial (3D) audio
     Audio.preload(
       EXPLOSION_SFX_KEY,
@@ -74,9 +74,9 @@ We extend the code sample above illustrating the playback methods (Some code is 
 public class AudioSample extends Scene {
   private static final String BG_MUSIC_KEY = "music";
   private static final String EXPLOSION_SFX_KEY = "explosion";
-  
+
   /** Omitted code */
-  
+
   @Override
   protected void update() {
     Audio.get(BG_MUSIC_KEY).play()        // Start playback from the beginning of the audio (No looping)
@@ -175,6 +175,85 @@ respectively.
 new AudioClip3D("test.wav", AudioGroup.EFFECTS, 1, AudioAttenuation.LINEAR, new AudioShapeCircle(5, 30));
 ```
 
-#### Attenuation
+#### Audio Listener
+
+Spatial audio requires a listener reference position to compute the relative panning. This controls how much of it is
+heard through the left and right speakers.
+
+This listener reference is represented by the singleton `AudioListener` class. It is essentially the position of your "
+ears" in the scene for spatial audio.
+
+For example, if your player character is the entity responsible for "hearing", you should make sure to update the
+`AudioListener` position to match the player's in-game position.
+
+This way, if the player gets close to, say a fireplace which emits sound, you'd hear the sound more on the right speaker
+if the fireplace is to the right of it.
+
+Use `AudioListener.setPosition` method to update the position of the listener.
 
 #### Audio Shapes
+
+Audio shapes model the area of spatial audio's range. They specify the minimum and maximum attenuation distances with
+respect to a shape. Common audio shapes include circle, box and capsule, illustrated below:
+
+<div class="caption-image-container" style="width: 45%; margin-right: 5%; margin-bottom: 5%">
+  <img src="/assets/circle-audio-shape.png" style="border:none;" alt="Circle Audio Shape"/>
+  <small class="caption">Circle Audio Shape</small>
+</div>
+
+<div class="caption-image-container" style="width: 45%">
+  <img src="/assets/box-audio-shape.png" style="border:none;" alt="Box Audio Shape"/>
+  <small class="caption">Box Audio Shape</small>
+</div>
+
+<div class="caption-image-container" style="display: flex; width: 70%; margin: 0 auto;">
+  <img src="/assets/capsule-audio-shape.png" style="border:none;" alt="Capsule Audio Shape"/>
+  <small class="caption">Capsule Audio Shape</small>
+</div>
+
+<br>The circle audio shape represents the natural shape of sound, starting at a point and propagating outward. The box
+audio shape can represent spatial sound in a rectangular room for example, while the capsule can be used for pipes.
+
+Audio shapes are represented by the abstract `AudioShape` class. You can extend this and implement the
+`getDistance` method to define custom audio shapes.
+
+GameKit ships with the concrete `AudioShape.CIRCLE` shape implementation.
+
+#### Attenuation
+
+Attenuation for spatial audio is the falloff in perceived volume of an audio source as the listener moves away from it.
+Mathematically, it is a function which maps the distance between the source and listener to a volume value.
+
+> While audio shapes define the area in which attenuation occurs, attenuation functions define how volume attenuation
+> occurs within the shape.
+
+Below, we see three different attenuation functions: linear, logarithmic and inverse. Linear gives a proportional
+falloff as the distance increases while logarithmic and inverse model a more realistic falloff.
+
+<div class="caption-image-container" style="width: 32%">
+  <img src="/assets/att-lin.png" alt="Linear attenuation"/>
+  <small class="caption">Linear Attenuation</small>
+</div>
+
+<div class="caption-image-container" style="width: 32%">
+  <img src="/assets/att-log.png" alt="Logarithmic attenuation"/>
+  <small class="caption">Logarithmic Attenuation</small>
+</div>
+
+<div class="caption-image-container" style="width: 32%">
+  <img src="/assets/att-inv.png" alt="Inverse attenuation"/>
+  <small class="caption">Inverse Attenuation</small>
+</div>
+
+<br>These curves can be modelled by implementing the `AudioAttenuation` interface and its `getDistance` method which
+receives the distance between the audio source and the listener and min and max distances of the audio shape and should
+return the attenuated volume.
+
+GameKit ships with the concrete `AudioAttenuation.LINEAR` shape implementation.
+
+## Conclusion
+
+While working with audio in a game can be challenging, GameKit does its best to offer tools for effective utilization.
+
+Having reached the end of this document, you should now be able to fully understand the
+[code example](#preloading-audio-clips) at the start of the document.
