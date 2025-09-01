@@ -28,14 +28,15 @@ h2 {
 h3 {
   font-size: 24px;
   font-weight: 600;
-}
-
-h3,
-h4,
-h5,
-h6 {
   color: darkblue;
 }
+
+h4 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #003800;
+}
+
 
 code {
   color: darkorange;
