@@ -140,7 +140,8 @@ public class SimpleScene extends Scene {
 
   @Override
   protected void update() {
-    // Called every frame to update the scene (Can be called multiple times per frame due to delays in game loop)
+    // Called every frame to update the scene
+    // Can be called multiple times per frame due to delays in game loop
   }
 
   @Override
@@ -455,9 +456,66 @@ public class AudioSample extends Scene {
 }
 ```
 
-### Full Documentation
-
-As stated earlier, this is just an introduction to GameKit's audio system. Visit the full
-documentation [here](/audio).
+As stated earlier, this is just an introduction to GameKit's audio system. Visit the full documentation [here](/audio).
 
 ## User Interface
+
+> This is an introduction to GameKit's UI system. Visit the full documentation [here](/user-interface).
+
+Almost every game requires a user interface. You know, that overlay of visual components that convey information to the
+player and also allows the player to interact with the game.
+
+In GameKit, the user interface (UI) is created and managed by the `Scene` class by overriding the `createUI` method.
+
+In the example shown below, a center-aligned text widget with text "Hello GameKit" is displayed in the middle of the
+screen:
+
+```java
+import dev.gamekit.core.Application;
+import dev.gamekit.core.Input;
+import dev.gamekit.core.Scene;
+import dev.gamekit.ui.enums.Alignment;
+import dev.gamekit.ui.enums.CrossAxisAlignment;
+import dev.gamekit.ui.widgets.*;
+
+public class UserInterfaceSample extends Scene {
+  public UserInterfaceSample() {
+    super("UI Scene");
+  }
+
+  public static void main(String[] args) {
+    Application game = new Application("User Interface") { };
+    game.loadScene(new UserInterfaceSample());
+    game.run();
+  }
+
+  @Override
+  protected Widget createUI() {
+    return Center.create(
+      Align.create(
+        Align.config().horizontalAlignment(Alignment.CENTER).verticalAlignment(Alignment.CENTER),
+        Column.create(
+          Column.config().crossAxisAlignment(CrossAxisAlignment.STRETCH),
+          Text.create(
+            Text.config().fontSize(72).alignment(Alignment.CENTER),
+            "Hello GameKit"
+          ),
+          Text.create(
+            Text.config().fontSize(24).alignment(Alignment.CENTER),
+            "User Interface Sample"
+          )
+        )
+      )
+    );
+  }
+}
+```
+
+The above program, when run, results in the window in the screenshot below:
+
+![](assets/user-interface.png)
+
+As you can see, UI creation occurs right in your scene code, not in a separate file you have to import into your code.
+This keeps things nice, clean and compact.
+
+Again, this is just an introduction to GameKit's UI system. Visit the full documentation [here](/user-interface).

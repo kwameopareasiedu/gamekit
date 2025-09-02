@@ -29,6 +29,10 @@ h3 {
   font-size: 24px;
   font-weight: 600;
   color: darkblue;
+
+  &:not(:first-child) {
+    margin-top: 24px;
+  }
 }
 
 h4 {
