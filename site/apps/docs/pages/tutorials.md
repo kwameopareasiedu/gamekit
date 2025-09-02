@@ -11,7 +11,7 @@ this engine, you must have the following installed and configured:
 2. A Java IDE (IntelliJ IDEA, _Eclipse_, _Netbeans_, _VSCode_, etc)
 3. Maven build tool and dependency manager (3.9.9+)
 
-Next, you need to create a Maven Java project and [add the GameKit engine to your dependencies](/#installation).
+Next, you need to create a Maven Java project and [add the GameKit engine to your dependencies](index.md#installation).
 
 ## The GameKit Application
 
@@ -300,29 +300,28 @@ The `Camera` class is incredibly simple to use. The table below shows all the av
 | `Camera.setZoom`               | Sets the zoom level of the camera                                                       |
 | `Camera.screenToWorldPosition` | Converts a point in screen coordinates to a point in world coordinates                  |
 
-## Loading Assets
+## External Assets
 
 While building your game, chances are, you'd need to import images, audio, fonts or other external resources. GameKit
 allows you to do this via the static `IO` class.
 
-`IO` caches resources it loads, making subsequent queries instantaneous, which improves overall performance of your
-game.
-
-`IO` also keeps references to any open streams, which it closes when the application exits. While this is
-convenient, it's good practice to close streams manually when done.
-
-> Since we are using Java here, you need to ensure that your external directory is added to the classpath.
->
+> Since GameKit is built with Java here, you need to ensure that your external directory is added to the classpath.
 > For Maven projects, this is the `src/main/java/resources/` directory which should already be added, however, be sure
 > to check your IDE settings.
 
+`IO` caches resources it loads, making subsequent queries instantaneous, which improves overall performance of your
+game.
+
 The table below shows all the available methods of `IO`:
 
-| Method                 | Description                                                                                                    |
-|------------------------|----------------------------------------------------------------------------------------------------------------|
-| `IO.getResourceStream` | Opens and returns a stream to a resource file                                                                  |
-| `IO.getResourceImage`  | Loads and caches an image resource file. This method is overloaded to return a slice of an image resource file |
-| `IO.getResourceFont`   | Loads and caches a font resource file                                                                          |
+| Method                 | Description                                   |
+|------------------------|-----------------------------------------------|
+| `IO.getResourceStream` | Opens and returns a stream to a resource file |
+| `IO.getResourceImage`  | Loads and caches an image resource file       |
+| `IO.getResourceFont`   | Loads and caches a font resource file         |
+
+`IO` keeps references to any open streams, which it closes when the application exits. While this is convenient, it's
+good practice to close streams manually when done.
 
 ## Handling Input
 
@@ -337,14 +336,14 @@ Detecting player input in GameKit is done using the static `Input` class. `Input
 
 The table below shows all the available methods of `Input`:
 
-| Method                   | Description                                                                            |
-|--------------------------|----------------------------------------------------------------------------------------|
-| `Input.isKeyDown`        | Checks if a key matching the given keycode has been pressed in the current frame       |
-| `Input.isKeyPressed`     | Checks if a key matching the given keycode is being held down                          |
-| `Input.isKeyReleased`    | Checks if a key matching the given keycode has been released in the current frame      |
-| `Input.isButtonDown`     | Checks if a button matching the given button id has been pressed in the current frame  |
-| `Input.isButtonPressed`  | Checks if a button matching the given button id is being held down                     |
-| `Input.isButtonReleased` | Checks if a button matching the given button id has been released in the current frame |
+| Method                   | Description                                                    |
+|--------------------------|----------------------------------------------------------------|
+| `Input.isKeyDown`        | Checks if a key has just been pressed in the current frame     |
+| `Input.isKeyPressed`     | Checks if a key is being held down                             |
+| `Input.isKeyReleased`    | Checks if a key has just been released in the current frame    |
+| `Input.isButtonDown`     | Checks if a button has just been pressed in the current frame  |
+| `Input.isButtonPressed`  | Checks if a button is being held down                          |
+| `Input.isButtonReleased` | Checks if a button has just been released in the current frame |
 
 ### Input Sample
 
@@ -390,7 +389,7 @@ public class InputSample extends Scene {
 
 ## Working With Audio
 
-> This is an introduction to GameKit's audio system. Visit the full documentation [here](/audio).
+> This is an introduction to GameKit's audio system. Visit the full documentation [here](audio.md).
 
 Music and sound effects add more life to your game, which improves player immersion. GameKit supports audio playback in
 a simple yet powerful manner.
@@ -456,11 +455,12 @@ public class AudioSample extends Scene {
 }
 ```
 
-As stated earlier, this is just an introduction to GameKit's audio system. Visit the full documentation [here](/audio).
+As stated earlier, this is just an introduction to GameKit's audio system. Visit the full
+documentation [here](audio.md).
 
 ## User Interface
 
-> This is an introduction to GameKit's UI system. Visit the full documentation [here](/user-interface).
+> This is an introduction to GameKit's UI system. Visit the full documentation [here](user-interface.md).
 
 Almost every game requires a user interface. You know, that overlay of visual components that convey information to the
 player and also allows the player to interact with the game.
@@ -518,4 +518,4 @@ The above program, when run, results in the window in the screenshot below:
 As you can see, UI creation occurs right in your scene code, not in a separate file you have to import into your code.
 This keeps things nice, clean and compact.
 
-Again, this is just an introduction to GameKit's UI system. Visit the full documentation [here](/user-interface).
+Again, this is just an introduction to GameKit's UI system. Visit the full documentation [here](user-interface.md).

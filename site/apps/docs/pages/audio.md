@@ -189,7 +189,35 @@ For example, if your player character is the entity responsible for "hearing", y
 This way, if the player gets close to, say a fireplace which emits sound, you'd hear the sound more on the right speaker
 if the fireplace is to the right of it.
 
-Use `AudioListener.setPosition` method to update the position of the listener.
+In the example below, we show how you would update the `AudioListener` instance in a hypothetical player entity class.
+
+```java
+import dev.gamekit.core.Entity;
+import dev.gamekit.core.Input;
+
+class PlayerCharacter extends Entity {
+  public PlayerCharacter() {
+    super("Player Character");
+  }
+  
+  /** Omitted code */
+  
+  @Override
+  protected void update() {
+    if (Input.isKeyPressed(Input.KEY_A)) {
+      /** Code to move player character left */
+    } else if (Input.isKeyPressed(Input.KEY_D)) {
+      /** Code to move player character right */
+    }
+    
+    double positionX = /** Retrive x-coordinate */
+    double positionY = /** Retrive y-coordinate */
+    
+    // Update the audio listener position
+    AudioListener.setPosition(positionX, positionY);
+  }
+}
+```
 
 #### Audio Shapes
 
