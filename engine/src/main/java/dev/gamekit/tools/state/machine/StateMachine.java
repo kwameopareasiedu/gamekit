@@ -1,4 +1,4 @@
-package dev.gamekit.statemachine;
+package dev.gamekit.tools.state.machine;
 
 import java.util.Arrays;
 import java.util.HashMap;

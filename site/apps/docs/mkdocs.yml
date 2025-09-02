@@ -2,9 +2,8 @@ site_name: GameKit
 site_dir: dist
 docs_dir: pages
 nav:
-  - Home: index.md
   - Tutorials: tutorials.md
-  - Components: entity-components.md
+#  - Components: entity-components.md
   - UI: user-interface.md
   - Audio: audio.md
 theme: mkdocs
