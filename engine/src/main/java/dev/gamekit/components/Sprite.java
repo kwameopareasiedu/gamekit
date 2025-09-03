@@ -11,9 +11,14 @@ import java.awt.image.BufferedImage;
 
 /** {@link Sprite} renders a {@link BufferedImage} appearance  for an {@link Entity} */
 public class Sprite extends Component {
+  protected final Bounds bounds;
+
   protected BufferedImage image;
   protected ImageInterpolation interpolation;
-  protected final Bounds bounds;
+  protected boolean flippedX = false;
+  protected boolean flippedY = false;
+
+  private double aspectRatio;
 
   public Sprite(BufferedImage image, ImageInterpolation interpolation) {
     if (image == null)
@@ -22,6 +27,7 @@ public class Sprite extends Component {
     this.image = image;
     this.interpolation = interpolation;
     this.bounds = new Bounds(0, 0, image.getWidth(), image.getHeight());
+    this.aspectRatio = (double) image.getWidth() / (double) image.getHeight();
   }
 
   public Sprite(BufferedImage image) {
@@ -32,12 +38,14 @@ public class Sprite extends Component {
   protected void render() {
     Transform transform = entity.findComponent(Transform.class);
     Vector globalPosition = transform.getGlobalPosition();
+    double signedWidth = !flippedX ? bounds.width : -bounds.width;
+    double signedHeight = !flippedY ? bounds.height : -bounds.height;
 
     Renderer.drawImage(
       image,
       (int) (globalPosition.x + bounds.x),
       (int) (globalPosition.y + bounds.y),
-      (int) bounds.width, (int) bounds.height
+      (int) signedWidth, (int) signedHeight
     ).withRotation(
       (int) (globalPosition.x),
       (int) (globalPosition.y),
@@ -48,6 +56,7 @@ public class Sprite extends Component {
   /** Updates this {@link Sprite sprite's} image */
   public void setImage(BufferedImage image) {
     this.image = image;
+    this.aspectRatio = (double) image.getWidth() / (double) image.getHeight();
   }
 
   /** Updates this {@link Sprite sprite's} interpolation setting */
@@ -55,22 +64,33 @@ public class Sprite extends Component {
     this.interpolation = interpolation;
   }
 
-  /**
-   * Sets the height based on the width and given aspect.
-   * <p>
-   * NB: <i>This should be called after {@link #setSize}</i>
-   */
-  public void setAspectRatio(double aspect) {
-    setSize(bounds.width, bounds.width / aspect);
+  /** Sets the width and computes the height based on the aspect ratio */
+  public void setWidth(double width) {
+    bounds.setSize(width, width / aspectRatio);
   }
 
-  /** Updates the center offset portion of the {@link #bounds} */
-  public void setOffset(double offsetX, double offsetY) {
-    bounds.setPosition(offsetX, offsetY);
+  /** Sets the height and computes the width based on the aspect ratio */
+  public void setHeight(double height) {
+    bounds.setSize(height * aspectRatio, height);
   }
 
-  /** Updates the dimension portion of the {@link #bounds} */
+  /** Sets the width and height, not respecting the aspect ratio */
   public void setSize(double width, double height) {
     bounds.setSize(width, height);
+  }
+
+  /** Updates the center offset of the {@link #bounds} */
+  public void setCenter(double centerX, double centerY) {
+    bounds.setPosition(centerX, centerY);
+  }
+
+  /** Set whether the sprite is flipped horizontally */
+  public void flipX(boolean flipped) {
+    flippedX = flipped;
+  }
+
+  /** Set whether the sprite is flipped vertically */
+  public void flipY(boolean flipped) {
+    flippedY = flipped;
   }
 }
