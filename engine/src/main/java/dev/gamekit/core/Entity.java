@@ -22,10 +22,10 @@ public abstract class Entity {
   public final String name;
 
   protected final Logger logger = LogManager.getLogger(getClass());
-  protected final ArrayList<Entity> children;
-  protected final ArrayList<Component> components;
   protected Entity parent;
 
+  private final ArrayList<Entity> children;
+  private final ArrayList<Component> components;
   private State state;
 
   public Entity(String name) {
