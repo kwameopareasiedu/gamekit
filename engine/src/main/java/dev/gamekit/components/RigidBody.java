@@ -1,7 +1,9 @@
 package dev.gamekit.components;
 
-import dev.gamekit.core.*;
 import dev.gamekit.core.Component;
+import dev.gamekit.core.Entity;
+import dev.gamekit.core.Physics;
+import dev.gamekit.core.Renderer;
 import dev.gamekit.utils.Vector;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.geometry.Mass;
@@ -158,18 +160,19 @@ public class RigidBody extends Component {
     List<Collider> colliders = entity.findComponents(Collider.class);
     colliders.forEach(collider -> body.addFixture(collider.fixture));
 
+    double initialX = body.getTransform().getTranslationX();
+    double initialY = body.getTransform().getTranslationY();
+
     body.updateMass();
+    body.getTransform().setTranslation(initialX, initialY);
     Physics.addBody(body);
+
+    updateTransformComponent();
   }
 
   @Override
   protected void update() {
-    Transform tx = entity.findComponent(Transform.class);
-    tx.setGlobalPosition(
-      body.getTransform().getTranslationX() * Physics.PIXELS_PER_METER,
-      body.getTransform().getTranslationY() * Physics.PIXELS_PER_METER
-    );
-    tx.setGlobalRotation(-body.getTransform().getRotationAngle());
+    updateTransformComponent();
   }
 
   @Override
@@ -185,5 +188,18 @@ public class RigidBody extends Component {
   @Override
   protected void dispose() {
     Physics.removeBody(body);
+  }
+
+  /**
+   * Updates the {@link Transform} component's global position and rotation with data from the
+   * physics body
+   */
+  private void updateTransformComponent() {
+    Transform tx = entity.findComponent(Transform.class);
+    tx.setGlobalPosition(
+      body.getTransform().getTranslationX() * Physics.PIXELS_PER_METER,
+      body.getTransform().getTranslationY() * Physics.PIXELS_PER_METER
+    );
+    tx.setGlobalRotation(-body.getTransform().getRotationAngle());
   }
 }

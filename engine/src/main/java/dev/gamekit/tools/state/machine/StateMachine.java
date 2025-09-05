@@ -1,37 +1,30 @@
 package dev.gamekit.tools.state.machine;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * {@link StateMachine} manages a finite set of {@link State states} and the transitions between
+ * {@link StateMachine} manages a finite set of {@link FiniteState states} and the transitions between
  * them
  */
 public class StateMachine<K extends Enum<K>> {
-  protected final Map<K, State<K>> stateMap = new HashMap<>();
+  protected final Map<K, FiniteState<K>> stateMap = new HashMap<>();
 
-  protected State<K> currentState;
+  protected FiniteState<K> currentState;
 
   @SafeVarargs
-  public StateMachine(State<K> initialState, State<K>... states) {
-    if (initialState == null)
-      throw new IllegalArgumentException("Initial state cannot be null");
-
+  public StateMachine(FiniteState<K>... states) {
     if (states.length == 0)
       throw new IllegalArgumentException("At least one state is required");
 
-    if (Arrays.stream(states).noneMatch(state -> state == initialState))
-      throw new IllegalArgumentException("Provided states must also contain the initial state");
-
-    for (State<K> state : states)
+    for (FiniteState<K> state : states)
       if (state == null)
         throw new IllegalArgumentException("State cannot be null");
 
-    for (State<K> state : states)
+    for (FiniteState<K> state : states)
       stateMap.put(state.key, state);
 
-    currentState = initialState;
+    currentState = states[0];
   }
 
   /**
