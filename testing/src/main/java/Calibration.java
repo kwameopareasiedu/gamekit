@@ -3,6 +3,7 @@ import dev.gamekit.settings.Resolution;
 import dev.gamekit.settings.Settings;
 import dev.gamekit.settings.WindowMode;
 import dev.gamekit.utils.Position;
+import dev.gamekit.utils.Vector;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -17,7 +18,7 @@ public class Calibration extends Scene {
   private static final double FREQ = 0.5;
 
   private double time;
-  private int x = 0, y = 0;
+  private double x = 0, y = 0;
   private final int[] polygonPoints;
   private final int[] filledPolygonPoints;
 
@@ -42,7 +43,7 @@ public class Calibration extends Scene {
 
     if (Input.isButtonPressed(Input.BUTTON_LMB)) {
       Position mousePos = Input.getMousePosition();
-      Position pos = Camera.screenToWorldPosition(mousePos.x, mousePos.y);
+      Vector pos = Camera.screenToWorldPosition(mousePos.x, mousePos.y);
       x = pos.x;
       y = pos.y;
     }
@@ -61,7 +62,8 @@ public class Calibration extends Scene {
   @Override
   public void render() {
     Renderer.clear(Color.DARK_GRAY);
-    Renderer.drawRect(x, y, Resolution.SVGA.width(), Resolution.SVGA.height()).withColor(Color.CYAN);
+    Renderer.drawRect((int) x, (int) y, Resolution.SVGA.width(), Resolution.SVGA.height())
+      .withColor(Color.CYAN);
 
     Renderer.drawHorizontalLine(-WORLD_WIDTH / 2, WORLD_WIDTH / 2, 0).withColor(Color.BLUE);
     Renderer.drawVerticalLine(0, -WORLD_HEIGHT / 2, WORLD_HEIGHT / 2).withColor(Color.BLUE);
@@ -92,6 +94,6 @@ public class Calibration extends Scene {
 
     Renderer.drawRect(0, 0, 10, 10).withColor(Color.MAGENTA);
 
-    Renderer.drawImage(SPRITE, x, y, 10, 10);
+    Renderer.drawImage(SPRITE, (int) x, (int) y, 10, 10);
   }
 }

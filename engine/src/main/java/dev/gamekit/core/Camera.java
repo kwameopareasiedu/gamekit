@@ -2,6 +2,7 @@ package dev.gamekit.core;
 
 import dev.gamekit.utils.Bounds;
 import dev.gamekit.utils.Position;
+import dev.gamekit.utils.Vector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -13,7 +14,8 @@ import java.awt.geom.AffineTransform;
  */
 public final class Camera {
   private static final Logger LOGGER = LogManager.getLogger(Camera.class);
-  private static final Position POSITION_CACHE = new Position();
+  private static final Position INT_POSITION_CACHE = new Position();
+  private static final Vector DOUBLE_POSITION_CACHE = new Vector();
   private static final Bounds BOUNDS_CACHE = new Bounds();
   private static final AffineTransform TRANSFORM = new AffineTransform(1, 0, 0, -1, 0, 0);
 
@@ -38,15 +40,26 @@ public final class Camera {
     return BOUNDS_CACHE;
   }
 
-  /** Transforms a screen-space point (sx,sy) into world-space position */
-  public static Position screenToWorldPosition(double sx, double sy) {
+  /** Transforms a screen-space point (sx,sy) into world-space vector */
+  public static Vector screenToWorldPosition(double sx, double sy) {
     Window.Info windowInfo = Window.getInfo();
     int centerX = windowInfo.displayCenterX();
     int centerY = windowInfo.displayCenterY();
-    int wx = (int) (invZoom * (centerX - sx - Camera.x));
-    int wy = (int) (invZoom * (centerY - sy - Camera.y));
-    POSITION_CACHE.set(-wx, wy);
-    return POSITION_CACHE;
+    double wx = invZoom * (centerX - sx - Camera.x);
+    double wy = invZoom * (centerY - sy - Camera.y);
+    DOUBLE_POSITION_CACHE.set(-wx, wy);
+    return DOUBLE_POSITION_CACHE;
+  }
+
+  /** Transforms a world-space point (sx,sy) into screen-space position */
+  public static Position worldToScreenPosition(double wx, double wy) {
+    Window.Info windowInfo = Window.getInfo();
+    int centerX = windowInfo.displayCenterX();
+    int centerY = windowInfo.displayCenterY();
+    int sx = (int) (centerX - wx * zoom - Camera.x);
+    int sy = (int) (centerY - wy * zoom - Camera.y);
+    INT_POSITION_CACHE.set(-sx, sy);
+    return INT_POSITION_CACHE;
   }
 
   /** Pan the camera to center point (x, y) within the {@link Window} */
@@ -57,7 +70,7 @@ public final class Camera {
 
   /** Sets the zoom level of the camera, clamped to a min of 1 */
   public static void setZoom(double zoom) {
-    Camera.zoom = Math.max(zoom, 1);
+    Camera.zoom = Math.max(zoom, dev.gamekit.utils.Math.EPSILON);
     Camera.invZoom = 1.0 / Camera.zoom;
   }
 

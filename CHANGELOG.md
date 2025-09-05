@@ -54,6 +54,7 @@
 - Added state machine package to engine module
 - Added `static Vector sum(Vector...)` to `Vector` which returns a vector summing all input vectors
 - Added `static double lerpAngle(double, double, double)` to `Math` class
+- Added `static Position worldToScreenPosition(double, double)` to `Camera` class
 
 ### Changed
 
@@ -75,6 +76,8 @@
 - Renamed `Task` class to `VoidCallback` and updated usages
 - Added `void setLinearVelocity(double, double)` to `RigidBody` class
 - Added `void applyForce(double, double)` to `RigidBody` class
+- Changed signature of `static Position screenToWorldPosition(double, double)` in `Camera` class
+  to `static Vector screenToWorldPosition(double, double)`
 
 ### Deprecated
 
