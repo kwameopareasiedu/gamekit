@@ -24,6 +24,9 @@ import java.util.List;
  */
 @SuppressWarnings({ "BusyWait", "SynchronizeOnNonFinalField" })
 public abstract class Application {
+  public static final long FRAME_INTERVAL_MS = 1000 / 240;
+  public static final long DRAW_INTERVAL_MS = 1000 / 60;
+
   private static Application instance;
 
   protected final Logger logger = LogManager.getLogger(getClass());
@@ -54,9 +57,9 @@ public abstract class Application {
     this.timeouts = new ArrayList<>();
     this.newTimeouts = new ArrayList<>();
     this.animations = new ArrayList<>();
-    this.audioThread = new WorkerThread("audio", Constants.FRAME_INTERVAL_MS, Audio::update);
-    this.physicsThread = new WorkerThread("physics", Constants.FRAME_INTERVAL_MS, Physics::update);
-    this.drawThread = new WorkerThread("draw", Constants.DRAW_INTERVAL_MS, this::draw);
+    this.audioThread = new WorkerThread("audio", FRAME_INTERVAL_MS, Audio::update);
+    this.physicsThread = new WorkerThread("physics", FRAME_INTERVAL_MS, Physics::update);
+    this.drawThread = new WorkerThread("draw", DRAW_INTERVAL_MS, this::draw);
     this.isRunning = true;
   }
 
@@ -134,8 +137,8 @@ public abstract class Application {
         lastFrameTime = currentFrameTime;
         frameTimeAccumulator += timeDiff;
 
-        while (frameTimeAccumulator >= Constants.FRAME_INTERVAL_MS) {
-          frameTimeAccumulator -= Constants.FRAME_INTERVAL_MS;
+        while (frameTimeAccumulator >= FRAME_INTERVAL_MS) {
+          frameTimeAccumulator -= FRAME_INTERVAL_MS;
           Input.freeze();
           update();
           Input.reset();

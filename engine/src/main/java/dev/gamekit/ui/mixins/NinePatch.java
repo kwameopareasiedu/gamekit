@@ -1,6 +1,6 @@
 package dev.gamekit.ui.mixins;
 
-import dev.gamekit.core.Constants;
+import dev.gamekit.core.UI;
 import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.widgets.Widget;
 import dev.gamekit.utils.Bounds;
@@ -81,8 +81,8 @@ public interface NinePatch {
       Color originalColor = graphics.getColor();
       Stroke originalStroke = graphics.getStroke();
 
-      graphics.setColor(Constants.DEBUG_COLOR);
-      graphics.setStroke(Constants.DEBUG_STROKE);
+      graphics.setColor(UI.DEBUG_COLOR);
+      graphics.setStroke(UI.DEBUG_STROKE);
       graphics.drawRect(
         (int) (absoluteBounds.x + edgeInsets.left),
         (int) (absoluteBounds.y + edgeInsets.top),

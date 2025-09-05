@@ -1,6 +1,6 @@
 package dev.gamekit.components;
 
-import dev.gamekit.core.Constants;
+import dev.gamekit.core.Physics;
 import org.dyn4j.geometry.Circle;
 
 /** {@link CircleCollider} defines a circular {@link Collider} for an entity */
@@ -9,7 +9,7 @@ public class CircleCollider extends Collider {
     super(
       new ColliderFixture(
         new Circle(
-          radius / Constants.PIXELS_PER_METER
+          radius / Physics.PIXELS_PER_METER
         )
       )
     );

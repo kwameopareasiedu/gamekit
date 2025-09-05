@@ -55,8 +55,8 @@ public class RigidBody extends Component {
   /** Sets the world position of this {@link RigidBody} */
   public void setPosition(double x, double y) {
     body.getTransform().setTranslation(
-      x / Constants.PIXELS_PER_METER,
-      y / Constants.PIXELS_PER_METER
+      x / Physics.PIXELS_PER_METER,
+      y / Physics.PIXELS_PER_METER
     );
   }
 
@@ -75,14 +75,14 @@ public class RigidBody extends Component {
     body.getTransform().setRotation(0);
 
     body.getTransform().setTranslation(
-      sx / Constants.PIXELS_PER_METER,
-      sy / Constants.PIXELS_PER_METER
+      sx / Physics.PIXELS_PER_METER,
+      sy / Physics.PIXELS_PER_METER
     );
 
     body.rotate(
       -rad,
-      rx / Constants.PIXELS_PER_METER,
-      ry / Constants.PIXELS_PER_METER
+      rx / Physics.PIXELS_PER_METER,
+      ry / Physics.PIXELS_PER_METER
     );
   }
 
@@ -166,8 +166,8 @@ public class RigidBody extends Component {
   protected void update() {
     Transform tx = entity.findComponent(Transform.class);
     tx.setGlobalPosition(
-      body.getTransform().getTranslationX() * Constants.PIXELS_PER_METER,
-      body.getTransform().getTranslationY() * Constants.PIXELS_PER_METER
+      body.getTransform().getTranslationX() * Physics.PIXELS_PER_METER,
+      body.getTransform().getTranslationY() * Physics.PIXELS_PER_METER
     );
     tx.setGlobalRotation(-body.getTransform().getRotationAngle());
   }

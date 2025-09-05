@@ -11,6 +11,8 @@ import java.util.HashMap;
 
 /** {@link Physics} handles updates of the {@link World} object on the main application thread */
 public final class Physics {
+  public static final double PIXELS_PER_METER = 128.0;
+
   private static final World<Body> WORLD;
   private static final HashMap<String, CollisionListener> COLLISION_LISTENER_MAP;
 
@@ -50,7 +52,7 @@ public final class Physics {
    * @see org.dyn4j.world.AbstractPhysicsWorld#update(double)
    */
   static void update() {
-    double elapsedTime = Constants.FRAME_INTERVAL_MS / 1000.0;
+    double elapsedTime = Application.FRAME_INTERVAL_MS / 1000.0;
 
     if (WORLD.update(elapsedTime)) {
       COLLISION_LISTENER_MAP.forEach(

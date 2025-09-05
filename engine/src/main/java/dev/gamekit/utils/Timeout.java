@@ -1,6 +1,6 @@
 package dev.gamekit.utils;
 
-import dev.gamekit.core.Constants;
+import dev.gamekit.core.Application;
 
 /** Timeout executes a specified {@link VoidCallback} after its duration has elapsed. */
 public class Timeout {
@@ -36,7 +36,7 @@ public class Timeout {
   public void update() {
     if (!completed) {
       durationMs = java.lang.Math.max(
-        0, durationMs - Constants.FRAME_INTERVAL_MS
+        0, durationMs - Application.FRAME_INTERVAL_MS
       );
 
       if (durationMs == 0) {

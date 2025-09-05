@@ -19,6 +19,12 @@ import java.util.Objects;
 
 /** {@link UI} manages the user interface within a {@link Scene} */
 public final class UI {
+  public static final Color TRANSPARENT_COLOR = new Color(0x0000000, true);
+  public static final Color DEBUG_COLOR = Color.GREEN;
+  public static final BasicStroke DEBUG_STROKE = new BasicStroke(
+    1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND
+  );
+
   private static final Logger LOGGER = LogManager.getLogger(UI.class);
   private static UI instance;
 
@@ -103,7 +109,7 @@ public final class UI {
   }
 
   void clear() {
-    canvasGraphics.setBackground(Constants.TRANSPARENT_COLOR);
+    canvasGraphics.setBackground(TRANSPARENT_COLOR);
     canvasGraphics.clearRect(0, 0, canvasImage.getWidth(), canvasImage.getHeight());
   }
 
@@ -130,7 +136,7 @@ public final class UI {
     if (tree != null && needsRender && !needsDraw) {
       LOGGER.debug("Rendering UI");
 
-      canvasGraphics.setBackground(Constants.TRANSPARENT_COLOR);
+      canvasGraphics.setBackground(TRANSPARENT_COLOR);
       canvasGraphics.clearRect(0, 0, canvasImage.getWidth(), canvasImage.getHeight());
       tree.render(canvasGraphics);
 
@@ -148,7 +154,7 @@ public final class UI {
       int displayWidth = windowInfo.displayWidth();
       int displayHeight = windowInfo.displayHeight();
 
-      uiGraphics.setBackground(Constants.TRANSPARENT_COLOR);
+      uiGraphics.setBackground(TRANSPARENT_COLOR);
       uiGraphics.clearRect(0, 0, displayWidth, displayHeight);
       uiGraphics.drawImage(canvasImage, 0, 0, displayWidth, displayHeight, null);
 

@@ -1,7 +1,7 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.core.Constants;
 import dev.gamekit.core.IO;
+import dev.gamekit.core.UI;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.utils.Bounds;
@@ -257,8 +257,8 @@ public class Text extends Leaf {
     }
 
     if (Widget.DEBUG_DRAW) {
-      g.setColor(Constants.DEBUG_COLOR);
-      g.setStroke(Constants.DEBUG_STROKE);
+      g.setColor(UI.DEBUG_COLOR);
+      g.setStroke(UI.DEBUG_STROKE);
 
       for (Symbol symbol : symbols) {
         g.drawRect(

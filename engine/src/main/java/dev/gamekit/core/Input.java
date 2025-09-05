@@ -230,51 +230,60 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
     absoluteMousePosition = new Position(MouseInfo.getPointerInfo().getLocation());
     relativeMousePosition = new Position(0, 0);
 
-    IntStream.range(0, KEY_COUNT).forEach(
-      i -> keyStates[i] = new KeyState()
-    );
-
-    IntStream.range(0, BUTTON_COUNT).forEach(
-      i -> buttonStates[i] = new ButtonState()
-    );
+    IntStream.range(0, KEY_COUNT).forEach(i -> keyStates[i] = new KeyState());
+    IntStream.range(0, BUTTON_COUNT).forEach(i -> buttonStates[i] = new ButtonState());
   }
 
-  public synchronized static boolean isKeyDown(int keyCode) {
+  /** Checks if a key has just been pressed */
+  public static boolean isKeyDown(int keyCode) {
     return INSTANCE.keyStates[keyCode].isDown;
   }
 
-  public synchronized static boolean isKeyPressed(int keyCode) {
+  /** Checks if a key is being held down */
+  public static boolean isKeyPressed(int keyCode) {
     return INSTANCE.keyStates[keyCode].isPressed;
   }
 
-  public synchronized static boolean isKeyReleased(int keyCode) {
+  /** Checks if a key has just been released */
+  public static boolean isKeyReleased(int keyCode) {
     return INSTANCE.keyStates[keyCode].isReleased;
   }
 
-  public synchronized static boolean isButtonDown(int buttonId) {
+  /** Checks if a button has just been pressed */
+  public static boolean isButtonDown(int buttonId) {
     int buttonIndex = buttonId - 1;
     return INSTANCE.buttonStates[buttonIndex].isDown;
   }
 
-  public synchronized static boolean isButtonPressed(int buttonId) {
+  /** Checks if a button is being held down */
+  public static boolean isButtonPressed(int buttonId) {
     int buttonIndex = buttonId - 1;
     return INSTANCE.buttonStates[buttonIndex].isPressed;
   }
 
-  public synchronized static boolean isButtonReleased(int buttonId) {
+  /** Checks if a button has just been released */
+  public static boolean isButtonReleased(int buttonId) {
     int buttonIndex = buttonId - 1;
     return INSTANCE.buttonStates[buttonIndex].isReleased;
   }
 
-  public synchronized static char getPressedCharacter() {
+  /** Returns the key character which was just pressed */
+  public static char getPressedCharacter() {
     return INSTANCE.characterPressed;
   }
 
-  public synchronized static int getPressedKeyCode() {
+  /** Returns the key code which was just pressed */
+  public static int getPressedKeyCode() {
     return INSTANCE.keyCodePressed;
   }
 
-  public synchronized static Position getMousePosition() {
+  /**
+   * Returns the mouse position relative to the screen resolution size.
+   * <p>
+   * <i>NB: The returned {@link Position} is reused across multiple invocations, so you should not
+   * keep a reference to it. Rather, retrieve the x and y values and store them if you need to.</i>
+   */
+  public static Position getMousePosition() {
     Window.Info info = Window.getInfo();
     double scaleRatio = info.displayScaleRatio();
     double windowWidth = info.frameWidth();
@@ -308,13 +317,8 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
   /** Resets the current state and allows Window input events to affect the current input state */
   static void reset() {
-    IntStream.range(0, KEY_COUNT).forEach(
-      i -> INSTANCE.keyStates[i].reset()
-    );
-
-    IntStream.range(0, BUTTON_COUNT).forEach(
-      i -> INSTANCE.buttonStates[i].reset()
-    );
+    IntStream.range(0, KEY_COUNT).forEach(i -> INSTANCE.keyStates[i].reset());
+    IntStream.range(0, BUTTON_COUNT).forEach(i -> INSTANCE.buttonStates[i].reset());
 
     INSTANCE.characterPressed = '\0';
     INSTANCE.keyCodePressed = 0;
@@ -322,7 +326,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   }
 
   @Override
-  public synchronized void keyPressed(KeyEvent e) {
+  public void keyPressed(KeyEvent e) {
     if (frozen)
       return;
 
@@ -335,7 +339,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   }
 
   @Override
-  public synchronized void keyReleased(KeyEvent e) {
+  public void keyReleased(KeyEvent e) {
     if (frozen)
       return;
 
@@ -354,7 +358,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   }
 
   @Override
-  public synchronized void mousePressed(MouseEvent e) {
+  public void mousePressed(MouseEvent e) {
     if (frozen)
       return;
 
@@ -365,7 +369,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   }
 
   @Override
-  public synchronized void mouseReleased(MouseEvent e) {
+  public void mouseReleased(MouseEvent e) {
     if (frozen)
       return;
 
@@ -376,7 +380,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   }
 
   @Override
-  public synchronized void mouseDragged(MouseEvent e) {
+  public void mouseDragged(MouseEvent e) {
     if (frozen)
       return;
 
@@ -384,7 +388,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   }
 
   @Override
-  public synchronized void mouseMoved(MouseEvent e) {
+  public void mouseMoved(MouseEvent e) {
     if (frozen)
       return;
 
@@ -392,13 +396,13 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   }
 
   @Override
-  public synchronized void mouseClicked(MouseEvent e) { /* No-op */ }
+  public void mouseClicked(MouseEvent e) { /* No-op */ }
 
   @Override
-  public synchronized void mouseEntered(MouseEvent e) { /* No-op */ }
+  public void mouseEntered(MouseEvent e) { /* No-op */ }
 
   @Override
-  public synchronized void mouseExited(MouseEvent e) { /* No-op */ }
+  public void mouseExited(MouseEvent e) { /* No-op */ }
 
   /** Represents an input state */
   private static abstract class ActionState {

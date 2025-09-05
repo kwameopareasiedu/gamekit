@@ -1,7 +1,6 @@
 package dev.gamekit.components;
 
 import dev.gamekit.core.Component;
-import dev.gamekit.core.Constants;
 import dev.gamekit.core.Physics;
 import dev.gamekit.core.Renderer;
 import dev.gamekit.utils.Vector;
@@ -51,7 +50,7 @@ public abstract class Collider extends Component {
 
   /** Sets the local offset relative to the entity's {@link RigidBody} */
   public void setOffset(double x, double y) {
-    fixture.getShape().translate(x / Constants.PIXELS_PER_METER, y / Constants.PIXELS_PER_METER);
+    fixture.getShape().translate(x / Physics.PIXELS_PER_METER, y / Physics.PIXELS_PER_METER);
   }
 
   /**
@@ -114,12 +113,12 @@ public abstract class Collider extends Component {
 
       Convex shape = fixture.getShape();
       Vector2 shapeCenter = shape.getCenter();
-      int shapePositionX = (int) (globalPosition.x + shapeCenter.x * Constants.PIXELS_PER_METER);
-      int shapePositionY = (int) (globalPosition.y + shapeCenter.y * Constants.PIXELS_PER_METER);
+      int shapePositionX = (int) (globalPosition.x + shapeCenter.x * Physics.PIXELS_PER_METER);
+      int shapePositionY = (int) (globalPosition.y + shapeCenter.y * Physics.PIXELS_PER_METER);
       Stroke stroke = fixture.isSensor() ? SENSOR_DEBUG_STROKE : null;
 
       if (shape instanceof Circle circle) {
-        int radius = (int) (circle.getRadius() * Constants.PIXELS_PER_METER);
+        int radius = (int) (circle.getRadius() * Physics.PIXELS_PER_METER);
 
         Renderer.drawCircle(shapePositionX, shapePositionY, radius)
           .withColor(Color.CYAN).withStroke(stroke)
@@ -127,8 +126,8 @@ public abstract class Collider extends Component {
         Renderer.drawVerticalLine(shapePositionX, shapePositionY, shapePositionY + radius)
           .withRotation(positionX, positionY, rotation);
       } else if (shape instanceof Rectangle rect) {
-        int width = (int) (rect.getWidth() * Constants.PIXELS_PER_METER);
-        int height = (int) (rect.getHeight() * Constants.PIXELS_PER_METER);
+        int width = (int) (rect.getWidth() * Physics.PIXELS_PER_METER);
+        int height = (int) (rect.getHeight() * Physics.PIXELS_PER_METER);
 
         Renderer.drawRect(shapePositionX, shapePositionY, width, height)
           .withColor(Color.CYAN).withStroke(stroke)

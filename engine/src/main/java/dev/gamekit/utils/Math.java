@@ -1,9 +1,25 @@
 package dev.gamekit.utils;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /** Provides commonly used math utility methods */
 public final class Math {
-  private static final double DEGREES_TO_RADIANS = 0.017453292519943295;
-  private static final double RADIANS_TO_DEGREES = 57.29577951308232;
+  public static final double EPSILON = 1e-6;
+  public static final double TWO_PI = 6.283185307179586;
+  public static final double DEGREES_TO_RADIANS = 0.017453292519943295;
+  public static final double RADIANS_TO_DEGREES = 57.29577951308232;
+  public static final String DEGREE_SYM = "°";
+  // Animation curve constants
+  public static final double C1 = 1.70158;
+  public static final double C3 = C1 + 1;
+  public static final double C2 = C1 * 1.525;
+  public static final double C4 = (2 * java.lang.Math.PI) / 3;
+  public static final double C5 = (2 * java.lang.Math.PI) / 4.5;
+  public static final double N1 = 7.5625;
+  public static final double D1 = 2.75;
+
+  private static final Logger LOGGER = LogManager.getLogger();
 
   private Math() { }
 
@@ -34,8 +50,44 @@ public final class Math {
     return rad * RADIANS_TO_DEGREES;
   }
 
+  /** Returns {@code true} if the given value is less than the engine's epsilon */
+  public static boolean isPracticallyZero(double value) {
+    return java.lang.Math.abs(value) < EPSILON;
+  }
+
   /** Linearly interpolates between two values using a specified rate */
-  public static double lerp(double from, double to, double rate) {
-    return from + rate * (to - from);
+  public static double lerp(double start, double end, double rate) {
+    return start + rate * (end - start);
+  }
+
+  /**
+   * Linearly interpolates between two angles in radian using a specified rate, wrapping the angle
+   * around {@code 2π} if it's a shorter path to reach the desired angle
+   */
+  public static double lerpAngle(double start, double end, double rate) {
+    double normalizedStart = start % TWO_PI;
+    double normalizedEnd = end % TWO_PI;
+
+    if (normalizedStart < 0) normalizedStart += TWO_PI;
+    if (normalizedEnd < 0) normalizedEnd += TWO_PI;
+
+    double diffCW = (normalizedEnd - normalizedStart) % TWO_PI;
+    double diffCCW = (normalizedStart - normalizedEnd) % TWO_PI;
+
+    if (diffCW <= 0) diffCW += TWO_PI;
+    if (diffCCW <= 0) diffCCW += TWO_PI;
+
+    int direction = diffCCW < diffCW ? -1 : 1;
+    double diff = java.lang.Math.min(diffCCW, diffCW);
+
+    double finalAngle = normalizedStart + direction * rate * diff;
+
+    if (finalAngle < 0) {
+      return finalAngle + TWO_PI;
+    } else if (finalAngle > TWO_PI) {
+      return finalAngle - TWO_PI;
+    } else {
+      return finalAngle;
+    }
   }
 }

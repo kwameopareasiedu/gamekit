@@ -1,6 +1,6 @@
 package dev.gamekit.components;
 
-import dev.gamekit.core.Constants;
+import dev.gamekit.core.Physics;
 import org.dyn4j.geometry.Rectangle;
 
 /** {@link BoxCollider} defines a rectangular {@link Collider} for an entity */
@@ -9,8 +9,8 @@ public class BoxCollider extends Collider {
     super(
       new ColliderFixture(
         new Rectangle(
-          width / Constants.PIXELS_PER_METER,
-          height / Constants.PIXELS_PER_METER
+          width / Physics.PIXELS_PER_METER,
+          height / Physics.PIXELS_PER_METER
         )
       )
     );

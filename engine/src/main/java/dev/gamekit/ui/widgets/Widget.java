@@ -1,6 +1,5 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.core.Constants;
 import dev.gamekit.core.Scene;
 import dev.gamekit.core.UI;
 import dev.gamekit.ui.Constraints;
@@ -162,8 +161,8 @@ public abstract class Widget {
       Color originalColor = canvasGraphics.getColor();
       Stroke originalStroke = canvasGraphics.getStroke();
 
-      canvasGraphics.setColor(Constants.DEBUG_COLOR);
-      canvasGraphics.setStroke(Constants.DEBUG_STROKE);
+      canvasGraphics.setColor(UI.DEBUG_COLOR);
+      canvasGraphics.setStroke(UI.DEBUG_STROKE);
       canvasGraphics.drawRect(
         (int) absoluteBounds.x,
         (int) absoluteBounds.y,
