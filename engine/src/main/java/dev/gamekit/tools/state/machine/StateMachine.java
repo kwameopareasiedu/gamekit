@@ -1,15 +1,20 @@
 package dev.gamekit.tools.state.machine;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * {@link StateMachine} manages a finite set of {@link FiniteState states} and the transitions between
- * them
+ * {@link StateMachine} manages a finite set of {@link FiniteState states} and the transitions
+ * between them
  */
 public class StateMachine<K extends Enum<K>> {
-  protected final Map<K, FiniteState<K>> stateMap = new HashMap<>();
+  public static boolean DEBUG = false;
 
+  protected final Logger logger = LogManager.getLogger(getClass());
+  protected final Map<K, FiniteState<K>> stateMap = new HashMap<>();
   protected FiniteState<K> currentState;
 
   @SafeVarargs
@@ -40,9 +45,15 @@ public class StateMachine<K extends Enum<K>> {
     K nextStateKey = currentState.getNextStateKey();
 
     if (nextStateKey != null && nextStateKey != currentState.key) {
+      if (DEBUG)
+        logger.debug("Exiting {}", currentState.getClass().getName());
+
       currentState.exit();
       currentState = stateMap.get(nextStateKey);
       currentState.enter();
+
+      if (DEBUG)
+        logger.debug("Entering {}", currentState.getClass().getName());
     }
 
     currentState.update();
