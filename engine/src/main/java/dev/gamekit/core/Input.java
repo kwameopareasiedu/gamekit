@@ -280,8 +280,9 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   /**
    * Returns the mouse position relative to the screen resolution size.
    * <p>
-   * <i>NB: The returned {@link Position} is reused across multiple invocations, so you should not
-   * keep a reference to it. Rather, retrieve the x and y values and store them if you need to.</i>
+   * <i>NB: For added performance, the returned {@link Position} is reused across multiple
+   * invocations, so you should not keep a reference to it. Rather, retrieve the x and y values
+   * and store them if you need to</i>
    */
   public static Position getMousePosition() {
     Window.Info info = Window.getInfo();

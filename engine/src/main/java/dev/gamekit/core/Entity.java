@@ -26,6 +26,7 @@ public abstract class Entity {
 
   private final ArrayList<Entity> children;
   private final ArrayList<Component> components;
+  private final ArrayList<Component> componentSearchList;
   private State state;
 
   public Entity(String name) {
@@ -34,6 +35,7 @@ public abstract class Entity {
     children = new ArrayList<>();
     components = new ArrayList<>();
     components.add(new Transform());
+    componentSearchList = new ArrayList<>();
   }
 
   /** Returns the parent entity */
@@ -94,12 +96,20 @@ public abstract class Entity {
 
   /** Returns a {@link Component} of the specified class else {@code null} */
   public <T extends Component> T findComponent(Class<T> clazz) {
+    return findComponent(clazz, (ignored) -> true);
+  }
+
+  /**
+   * Returns a {@link Component} of the specified class, matching the provided filter else
+   * {@code null}
+   */
+  public <T extends Component> T findComponent(Class<T> clazz, Component.Filter<T> filter) {
     // Optimization for finding the Transform component
     if (clazz == Transform.class)
       return (T) components.get(0);
 
     for (Component component : components) {
-      if (clazz.isInstance(component))
+      if (clazz.isInstance(component) && filter.filter((T) component))
         return (T) component;
     }
 
@@ -109,18 +119,18 @@ public abstract class Entity {
   /**
    * Returns a list of {@link Component components} of the specified class
    * <p>
-   * NB: Care must be taken when using this method since it creates a new {@link List} object
-   * every time
+   * <i>NB: For added performance, the returned {@link ArrayList<T>} is reused across multiple
+   * invocations so you should not keep a reference to it</i>
    */
   public <T extends Component> List<T> findComponents(Class<T> clazz) {
-    List<T> out = new ArrayList<>();
+    componentSearchList.clear();
 
     for (Component component : components) {
       if (clazz.isInstance(component))
-        out.add((T) component);
+        componentSearchList.add(component);
     }
 
-    return out;
+    return (List<T>) componentSearchList;
   }
 
   /**

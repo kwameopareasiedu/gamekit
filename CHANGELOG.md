@@ -55,6 +55,8 @@
 - Added `static Vector sum(Vector...)` to `Vector` which returns a vector summing all input vectors
 - Added `static double lerpAngle(double, double, double)` to `Math` class
 - Added `static Position worldToScreenPosition(double, double)` to `Camera` class
+- Added `public <T extends Component> findComponent(Class<T>, Component.Filter<T>)` to `Entity`
+  class which finds a component of a class, matching the filter provided
 
 ### Changed
 
@@ -78,6 +80,7 @@
 - Added `void applyForce(double, double)` to `RigidBody` class
 - Changed signature of `static Position screenToWorldPosition(double, double)` in `Camera` class
   to `static Vector screenToWorldPosition(double, double)`
+- Modified `Component` to keep a reference to its `Entity` during disposal
 
 ### Deprecated
 

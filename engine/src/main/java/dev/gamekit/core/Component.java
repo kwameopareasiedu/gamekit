@@ -85,6 +85,11 @@ public abstract class Component {
   /** Called <b>once</b> by the host {@link Entity} to dispose the component */
   void _dispose() {
     dispose();
-    entity = null;
+  }
+
+  /** A SAM interface for a component filter */
+  public interface Filter<T extends Component> {
+    /** Returns {@code true} if the provided component passes a filter function */
+    boolean filter(T component);
   }
 }
