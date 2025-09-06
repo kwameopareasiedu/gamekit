@@ -15,6 +15,8 @@ import java.util.List;
  * and network components.
  */
 public abstract class Component {
+  static final Component.Filter<Component> TRUTHY_FILTER = (ignored) -> true;
+
   protected final Logger logger = LogManager.getLogger(getClass());
 
   /** The host {@link Entity entity} the component is attached to */

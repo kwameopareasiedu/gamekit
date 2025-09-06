@@ -96,7 +96,7 @@ public abstract class Entity {
 
   /** Returns a {@link Component} of the specified class else {@code null} */
   public <T extends Component> T findComponent(Class<T> clazz) {
-    return findComponent(clazz, (ignored) -> true);
+    return findComponent(clazz, (Component.Filter<T>) Component.TRUTHY_FILTER);
   }
 
   /**
