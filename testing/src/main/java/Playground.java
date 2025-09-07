@@ -1,18 +1,24 @@
+import dev.gamekit.core.IO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static dev.gamekit.utils.Math.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.stream.Collectors;
 
 public class Playground {
   private static final Logger LOGGER = LogManager.getLogger();
 
   public static void main(String[] args) {
-    double angle = degToRad(355);
-    double desiredAngle = degToRad(315);
+    IO.writeFile("testy/write-test.txt", "My name is GameKits!", true);
 
-    while (!isPracticallyZero(angle - desiredAngle)) {
-      angle = lerpAngle(angle, desiredAngle, 0.05);
-      LOGGER.debug("Angle: {}°", radToDeg(angle));
+    try (BufferedReader bf = new BufferedReader(
+      new InputStreamReader(IO.getFileStream("./README.md"))
+    )) {
+      LOGGER.debug("File content: {}", bf.lines().collect(Collectors.joining()));
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
   }
 }

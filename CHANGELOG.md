@@ -29,10 +29,11 @@
 - Added `Progress` widget which is a `Leaf` widget which displays a progress bar
 - Added `Slider` widget which is a `Progress` widget extension which adjusts a value by moving a
   slider
-- Added `static void drawPolygon(int[])` and `static void fillPolygon(int[])` methods to
-  `Renderer` class
+- Added `static void drawPolygon(int[] pointPairs)` and `static void fillPolygon(int[] pointPairs)` 
+  methods to `Renderer` class
 - Added `Sprite` which is a `Component` that renders an image appearance for an entity
-- Added `public <T extends DrawImage> T withInterpolation(double)` method to `DrawImage` draw call
+- Added `public <T extends DrawImage> T withInterpolation(ImageInterpolation interpolation)`
+  method to `DrawImage` draw call
 - Added `AnimatedSprite` which is a `Sprite` component extension that renders an animated sprite
   sheet
 - Added abstract `Collider` which is a `Component` which defines the physics shape of an entity for
@@ -46,27 +47,29 @@
 - Added `void destroy()` method to `Entity` which schedules it for destruction at the end of the
   current frame
 - Added `Entity.State getState()` method to `Entity` which returns the current state of the entity
-- Added `static double angle(Vector, Vector)` method to `Vector` class
-- Added `static Vector from(double, double)` method to `Vector` class
+- Added `static double angle(Vector from, Vector to)` method to `Vector` class
+- Added `static Vector from(double manitude, double rotation)` method to `Vector` class
 - Added `Animation.State.RESTARTED` and `Animation.State.REVERSED` pseudo states which are
   passed to a registered state listener when an animation restarts or reverses respectively
 - Added `ValueCallback<T>` class which is a single abstract method interfaces whose `run` method
   accepts a single variable of type `T`
 - Added state machine tool package to engine module
-- Added `void setLinearVelocity(double, double)` method to `RigidBody` class
-- Added `void applyForce(double, double)` method to `RigidBody` class
-- Added `static Vector sum(Vector...)` method to `Vector` which returns a vector summing all input
-  vectors
-- Added `static double lerpAngle(double, double, double)` method to `Math` class
-- Added `static Position worldToScreenPosition(double, double)` method to `Camera` class
-- Added `public <T extends Component> findComponent(Class<T>, Component.Filter<T>)` method to
-  `Entity` class which finds a component of a class, matching the filter provided
-- Added `public <T extends DrawCall> T withOpacity(double)` modifier method to abstract `DrawCall`
-  class
+- Added `void setLinearVelocity(double x, double y)` method to `RigidBody` class
+- Added `void applyForce(double x, double y)` method to `RigidBody` class
+- Added `static Vector sum(Vector... vectors)` method to `Vector` which returns a vector summing
+  all input vectors
+- Added `static double lerpAngle(double start, double end, double rate)` method to `Math` class
+- Added `static Position worldToScreenPosition(double wx, double wy)` method to `Camera` class
+- Added `public <T extends Component> findComponent(Class<T> clazz, Component.Filter<T> filter)`
+  method to `Entity` class which finds a component of a class, matching the filter provided
+- Added `public <T extends DrawCall> T withOpacity(double opacity)` modifier method to abstract
+  `DrawCall` class
+- Added `static InputStream getFileStream(String path)` to `IO` class
+- Added `static boolean writeFile(String path, String content, boolean overwrite)` to `IO` class
 
 ### Changed
 
-- Changed signature of `public void mounted()` lifecycle method in `Widget` class to
+- Renamed `public void mounted()` lifecycle method in `Widget` class to
   `public void init(UI.BridgeObject)`
 - Renamed `public void updateState(Widget)` in `Widget` to `public void update(Widget)`
 - Renamed `FRAME_TIME_MS` to `FRAME_INTERVAL_MS` in `Constants` class
@@ -82,21 +85,22 @@
   the `Transform` component
 - Changed engine rotations from degree-based to radian-based
 - Renamed `Task` class to `VoidCallback` and updated usages
-- Changed signature of `static Position screenToWorldPosition(double, double)` in `Camera` class
-  to `static Vector screenToWorldPosition(double, double)`
+- Changed signature of `static Position screenToWorldPosition(double sx, double sy)` in `Camera`
+  class to `static Vector screenToWorldPosition(double, double)`
 - Modified `Component` to keep a reference to its `Entity` during disposal
 
 ### Deprecated
 
 ### Removed
 
-- Removed `void addCircleFixture(double, FixtureTuner)` from `RigidBody` class
-- Removed `void addCircleFixture(double)` from `RigidBody` class
-- Removed `void addRectFixture(double, double, FixtureTuner)` from `RigidBody` class
-- Removed `void addRectFixture(double, double)` from `RigidBody` class
-- Removed `void addCollisionListener(Physics.CollisionListener)` from `RigidBody` class
-- Removed `static int toInt(double)` from `Math` class
-- Removed `static int toInt(float)` from `Math` class
+- Removed `void addCircleFixture(double radius, FixtureTuner tuner)` from `RigidBody` class
+- Removed `void addCircleFixture(double radius)` from `RigidBody` class
+- Removed `void addRectFixture(double width, double height, FixtureTuner tuner)` from `RigidBody`
+  class
+- Removed `void addRectFixture(double width, double height)` from `RigidBody` class
+- Removed `void addCollisionListener(Physics.CollisionListener listener)` from `RigidBody` class
+- Removed `static int toInt(double value)` from `Math` class
+- Removed `static int toInt(float value)` from `Math` class
 
 ## 0.5.0-SNAPSHOT-1
 
@@ -122,7 +126,7 @@
 
 ### Changed
 
-- Updated `public static <_InsertWidgetName_>Options options()` method in all widget classes to
+- Updated `public static <WIDGET_NAME>Options options()` method in all widget classes to
   `public static Config config()`
 - Changed `static Window getInstance()` in `Window` class from public to package-private
 
@@ -134,7 +138,8 @@
 
 ### Changed
 
-- Changed signature of `Entity.render` from `void render(Renderer renderer)` to `void render()`
+- Changed signature of `public void render(Renderer renderer)` to `public void render()` in
+  `Entity` class
 - Updated `Renderer`, changing all instance methods to static methods
 
 ## 0.4.0-SNAPSHOT-4
@@ -152,8 +157,8 @@
 
 ### Changed
 
-- Changed signature of `Entity.render` from `public void render()` to `public void render
-  (dev.gamekit.core.Renderer renderer)`
+- Changed signature of `public void render()` to `public void render(Renderer renderer)` in
+  `Entity` class
 
 ### Removed
 
@@ -170,35 +175,29 @@
 
 ### Added
 
-- Added `Opacity` which is a `SingleChildParent` which renders its child
-  with transparency
-- Added `Scaled` which is a `SingleChildParent` which scales the computed
-  size of its child
+- Added `Opacity` which is a `SingleChildParent` which renders its child with transparency
+- Added `Scaled` which is a `SingleChildParent` which scales the computed size of its child
 - Added `Audio` class which manages loaded audio clips
 - Added abstract `AudioClip` which loads and manages the clip from a resource
 - Added `AudioClip2D` which loads and plays non-spatial audio clips
 - Added `AudioClip3D` which loads and plays spatial clips and whose volume
   and pan depend on its position and the position of the `AudioListener`
-- Added `AudioListener` which is a reference for `AudioClip3D` to compute
-  its volume and pan
-- Added `AudioGroup` which manages the volume and mute status of
-  `AudioClip`s added to it
-- Added `AudioAttenuation` interface which defines a distance attenuation
-  function for `AudioClip3D`
-- Added abstract `AudioShape` which defines the shape, minimum and maximum
-  attenuation distances of the field of `AudioClip3D`
-- Added `AudioShapeCircle` which defines a circular audio field for  
-  `AudioClip3D`
+- Added `AudioListener` which is a reference for `AudioClip3D` to compute its volume and pan
+- Added `AudioGroup` which manages the volume and mute status of `AudioClip`s added to it
+- Added `AudioAttenuation` interface which defines a distance attenuation function for `AudioClip3D`
+- Added abstract `AudioShape` which defines the shape, minimum and maximum attenuation distances
+  of the field of `AudioClip3D`
+- Added `AudioShapeCircle` which defines a circular audio field for `AudioClip3D`
 - Added `static boolean isButtonClicked(int buttonCode)` to `Input` class
 - Added event handling code to `Widget` class
-- Added `InputEventHandler` interface to be implemented by `Widgets` which
-  would like to receive input events
-- Added `Compose` which is a `SingleChildParent` which delegates layout and
-  rendering to the provided widget tree, essentially a base for custom widgets
-- Added `static void drawString(String content, int x, int y, int width, int 
-height)` method to `Renderer` class
-- Added `static void withRotation(int x, int y, double deg, RenderActions 
-renderGroup)` method to `Renderer` class
+- Added `InputEventHandler` interface to be implemented by `Widgets` which would like to receive
+  input events
+- Added `Compose` which is a `SingleChildParent` which delegates layout and rendering to the
+  provided widget tree, essentially a base for custom widgets
+- Added `static void drawString(String content, int x, int y, int width, int height)` method to
+  `Renderer` class
+- Added `static void withRotation(int x, int y, double deg, RenderActions renderGroup)` method
+  to `Renderer` class
 - Added `static double lerp(double from, double to, double rate)` to `Math` class for linear
   interpolation
 - Added `static void resetOptions()` to `Renderer` class
@@ -213,19 +212,19 @@ renderGroup)` method to `Renderer` class
 - Modified `Padding` widget to center child
 - Modified `NinePatch` widget to center child
 - Renamed `FixedSize` widget to `Sized`
-- Renamed `static Font loadFontResource(String path)` to `static Font 
-getResourceFong(String path)` in `IO` class
-- Renamed `static Font loadFontResource(String path)` to `static Font 
-getResourceFong(String path)` in `IO` class
-- Renamed `static BufferedImage loadImageResource(String path)` to `static 
-BufferedImage getResourceImage(String path)` in `IO` class
+- Renamed `static Font loadFontResource(String path)` to
+  `static Font getResourceFont(String resPath)` in `IO` class
+- Renamed `static Font loadFontResource(String path)` to
+  `static Font getResourceFong(String resPath)` in `IO` class
+- Renamed `static BufferedImage loadImageResource(String path)` to
+  `static BufferedImage getResourceImage(String resPath)` in `IO` class
 - Renamed `NinePatch` widget to `Panel`
-- Renamed `static Input.isButtonJustPressed(int buttonCode)` to `static 
-  Input.isButtonDown(int buttonId)`
-- Renamed `static Input.isButtonJustReleased(int buttonCode)` to `static 
-  Input.isButtonReleased(int buttonId)`
-- Renamed `static Camera.screenToWorldPoint(int x, int y)` to `static 
-  Camera.screenPointToWorld(int x, int y)`
+- Renamed `static Input.isButtonJustPressed(int buttonCode)` to
+  `static Input.isButtonDown(int buttonId)`
+- Renamed `static Input.isButtonJustReleased(int buttonCode)` to
+  `static Input.isButtonReleased(int buttonId)`
+- Renamed `static Camera.screenToWorldPoint(int x, int y)` to
+  `static Camera.screenPointToWorld(int x, int y)`
 - Renamed `void onStart()` to `void start()` in `Scene` and `Prop` class
 - Renamed `void onUpdate()` to `void update()` in `Scene` and `Prop` class
 - Renamed `void onRender()` to `void render()` in `Scene` and `Prop` class
@@ -235,12 +234,9 @@ BufferedImage getResourceImage(String path)` in `IO` class
 
 ### Removed
 
-- Removed `IntrinsicWidth` widget. Use `IntrinsicSize` with `Axis.
-  HORIZONTAL` instead
-- Removed `IntrinsicHeight` widget. Use `IntrinsicSize` with `Axis.VERTICAL`
-  instead
-- Removed `static BufferedReader loadBufferedResource(String path)` from `IO`
-  class
+- Removed `IntrinsicWidth` widget in favour of `IntrinsicSize` with `Axis.HORIZONTAL`
+- Removed `IntrinsicHeight` widget in favour of `IntrinsicSize` with `Axis.VERTICAL`
+- Removed `static BufferedReader loadBufferedResource(String path)` from `IO` class
 - Removed `MouseMotionEvent` class and merged function into `MouseEvent` class
 - Removed `MouseClickEvent` class and merged function into `MouseEvent` class
 - Removed `MouseEnterEvent` class and merged function into `MouseEvent` class
@@ -256,63 +252,56 @@ BufferedImage getResourceImage(String path)` in `IO` class
 
 ### Added
 
-- Added constructor `Application(Config)` which can be used to set the title,
-  resolution and fullscreen mode
-- Added `Stack` which is a `MultiChildParent` which stacks its children on
-  top of each other
-- Added `Animation setValueListener(ValueListener)` to `Animation` to be
-  notified of value changes
-- Added `Animation setStateListener(StateListener)` to `Animation` to be
-  notified of state changes
-- Added `static Position screenToWorldPoint(int, int)` to `Camera` which
+- Added constructor `Application(Config config)` which can be used to set the title, resolution and
+  fullscreen mode
+- Added `Stack` which is a `MultiChildParent` which stacks its children on top of each other
+- Added `Animation setValueListener(ValueListener valueListener)` to `Animation` to be notified
+  of value changes
+- Added `Animation setStateListener(StateListener stateListener)` to `Animation` to be notified
+  of state changes
+- Added `static Position screenToWorldPoint(int sx, int sy)` to `Camera` which
   transforms a screen-space position into a world position
 - Added event generation and dispatch system to `UI` class
 - Added abstract `Event` class
 - Added abstract `MouseEvent` which is the `Event` for mouse events
-- Added `MouseMotionEvent` which is a `MouseEvent` dispatched when the mouse
-  moves
-- Added `MouseClickEvent` which is a `MouseEvent` dispatched when a mouse
-  button is released
+- Added `MouseMotionEvent` which is a `MouseEvent` dispatched when the mouse moves
+- Added `MouseClickEvent` which is a `MouseEvent` dispatched when a mouse button is released
 - Added `Button` which is a `SingleChildParent` for detecting UI events
-- Added `MouseEnterEvent` which is a `MouseEvent` dispatched when the mouse
-  enters a widget
-- Added `MouseExitEvent` which is a `MouseEvent` dispatched when the mouse
-  leaves a widget
-- Added `Decorated` which is a `SingleChildParent` paints a shape,
-  background color and border decorations
-- Added `NinePatch` which is a `Widget` which uses the 9-patch algorithm to
-  resize parts of the image to prevent stretching
-- Added `IntrinsicWidth` which is a `SingleChildParent` which limits the
-  computed width of its single child to the child's intrinsic width
-- Added `IntrinsicHeight` which is a `SingleChildParent` which limits the
-  computed height of its single child to the child's intrinsic height
-- Added `IntrinsicSize` which is a `SingleChildParent` which limits the
-  computed size of its single child to the child's intrinsic size
-- Added `Empty` which is a `Widget with zero size which renders 
-  nothing and should be used in places where `null` would have been preferable
+- Added `MouseEnterEvent` which is a `MouseEvent` dispatched when the mouse enters a widget
+- Added `MouseExitEvent` which is a `MouseEvent` dispatched when the mouse leaves a widget
+- Added `Decorated` which is a `SingleChildParent` paints a shape, background color and border
+  decorations
+- Added `NinePatch` which is a `Widget` which uses the 9-patch algorithm to resize parts of the
+  image to prevent stretching
+- Added `IntrinsicWidth` which is a `SingleChildParent` which limits the computed width of its
+  single child to the child's intrinsic width
+- Added `IntrinsicHeight` which is a `SingleChildParent` which limits the computed height of its
+  single child to the child's intrinsic height
+- Added `IntrinsicSize` which is a `SingleChildParent` which limits the computed size of its
+  single child to the child's intrinsic size
+- Added `Empty` which is a `Widget` with zero size which renders nothing and should be used in
+  places where `null` would have been preferable
 
 ### Changed
 
 - Modified `Image` widget to render a given image instead
-- Changed `Camera` class to a utility class. Instead of
-  `Camera.getInstance().<METHOD>`, use `Camera.<METHOD>`
+- Changed `Camera` class to a utility class. Instead of `Camera.getInstance().<METHOD>`, use
+  `Camera.<METHOD>`
 
 ### Removed
 
-- Removed `static void setResolution(Resolution)` from `Window` class
-- Removed `static void setFullscreen(boolean)` from `Window` class
+- Removed `static void setResolution(Resolution resolution)` from `Window` class
+- Removed `static void setFullscreen(boolean fullScreen)` from `Window` class
 - Removed `static Camera getInstance()` from `Camera` class
-- Removed `Point transformPoint(int, int)` from `Camera` class
-- Removed `Image withSize(int, int)` from `Image` class
+- Removed `Point transformPoint(int x, int y)` from `Camera` class
+- Removed `Image withSize(int width, int height)` from `Image` class
 
 ## 0.3.0-SNAPSHOT-2
 
 ### Added
 
-- Added `Flex` which is a `MultiChildParent` which lays its children out along a
-  single axis
-- Added `FixedSize` which is a `SingleChildParent` which enforces a fixed size
-  on its child
+- Added `Flex` which is a `MultiChildParent` which lays its children out along a single axis
+- Added `FixedSize` which is a `SingleChildParent` which enforces a fixed size on its child
 - Added `gapSize` property to `Row` and `Column` widgets
 - Added `mainAxisAlignment` property to `Row` and `Column` widgets
 - Added `crossAxisAlignment` property to `Row` and `Column` widgets
@@ -329,36 +318,35 @@ BufferedImage getResourceImage(String path)` in `IO` class
 
 ### Added
 
-- Added `static void setResolution(Resolution)` to `Window` class
-- Added `static void setFullscreen(boolean)` to `Window` class
+- Added `static void setResolution(Resolution resolution)` to `Window` class
+- Added `static void setFullscreen(boolean fullScreen)` to `Window` class
 - Implemented mouse button detection in `Input` class
-- Added `static boolean isButtonPressed(int)` to `Input` class
-- Added `static boolean isButtonJustPressed(int)` to `Input` class
-- Added `static boolean isButtonJustReleased(int)` to `Input` class
+- Added `static boolean isButtonPressed(int buttonCode)` to `Input` class
+- Added `static boolean isButtonJustPressed(int buttonCode)` to `Input` class
+- Added `static boolean isButtonJustReleased(int buttonCode)` to `Input` class
 - Added abstract `Widget` class which is the base class of all UI elements
 - Added abstract `Parent` which is a `Widget` which contain other widgets
-- Added abstract `SingleChildParent` which is a `Parent` that has only one child
-  widget
-- Added abstract `MultiChildParent` which is a `Parent` that container multiple
-  child widgets
+- Added abstract `SingleChildParent` which is a `Parent` that has only one child widget
+- Added abstract `MultiChildParent` which is a `Parent` that container multiple child widgets
 - Added `Row` which is a `MultiChildParent` that lays its children horizontally
 - Added `Column` which is a `MultiChildParent` that lays its children vertically
 - Added `Text` which is a `Widget` that renders text
 - Added `Image` which is a `Widget` that renders a resource image
-- Added `Align` which is a `SingleChildParent` that align its child within
-  itself
+- Added `Align` which is a `SingleChildParent` that align its child within itself
 - Added `Center` which is an `Align` with center alignment
-- Added `Padding` which is a `SingleChildParent` that adds spacing around its
-  child
+- Added `Padding` which is a `SingleChildParent` that adds spacing around its child
 - Added `Spacing` class which represents space around a widget
 - Added `UI` class which manages the user interface for a `Scene`
 
+### Changed
+
+- Renamed `void scheduleFrameEndTask(Task task)` to `void scheduleTask(Task task)` in `Application`
+  class.
+
 ### Removed
 
-- Removed `void scheduleFrameEndTask(Task)` from `Application` class. To
-  schedule end of frame task, use `void scheduleTask(Task)` instead
 - Removed deprecated `AnimationCurves` class.
-- Removed `void setSize(int, int)` from `Window` class
+- Removed `void setSize(int size, int size)` from `Window` class
 - Removed `void maximize()` from `Window` class
 - Removed deprecated `AnimationCurves` class
 
@@ -375,29 +363,26 @@ BufferedImage getResourceImage(String path)` in `IO` class
 
 ### Deprecated
 
-- Deprecated `AnimationCurves` and its static constants for removal in next
-  minor update
+- Deprecated `AnimationCurves` and its static constants for removal in next minor update
 
 ## v0.2.0-SNAPSHOT
 
 ### Added
 
-- Added `static BufferedReader loadBufferedResource(String)` to `IO` class which
-  returns a `BufferedReader` to a resource at the specified path
-- Added `void setSize(int, int)` to `Window` class which resizes the current
-  instance frame to the new width and height.
-- Added `void maximize()` to `Window` class which maximizes the current instance
-  frame.
-- Added `void scheduleTimerTask(long, Task)` to `Application` which schedules a
-  task to be run after the
-  timeout has elapsed
+- Added `static BufferedReader loadBufferedResource(String resPath)` to `IO` class which returns
+  a `BufferedReader` to a resource at the specified path
+- Added `void setSize(int width, int size)` to `Window` class which resizes the current instance
+  frame to the new width and height.
+- Added `void maximize()` to `Window` class which maximizes the current instance frame.
+- Added `void scheduleTimerTask(long timeout, Task task)` to `Application` which schedules a
+  task to be run after the timeout has elapsed
 
 ### Changed
 
-- Renamed `static BufferedImage loadImage(String)` to
-  `static BufferedImage loadImageResource(String)` in `IO` class.
-- Renamed `static Font loadFont(String)` to
-  `static BufferedImage loadFontResource(String)` in `IO` class.
-- Renamed `void runAnimation(Animation)` to `void scheduleAnimation(Animation)`
-  in `Application` class.
+- Renamed `static BufferedImage loadImage(String path)` to
+  `static BufferedImage loadImageResource(String resPath)` in `IO` class.
+- Renamed `static Font loadFont(String path)` to
+  `static BufferedImage loadFontResource(String resPath)` in `IO` class.
+- Renamed `void runAnimation(Animation)` to `void scheduleAnimation(Animation animation)`in
+  `Application` class.
 - Modified `Window` to start in windowed mode instead of maximized

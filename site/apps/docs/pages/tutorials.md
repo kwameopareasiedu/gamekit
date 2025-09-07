@@ -222,13 +222,15 @@ The table below shows all the available methods of `Renderer`:
 Draw calls can further be enhanced with attributes which customize their operation. These attributes are defined in the
 table below:
 
-| Attribute | Method Call                    | Description                                                                             |
-|-----------|--------------------------------|-----------------------------------------------------------------------------------------|
-| Color     | `withColor(Color)`             | Sets the foreground color of the draw call                                              |
-| Stroke    | `withStroke(Stroke)`           | Sets the border stroke (width and type) of the draw call                                |
-| Paint     | `withPaint(Paint)`             | Sets the paint of the draw call. Paint allows drawing of gradients                      |
-| Clip      | `withClip(int,int,int,int)`    | Sets the clip region of the draw call which prevents drawing outside the specified area |
-| Rotation  | `withRotation(int,int,double)` | Sets the clockwise rotation in radian of the draw call                                  |
+| Attribute                              | Method Call                    | Description                                                                             |
+|----------------------------------------|--------------------------------|-----------------------------------------------------------------------------------------|
+| Color                                  | `withColor(Color)`             | Sets the foreground color of the draw call                                              |
+| Stroke                                 | `withStroke(Stroke)`           | Sets the border stroke (width and type) of the draw call                                |
+| Paint                                  | `withPaint(Paint)`             | Sets the paint of the draw call. Paint allows drawing of gradients                      |
+| Clip                                   | `withClip(int,int,int,int)`    | Sets the clip region of the draw call which prevents drawing outside the specified area |
+| Rotation                               | `withRotation(int,int,double)` | Sets the clockwise rotation in radian of the draw call                                  |
+| Opacity                                | `withOpacity(double)`          | Sets the opacity of the draw call                                                       |
+| Image Interpolation (`DrawImage` only) | `withInterpolation(double)`    | Sets the image interpolation of the draw image call                                     |
 
 ### Rendering Sample
 
@@ -238,6 +240,7 @@ The sample below is a scene which uses the renderer methods and attributes shown
 import dev.gamekit.core.Application;
 import dev.gamekit.core.IO;
 import dev.gamekit.core.Scene;
+import dev.gamekit.settings.ImageInterpolation;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -277,8 +280,9 @@ public class RendererScene extends Scene {
     Renderer.drawCircle(30, 30, 50); // A 50px radius circle centered at (30, 30)
     Renderer.fillCircle(30, 30, 48);
 
-    Renderer.drawImage(IMAGE, 100, 100, 300, 200)
-      .withRotation(100, 100, 0.5 * Math.PI); // A 300x200 image centered at (100, 100) rotated by 90 degrees about (100, 100)
+    Renderer.drawImage(IMAGE, 100, 100, 300, 200)     // A 300x200 image centered at (100, 100)...
+      .withRotation(100, 100, 0.5 * Math.PI)          // rotated by 90 degrees about (100, 100)...
+      .withInterpolation(ImageInterpolation.NEAREST); // with nearest neighbour image interpolation
 
     Renderer.drawPolygon(POLYGON_POINTS)
       .withClip(0, 0, 100, 100); // Polygon points cliped to the area defined by top-left (0, 0) and width and height of 100x100

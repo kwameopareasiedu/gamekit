@@ -7,8 +7,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.RasterFormatException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +32,20 @@ public final class IO {
   /** Open and return a stream to a <b>resource file</b> */
   public static InputStream getResourceStream(String resPath) {
     InputStream is = IO.class.getClassLoader().getResourceAsStream(resPath);
+    INPUT_STREAMS.add(is);
+    return is;
+  }
+
+  /**
+   * Opens and returns a stream to a file which may or may not be a resource file.
+   * <p>
+   * The path can either be an absolute path or relative to the working directory the java
+   * command is invoked in
+   * <p>
+   * Throws a {@link FileNotFoundException} if the path is not a valid file.
+   */
+  public static InputStream getFileStream(String path) throws FileNotFoundException {
+    FileInputStream is = new FileInputStream(path);
     INPUT_STREAMS.add(is);
     return is;
   }
@@ -76,14 +89,49 @@ public final class IO {
         return (Font) CACHE.get(resPath);
 
       LOGGER.debug("Loading resource font at {}", resPath);
-      Font font = Font.createFont(Font.TRUETYPE_FONT,
-        getResourceStream(resPath));
+      Font font = Font.createFont(Font.TRUETYPE_FONT, getResourceStream(resPath));
       CACHE.put(resPath, font);
       return font;
     } catch (FontFormatException | IOException e) {
       LOGGER.error("Unable to load resource font at {}", resPath);
       LOGGER.catching(e);
       return null;
+    }
+  }
+
+  /**
+   * Writes data to the file at the specified path.
+   * <p>
+   * The path can either be an absolute path or relative to the working directory the java
+   * command is invoked in
+   */
+  public static boolean writeFile(String path, String content, boolean overwrite) {
+    File file = new File(path);
+    File parent = file.getParentFile();
+
+    try {
+      if (!file.exists()) {
+        if (parent != null && !parent.exists() && !parent.mkdirs()) {
+          LOGGER.error("Unable to create directory hierarchy: {}", path);
+          return false;
+        }
+
+        if (!file.createNewFile()) {
+          LOGGER.error("Unable to create file: {}", path);
+          return false;
+        }
+      } else if (!overwrite) {
+        LOGGER.error("Failed to overwrite file. Disable overwrite protection first");
+        return false;
+      }
+
+      try (FileWriter writer = new FileWriter(file)) {
+        writer.write(content);
+        return true;
+      }
+    } catch (IOException e) {
+      LOGGER.error("Failed to write to file", e);
+      return false;
     }
   }
 
