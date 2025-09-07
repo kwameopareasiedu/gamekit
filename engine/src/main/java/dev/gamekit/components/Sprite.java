@@ -19,6 +19,7 @@ public class Sprite extends Component {
   protected boolean flippedY = false;
 
   private double aspectRatio;
+  private double opacity = 1;
 
   public Sprite(BufferedImage image, ImageInterpolation interpolation) {
     if (image == null)
@@ -42,15 +43,18 @@ public class Sprite extends Component {
     double signedHeight = !flippedY ? bounds.height : -bounds.height;
 
     Renderer.drawImage(
-      image,
-      (int) (globalPosition.x + bounds.x),
-      (int) (globalPosition.y + bounds.y),
-      (int) signedWidth, (int) signedHeight
-    ).withRotation(
-      (int) (globalPosition.x),
-      (int) (globalPosition.y),
-      transform.getGlobalRotation()
-    ).withInterpolation(interpolation);
+        image,
+        (int) (globalPosition.x + bounds.x),
+        (int) (globalPosition.y + bounds.y),
+        (int) signedWidth, (int) signedHeight
+      )
+      .withInterpolation(interpolation)
+      .withOpacity(opacity)
+      .withRotation(
+        (int) (globalPosition.x),
+        (int) (globalPosition.y),
+        transform.getGlobalRotation()
+      );
   }
 
   /** Updates this {@link Sprite sprite's} image */
@@ -59,9 +63,14 @@ public class Sprite extends Component {
     this.aspectRatio = (double) image.getWidth() / (double) image.getHeight();
   }
 
-  /** Updates this {@link Sprite sprite's} interpolation setting */
+  /** Sets the image interpolation setting */
   public void setInterpolation(ImageInterpolation interpolation) {
     this.interpolation = interpolation;
+  }
+
+  /** Sets the image opacity */
+  public void setOpacity(double opacity) {
+    this.opacity = opacity;
   }
 
   /** Sets the width and computes the height based on the aspect ratio */

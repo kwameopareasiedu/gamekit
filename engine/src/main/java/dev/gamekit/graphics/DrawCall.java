@@ -8,6 +8,7 @@ public abstract class DrawCall<T extends DrawCall<T>> {
   private int rotationPointX;
   private int rotationPointY;
   private double rotationAngle;
+  private AlphaComposite opacityComposite;
 
   /**
    * Called internally by the engine to modify the provided {@link Graphics2D} object with the
@@ -20,9 +21,17 @@ public abstract class DrawCall<T extends DrawCall<T>> {
       g.translate(-rotationPointX, rotationPointY);
     }
 
+    Composite originalComposite = g.getComposite();
+
+    if (opacityComposite != null) {
+      g.setComposite(opacityComposite);
+    }
+
     setup(g);
     draw(g);
     cleanup(g);
+
+    g.setComposite(originalComposite);
 
     if (rotationAngle != 0) {
       g.translate(rotationPointX, -rotationPointY);
@@ -40,6 +49,16 @@ public abstract class DrawCall<T extends DrawCall<T>> {
     rotationPointX = x;
     rotationPointY = y;
     rotationAngle = rad;
+    return (T) this;
+  }
+
+  /**
+   * A modifier which applies transparency to the draw call.
+   * <p>
+   * This method returns the object on which it was called for further chaining
+   */
+  public T withOpacity(double opacity) {
+    opacityComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) opacity);
     return (T) this;
   }
 

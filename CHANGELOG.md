@@ -32,7 +32,7 @@
 - Added `static void drawPolygon(int[])` and `static void fillPolygon(int[])` methods to
   `Renderer` class
 - Added `Sprite` which is a `Component` that renders an image appearance for an entity
-- Added interpolation support to `DrawImage` draw call
+- Added `public <T extends DrawImage> T withInterpolation(double)` method to `DrawImage` draw call
 - Added `AnimatedSprite` which is a `Sprite` component extension that renders an animated sprite
   sheet
 - Added abstract `Collider` which is a `Component` which defines the physics shape of an entity for
@@ -46,18 +46,23 @@
 - Added `void destroy()` method to `Entity` which schedules it for destruction at the end of the
   current frame
 - Added `Entity.State getState()` method to `Entity` which returns the current state of the entity
-- Added `static double angle(Vector, Vector)` to `Vector` class
-- Added `static Vector from(double, double)` to `Vector` class
+- Added `static double angle(Vector, Vector)` method to `Vector` class
+- Added `static Vector from(double, double)` method to `Vector` class
 - Added `Animation.State.RESTARTED` and `Animation.State.REVERSED` pseudo states which are
   passed to a registered state listener when an animation restarts or reverses respectively
 - Added `ValueCallback<T>` class which is a single abstract method interfaces whose `run` method
   accepts a single variable of type `T`
-- Added state machine package to engine module
-- Added `static Vector sum(Vector...)` to `Vector` which returns a vector summing all input vectors
-- Added `static double lerpAngle(double, double, double)` to `Math` class
-- Added `static Position worldToScreenPosition(double, double)` to `Camera` class
-- Added `public <T extends Component> findComponent(Class<T>, Component.Filter<T>)` to `Entity`
-  class which finds a component of a class, matching the filter provided
+- Added state machine tool package to engine module
+- Added `void setLinearVelocity(double, double)` method to `RigidBody` class
+- Added `void applyForce(double, double)` method to `RigidBody` class
+- Added `static Vector sum(Vector...)` method to `Vector` which returns a vector summing all input
+  vectors
+- Added `static double lerpAngle(double, double, double)` method to `Math` class
+- Added `static Position worldToScreenPosition(double, double)` method to `Camera` class
+- Added `public <T extends Component> findComponent(Class<T>, Component.Filter<T>)` method to
+  `Entity` class which finds a component of a class, matching the filter provided
+- Added `public <T extends DrawCall> T withOpacity(double)` modifier method to abstract `DrawCall`
+  class
 
 ### Changed
 
@@ -77,8 +82,6 @@
   the `Transform` component
 - Changed engine rotations from degree-based to radian-based
 - Renamed `Task` class to `VoidCallback` and updated usages
-- Added `void setLinearVelocity(double, double)` to `RigidBody` class
-- Added `void applyForce(double, double)` to `RigidBody` class
 - Changed signature of `static Position screenToWorldPosition(double, double)` in `Camera` class
   to `static Vector screenToWorldPosition(double, double)`
 - Modified `Component` to keep a reference to its `Entity` during disposal
