@@ -92,7 +92,7 @@ public class Transform extends Component {
     localRotation += offset;
   }
 
-  /** Recursively walks up ancestry to update global position and rotation */
+  /** Recursively walks up the entity's ancestry to update global position and rotation */
   private void updateGlobalProperties() {
     Entity parentEntity = entity.getParent();
 

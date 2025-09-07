@@ -72,6 +72,9 @@ public class Animation {
     if (state == State.IDLE)
       Application.getInstance().playAnimation(this);
 
+    if (state == State.ENDED)
+      return;
+
     state = State.RUNNING;
     value = 0;
 
@@ -109,7 +112,7 @@ public class Animation {
     return state == State.ENDED;
   }
 
-  /** Called internally by the application game loop to update this animation */
+  /** Called internally by the {@link Application} to update this animation */
   public void update() {
     if (state == State.RUNNING) {
       value = clamp(value + 0.001 * rate * Application.FRAME_INTERVAL_MS, 0, 1);

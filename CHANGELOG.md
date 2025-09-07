@@ -7,6 +7,7 @@
 - Networked multiplayer
 - Save/Load system
 - Maven plugin for CLI tasks like packaging
+- Control debugging level via Application
 
 ## UNRELEASED
 

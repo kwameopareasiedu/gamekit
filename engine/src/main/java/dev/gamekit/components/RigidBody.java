@@ -162,9 +162,12 @@ public class RigidBody extends Component {
 
     double initialX = body.getTransform().getTranslationX();
     double initialY = body.getTransform().getTranslationY();
+    double initialRotation = body.getTransform().getRotationAngle();
 
     body.updateMass();
     body.getTransform().setTranslation(initialX, initialY);
+    body.getTransform().setRotation(initialRotation);
+
     Physics.addBody(body);
 
     syncPositionAndRotation();
@@ -191,15 +194,14 @@ public class RigidBody extends Component {
   }
 
   /**
-   * Synchronizes the {@link Transform} component's global position and rotation with position
+   * Synchronizes the {@link Transform} component global position and rotation with position
    * and rotation of the physics body
    */
   private void syncPositionAndRotation() {
     Transform tx = entity.findComponent(Transform.class);
-    tx.setGlobalPosition(
-      body.getTransform().getTranslationX() * Physics.PIXELS_PER_METER,
-      body.getTransform().getTranslationY() * Physics.PIXELS_PER_METER
-    );
+    double bodyX = body.getTransform().getTranslationX();
+    double bodyY = body.getTransform().getTranslationY();
+    tx.setGlobalPosition(bodyX * Physics.PIXELS_PER_METER, bodyY * Physics.PIXELS_PER_METER);
     tx.setGlobalRotation(-body.getTransform().getRotationAngle());
   }
 }
