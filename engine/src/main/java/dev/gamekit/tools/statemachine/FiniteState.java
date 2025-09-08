@@ -1,4 +1,4 @@
-package dev.gamekit.tools.state.machine;
+package dev.gamekit.tools.statemachine;
 
 /**
  * A state represents a behaviour in a state machine. Subclasses should extend to represent
