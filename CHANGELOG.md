@@ -5,7 +5,6 @@
 - Text widget spanning to allow different text attributes for different segments of text
 - Dynamic lighting
 - Networked multiplayer
-- Save/Load system
 - Maven plugin for CLI tasks like packaging
 - Control debugging level via Application
 
@@ -29,7 +28,7 @@
 - Added `Progress` widget which is a `Leaf` widget which displays a progress bar
 - Added `Slider` widget which is a `Progress` widget extension which adjusts a value by moving a
   slider
-- Added `static void drawPolygon(int[] pointPairs)` and `static void fillPolygon(int[] pointPairs)` 
+- Added `static void drawPolygon(int[] pointPairs)` and `static void fillPolygon(int[] pointPairs)`
   methods to `Renderer` class
 - Added `Sprite` which is a `Component` that renders an image appearance for an entity
 - Added `public <T extends DrawImage> T withInterpolation(ImageInterpolation interpolation)`
@@ -66,6 +65,20 @@
   `DrawCall` class
 - Added `static InputStream getFileStream(String path)` to `IO` class
 - Added `static boolean writeFile(String path, String content, boolean overwrite)` to `IO` class
+- Added `static void saveString(String key, String value)` to `IO` class
+- Added `static void saveInteger(String key, int value)` to `IO` class
+- Added `static void saveBoolean(String key, boolean value)` to `IO` class
+- Added `static void saveDouble(String key, double value)` to `IO` class
+- Added `static void saveFloat(String key, float value)` to `IO` class
+- Added `static void saveLong(String key, long value)` to `IO` class
+- Added `static void saveBytes(String key, byte[] value)` to `IO` class
+- Added `static String getSavedString(String key, String defaultValue)` to `IO` class
+- Added `static int getSavedInteger(String key, int defaultValue)` to `IO` class
+- Added `static boolean getSavedBoolean(String key, boolean defaultValue)` to `IO` class
+- Added `static double getSavedDouble(String key, double defaultValue)` to `IO` class
+- Added `static float getSavedFloat(String key, float defaultValue)` to `IO` class
+- Added `static long getSavedLong(String key, long defaultValue)` to `IO` class
+- Added `static byte[] getSavedBytes(String key, byte[] defaultValue)` to `IO` class
 
 ### Changed
 

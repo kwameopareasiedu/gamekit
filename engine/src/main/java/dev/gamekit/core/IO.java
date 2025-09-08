@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.prefs.Preferences;
 
 /**
  * {@link IO} handles resource access
@@ -135,6 +136,111 @@ public final class IO {
     }
   }
 
+  /** Saves a string value in the application's {@link Preferences} node */
+  public static void saveString(String key, String value) {
+    getApplicationPreferenceNode().put(key, value);
+  }
+
+  /** Saves an integer value in the application's {@link Preferences} node */
+  public static void saveInteger(String key, int value) {
+    getApplicationPreferenceNode().putInt(key, value);
+  }
+
+  /** Saves a boolean value in the application's {@link Preferences} node */
+  public static void saveBoolean(String key, boolean value) {
+    getApplicationPreferenceNode().putBoolean(key, value);
+  }
+
+  /** Saves a double value in the application's {@link Preferences} node */
+  public static void saveDouble(String key, double value) {
+    getApplicationPreferenceNode().putDouble(key, value);
+  }
+
+  /** Saves a float value in the application's {@link Preferences} node */
+  public static void saveFloat(String key, float value) {
+    getApplicationPreferenceNode().putFloat(key, value);
+  }
+
+  /** Saves a long value in the application's {@link Preferences} node */
+  public static void saveLong(String key, long value) {
+    getApplicationPreferenceNode().putLong(key, value);
+  }
+
+  /** Saves a byte array value in the application's {@link Preferences} node */
+  public static void saveBytes(String key, byte[] value) {
+    getApplicationPreferenceNode().putByteArray(key, value);
+  }
+
+  /**
+   * Returns a string value from the application's {@link Preferences} node associated with the
+   * specified key.
+   * <p>
+   * If no value is found, the given default value is returned instead.
+   */
+  public static String getSavedString(String key, String defaultValue) {
+    return getApplicationPreferenceNode().get(key, defaultValue);
+  }
+
+  /**
+   * Returns an integer value from the application's {@link Preferences} node associated with the
+   * specified key.
+   * <p>
+   * If no value is found, the given default value is returned instead.
+   */
+  public static int getSavedInteger(String key, int defaultValue) {
+    return getApplicationPreferenceNode().getInt(key, defaultValue);
+  }
+
+  /**
+   * Returns a boolean value from the application's {@link Preferences} node associated with the
+   * specified key.
+   * <p>
+   * If no value is found, the given default value is returned instead.
+   */
+  public static boolean getSavedBoolean(String key, boolean defaultValue) {
+    return getApplicationPreferenceNode().getBoolean(key, defaultValue);
+  }
+
+  /**
+   * Returns a double value from the application's {@link Preferences} node associated with the
+   * specified key.
+   * <p>
+   * If no value is found, the given default value is returned instead.
+   */
+  public static double getSavedDouble(String key, double defaultValue) {
+    return getApplicationPreferenceNode().getDouble(key, defaultValue);
+  }
+
+  /**
+   * Returns a float value from the application's {@link Preferences} node associated with the
+   * specified key.
+   * <p>
+   * If no value is found, the given default value is returned instead.
+   */
+  public static float getSavedFloat(String key, float defaultValue) {
+    return getApplicationPreferenceNode().getFloat(key, defaultValue);
+  }
+
+  /**
+   * Returns a long value from the application's {@link Preferences} node associated with the
+   * specified key.
+   * <p>
+   * If no value is found, the given default value is returned instead.
+   */
+  public static long getSavedLong(String key, long defaultValue) {
+    return getApplicationPreferenceNode().getLong(key, defaultValue);
+  }
+
+  /**
+   * Returns a byte array value from the application's {@link Preferences} node associated with the
+   * specified key.
+   * <p>
+   * If no value is found, the given default value is returned instead.
+   */
+  public static byte[] getSavedBytes(String key, byte[] defaultValue) {
+    return getApplicationPreferenceNode().getByteArray(key, defaultValue);
+  }
+
   /** Close any open IO resources */
   static void dispose() {
     try {
@@ -143,5 +249,20 @@ public final class IO {
     } catch (IOException e) {
       LOGGER.error("Unable to close input stream", e);
     }
+  }
+
+  /**
+   * Returns the {@link Preferences} node associated with the current {@link Application} instance.
+   * <p>
+   * The preference path is computed from the application's title and hence is always the same for
+   * a title string.
+   */
+  private static Preferences getApplicationPreferenceNode() {
+    if (Application.getInstance() == null)
+      throw new IllegalStateException("No instance of Application running");
+
+    String applicationTitle = Application.getInstance().getSettings().title;
+    String preferencePath = "_" + applicationTitle.trim().replaceAll("\\W", "_");
+    return Preferences.userRoot().node(preferencePath);
   }
 }
