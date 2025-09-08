@@ -2,6 +2,7 @@ package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.Scene;
 import dev.gamekit.core.UI;
+import dev.gamekit.core.Window;
 import dev.gamekit.ui.Constraints;
 import dev.gamekit.utils.Bounds;
 import org.apache.logging.log4j.LogManager;
@@ -33,10 +34,10 @@ public abstract class Widget {
   protected final Bounds absoluteBounds;
   protected final Bounds computedBounds;
   protected final Bounds intrinsicBounds;
-  protected UI.BridgeObject uiBridge;
   protected Constraints constraints;
   protected WidgetConfig config;
   protected Widget parent;
+  protected Host host;
 
   public Widget(WidgetConfig config) {
     if (config == null)
@@ -69,8 +70,8 @@ public abstract class Widget {
    * Since this method is marked as {@code final}, subclasses should override the
    * {@link #performInit} method instead to perform any post-mount operations
    */
-  public final void init(UI.BridgeObject uiBridge) {
-    this.uiBridge = uiBridge;
+  public final void init(Host host) {
+    this.host = host;
     performInit();
   }
 
@@ -95,7 +96,7 @@ public abstract class Widget {
   public final void update(Widget widget) {
     this.config = widget.config;
     performUpdate(widget);
-    init(uiBridge);
+    init(host);
   }
 
   /** Delegate method performs the state update for this widget */
@@ -252,4 +253,16 @@ public abstract class Widget {
 
   /** Base class for all widget constructor configurations */
   public static abstract class WidgetConfig { }
+
+  /**
+   * Interface for the host containing a {@link Widget}, allowing widgets to invoke necessary
+   * methods on it
+   */
+  public interface Host {
+    /** Returns the font metrics for the given font from the {@link Window} object */
+    FontMetrics getFontMetrics(Font font);
+
+    /** Triggers a re-render of the {@link Widget widget} tree */
+    void triggerRender();
+  }
 }

@@ -93,7 +93,7 @@ public class Text extends Leaf {
     renderFont = font != null
       ? font.deriveFont(fontStyle, fontSize)
       : DEFAULT_FONT.deriveFont(fontStyle, fontSize);
-    fontMetrics = uiBridge.getFontMetrics(renderFont);
+    fontMetrics = host.getFontMetrics(renderFont);
   }
 
   @Override
@@ -182,10 +182,10 @@ public class Text extends Leaf {
         continue;
 
       double lineOffset = lineOffsets.get(i);
-      String[] lineTokens = line.split("");
+      String[] lineCharacters = line.split("");
       double lineYPosition = i * fontSize;
 
-      for (String ch : lineTokens) {
+      for (String ch : lineCharacters) {
         int chWidth = fontMetrics.stringWidth(ch);
 
         symbols.add(

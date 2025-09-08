@@ -55,8 +55,8 @@ public class Field extends Text
       if (val == 1.0 && focused) {
         textModel.toggleCursorVisibility();
 
-        if (uiBridge != null)
-          uiBridge.triggerRender();
+        if (host != null)
+          host.triggerRender();
       }
     });
   }
@@ -170,7 +170,7 @@ public class Field extends Text
 
     textModel.setCursorVisibility(focused);
     cursorAnimation.start();
-    uiBridge.triggerRender();
+    host.triggerRender();
 
     if (focusListener != null)
       focusListener.handleEvent(ev);
@@ -188,22 +188,22 @@ public class Field extends Text
       case Input.KEY_LEFT -> {
         textModel.offsetCursor(-1);
         textModel.setCursorVisibility(true);
-        uiBridge.triggerRender();
+        host.triggerRender();
       }
       case Input.KEY_RIGHT -> {
         textModel.offsetCursor(1);
         textModel.setCursorVisibility(true);
-        uiBridge.triggerRender();
+        host.triggerRender();
       }
       case Input.KEY_HOME -> {
         textModel.offsetCursor(-symbols.size());
         textModel.setCursorVisibility(true);
-        uiBridge.triggerRender();
+        host.triggerRender();
       }
       case Input.KEY_END -> {
         textModel.offsetCursor(symbols.size());
         textModel.setCursorVisibility(true);
-        uiBridge.triggerRender();
+        host.triggerRender();
       }
     }
   }
@@ -316,6 +316,7 @@ public class Field extends Text
       this.cursorVisible = !cursorVisible;
     }
 
+    /** Updates the symbols of this text model after a layout in the associated {@link Field} */
     public void updateSymbols(List<Symbol> symbols) {
       this.symbols.clear();
       this.symbols.addAll(symbols);

@@ -18,7 +18,7 @@ public abstract class SingleChildParent extends Parent {
 
   @Override
   protected void performInit() {
-    child.init(uiBridge);
+    child.init(host);
   }
 
   @Override

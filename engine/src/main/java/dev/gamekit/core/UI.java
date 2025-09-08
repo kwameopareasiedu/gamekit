@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Objects;
 
 /** {@link UI} manages the user interface within a {@link Scene} */
-public final class UI {
+public final class UI implements Widget.Host {
   public static final Color TRANSPARENT_COLOR = new Color(0x0000000, true);
   public static final Color DEBUG_COLOR = Color.GREEN;
   public static final BasicStroke DEBUG_STROKE = new BasicStroke(
@@ -33,7 +33,6 @@ public final class UI {
   private final List<Widget> currentHitTestList;
   private final List<Widget> previousHitTestList;
   private final EventStore eventStore;
-  private final BridgeObject bridgeObject;
   private final Position mousePosition;
   private final BufferedImage canvasImage;
   private final Graphics2D canvasGraphics;
@@ -61,17 +60,6 @@ public final class UI {
     this.currentHitTestList = new ArrayList<>();
     this.previousHitTestList = new ArrayList<>();
     this.eventStore = new EventStore();
-    this.bridgeObject = new BridgeObject() {
-      @Override
-      public FontMetrics getFontMetrics(Font font) {
-        return Window.getInstance().getUiGraphics().getFontMetrics(font);
-      }
-
-      @Override
-      public void triggerRender() {
-        UI.this.triggerRender();
-      }
-    };
     this.mousePosition = new Position();
     this.canvasImage = new BufferedImage(dw, dh, BufferedImage.TYPE_INT_ARGB);
     this.canvasGraphics = canvasImage.createGraphics();
@@ -86,12 +74,22 @@ public final class UI {
     UI.instance = this;
   }
 
+  @Override
+  public FontMetrics getFontMetrics(Font font) {
+    return Window.getInstance().getUiGraphics().getFontMetrics(font);
+  }
+
+  @Override
+  public void triggerRender() {
+    needsRender = true;
+  }
+
   /** Set the initial widget tree */
   void setWidgetTree(Widget tree) {
     this.tree = tree;
 
     if (this.tree != null) {
-      this.tree.init(bridgeObject);
+      this.tree.init(this);
       this.tree.layout(windowConstraints);
       this.tree.postLayout();
       triggerRender();
@@ -101,11 +99,6 @@ public final class UI {
   /** Triggers a layout update during the next frame */
   void triggerUpdate() {
     needsUpdate = true;
-  }
-
-  /** Triggers a re-render of the current widget tree */
-  void triggerRender() {
-    needsRender = true;
   }
 
   void clear() {
@@ -181,7 +174,7 @@ public final class UI {
     boolean treeUpdated = false;
 
     // Initialize the new tree to set up internal state before comparison
-    newTree.init(bridgeObject);
+    newTree.init(this);
 
     currentWidgetQueue.add(tree);
     newWidgetQueue.add(newTree);
@@ -511,18 +504,6 @@ public final class UI {
 
   private interface TreeWidgetVisitor {
     void visit(Widget widget);
-  }
-
-  /**
-   * Interface for a bridge object passed to {@link Widget widgets} enabling them to call
-   * certain methods in the {@link UI}
-   */
-  public interface BridgeObject {
-    /** Returns the font metrics for the given font from the {@link Window} object */
-    FontMetrics getFontMetrics(Font font);
-
-    /** Triggers a re-render of the {@link Widget widget} tree */
-    void triggerRender();
   }
 
   /** Convenience class which stores structures of {@link InputEvent} */

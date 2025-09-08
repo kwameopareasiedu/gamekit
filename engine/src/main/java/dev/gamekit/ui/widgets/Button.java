@@ -115,7 +115,7 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
       }
     }
 
-    uiBridge.triggerRender();
+    host.triggerRender();
 
     if (mouseListener != null)
       mouseListener.handleEvent(event);

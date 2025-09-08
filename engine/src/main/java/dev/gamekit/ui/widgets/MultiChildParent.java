@@ -22,7 +22,7 @@ public abstract class MultiChildParent extends Parent {
 
   @Override
   protected void performInit() {
-    children.forEach(c -> c.init(uiBridge));
+    children.forEach(c -> c.init(host));
   }
 
   @Override
