@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 /**
@@ -239,6 +240,17 @@ public final class IO {
    */
   public static byte[] getSavedBytes(String key, byte[] defaultValue) {
     return getApplicationPreferenceNode().getByteArray(key, defaultValue);
+  }
+
+  /** Clears all saved value in the application's {@link Preferences} node */
+  public static boolean clearPreferences() {
+    try {
+      getApplicationPreferenceNode().clear();
+      return true;
+    } catch (BackingStoreException e) {
+      LOGGER.error("Unable to clear preferences", e);
+      return false;
+    }
   }
 
   /** Close any open IO resources */
