@@ -242,7 +242,12 @@ public final class IO {
     return getApplicationPreferenceNode().getByteArray(key, defaultValue);
   }
 
-  /** Clears all saved value in the application's {@link Preferences} node */
+  /** Clears the saved value of a key from the application's {@link Preferences} node */
+  public static void clearPreference(String key) {
+    getApplicationPreferenceNode().remove(key);
+  }
+
+  /** Clears all saved values in the application's {@link Preferences} node */
   public static boolean clearPreferences() {
     try {
       getApplicationPreferenceNode().clear();
