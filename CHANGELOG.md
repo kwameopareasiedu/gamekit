@@ -79,6 +79,7 @@
 - Added `static float getSavedFloat(String key, float defaultValue)` to `IO` class
 - Added `static long getSavedLong(String key, long defaultValue)` to `IO` class
 - Added `static byte[] getSavedBytes(String key, byte[] defaultValue)` to `IO` class
+- Added `Gap` widget which is a `Leaf` which leaves a gap spacing
 
 ### Changed
 
