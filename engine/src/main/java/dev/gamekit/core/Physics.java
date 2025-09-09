@@ -1,6 +1,8 @@
 package dev.gamekit.core;
 
 import dev.gamekit.components.Collider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.world.ManifoldCollisionData;
@@ -15,6 +17,7 @@ public final class Physics {
 
   private static final World<Body> WORLD;
   private static final HashMap<String, CollisionListener> COLLISION_LISTENER_MAP;
+  private static final Logger LOGGER = LogManager.getLogger(Physics.class);
 
   static {
     WORLD = new World<>();
@@ -68,7 +71,8 @@ public final class Physics {
 
   /** Removes a {@link Body} from the physics world */
   public static void removeBody(Body body) {
-    WORLD.removeBody(body);
+    try { WORLD.removeBody(body); } //
+    catch (Exception ignored) { }
   }
 
   /** Registers a collision listener with the specified id, replacing any existing listener */
