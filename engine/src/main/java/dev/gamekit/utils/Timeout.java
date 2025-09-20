@@ -34,15 +34,16 @@ public class Timeout {
    * is executed.
    */
   public void update() {
-    if (!completed) {
-      durationMs = java.lang.Math.max(
-        0, durationMs - Application.FRAME_INTERVAL_MS
-      );
+    if (completed)
+      return;
 
-      if (durationMs == 0) {
-        completed = true;
-        callback.run();
-      }
+    durationMs = java.lang.Math.max(
+      0, durationMs - Application.FRAME_INTERVAL_MS
+    );
+
+    if (durationMs == 0) {
+      completed = true;
+      callback.run();
     }
   }
 }

@@ -4,7 +4,6 @@ import dev.gamekit.utils.Position;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.stream.IntStream;
 
 import static dev.gamekit.utils.Math.clamp;
 
@@ -230,8 +229,11 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
     absoluteMousePosition = new Position(MouseInfo.getPointerInfo().getLocation());
     relativeMousePosition = new Position(0, 0);
 
-    IntStream.range(0, KEY_COUNT).forEach(i -> keyStates[i] = new KeyState());
-    IntStream.range(0, BUTTON_COUNT).forEach(i -> buttonStates[i] = new ButtonState());
+    for (int i1 = 0; i1 < KEY_COUNT; i1++)
+      keyStates[i1] = new KeyState();
+
+    for (int i = 0; i < BUTTON_COUNT; i++)
+      buttonStates[i] = new ButtonState();
   }
 
   /** Checks if a key has just been pressed */
@@ -318,8 +320,11 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
   /** Resets the current state and allows Window input events to affect the current input state */
   static void reset() {
-    IntStream.range(0, KEY_COUNT).forEach(i -> INSTANCE.keyStates[i].reset());
-    IntStream.range(0, BUTTON_COUNT).forEach(i -> INSTANCE.buttonStates[i].reset());
+    for (int i1 = 0; i1 < KEY_COUNT; i1++)
+      INSTANCE.keyStates[i1].reset();
+
+    for (int i = 0; i < BUTTON_COUNT; i++)
+      INSTANCE.buttonStates[i].reset();
 
     INSTANCE.characterPressed = '\0';
     INSTANCE.keyCodePressed = 0;

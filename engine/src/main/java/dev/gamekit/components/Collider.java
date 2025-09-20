@@ -97,7 +97,6 @@ public abstract class Collider extends Component {
 
   @Override
   protected void start() {
-    // Register the collision listener
     if (collisionListener != null)
       Physics.addCollisionListener(fixture.id, collisionListener);
   }
@@ -143,9 +142,8 @@ public abstract class Collider extends Component {
 
   @Override
   protected void dispose() {
-    // Unregister the collision listener
     if (collisionListener != null)
-      Physics.removeCollisionListener(fixture.id, this.collisionListener);
+      Physics.removeCollisionListener(fixture.id, collisionListener);
   }
 
   /**

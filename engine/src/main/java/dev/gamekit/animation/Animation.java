@@ -69,11 +69,11 @@ public class Animation {
 
   /** Starts / Restarts this animation and changes its state to {@link State#RUNNING} */
   public void start() {
-    if (state == State.IDLE)
-      Application.getInstance().playAnimation(this);
-
     if (state == State.ENDED)
       return;
+
+    if (state == State.IDLE)
+      Application.getInstance().playAnimation(this);
 
     state = State.RUNNING;
     value = 0;

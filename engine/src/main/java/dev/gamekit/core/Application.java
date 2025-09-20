@@ -109,7 +109,7 @@ public abstract class Application {
    * explicitly invoke this</i>
    */
   public void playAnimation(Animation animation) {
-    if (!animations.contains(animation))
+    if (animation != null && !animations.contains(animation))
       animations.add(animation);
   }
 
@@ -183,8 +183,11 @@ public abstract class Application {
 
   /** Called in each frame to update the current scene */
   private void update() {
-    animations.forEach(Animation::update);
-    timeouts.forEach(Timeout::update);
+    for (Animation animation : animations)
+      animation.update();
+
+    for (Timeout timeout : timeouts)
+      timeout.update();
 
     if (currentScene != null)
       currentScene._update();
@@ -249,13 +252,13 @@ public abstract class Application {
       currentScene._dispose();
 
     audioThread.interrupt();
-    audioThread.join(330);
+    audioThread.join(500);
 
     physicsThread.interrupt();
-    physicsThread.join(330);
+    physicsThread.join(500);
 
     drawThread.interrupt();
-    drawThread.join(330);
+    drawThread.join(500);
 
     Audio.dispose();
     IO.dispose();

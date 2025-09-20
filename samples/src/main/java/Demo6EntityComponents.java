@@ -12,7 +12,6 @@ import org.dyn4j.geometry.MassType;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -100,7 +99,7 @@ public class Demo6EntityComponents extends Scene {
       // Add the rigid body to the components
       components.add(rb);
 
-      Arrays.stream(WALL_TRANSFORMS).forEach(tx -> {
+      for (double[] tx : WALL_TRANSFORMS) {
         // Create a BoxCollider with width and height
         BoxCollider wallCollider = new BoxCollider(tx[2], tx[3]);
         // Set metadata (for collision identification)
@@ -112,7 +111,7 @@ public class Demo6EntityComponents extends Scene {
 
         if (tx == WALL_TRANSFORMS[0])
           wallCollider.setSensor(true);
-      });
+      }
 
       // Return a list of components for the Wall entity
       return components;

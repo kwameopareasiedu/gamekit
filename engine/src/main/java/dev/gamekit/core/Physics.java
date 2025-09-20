@@ -9,7 +9,9 @@ import org.dyn4j.world.ManifoldCollisionData;
 import org.dyn4j.world.World;
 import org.dyn4j.world.listener.CollisionListenerAdapter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /** {@link Physics} handles updates of the {@link World} object on the main application thread */
 public final class Physics {
@@ -18,10 +20,14 @@ public final class Physics {
   private static final World<Body> WORLD;
   private static final HashMap<String, CollisionListener> COLLISION_LISTENER_MAP;
   private static final Logger LOGGER = LogManager.getLogger(Physics.class);
+  private static final List<Body> NEW_BODIES;
+  private static final List<Body> DESTROYED_BODIES;
 
   static {
     WORLD = new World<>();
     COLLISION_LISTENER_MAP = new HashMap<>();
+    NEW_BODIES = new ArrayList<>();
+    DESTROYED_BODIES = new ArrayList<>();
 
     WORLD.addCollisionListener(new CollisionListenerAdapter<>() {
       @Override
@@ -61,18 +67,36 @@ public final class Physics {
       COLLISION_LISTENER_MAP.forEach(
         (body, listener) -> listener.update()
       );
+
+      synchronized (NEW_BODIES) {
+        for (Body body : NEW_BODIES)
+          WORLD.addBody(body);
+
+        NEW_BODIES.clear();
+      }
+
+      synchronized (DESTROYED_BODIES) {
+        for (Body body : DESTROYED_BODIES)
+          try { WORLD.removeBody(body); } //
+          catch (Exception ignored) { }
+
+        DESTROYED_BODIES.clear();
+      }
     }
   }
 
   /** Adds a {@link Body} to the physics world for simulation */
   public static void addBody(Body body) {
-    WORLD.addBody(body);
+    synchronized (NEW_BODIES) {
+      NEW_BODIES.add(body);
+    }
   }
 
   /** Removes a {@link Body} from the physics world */
   public static void removeBody(Body body) {
-    try { WORLD.removeBody(body); } //
-    catch (Exception ignored) { }
+    synchronized (DESTROYED_BODIES) {
+      DESTROYED_BODIES.add(body);
+    }
   }
 
   /** Registers a collision listener with the specified id, replacing any existing listener */

@@ -158,7 +158,9 @@ public class RigidBody extends Component {
   protected void start() {
     // Find all colliders and add their fixtures to the body
     List<Collider> colliders = entity.findComponents(Collider.class);
-    colliders.forEach(collider -> body.addFixture(collider.fixture));
+
+    for (Collider collider : colliders)
+      body.addFixture(collider.fixture);
 
     double initialX = body.getTransform().getTranslationX();
     double initialY = body.getTransform().getTranslationY();

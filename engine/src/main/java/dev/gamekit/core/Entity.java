@@ -49,46 +49,46 @@ public abstract class Entity {
   }
 
   /**
-   * Adds a child to this entity, if it isn't already.
-   * <p>
-   * This also invokes the child's {@link Entity#_start} method if it is new or
-   * {@link Entity#_restart} if it was previously inactivated.
+   * Adds a child to this entity, at the end of the current frame, invoking the child's
+   * {@link Entity#start} method if it is new or {@link Entity#restart} if it was previously
+   * inactivated.
    */
   public void addChild(Entity child) {
+    if (children.contains(child))
+      return;
+
     if (child.parent != null)
       throw new IllegalStateException("Cannot add child with parent. Remove from parent first");
 
     switch (child.state) {
       case DOOMED, DEAD -> throw new IllegalStateException("Cannot add a doomed or dead child");
-      case ACTIVE ->
-        throw new IllegalStateException("Cannot add active child. Remove from parent first");
+      case ACTIVE -> throw new IllegalStateException("Cannot add active child of another parent");
     }
 
-    if (!children.contains(child)) {
+    Application.getInstance().scheduleTask(() -> {
       logger.debug("Adding {} to {}", child.name, name);
 
-      Application.getInstance().scheduleTask(() -> {
-        switch (child.state) {
-          case NEW -> child._start(this);
-          case INACTIVE -> child._restart(this);
-        }
+      switch (child.state) {
+        case NEW -> child._start(this);
+        case INACTIVE -> child._restart(this);
+      }
 
-        children.add(child);
-      });
-    }
+      children.add(child);
+    });
   }
 
   /**
-   * Removes a child from this entity, if it is part of its children.
-   * <p>
-   * This also invokes the child's {@link Scene#_dispose} method
+   * Removes a child from this entity at the end of the current frame, invoking the child's
+   * {@link Entity#stop} method
    */
   public void removeChild(Entity child) {
     if (children.contains(child)) {
-      logger.debug("Removing {} from {}", child.name, name);
+      child.state = State.INACTIVE;
 
       Application.getInstance().scheduleTask(() -> {
-        child._stop();
+        logger.debug("Removing {} from {}", child.name, name);
+        child.stop();
+        child.parent = null;
         children.remove(child);
       });
     }
@@ -139,12 +139,10 @@ public abstract class Entity {
    */
   public void destroy() {
     if (state == State.ACTIVE) {
-      stop();
       state = State.DOOMED;
-      logger.debug("Destroying {}", name);
 
       Application.getInstance().scheduleTask(() -> {
-        parent.children.remove(this);
+        logger.debug("Destroying {}", name);
         _dispose();
       });
     }
@@ -195,13 +193,11 @@ public abstract class Entity {
   }
 
   /**
-   * Called by the parent {@link Entity} after being added to it, but if {@link #_stop} was
-   * previously called.
-   * <p>
-   * This can be used to re-initialize the entity with the new parent
+   * Called by a new parent {@link Entity} after previously being stopped, to re-initialize this
+   * entity
    */
-  void _restart(Entity newParent) {
-    this.parent = newParent;
+  void _restart(Entity parent) {
+    this.parent = parent;
     restart();
     state = State.ACTIVE;
   }
@@ -209,9 +205,13 @@ public abstract class Entity {
   /** Called by the parent {@link Entity} to update the entity */
   void _update() {
     if (state == State.ACTIVE) {
-      components.forEach(Component::_update);
+      for (Component component : components)
+        component._update();
+
       update();
-      children.forEach(Entity::_update);
+
+      for (Entity child : children)
+        child._update();
     }
   }
 
@@ -219,28 +219,26 @@ public abstract class Entity {
   void _render() {
     if (state == State.ACTIVE) {
       render();
-      components.forEach(Component::_render);
-      children.forEach(Entity::_render);
-    }
-  }
 
-  /**
-   * Called by the parent {@link Entity} before it is removed from its children.
-   * <p>
-   * The entity will not be destroyed, but will no longer run lifecycle methods
-   */
-  void _stop() {
-    stop();
-    parent = null;
-    state = State.INACTIVE;
+      for (Component component : components)
+        component._render();
+
+      for (Entity child : children)
+        child._render();
+    }
   }
 
   /** Called <b>once</b> by the parent {@link Entity} to dispose the entity */
   void _dispose() {
-    children.forEach(Entity::_dispose);
-    components.forEach(Component::_dispose);
+    for (Entity child : children)
+      child._dispose();
+
+    for (Component component : components)
+      component._dispose();
+
     dispose();
 
+    parent.children.remove(this);
     parent = null;
     state = State.DEAD;
   }
