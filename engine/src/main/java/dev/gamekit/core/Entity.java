@@ -230,8 +230,9 @@ public abstract class Entity {
 
   /** Called <b>once</b> by the parent {@link Entity} to dispose the entity */
   void _dispose() {
-    for (Entity child : children)
-      child._dispose();
+    //noinspection ForLoopReplaceableByForEach
+    for (int i = 0; i < children.size(); i++)
+      children.get(i)._dispose();
 
     for (Component component : components)
       component._dispose();
