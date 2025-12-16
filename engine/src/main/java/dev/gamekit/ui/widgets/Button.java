@@ -1,8 +1,8 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.IO;
-import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.Spacing;
+import dev.gamekit.utils.Constraints;
+import dev.gamekit.utils.Spacing;
 import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.mixins.NinePatch;
 
@@ -77,16 +77,16 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
       )
     );
 
-    intrinsicBounds.setSize(child.computedBounds.width, child.computedBounds.height);
+    intrinsicSize.set(child.computedBounds.width, child.computedBounds.height);
 
     computedBounds.setSize(
-      constraints.constrainWidth(intrinsicBounds.width),
-      constraints.constrainHeight(intrinsicBounds.height)
+      constraints.constrainWidth(intrinsicSize.width),
+      constraints.constrainHeight(intrinsicSize.height)
     );
 
     child.computedBounds.setPosition(
-      computedBounds.width / 2 - intrinsicBounds.width / 2,
-      computedBounds.height / 2 - intrinsicBounds.height / 2
+      computedBounds.width / 2 - intrinsicSize.width / 2,
+      computedBounds.height / 2 - intrinsicSize.height / 2
     );
   }
 

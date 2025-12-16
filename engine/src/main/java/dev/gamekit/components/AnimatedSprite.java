@@ -26,7 +26,7 @@ public class AnimatedSprite extends Sprite implements ValueCallback<Animation.St
   /**
    * Creates a new {@link AnimatedSprite}.
    * <p>
-   * The {@code coordinates} should be of the format {@code [x1, y1, x2, y2, ..., xn,yn]}, where
+   * The {@code coordinates} should be of the format {@code [x1, y1, x2, y2, ..., xn, yn]}, where
    * each  {@code (x, y)} pair represents the top-left point of the individual sprites in the
    * sprite sheet
    */
@@ -109,11 +109,11 @@ public class AnimatedSprite extends Sprite implements ValueCallback<Animation.St
   }
 
   @Override
-  public void run(Animation.State state) {
+  public void update(Animation.State state) {
     if (state == Animation.State.RESTARTED) {
       if (imageIndex == sprites.length - 1 && !this.looping) {
         if (stateListener != null)
-          stateListener.run(Animation.State.ENDED);
+          stateListener.update(Animation.State.ENDED);
 
         animation.stop();
         return;
@@ -123,7 +123,7 @@ public class AnimatedSprite extends Sprite implements ValueCallback<Animation.St
       image = sprites[imageIndex];
 
       if (imageIndex == 0 && stateListener != null)
-        stateListener.run(Animation.State.RESTARTED);
+        stateListener.update(Animation.State.RESTARTED);
     }
   }
 

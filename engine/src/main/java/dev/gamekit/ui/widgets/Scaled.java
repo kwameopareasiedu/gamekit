@@ -1,6 +1,6 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.ui.Constraints;
+import dev.gamekit.utils.Constraints;
 
 import java.util.Objects;
 
@@ -49,11 +49,11 @@ public class Scaled extends SingleChildParent {
     int scaledWidth = (int) (child.computedBounds.width * scale);
     int scaledHeight = (int) (child.computedBounds.width * scale);
 
-    intrinsicBounds.setSize(scaledWidth, scaledHeight);
+    intrinsicSize.set(scaledWidth, scaledHeight);
 
     computedBounds.setSize(
-      constraints.constrainWidth(intrinsicBounds.width),
-      constraints.constrainHeight(intrinsicBounds.height)
+      constraints.constrainWidth(intrinsicSize.width),
+      constraints.constrainHeight(intrinsicSize.height)
     );
 
     child.layout(

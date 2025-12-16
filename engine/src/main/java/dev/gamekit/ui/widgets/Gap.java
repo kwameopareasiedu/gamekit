@@ -1,6 +1,6 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.ui.Constraints;
+import dev.gamekit.utils.Constraints;
 
 import java.awt.*;
 import java.util.Objects;
@@ -41,11 +41,11 @@ public class Gap extends Leaf {
 
   @Override
   protected void performLayout(Constraints constraints) {
-    intrinsicBounds.setSize(width, height);
+    intrinsicSize.set(width, height);
 
     computedBounds.setSize(
-      constraints.constrainWidth(intrinsicBounds.width),
-      constraints.constrainHeight(intrinsicBounds.height)
+      constraints.constrainWidth(intrinsicSize.width),
+      constraints.constrainHeight(intrinsicSize.height)
     );
   }
 

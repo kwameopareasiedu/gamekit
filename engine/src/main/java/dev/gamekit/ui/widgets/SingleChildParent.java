@@ -37,7 +37,9 @@ public abstract class SingleChildParent extends Parent {
     child.unmount();
   }
 
-  public Widget getChild() { return child; }
+  public Widget getChild() {
+    return child;
+  }
 
   public final void updateChild(Widget newChild) {
     child.parent = null;

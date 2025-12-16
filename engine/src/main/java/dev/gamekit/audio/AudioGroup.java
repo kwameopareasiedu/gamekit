@@ -22,14 +22,27 @@ public class AudioGroup {
     this.muted = false;
   }
 
-  public String getName() { return name; }
+  /** Returns the name of this {@link AudioGroup} */
+  public String getName() {
+    return name;
+  }
 
-  public boolean isMuted() { return muted; }
+  /** Returns the mute status of this {@link AudioGroup} */
+  public boolean isMuted() {
+    return muted;
+  }
 
-  public void setMuted(boolean muted) { this.muted = muted; }
+  /** Mutes/Unmutes this {@link AudioGroup}, affecting any associated {@link AudioClip} */
+  public void setMuted(boolean muted) {
+    this.muted = muted;
+  }
 
-  public double getMaxVolume() { return maxVolume; }
+  /** Returns the max volume of this {@link AudioGroup} */
+  public double getMaxVolume() {
+    return maxVolume;
+  }
 
+  /** Sets the max volume of this {@link AudioGroup}, affecting any associated {@link AudioClip} */
   public void setMaxVolume(double maxVolume) {
     this.maxVolume = clamp(maxVolume, 0, 1);
   }

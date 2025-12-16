@@ -10,8 +10,8 @@ import java.util.List;
  * {@link Scene} represents a logical part of your game. This can be a main menu, or a level
  * within your game.
  * <p>
- * Internally, a scene is a special kind of {@link Entity} which can also render
- * UI elements to the window
+ * Internally, a scene is a special kind of {@link Entity} which can also render UI elements to
+ * the window
  */
 public abstract class Scene extends Entity {
   protected final Logger logger;

@@ -1,8 +1,8 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.IO;
-import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.Spacing;
+import dev.gamekit.utils.Constraints;
+import dev.gamekit.utils.Spacing;
 import dev.gamekit.ui.mixins.NinePatch;
 import dev.gamekit.utils.Bounds;
 
@@ -95,7 +95,7 @@ public class Progress extends Leaf implements NinePatch {
 
   @Override
   protected void performLayout(Constraints constraints) {
-    intrinsicBounds.setSize(
+    intrinsicSize.set(
       constraints.maxWidth(),
       trackBackground != null
         ? trackBackground.getHeight()
@@ -103,8 +103,8 @@ public class Progress extends Leaf implements NinePatch {
     );
 
     computedBounds.setSize(
-      constraints.constrainWidth(intrinsicBounds.width),
-      constraints.constrainHeight(intrinsicBounds.height)
+      constraints.constrainWidth(intrinsicSize.width),
+      constraints.constrainHeight(intrinsicSize.height)
     );
   }
 

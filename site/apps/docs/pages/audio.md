@@ -19,12 +19,12 @@ existing key is reused.
 The sample below illustrates preloading of non-spatial and spatial audio clips:
 
 ```java
-import dev.gamekit.audio.AudioAttenuation;
+import dev.gamekit.audio.attenuation.AudioAttenuation;
 import dev.gamekit.audio.AudioClip2D;
 import dev.gamekit.audio.AudioClip3D;
 import dev.gamekit.audio.AudioGroup;
 import dev.gamekit.audio.shapes.AudioShape;
-import dev.gamekit.audio.shapes.AudioShapeCircle;
+import dev.gamekit.audio.shapes.CircleAudioShape;
 import dev.gamekit.core.Application;
 import dev.gamekit.core.Scene;
 

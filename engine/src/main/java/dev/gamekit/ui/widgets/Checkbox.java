@@ -1,8 +1,8 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.IO;
-import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.Spacing;
+import dev.gamekit.utils.Constraints;
+import dev.gamekit.utils.Spacing;
 import dev.gamekit.ui.events.ChangeEvent;
 import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.mixins.NinePatch;
@@ -84,14 +84,14 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
       )
     );
 
-    intrinsicBounds.setSize(
+    intrinsicSize.set(
       iconWidth + gapSize + child.computedBounds.width,
       Math.max(iconHeight, child.computedBounds.height)
     );
 
     computedBounds.setSize(
-      constraints.constrainWidth(intrinsicBounds.width),
-      constraints.constrainHeight(intrinsicBounds.height)
+      constraints.constrainWidth(intrinsicSize.width),
+      constraints.constrainHeight(intrinsicSize.height)
     );
 
     child.computedBounds.setPosition(

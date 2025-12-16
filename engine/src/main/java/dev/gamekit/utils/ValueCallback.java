@@ -4,5 +4,5 @@ package dev.gamekit.utils;
 @FunctionalInterface
 public interface ValueCallback<T> {
   /** Abstract method implementing the callback's logic */
-  void run(T value);
+  void update(T value);
 }

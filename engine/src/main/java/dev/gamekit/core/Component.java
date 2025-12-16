@@ -10,9 +10,9 @@ import java.util.List;
  * usually a good idea to separate independent functionality from each other, and this is where
  * components come in.
  * <p>
- * {@link Component} represents predefined behaviours that can then be attached to one or more
- * {@link Entity entities}. These behaviors include, but are not limited to, physics, lighting
- * and network components.
+ * {@link Component} represents predefined behaviours that can then be attached to {@link Entity
+ * entities}. These behaviors include, but are not limited to, physics, lighting and network
+ * components.
  */
 public abstract class Component {
   static final Component.Filter<Component> TRUTHY_FILTER = (ignored) -> true;
@@ -31,7 +31,7 @@ public abstract class Component {
    * Called before {@link #start} to run validation logic on the components.
    * <p>
    * This method should throw an exception with an appropriate description if validation failed
-   * and <b>must not</b> modify the provided list.
+   * and <b>must not</b> modify the provided component list.
    */
   public void validate(Entity entity, List<Component> components) { /* No-op */ }
 

@@ -1,6 +1,6 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.ui.Constraints;
+import dev.gamekit.utils.Constraints;
 import dev.gamekit.ui.enums.Alignment;
 
 import java.util.Objects;
@@ -50,7 +50,7 @@ public class Align extends SingleChildParent {
       )
     );
 
-    intrinsicBounds.setSize(
+    intrinsicSize.set(
       child.computedBounds.width,
       child.computedBounds.height
     );
@@ -61,14 +61,14 @@ public class Align extends SingleChildParent {
     );
 
     double hOffset = switch (horizontalAlignment) {
-      case CENTER -> computedBounds.width / 2 - intrinsicBounds.width / 2;
-      case END -> computedBounds.width - intrinsicBounds.width;
+      case CENTER -> computedBounds.width / 2 - intrinsicSize.width / 2;
+      case END -> computedBounds.width - intrinsicSize.width;
       default -> 0;
     };
 
     double vOffset = switch (verticalAlignment) {
-      case CENTER -> computedBounds.height / 2 - intrinsicBounds.height / 2;
-      case END -> computedBounds.height - intrinsicBounds.height;
+      case CENTER -> computedBounds.height / 2 - intrinsicSize.height / 2;
+      case END -> computedBounds.height - intrinsicSize.height;
       default -> 0;
     };
 

@@ -10,6 +10,7 @@ import java.awt.geom.AffineTransform;
 
 /**
  * {@link Camera} controls which part of the game world is visible in the {@link Window}.
+ * <p>
  * It does this by manipulating the window's {@link AffineTransform} object
  */
 public final class Camera {
@@ -26,7 +27,7 @@ public final class Camera {
 
   /** Returns the visible render bounds based on the camera's parameters */
   public static Bounds getRenderBounds() {
-    Window.Info windowInfo = Window.getInfo();
+    Window.Info windowInfo = Window.getInstance().getInfo();
     int centerX = windowInfo.displayCenterX();
     int centerY = windowInfo.displayCenterY();
 
@@ -40,9 +41,9 @@ public final class Camera {
     return BOUNDS_CACHE;
   }
 
-  /** Transforms a screen-space point (sx,sy) into world-space vector */
+  /** Transforms a screen-space point (sx,sy) into world-space position */
   public static Vector screenToWorldPosition(double sx, double sy) {
-    Window.Info windowInfo = Window.getInfo();
+    Window.Info windowInfo = Window.getInstance().getInfo();
     int centerX = windowInfo.displayCenterX();
     int centerY = windowInfo.displayCenterY();
     double wx = invZoom * (centerX - sx - Camera.x);
@@ -53,7 +54,7 @@ public final class Camera {
 
   /** Transforms a world-space point (sx,sy) into screen-space position */
   public static Position worldToScreenPosition(double wx, double wy) {
-    Window.Info windowInfo = Window.getInfo();
+    Window.Info windowInfo = Window.getInstance().getInfo();
     int centerX = windowInfo.displayCenterX();
     int centerY = windowInfo.displayCenterY();
     int sx = (int) (centerX - wx * zoom - Camera.x);
@@ -81,7 +82,7 @@ public final class Camera {
   /** Applies the camera's position and zoom to the current window's transform matrix */
   static void updateWindow() {
     Window window = Window.getInstance();
-    Window.Info windowInfo = Window.getInfo();
+    Window.Info windowInfo = Window.getInstance().getInfo();
     int centerX = windowInfo.displayCenterX();
     int centerY = windowInfo.displayCenterY();
     TRANSFORM.setTransform(zoom, 0, 0, zoom, centerX - x, centerY - y);

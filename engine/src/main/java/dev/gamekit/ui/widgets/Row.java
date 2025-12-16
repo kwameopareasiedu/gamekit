@@ -1,6 +1,6 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.ui.Constraints;
+import dev.gamekit.utils.Constraints;
 import dev.gamekit.ui.enums.MainAxisAlignment;
 
 /** A {@link Flex} which arranges its children horizontally */
@@ -23,7 +23,7 @@ public class Row extends Flex {
 
   @Override
   protected void performLayout(Constraints constraints) {
-    Constraints cc = new Constraints(
+    Constraints childConstraints = new Constraints(
       0, constraints.maxWidth(),
       0, constraints.maxHeight()
     );
@@ -32,31 +32,31 @@ public class Row extends Flex {
     double maxHeight = 0;
 
     for (var child : children) {
-      child.layout(cc);
+      child.layout(childConstraints);
       child.computedBounds.setPosition(currentWidth, 0);
 
       currentWidth += child.computedBounds.width + gapSize;
       maxHeight = Math.max(maxHeight, child.computedBounds.height);
-      cc = new Constraints(
-        0, cc.maxWidth() - child.computedBounds.width,
-        0, cc.maxHeight()
+      childConstraints = new Constraints(
+        0, childConstraints.maxWidth() - child.computedBounds.width,
+        0, childConstraints.maxHeight()
       );
     }
 
     currentWidth -= gapSize;
-    intrinsicBounds.setSize(currentWidth, maxHeight);
+    intrinsicSize.set(currentWidth, maxHeight);
 
     computedBounds.setSize(
-      constraints.constrainWidth(intrinsicBounds.width),
-      constraints.constrainHeight(intrinsicBounds.height)
+      constraints.constrainWidth(intrinsicSize.width),
+      constraints.constrainHeight(intrinsicSize.height)
     );
 
-    double freeSpace = Math.max(0, computedBounds.width - intrinsicBounds.width);
+    double freeSpace = Math.max(0, computedBounds.width - intrinsicSize.width);
     double spaceBetween = freeSpace / Math.max(children.size() - 1, 1);
 
     double newX = switch (mainAxisAlignment) {
-      case CENTER -> computedBounds.width / 2 - intrinsicBounds.width / 2;
-      case END -> computedBounds.width - intrinsicBounds.width;
+      case CENTER -> computedBounds.width / 2 - intrinsicSize.width / 2;
+      case END -> computedBounds.width - intrinsicSize.width;
       default -> 0;
     };
 

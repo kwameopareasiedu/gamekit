@@ -1,6 +1,6 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.ui.Constraints;
+import dev.gamekit.utils.Constraints;
 
 import java.awt.*;
 import java.util.Objects;
@@ -43,14 +43,14 @@ public class Colored extends Leaf {
 
   @Override
   protected void performLayout(Constraints constraints) {
-    intrinsicBounds.setSize(
+    intrinsicSize.set(
       constraints.maxWidth(),
       constraints.maxHeight()
     );
 
     computedBounds.setSize(
-      constraints.constrainWidth(intrinsicBounds.width),
-      constraints.constrainHeight(intrinsicBounds.height)
+      constraints.constrainWidth(intrinsicSize.width),
+      constraints.constrainHeight(intrinsicSize.height)
     );
   }
 

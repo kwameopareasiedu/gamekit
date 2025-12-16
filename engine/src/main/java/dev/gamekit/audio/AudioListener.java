@@ -15,12 +15,23 @@ public class AudioListener {
 
   private AudioListener() { }
 
-  public static Vector getPosition() { return POSITION; }
+  /** Returns the position of the {@link AudioListener} */
+  public static Vector getPosition() {
+    return POSITION;
+  }
 
+  /**
+   * Sets the position of the {@link AudioListener} which effectively "moves" the listener
+   * within the game world
+   */
   public static void setPosition(double x, double y) {
     POSITION.set(x, y);
   }
 
+  /**
+   * Sets the position of the {@link AudioListener} which effectively "moves" the listener
+   * within the game world
+   */
   public static void setPosition(Vector pos) {
     POSITION.set(pos);
   }

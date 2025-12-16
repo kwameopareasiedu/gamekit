@@ -104,8 +104,8 @@ public class Transform extends Component {
       Transform parentTransform = parentEntity.findComponent(Transform.class);
 
       globalPosition.set(
-        globalPosition.x += parentTransform.localPosition.x,
-        globalPosition.y += parentTransform.localPosition.y
+        globalPosition.x + parentTransform.localPosition.x,
+        globalPosition.y + parentTransform.localPosition.y
       );
 
       parentTransform.globalPosition.rotatePoint(

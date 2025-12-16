@@ -1,9 +1,10 @@
-import dev.gamekit.audio.AudioAttenuation;
 import dev.gamekit.audio.AudioClip3D;
 import dev.gamekit.audio.AudioGroup;
 import dev.gamekit.audio.AudioListener;
+import dev.gamekit.audio.attenuation.AudioAttenuation;
+import dev.gamekit.audio.attenuation.LinearAudioAttenuation;
 import dev.gamekit.audio.shapes.AudioShape;
-import dev.gamekit.audio.shapes.AudioShapeCircle;
+import dev.gamekit.audio.shapes.CircleAudioShape;
 import dev.gamekit.core.*;
 import dev.gamekit.core.Window;
 import dev.gamekit.settings.*;
@@ -34,22 +35,21 @@ import java.util.Objects;
 public class Demo5Audio extends Scene {
   private static final BufferedImage SPEAKER_IMG = IO.getResourceImage("speaker.png");
   private static final String MUSIC_KEY = "music";
-
-  private double pan = 0;
   private final int halfWindowWidth;
   private final Vector listenerPos;
   private final Position prevMousePos;
+  private double pan = 0;
 
   public Demo5Audio() {
     super("Main Scene");
 
-    halfWindowWidth = Window.getInfo().frameWidth() / 2;
+    halfWindowWidth = Window.getInstance().getInfo().frameWidth() / 2;
     listenerPos = new Vector(0, 0);
     prevMousePos = new Position(0, 0);
 
     Audio.preload(MUSIC_KEY,
       new AudioClip3D("cybertruck.wav", AudioGroup.MUSIC, 1,
-        AudioAttenuation.LINEAR, new AudioShapeCircle(5, 30)
+        new LinearAudioAttenuation(), new CircleAudioShape(5, 30)
       )
     );
   }
@@ -81,7 +81,7 @@ public class Demo5Audio extends Scene {
     if (Input.isKeyDown(Input.KEY_ESCAPE))
       Audio.get(MUSIC_KEY).stop();
 
-    Window.Info windowInfo = Window.getInfo();
+    Window.Info windowInfo = Window.getInstance().getInfo();
     Position mousePos = Input.getMousePosition();
 
     listenerPos.set(

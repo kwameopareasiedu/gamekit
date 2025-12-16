@@ -63,9 +63,15 @@ public abstract class Application {
     this.isRunning = true;
   }
 
-  public static Application getInstance() { return instance; }
+  /** Returns the current instance of {@link Application} */
+  public static Application getInstance() {
+    return instance;
+  }
 
-  public Settings getSettings() { return settings; }
+  /** Returns the settings used to initialize the current instance of {@link Application} */
+  public Settings getSettings() {
+    return settings;
+  }
 
   /** Schedules a scene to be loaded after the end of the current frame */
   public void loadScene(Scene scene) {

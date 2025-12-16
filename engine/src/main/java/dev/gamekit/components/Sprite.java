@@ -35,28 +35,6 @@ public class Sprite extends Component {
     this(image, ImageInterpolation.DEFAULT);
   }
 
-  @Override
-  protected void render() {
-    Transform transform = entity.findComponent(Transform.class);
-    Vector globalPosition = transform.getGlobalPosition();
-    double signedWidth = !flippedX ? bounds.width : -bounds.width;
-    double signedHeight = !flippedY ? bounds.height : -bounds.height;
-
-    Renderer.drawImage(
-        image,
-        (int) (globalPosition.x + bounds.x),
-        (int) (globalPosition.y + bounds.y),
-        (int) signedWidth, (int) signedHeight
-      )
-      .withInterpolation(interpolation)
-      .withOpacity(opacity)
-      .withRotation(
-        (int) (globalPosition.x),
-        (int) (globalPosition.y),
-        transform.getGlobalRotation()
-      );
-  }
-
   /** Updates this {@link Sprite sprite's} image */
   public void setImage(BufferedImage image) {
     this.image = image;
@@ -101,5 +79,28 @@ public class Sprite extends Component {
   /** Set whether the sprite is flipped vertically */
   public void flipY(boolean flipped) {
     flippedY = flipped;
+  }
+
+  @Override
+  protected void render() {
+    Transform transform = entity.findComponent(Transform.class);
+    Vector globalPosition = transform.getGlobalPosition();
+    double signedWidth = !flippedX ? bounds.width : -bounds.width;
+    double signedHeight = !flippedY ? bounds.height : -bounds.height;
+
+    Renderer.drawImage(
+        image,
+        (int) (globalPosition.x + bounds.x),
+        (int) (globalPosition.y + bounds.y),
+        (int) signedWidth,
+        (int) signedHeight
+      )
+      .withInterpolation(interpolation)
+      .withOpacity(opacity)
+      .withRotation(
+        (int) (globalPosition.x),
+        (int) (globalPosition.y),
+        transform.getGlobalRotation()
+      );
   }
 }

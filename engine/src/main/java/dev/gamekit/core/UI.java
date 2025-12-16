@@ -1,7 +1,7 @@
 package dev.gamekit.core;
 
 import dev.gamekit.settings.Settings;
-import dev.gamekit.ui.Constraints;
+import dev.gamekit.utils.Constraints;
 import dev.gamekit.ui.events.*;
 import dev.gamekit.ui.widgets.MultiChildParent;
 import dev.gamekit.ui.widgets.Parent;
@@ -51,7 +51,7 @@ public final class UI implements Widget.Host {
 
   public UI(Scene scene) {
     Settings settings = Application.getInstance().getSettings();
-    Window.Info windowInfo = Window.getInfo();
+    Window.Info windowInfo = Window.getInstance().getInfo();
     int dw = windowInfo.displayWidth();
     int dh = windowInfo.displayHeight();
 
@@ -122,7 +122,7 @@ public final class UI implements Widget.Host {
   }
 
   /**
-   * Called to render the UI unto the canvas which is drawn to the {@link Window} by the render
+   * Called to render the UI unto the canvas which is drawn to the {@link Window} by the draw
    * thread at a later time
    */
   void render() {
@@ -142,7 +142,7 @@ public final class UI implements Widget.Host {
   void draw() {
     if (needsDraw) {
       Window win = Window.getInstance();
-      Window.Info windowInfo = Window.getInfo();
+      Window.Info windowInfo = Window.getInstance().getInfo();
       Graphics2D uiGraphics = win.getUiGraphics();
       int displayWidth = windowInfo.displayWidth();
       int displayHeight = windowInfo.displayHeight();
@@ -183,10 +183,10 @@ public final class UI implements Widget.Host {
       Widget treeWidget = currentWidgetQueue.remove(0);
       Widget newWidget = newWidgetQueue.remove(0);
 
-      boolean classMatch = treeWidget.getClass().equals(newWidget.getClass());
+      boolean typeMatch = treeWidget.getClass().equals(newWidget.getClass());
       boolean stateMatch = treeWidget.stateEquals(newWidget);
 
-      if (!classMatch) {
+      if (!typeMatch) {
         Parent treeWidgetParent = (Parent) treeWidget.getParent();
 
         treeWidget.unmount();

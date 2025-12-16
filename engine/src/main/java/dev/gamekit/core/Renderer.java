@@ -1,7 +1,6 @@
 package dev.gamekit.core;
 
 import dev.gamekit.graphics.*;
-import dev.gamekit.settings.ImageInterpolation;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -11,6 +10,7 @@ import java.util.ArrayList;
  * {@link Renderer} dispatches {@link DrawCall draw calls} which are processed by the render
  * thread to draw on the current {@link Window}
  */
+@SuppressWarnings("JavaExistingMethodCanBeUsed")
 public final class Renderer {
   private static final ArrayList<DrawCall<?>> BUFFER;
   private static boolean committed;
@@ -63,9 +63,7 @@ public final class Renderer {
     return call;
   }
 
-  /**
-   * Fills a <b>center-origin</b> rounded rect at (x, y) with size, height, arc size and height
-   */
+  /** Fills a <b>center-origin</b> rounded rect at (x, y) with size, height, arc size and height */
   public static DrawRoundRect fillRoundRect(
     int x, int y, int width, int height, int arcWidth, int arcHeight
   ) {
@@ -74,9 +72,7 @@ public final class Renderer {
     return call;
   }
 
-  /**
-   * Draws a <b>center-origin</b> rounded rect at (x, y) with size, height, arc size and height
-   */
+  /** Draws a <b>center-origin</b> rounded rect at (x, y) with size, height, arc size and height */
   public static DrawRoundRect drawRoundRect(
     int x, int y, int width, int height, int arcWidth, int arcHeight
   ) {

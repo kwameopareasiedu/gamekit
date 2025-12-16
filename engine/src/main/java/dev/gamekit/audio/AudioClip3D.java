@@ -1,5 +1,6 @@
 package dev.gamekit.audio;
 
+import dev.gamekit.audio.attenuation.AudioAttenuation;
 import dev.gamekit.audio.shapes.AudioShape;
 import dev.gamekit.utils.Vector;
 
@@ -41,8 +42,12 @@ public class AudioClip3D extends AudioClip {
     this.listenerVector = new Vector();
   }
 
-  public Vector getPosition() { return position; }
+  /** Returns the position of this {@link AudioClip3D} */
+  public Vector getPosition() {
+    return position;
+  }
 
+  /** Sets the position of this {@link AudioClip3D} */
   public void setPosition(double x, double y) {
     position.set(x, y);
   }

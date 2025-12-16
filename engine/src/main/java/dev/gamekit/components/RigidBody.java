@@ -68,12 +68,12 @@ public class RigidBody extends Component {
   }
 
   /**
-   * Sets the global rotation (radian) of this {@link RigidBody} about a point {@code (rx, ry)}
+   * Sets the global rotation (radian) of this {@link RigidBody} about a point {@code (px, py)}
    * <p>
    * Rotating about a non-center point changes the position, so the starting position
    * {@code (sx, sy)} is required
    */
-  public void setRotation(double rad, double rx, double ry, double sx, double sy) {
+  public void setRotation(double rad, double px, double py, double sx, double sy) {
     body.getTransform().setRotation(0);
 
     body.getTransform().setTranslation(
@@ -83,8 +83,8 @@ public class RigidBody extends Component {
 
     body.rotate(
       -rad,
-      rx / Physics.PIXELS_PER_METER,
-      ry / Physics.PIXELS_PER_METER
+      px / Physics.PIXELS_PER_METER,
+      py / Physics.PIXELS_PER_METER
     );
   }
 

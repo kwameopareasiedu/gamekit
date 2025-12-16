@@ -62,8 +62,8 @@ public abstract class Collider extends Component {
   }
 
   /**
-   * Set the collision category this collider resides in, and a layer mask which this collider
-   * can collide with.
+   * Set the collision category this collider resides in, and a layer mask indicating which layers
+   * this collider can collide with
    * @see org.dyn4j.collision.CategoryFilter
    */
   public void setCollisionFilter(long category, long mask) {

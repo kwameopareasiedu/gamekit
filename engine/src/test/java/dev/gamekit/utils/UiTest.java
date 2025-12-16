@@ -1,6 +1,5 @@
 package dev.gamekit.utils;
 
-import dev.gamekit.ui.Spacing;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -144,5 +143,24 @@ public class UiTest {
     assertFalse(bounds.contains(51, 50));
     assertFalse(bounds.contains(50, 51));
     assertFalse(bounds.contains(51, 51));
+  }
+
+  @Test
+  public void sizeTest() {
+    Size size = new Size(75, 100);
+    assertEquals(75, size.width);
+    assertEquals(100, size.height);
+
+    Size size2 = new Size(size);
+    assertEquals(75, size2.width);
+    assertEquals(100, size2.height);
+
+    size.set(50, 50);
+    assertEquals(50, size.width);
+    assertEquals(50, size.height);
+
+    size.set(size2);
+    assertEquals(75, size.width);
+    assertEquals(100, size.height);
   }
 }

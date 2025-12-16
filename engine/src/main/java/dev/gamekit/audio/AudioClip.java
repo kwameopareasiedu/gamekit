@@ -31,8 +31,16 @@ public abstract class AudioClip {
     gainControl = getControl(FloatControl.Type.MASTER_GAIN);
   }
 
-  public void play() { play(false); }
+  /** Begins playback of this {@link AudioClip} from the beginning without looping */
+  public void play() {
+    play(false);
+  }
 
+  /**
+   * Begins playback of this {@link AudioClip} from the beginning
+   * <p>
+   * If {@code loop} is {@code true}, playback restarts automatically after playback is complete
+   */
   public void play(boolean loop) {
     stop();
 
@@ -43,10 +51,17 @@ public abstract class AudioClip {
     }
   }
 
-  public void resume() { clip.start(); }
+  /** Resumes playback of this {@link AudioClip} */
+  public void resume() {
+    clip.start();
+  }
 
-  public void pause() { clip.stop(); }
+  /** Pauses playback of this {@link AudioClip} */
+  public void pause() {
+    clip.stop();
+  }
 
+  /** Stops playback of this {@link AudioClip}, resetting the clip position to the beginning */
   public void stop() {
     clip.stop();
     clip.flush();

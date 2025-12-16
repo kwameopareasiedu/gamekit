@@ -1,8 +1,8 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.IO;
-import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.Spacing;
+import dev.gamekit.utils.Constraints;
+import dev.gamekit.utils.Spacing;
 import dev.gamekit.ui.events.ChangeEvent;
 import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.mixins.NinePatch;
@@ -73,7 +73,7 @@ public class Slider extends Progress implements NinePatch, MouseEvent.Handler {
   protected void performLayout(Constraints constraints) {
     //    super.performLayout(constraints);
 
-    intrinsicBounds.setSize(
+    intrinsicSize.set(
       constraints.maxWidth(),
       trackBackground != null
         ? Math.max(trackBackground.getHeight(), thumbHeight)
@@ -81,8 +81,8 @@ public class Slider extends Progress implements NinePatch, MouseEvent.Handler {
     );
 
     computedBounds.setSize(
-      constraints.constrainWidth(intrinsicBounds.width),
-      constraints.constrainHeight(intrinsicBounds.height)
+      constraints.constrainWidth(intrinsicSize.width),
+      constraints.constrainHeight(intrinsicSize.height)
     );
   }
 

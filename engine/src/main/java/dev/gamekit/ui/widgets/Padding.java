@@ -1,7 +1,7 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.Spacing;
+import dev.gamekit.utils.Constraints;
+import dev.gamekit.utils.Spacing;
 
 import java.util.Objects;
 
@@ -47,14 +47,14 @@ public class Padding extends SingleChildParent {
       )
     );
 
-    intrinsicBounds.setSize(
+    intrinsicSize.set(
       child.computedBounds.width + padding.getHorizontal(),
       child.computedBounds.height + padding.getVertical()
     );
 
     computedBounds.setSize(
-      constraints.constrainWidth(intrinsicBounds.width),
-      constraints.constrainHeight(intrinsicBounds.height)
+      constraints.constrainWidth(intrinsicSize.width),
+      constraints.constrainHeight(intrinsicSize.height)
     );
 
     child.computedBounds.setPosition(padding.left, padding.top);

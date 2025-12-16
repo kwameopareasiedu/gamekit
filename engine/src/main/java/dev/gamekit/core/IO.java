@@ -18,7 +18,7 @@ import java.util.prefs.Preferences;
 /**
  * {@link IO} handles resource access
  * <p>
- * {@code IO} caches resources loaded, prevent multiple disk reads for the same and improving
+ * {@link IO} caches resources loaded, prevent multiple disk reads for the same and improving
  * performance.
  * <p>
  * It also keeps track of opened {@link InputStream} objects and closes them when the current

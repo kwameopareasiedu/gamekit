@@ -1,6 +1,6 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.ui.Constraints;
+import dev.gamekit.utils.Constraints;
 
 import java.awt.*;
 import java.util.Objects;
@@ -53,14 +53,14 @@ public class Opacity extends SingleChildParent {
       )
     );
 
-    intrinsicBounds.setSize(
+    intrinsicSize.set(
       child.computedBounds.width,
       child.computedBounds.height
     );
 
     computedBounds.setSize(
-      constraints.constrainWidth(intrinsicBounds.width),
-      constraints.constrainHeight(intrinsicBounds.height)
+      constraints.constrainWidth(intrinsicSize.width),
+      constraints.constrainHeight(intrinsicSize.height)
     );
 
     child.layout(

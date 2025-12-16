@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-/** {@link Physics} handles updates of the {@link World} object on the main application thread */
+/** {@link Physics} handles updates of the Dyn4J {@link World} object */
 public final class Physics {
   public static final double PIXELS_PER_METER = 128.0;
 

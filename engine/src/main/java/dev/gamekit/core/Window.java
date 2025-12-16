@@ -14,7 +14,6 @@ public final class Window {
   private static final Logger LOGGER = LogManager.getLogger(Window.class);
 
   private static Window instance;
-  private static Info info;
 
   private final int displayWidth;
   private final int displayHeight;
@@ -26,6 +25,7 @@ public final class Window {
   private final Graphics2D displayGraphics;
   private final BufferedImage uiBuffer;
   private final Graphics2D uiGraphics;
+  private final Info info;
 
   Window() {
     LOGGER.debug("Created window");
@@ -103,18 +103,40 @@ public final class Window {
     LOGGER.debug(info);
   }
 
-  static Window getInstance() { return instance; }
+  /** Returns the current instance of {@link Window} */
+  public static Window getInstance() {
+    return instance;
+  }
 
-  public static Info getInfo() { return info; }
+  /** Returns the {@link Info} object associated with the current instance of {@link Window} */
+  public Info getInfo() {
+    return info;
+  }
 
-  JFrame getFrame() { return frame; }
+  /** Returns the visible {@link JFrame} of the {@link Window} */
+  JFrame getFrame() {
+    return frame;
+  }
 
-  Graphics2D getDisplayGraphics() { return displayGraphics; }
+  /** Returns the {@link Graphics2D} of the display buffer to which the scene is rendered */
+  Graphics2D getDisplayGraphics() {
+    return displayGraphics;
+  }
 
-  Graphics2D getUiGraphics() { return uiGraphics; }
+  /** Returns the {@link Graphics2D} of the UI buffer to which UI elements are drawn */
+  Graphics2D getUiGraphics() {
+    return uiGraphics;
+  }
 
-  void show() { frame.setVisible(true); }
+  /** Makes the associated {@link JFrame} visible */
+  void show() {
+    frame.setVisible(true);
+  }
 
+  /**
+   * Composites the display and UI buffer to the render buffer which is then drawn onto the
+   * associated {@link JFrame}
+   */
   void refresh() {
     Settings settings = Application.getInstance().getSettings();
 

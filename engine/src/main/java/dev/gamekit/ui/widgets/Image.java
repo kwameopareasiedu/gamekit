@@ -1,7 +1,7 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.settings.ImageInterpolation;
-import dev.gamekit.ui.Constraints;
+import dev.gamekit.utils.Constraints;
 import dev.gamekit.ui.enums.ImageFit;
 
 import java.awt.*;
@@ -56,11 +56,11 @@ public class Image extends Leaf {
 
   @Override
   protected void performLayout(Constraints constraints) {
-    intrinsicBounds.setSize(image.getWidth(), image.getHeight());
+    intrinsicSize.set(image.getWidth(), image.getHeight());
 
     computedBounds.setSize(
-      constraints.constrainWidth(intrinsicBounds.width),
-      constraints.constrainHeight(intrinsicBounds.height)
+      constraints.constrainWidth(intrinsicSize.width),
+      constraints.constrainHeight(intrinsicSize.height)
     );
   }
 
@@ -84,12 +84,12 @@ public class Image extends Leaf {
         dy2 = dy1 + scaledHeight;
       }
       case CROP -> {
-        double widthRatio = absoluteBounds.width / intrinsicBounds.width;
-        double heightRatio = absoluteBounds.height / intrinsicBounds.height;
-        double scaleRatio = intrinsicBounds.width > intrinsicBounds.height
+        double widthRatio = absoluteBounds.width / intrinsicSize.width;
+        double heightRatio = absoluteBounds.height / intrinsicSize.height;
+        double scaleRatio = intrinsicSize.width > intrinsicSize.height
           ? widthRatio : heightRatio;
-        int scaledWidth = (int) (intrinsicBounds.width * scaleRatio);
-        int scaledHeight = (int) (intrinsicBounds.height * scaleRatio);
+        int scaledWidth = (int) (intrinsicSize.width * scaleRatio);
+        int scaledHeight = (int) (intrinsicSize.height * scaleRatio);
 
         dx1 = absoluteBounds.x + (absoluteBounds.width - scaledWidth) / 2;
         dy1 = absoluteBounds.y + (absoluteBounds.height - scaledHeight) / 2;
@@ -121,7 +121,7 @@ public class Image extends Leaf {
 
     g.drawImage(
       image, (int) dx1, (int) dy1, (int) dx2, (int) dy2,
-      0, 0, (int) intrinsicBounds.width, (int) intrinsicBounds.height, null
+      0, 0, (int) intrinsicSize.width, (int) intrinsicSize.height, null
     );
 
     originalInterpolation.apply(g);

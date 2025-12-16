@@ -1,7 +1,7 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.Spacing;
+import dev.gamekit.utils.Constraints;
+import dev.gamekit.utils.Spacing;
 import dev.gamekit.ui.enums.Alignment;
 
 import java.awt.*;
@@ -187,14 +187,14 @@ public class Theme extends SingleChildParent {
   protected void performLayout(Constraints constraints) {
     child.layout(constraints);
 
-    intrinsicBounds.setSize(
+    intrinsicSize.set(
       child.computedBounds.width,
       child.computedBounds.height
     );
 
     computedBounds.setSize(
-      constraints.constrainWidth(intrinsicBounds.width),
-      constraints.constrainHeight(intrinsicBounds.height)
+      constraints.constrainWidth(intrinsicSize.width),
+      constraints.constrainHeight(intrinsicSize.height)
     );
   }
 

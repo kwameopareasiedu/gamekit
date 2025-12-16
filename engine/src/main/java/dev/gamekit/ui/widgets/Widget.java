@@ -3,8 +3,9 @@ package dev.gamekit.ui.widgets;
 import dev.gamekit.core.Scene;
 import dev.gamekit.core.UI;
 import dev.gamekit.core.Window;
-import dev.gamekit.ui.Constraints;
 import dev.gamekit.utils.Bounds;
+import dev.gamekit.utils.Constraints;
+import dev.gamekit.utils.Size;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,7 +34,7 @@ public abstract class Widget {
   protected final Logger logger = LogManager.getLogger(getClass());
   protected final Bounds absoluteBounds;
   protected final Bounds computedBounds;
-  protected final Bounds intrinsicBounds;
+  protected final Size intrinsicSize;
   protected Constraints constraints;
   protected WidgetConfig config;
   protected Widget parent;
@@ -46,7 +47,7 @@ public abstract class Widget {
     this.config = config;
     this.absoluteBounds = new Bounds(0, 0, 0, 0);
     this.computedBounds = new Bounds(0, 0, 0, 0);
-    this.intrinsicBounds = new Bounds(0, 0, 0, 0);
+    this.intrinsicSize = new Size(0, 0);
     this.parent = null;
   }
 
@@ -251,9 +252,6 @@ public abstract class Widget {
     return null;
   }
 
-  /** Base class for all widget constructor configurations */
-  public static abstract class WidgetConfig { }
-
   /**
    * Interface for the host containing a {@link Widget}, allowing widgets to invoke necessary
    * methods on it
@@ -265,4 +263,7 @@ public abstract class Widget {
     /** Triggers a re-render of the {@link Widget widget} tree */
     void triggerRender();
   }
+
+  /** Base class for all widget constructor configurations */
+  public static abstract class WidgetConfig { }
 }

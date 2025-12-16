@@ -2,7 +2,7 @@ package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.IO;
 import dev.gamekit.core.UI;
-import dev.gamekit.ui.Constraints;
+import dev.gamekit.utils.Constraints;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.utils.Bounds;
 
@@ -104,11 +104,11 @@ public class Text extends Leaf {
     int textWidth = fontMetrics.stringWidth(text);
     int textHeight = fontSize;
 
-    intrinsicBounds.setSize(textWidth, textHeight);
+    intrinsicSize.set(textWidth, textHeight);
 
     computedBounds.setSize(
-      constraints.constrainWidth(intrinsicBounds.width),
-      constraints.constrainHeight(intrinsicBounds.height)
+      constraints.constrainWidth(intrinsicSize.width),
+      constraints.constrainHeight(intrinsicSize.height)
     );
 
     if (textWidth > computedBounds.width) {
@@ -147,11 +147,11 @@ public class Text extends Leaf {
       if (!lineBuilder.isEmpty())
         lines.add(lineBuilder.toString());
 
-      intrinsicBounds.setSize(maxLineWidth, textHeight * lines.size());
+      intrinsicSize.set(maxLineWidth, textHeight * lines.size());
 
       computedBounds.setSize(
-        constraints.constrainWidth(intrinsicBounds.width),
-        constraints.constrainHeight(intrinsicBounds.height)
+        constraints.constrainWidth(intrinsicSize.width),
+        constraints.constrainHeight(intrinsicSize.height)
       );
 
       for (String line : lines) {
@@ -169,8 +169,8 @@ public class Text extends Leaf {
       lines.add(text);
       lineOffsets.add(
         switch (alignment) {
-          case CENTER -> computedBounds.width / 2 - intrinsicBounds.width / 2.0;
-          case END -> computedBounds.width - intrinsicBounds.width;
+          case CENTER -> computedBounds.width / 2 - intrinsicSize.width / 2.0;
+          case END -> computedBounds.width - intrinsicSize.width;
           default -> 0.0;
         }
       );

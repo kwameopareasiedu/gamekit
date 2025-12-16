@@ -79,10 +79,10 @@ public class Animation {
     value = 0;
 
     if (stateListener != null)
-      stateListener.run(state);
+      stateListener.update(state);
 
     if (valueListener != null)
-      valueListener.run(value);
+      valueListener.update(value);
   }
 
   /**
@@ -93,7 +93,7 @@ public class Animation {
     state = State.STOPPED;
 
     if (stateListener != null)
-      stateListener.run(state);
+      stateListener.update(state);
   }
 
   /**
@@ -104,7 +104,7 @@ public class Animation {
     state = State.ENDED;
 
     if (stateListener != null)
-      stateListener.run(state);
+      stateListener.update(state);
   }
 
   /** Returns {@code true} if the animation is ended and false otherwise */
@@ -118,7 +118,7 @@ public class Animation {
       value = clamp(value + 0.001 * rate * Application.FRAME_INTERVAL_MS, 0, 1);
 
       if (valueListener != null)
-        valueListener.run(getValue());
+        valueListener.update(getValue());
 
       if ((value >= 1 && rate > 0) || (value <= 0 && rate < 0)) {
         switch (repeatMode) {
@@ -127,13 +127,13 @@ public class Animation {
             value = 0;
 
             if (stateListener != null)
-              stateListener.run(State.RESTARTED);
+              stateListener.update(State.RESTARTED);
           }
           case ALTERNATE -> {
             rate *= -1;
 
             if (stateListener != null)
-              stateListener.run(State.REVERSED);
+              stateListener.update(State.REVERSED);
           }
         }
       }

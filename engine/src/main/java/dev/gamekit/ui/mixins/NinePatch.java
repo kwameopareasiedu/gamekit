@@ -1,7 +1,7 @@
 package dev.gamekit.ui.mixins;
 
 import dev.gamekit.core.UI;
-import dev.gamekit.ui.Spacing;
+import dev.gamekit.utils.Spacing;
 import dev.gamekit.ui.widgets.Widget;
 import dev.gamekit.utils.Bounds;
 

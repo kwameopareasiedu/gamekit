@@ -3,8 +3,8 @@ package dev.gamekit.ui.widgets;
 import dev.gamekit.animation.Animation;
 import dev.gamekit.core.IO;
 import dev.gamekit.core.Input;
-import dev.gamekit.ui.Constraints;
-import dev.gamekit.ui.Spacing;
+import dev.gamekit.utils.Constraints;
+import dev.gamekit.utils.Spacing;
 import dev.gamekit.ui.events.*;
 import dev.gamekit.ui.mixins.NinePatch;
 import dev.gamekit.utils.Bounds;
@@ -103,14 +103,14 @@ public class Field extends Text
   protected void performLayout(Constraints constraints) {
     super.performLayout(constraints);
 
-    intrinsicBounds.setSize(
-      intrinsicBounds.width + padding.getHorizontal(),
-      intrinsicBounds.height + padding.getVertical()
+    intrinsicSize.set(
+      intrinsicSize.width + padding.getHorizontal(),
+      intrinsicSize.height + padding.getVertical()
     );
 
     computedBounds.setSize(
-      constraints.constrainWidth(intrinsicBounds.width),
-      constraints.constrainHeight(intrinsicBounds.height)
+      constraints.constrainWidth(intrinsicSize.width),
+      constraints.constrainHeight(intrinsicSize.height)
     );
 
     textModel.updateSymbols(symbols);

@@ -287,7 +287,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
    * and store them if you need to</i>
    */
   public static Position getMousePosition() {
-    Window.Info info = Window.getInfo();
+    Window.Info info = Window.getInstance().getInfo();
     double scaleRatio = info.displayScaleRatio();
     double windowWidth = info.frameWidth();
     double windowHeight = info.frameHeight();
@@ -320,11 +320,11 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
   /** Resets the current state and allows Window input events to affect the current input state */
   static void reset() {
-    for (int i1 = 0; i1 < KEY_COUNT; i1++)
-      INSTANCE.keyStates[i1].reset();
+    for (int kdx = 0; kdx < KEY_COUNT; kdx++)
+      INSTANCE.keyStates[kdx].reset();
 
-    for (int i = 0; i < BUTTON_COUNT; i++)
-      INSTANCE.buttonStates[i].reset();
+    for (int bdx = 0; bdx < BUTTON_COUNT; bdx++)
+      INSTANCE.buttonStates[bdx].reset();
 
     INSTANCE.characterPressed = '\0';
     INSTANCE.keyCodePressed = 0;

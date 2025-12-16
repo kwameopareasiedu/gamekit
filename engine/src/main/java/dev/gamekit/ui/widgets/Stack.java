@@ -1,6 +1,6 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.ui.Constraints;
+import dev.gamekit.utils.Constraints;
 
 /** A {@link MultiChildParent} which stacks its children on top of each other */
 public class Stack extends MultiChildParent {
@@ -33,11 +33,11 @@ public class Stack extends MultiChildParent {
       maxHeight = Math.max(maxHeight, child.computedBounds.height);
     }
 
-    intrinsicBounds.setSize(maxWidth, maxHeight);
+    intrinsicSize.set(maxWidth, maxHeight);
 
     computedBounds.setSize(
-      constraints.constrainWidth(intrinsicBounds.width),
-      constraints.constrainHeight(intrinsicBounds.height)
+      constraints.constrainWidth(intrinsicSize.width),
+      constraints.constrainHeight(intrinsicSize.height)
     );
 
     for (Widget child : children) {
