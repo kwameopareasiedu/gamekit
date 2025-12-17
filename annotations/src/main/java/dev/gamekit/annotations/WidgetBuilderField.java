@@ -17,4 +17,10 @@ public @interface WidgetBuilderField {
    * for the annotated widget field
    */
   String setterArgType() default "";
+
+  /**
+   * Indicates that the annotated field should take part in state comparison in the generated
+   * config builder class
+   */
+  boolean includeInStateMatch() default true;
 }

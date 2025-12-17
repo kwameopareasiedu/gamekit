@@ -106,44 +106,54 @@ public class Demo5Audio extends Scene {
   @Override
   public Widget createUI() {
     return Column.create(
-      Column.config()
-        .mainAxisAlignment(MainAxisAlignment.CENTER)
-        .crossAxisAlignment(CrossAxisAlignment.STRETCH)
-        .gapSize(8),
-      Text.create(
-        Text.config().alignment(Alignment.CENTER),
-        "Space Bar to play/restart the audio"
-      ),
-      Text.create(
-        Text.config().alignment(Alignment.CENTER),
-        "Escape to stop the playback"
-      ),
-      Text.create(
-        Text.config().alignment(Alignment.CENTER),
-        "Move the mouse from left to right to pan the audio"
-      ),
-      Row.create(
-        Row.config()
-          .mainAxisAlignment(MainAxisAlignment.CENTER)
-          .crossAxisAlignment(CrossAxisAlignment.CENTER)
-          .gapSize(8),
-        Opacity.create(
-          Opacity.config().opacity(pan < 0 ? 1 : 1 - pan),
-          Scaled.create(
-            Scaled.config().scale(0.5),
-            Image.create(
-              Image.config().interpolation(ImageInterpolation.BICUBIC),
-              SPEAKER_IMG
-            )
-          )
+      ColumnConfig.mainAxisAlignment(MainAxisAlignment.CENTER),
+      ColumnConfig.crossAxisAlignment(CrossAxisAlignment.STRETCH),
+      ColumnConfig.gapSize(8),
+      ColumnConfig.children(
+        Text.create(
+          TextConfig.alignment(Alignment.CENTER),
+          TextConfig.text("Space Bar to play/restart the audio")
         ),
-        Opacity.create(
-          Opacity.config().opacity(pan > 0 ? 1 : 1 + pan),
-          Scaled.create(
-            Scaled.config().scale(0.5),
-            Image.create(
-              Image.config().interpolation(ImageInterpolation.BICUBIC),
-              SPEAKER_IMG
+        Text.create(
+          TextConfig.alignment(Alignment.CENTER),
+          TextConfig.text("Escape to stop the playback")
+        ),
+        Text.create(
+          TextConfig.alignment(Alignment.CENTER),
+          TextConfig.text("Move the mouse from left to right to pan the audio")
+        ),
+        Row.create(
+          RowConfig.mainAxisAlignment(MainAxisAlignment.CENTER),
+          RowConfig.crossAxisAlignment(CrossAxisAlignment.CENTER),
+          RowConfig.gapSize(8),
+          RowConfig.children(
+            Opacity.create(
+              OpacityConfig.opacity(pan < 0 ? 1 : 1 - pan),
+              OpacityConfig.child(
+                Scaled.create(
+                  ScaledConfig.scale(0.5),
+                  ScaledConfig.child(
+                    Image.create(
+                      ImageConfig.interpolation(ImageInterpolation.BICUBIC),
+                      ImageConfig.image(SPEAKER_IMG)
+                    )
+                  )
+                )
+              )
+            ),
+            Opacity.create(
+              OpacityConfig.opacity(pan > 0 ? 1 : 1 + pan),
+              OpacityConfig.child(
+                Scaled.create(
+                  ScaledConfig.scale(0.5),
+                  ScaledConfig.child(
+                    Image.create(
+                      ImageConfig.interpolation(ImageInterpolation.BICUBIC),
+                      ImageConfig.image(SPEAKER_IMG)
+                    )
+                  )
+                )
+              )
             )
           )
         )

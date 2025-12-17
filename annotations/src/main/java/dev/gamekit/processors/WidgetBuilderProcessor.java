@@ -61,6 +61,7 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
         }
 
         // Traverse the annotated class hierarchy, gathering fields annotated with
+        // WidgetBuilderField
         hierarchyElement = (TypeElement) annotatedClassElement;
 
         // Map the widget name to the annotated elements
@@ -80,11 +81,20 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
             String fieldType = fieldElement.asType().toString();
             String fieldCustomSetterTypeName =
               fieldElement.getAnnotation(WidgetBuilderField.class).setterArgType();
-            String fieldSetterType = fieldCustomSetterTypeName.isEmpty() ? fieldType :
-              fieldCustomSetterTypeName;
+            String fieldSetterType =
+              !fieldCustomSetterTypeName.isEmpty() ? fieldCustomSetterTypeName : fieldType;
             String fieldName = fieldElement.getSimpleName().toString();
+            boolean fieldIncludedInStateMatch =
+              fieldElement.getAnnotation(WidgetBuilderField.class).includeInStateMatch();
 
-            allWidgetFields.add(new WidgetField(fieldType, fieldSetterType, fieldName));
+            allWidgetFields.add(
+              new WidgetField(
+                fieldType,
+                fieldSetterType,
+                fieldName,
+                fieldIncludedInStateMatch
+              )
+            );
           }
 
           hierarchyElement =
@@ -116,9 +126,6 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
           try (PrintWriter out = new PrintWriter(fileObject.openOutputStream())) {
             // Builder package declaration
             out.printf("package %s;\n\n", widgetClass.builderPackageName);
-
-            // Builder import directives
-            out.printf("import java.util.Objects;\n\n");
 
             // Builder class declaration
             if (widgetClass.superBuilderName != null) {
@@ -189,12 +196,14 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
               widgetClass.builderVarName
             );
 
-            if (!widgetClass.allFields.isEmpty()) {
-              for (WidgetField field : widgetClass.allFields) {
-                out.printf("\t\t\t&& Objects.equals(%s, %s.%s)\n",
-                  field.name(), widgetClass.builderVarName, field.name()
-                );
-              }
+            List<WidgetField> stateMatchableFields = widgetClass.allFields.stream().filter(
+              WidgetField::includeInStateMatch
+            ).toList();
+
+            for (WidgetField field : stateMatchableFields) {
+              out.printf("\t\t\t&& java.util.Objects.equals(%s, %s.%s)\n",
+                field.name(), widgetClass.builderVarName, field.name()
+              );
             }
 
             out.printf(";\n");

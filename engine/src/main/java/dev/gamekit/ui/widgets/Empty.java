@@ -11,6 +11,10 @@ import java.awt.*;
  */
 @WidgetBuilder
 public class Empty extends Leaf {
+  public Empty() {
+    super(new EmptyConfig());
+  }
+
   public static Empty create() {
     return new Empty();
   }

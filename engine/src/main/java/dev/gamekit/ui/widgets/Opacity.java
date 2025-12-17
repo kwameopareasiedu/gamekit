@@ -21,6 +21,10 @@ public class Opacity extends SingleChildParent {
     super(config);
   }
 
+  public static Opacity create(OpacityConfig... config) {
+    return new Opacity(config);
+  }
+
   @Override
   protected void performInit() {
     OpacityConfig config = (OpacityConfig) super.config;

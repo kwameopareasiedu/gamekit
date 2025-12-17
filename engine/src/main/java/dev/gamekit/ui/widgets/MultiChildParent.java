@@ -8,7 +8,10 @@ import java.awt.*;
 /** A parent which contains multiple child {@link Widget}s */
 @WidgetBuilder
 public abstract class MultiChildParent extends Parent {
-  @WidgetBuilderField(setterArgType = "dev.gamekit.ui.widgets.Widget...")
+  @WidgetBuilderField(
+    setterArgType = "dev.gamekit.ui.widgets.Widget...",
+    includeInStateMatch = false
+  )
   protected Widget[] children;
 
   public MultiChildParent(MultiChildParentConfig... config) {

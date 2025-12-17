@@ -134,8 +134,8 @@ public class Demo4UserInterface extends Scene {
                           )
                         ),
                         IntrinsicSize.create(
-                          IntrinsicSizeConfig.width(256),
-                          IntrinsicSizeConfig.intrinsicHeight(),
+                          //  IntrinsicSizeConfig.width(256),
+                          //  IntrinsicSizeConfig.intrinsicHeight(),
                           IntrinsicSizeConfig.child(
                             Slider.create(
                               SliderConfig.value(sliderValue),
@@ -157,7 +157,7 @@ public class Demo4UserInterface extends Scene {
                           FixedSizeConfig.child(
                             Progress.create(
                               ProgressConfig.value(sliderValue),
-                              ProgressConfig.maxValue(100.0),
+                              ProgressConfig.minValue(0.0),
                               ProgressConfig.maxValue(100.0),
                               ProgressConfig.trackBackground(PROGRESS_TRACK),
                               ProgressConfig.trackEdgeInsets(new Spacing(0, 0, 0, 0)),
