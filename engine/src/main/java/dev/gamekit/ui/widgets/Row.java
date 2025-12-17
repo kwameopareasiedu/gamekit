@@ -1,9 +1,11 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.utils.Constraints;
 import dev.gamekit.ui.enums.MainAxisAlignment;
 
 /** A {@link Flex} which arranges its children horizontally */
+@WidgetBuilder
 public class Row extends Flex {
   public Row(RowConfig... config) {
     super(config);

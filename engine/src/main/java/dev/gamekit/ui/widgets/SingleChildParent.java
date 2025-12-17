@@ -1,10 +1,12 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
 
 import java.awt.*;
 
 /** A parent which contains only one child {@link Widget} */
+@WidgetBuilder
 public abstract class SingleChildParent extends Parent {
   @WidgetBuilderField
   protected Widget child;

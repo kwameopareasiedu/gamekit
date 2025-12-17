@@ -1,5 +1,7 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.annotations.WidgetBuilder;
+import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.core.IO;
 import dev.gamekit.utils.Constraints;
 import dev.gamekit.utils.Spacing;
@@ -13,23 +15,22 @@ import java.util.Objects;
 import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link SingleChildParent} which uses the 9-patch algorithm to render a background */
+@WidgetBuilder
 public class Panel extends SingleChildParent implements NinePatch, MouseEvent.Handler {
   public static final BufferedImage DEFAULT_BG =
     IO.getResourceImage("default-sprites.png", 470, 64, 120, 120);
 
+  @WidgetBuilderField
   protected BufferedImage background;
+  @WidgetBuilderField
   protected Spacing edgeInsets;
 
-  public Panel(PanelConfig config, Widget child) {
-    super(config, child);
+  public Panel(PanelConfig... config) {
+    super(config);
   }
 
-  public static Panel create(PanelConfig config, Widget child) {
-    return new Panel(config, child);
-  }
-
-  public static PanelConfig config() {
-    return new PanelConfig();
+  public static Panel create(PanelConfig... config) {
+    return new Panel(config);
   }
 
   @Override
@@ -82,20 +83,5 @@ public class Panel extends SingleChildParent implements NinePatch, MouseEvent.Ha
   @Override
   public void handleEvent(MouseEvent event) {
     event.setHandled();
-  }
-
-  public static class PanelConfig extends SingleChildParentConfig {
-    protected BufferedImage background;
-    protected Spacing edgeInsets;
-
-    public PanelConfig background(BufferedImage background) {
-      this.background = background;
-      return this;
-    }
-
-    public PanelConfig edgeInsets(int top, int right, int bottom, int left) {
-      this.edgeInsets = new Spacing(top, right, bottom, left);
-      return this;
-    }
   }
 }

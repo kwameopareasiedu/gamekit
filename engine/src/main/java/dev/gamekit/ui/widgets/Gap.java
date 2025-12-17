@@ -1,5 +1,6 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.utils.Constraints;
 
@@ -7,6 +8,7 @@ import java.awt.*;
 import java.util.Objects;
 
 /** A {@link Leaf} which leaves a gap space */
+@WidgetBuilder
 public class Gap extends Leaf {
   @WidgetBuilderField
   protected Integer width = 8;

@@ -1,5 +1,6 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.utils.Constraints;
 
@@ -9,6 +10,7 @@ import java.util.Objects;
 import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link Leaf} which renders a solid color background */
+@WidgetBuilder
 public class Colored extends Leaf {
   @WidgetBuilderField
   protected Color color;

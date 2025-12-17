@@ -1,12 +1,14 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.annotations.WidgetBuilder;
+import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.core.IO;
-import dev.gamekit.utils.Constraints;
-import dev.gamekit.utils.Spacing;
 import dev.gamekit.ui.events.ChangeEvent;
 import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.mixins.NinePatch;
 import dev.gamekit.utils.Bounds;
+import dev.gamekit.utils.Constraints;
+import dev.gamekit.utils.Spacing;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -15,34 +17,39 @@ import java.util.Objects;
 import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link SingleChildParent} input widget which toggles between two states */
+@WidgetBuilder
 public class Checkbox extends SingleChildParent implements MouseEvent.Handler, NinePatch {
   public static final BufferedImage DEFAULT_ICON =
     IO.getResourceImage("default-sprites.png", 646, 206, 32, 32);
   public static final BufferedImage TOGGLED_ICON =
     IO.getResourceImage("default-sprites.png", 646, 277, 32, 32);
 
+  @WidgetBuilderField
   protected BufferedImage defaultIcon;
+  @WidgetBuilderField
   protected BufferedImage toggledIcon;
+  @WidgetBuilderField
   protected Spacing iconEdgeInsets;
+  @WidgetBuilderField
   protected Integer iconWidth;
+  @WidgetBuilderField
   protected Integer iconHeight;
+  @WidgetBuilderField
   protected Integer gapSize;
+  @WidgetBuilderField
   protected Boolean toggled;
+  @WidgetBuilderField
   protected ChangeEvent.Handler<Boolean> changeListener;
 
   private final Bounds iconAbsoluteBounds;
 
-  public Checkbox(CheckboxConfig config, Widget child) {
-    super(config, child);
+  public Checkbox(CheckboxConfig... config) {
+    super(config);
     iconAbsoluteBounds = new Bounds();
   }
 
-  public static Checkbox create(CheckboxConfig config, Widget child) {
-    return new Checkbox(config, child);
-  }
-
-  public static CheckboxConfig config() {
-    return new CheckboxConfig();
+  public static Checkbox create(CheckboxConfig... config) {
+    return new Checkbox(config);
   }
 
   @Override
@@ -126,53 +133,6 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
     if (ev.type == MouseEvent.Type.CLICK && changeListener != null) {
       changeListener.handleEvent(new ChangeEvent<>(!toggled));
       host.triggerRender();
-    }
-  }
-
-  public static class CheckboxConfig extends SingleChildParentConfig {
-    protected BufferedImage defaultIcon;
-    protected BufferedImage toggledIcon;
-    protected Spacing iconEdgeInsets;
-    protected Integer iconWidth;
-    protected Integer iconHeight;
-    protected Integer gapSize;
-    protected Boolean value;
-    protected ChangeEvent.Handler<Boolean> changeListener;
-
-    public CheckboxConfig defaultIcon(BufferedImage defaultIcon) {
-      this.defaultIcon = defaultIcon;
-      return this;
-    }
-
-    public CheckboxConfig toggledIcon(BufferedImage toggledIcon) {
-      this.toggledIcon = toggledIcon;
-      return this;
-    }
-
-    public CheckboxConfig iconEdgeInsets(int top, int right, int bottom, int left) {
-      this.iconEdgeInsets = new Spacing(top, right, bottom, left);
-      return this;
-    }
-
-    public CheckboxConfig iconSize(Integer iconWidth, Integer iconHeight) {
-      this.iconWidth = iconWidth;
-      this.iconHeight = iconHeight;
-      return this;
-    }
-
-    public CheckboxConfig gapSize(Integer gapSize) {
-      this.gapSize = gapSize;
-      return this;
-    }
-
-    public CheckboxConfig value(Boolean value) {
-      this.value = value;
-      return this;
-    }
-
-    public CheckboxConfig changeListener(ChangeEvent.Handler<Boolean> changeListener) {
-      this.changeListener = changeListener;
-      return this;
     }
   }
 }

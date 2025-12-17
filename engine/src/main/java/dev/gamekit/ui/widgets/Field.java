@@ -1,6 +1,7 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.animation.Animation;
+import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.core.IO;
 import dev.gamekit.core.Input;
@@ -23,6 +24,7 @@ import static dev.gamekit.utils.Misc.coalesce;
 // TODO: Implement sliding window for text rendering
 // TODO: Implement text selection
 // TODO: Implement key char and key code modifier detection
+@WidgetBuilder
 public class Field extends Text
   implements NinePatch, FocusEvent.Handler, MouseEvent.Handler,
   KeyCharEvent.Handler, KeyCodeEvent.Handler {
@@ -53,8 +55,9 @@ public class Field extends Text
   private final Animation cursorAnimation;
   private final TextModel textModel;
 
-  public Field(FieldConfig config, String text) {
-    super(config, text);
+  public Field(FieldConfig... config) {
+    super(config);
+
     contentAbsoluteBounds = new Bounds();
     tempAbsoluteBounds = new Bounds();
     cursorAnimation = new Animation(500, Animation.RepeatMode.RESTART);
@@ -70,12 +73,8 @@ public class Field extends Text
     });
   }
 
-  public static Field create(FieldConfig config, String text) {
-    return new Field(config, text);
-  }
-
-  public static FieldConfig config() {
-    return new FieldConfig();
+  public static Field create(FieldConfig... config) {
+    return new Field(config);
   }
 
   @Override

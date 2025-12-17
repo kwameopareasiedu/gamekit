@@ -1,12 +1,12 @@
 package dev.gamekit.core;
 
 import dev.gamekit.settings.Settings;
-import dev.gamekit.utils.Constraints;
 import dev.gamekit.ui.events.*;
 import dev.gamekit.ui.widgets.MultiChildParent;
 import dev.gamekit.ui.widgets.Parent;
 import dev.gamekit.ui.widgets.SingleChildParent;
 import dev.gamekit.ui.widgets.Widget;
+import dev.gamekit.utils.Constraints;
 import dev.gamekit.utils.Position;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,10 +45,6 @@ public final class UI implements Widget.Host {
   private boolean needsRender = false;
   private boolean needsDraw = false;
 
-  static UI getInstance() {
-    return instance;
-  }
-
   public UI(Scene scene) {
     Settings settings = Application.getInstance().getSettings();
     Window.Info windowInfo = Window.getInstance().getInfo();
@@ -72,6 +68,10 @@ public final class UI implements Widget.Host {
     settings.dithering.apply(canvasGraphics);
 
     UI.instance = this;
+  }
+
+  static UI getInstance() {
+    return instance;
   }
 
   @Override
@@ -180,42 +180,43 @@ public final class UI implements Widget.Host {
     newWidgetQueue.add(newTree);
 
     while (!currentWidgetQueue.isEmpty() && !newWidgetQueue.isEmpty()) {
-      Widget treeWidget = currentWidgetQueue.remove(0);
+      Widget currentWidget = currentWidgetQueue.remove(0);
       Widget newWidget = newWidgetQueue.remove(0);
 
-      boolean typeMatch = treeWidget.getClass().equals(newWidget.getClass());
-      boolean stateMatch = treeWidget.stateEquals(newWidget);
+      boolean typeMatch = currentWidget.getClass().equals(newWidget.getClass());
+      boolean stateMatch = currentWidget.stateEquals(newWidget);
 
       if (!typeMatch) {
-        Parent treeWidgetParent = (Parent) treeWidget.getParent();
+        Parent currentWidgetParent = (Parent) currentWidget.getParent();
 
-        treeWidget.unmount();
+        currentWidget.unmount();
 
-        if (treeWidgetParent == null) {
+        if (currentWidgetParent == null) {
           tree = newWidget;
-        } else if (treeWidgetParent instanceof SingleChildParent treeWidgetSingleChildParent) {
-          treeWidgetSingleChildParent.updateChild(newWidget);
-        } else if (treeWidgetParent instanceof MultiChildParent treeWidgetMultiChildParent) {
-          int index = treeWidgetMultiChildParent.getChildren().indexOf(treeWidget);
-          treeWidgetMultiChildParent.updateChild(index, newWidget);
+        } else if (currentWidgetParent instanceof SingleChildParent currentWidgetSingleChildParent) {
+          currentWidgetSingleChildParent.updateChild(newWidget);
+        } else if (currentWidgetParent instanceof MultiChildParent currentWidgetMultiChildParent) {
+          int index = List.of(currentWidgetMultiChildParent.getChildren()).indexOf(currentWidget);
+          currentWidgetMultiChildParent.updateChild(index, newWidget);
         }
 
         treeUpdated = true;
       } else if (!stateMatch) {
-        treeWidget.update(newWidget);
+        currentWidget.update(newWidget);
         treeUpdated = true;
       }
 
-      if (treeWidget instanceof SingleChildParent currentParent
+      if (currentWidget instanceof SingleChildParent currentParent
         && newWidget instanceof SingleChildParent newParent) {
         // Add child of SingleChildParent to queue for processing
         currentWidgetQueue.add(currentParent.getChild());
         newWidgetQueue.add(newParent.getChild());
-      } else if (treeWidget instanceof MultiChildParent currentParent
+      } else if (currentWidget instanceof MultiChildParent currentParent
         && newWidget instanceof MultiChildParent newParent) {
         // Add children of MultiChildParent to queue for processing
-        currentWidgetQueue.addAll(currentParent.getChildren());
-        newWidgetQueue.addAll(newParent.getChildren());
+        List<Widget> childrenWidgets = List.of(currentParent.getChildren());
+        currentWidgetQueue.addAll(childrenWidgets);
+        newWidgetQueue.addAll(childrenWidgets);
       }
     }
 
@@ -489,7 +490,7 @@ public final class UI implements Widget.Host {
         if (tree instanceof SingleChildParent parent) {
           traverseTree(parent.getChild(), direction, visitor);
         } else if (tree instanceof MultiChildParent parent) {
-          List<Widget> children = parent.getChildren();
+          Widget[] children = parent.getChildren();
 
           for (Widget child : children)
             traverseTree(child, direction, visitor);

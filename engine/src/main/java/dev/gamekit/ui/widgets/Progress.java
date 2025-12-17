@@ -1,5 +1,6 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.core.IO;
 import dev.gamekit.ui.mixins.NinePatch;
@@ -14,6 +15,7 @@ import java.util.Objects;
 import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link Leaf} widget which displays a progress bar */
+@WidgetBuilder
 public class Progress extends Leaf implements NinePatch {
   public static final BufferedImage TRACK_BG =
     IO.getResourceImage("default-sprites.png", 470, 232, 96, 32);

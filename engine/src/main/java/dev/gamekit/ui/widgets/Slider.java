@@ -1,5 +1,6 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.core.IO;
 import dev.gamekit.ui.events.ChangeEvent;
@@ -18,6 +19,7 @@ import static dev.gamekit.utils.Math.clamp;
 import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link Progress} widget extension which adjusts a value by moving a slider */
+@WidgetBuilder
 public class Slider extends Progress implements NinePatch, MouseEvent.Handler {
   public static final BufferedImage THUMB_BG =
     IO.getResourceImage("default-sprites.png", 470, 346, 32, 32);
@@ -43,8 +45,8 @@ public class Slider extends Progress implements NinePatch, MouseEvent.Handler {
     lastMousePosition = new Position();
   }
 
-  public static Slider create(SliderConfig config, double value) {
-    return new Slider(config, value);
+  public static Slider create(SliderConfig... config) {
+    return new Slider(config);
   }
 
   @Override

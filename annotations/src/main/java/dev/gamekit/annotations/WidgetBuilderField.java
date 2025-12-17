@@ -7,10 +7,14 @@ import java.lang.annotation.Target;
 
 /**
  * {@link WidgetBuilderField} marks fields of a {@code Widget} as needing to be part of the
- * generated builder class.
- * <p>
- * PS: Compilation will fail if this annotation is used on member fields of non-Widget classes
+ * enclosing widget's generated builder class.
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.SOURCE)
-public @interface WidgetBuilderField { }
+public @interface WidgetBuilderField {
+  /**
+   * A custom fully qualified type to use as the argument type of the setter method generated
+   * for the annotated widget field
+   */
+  String setterArgType() default "";
+}

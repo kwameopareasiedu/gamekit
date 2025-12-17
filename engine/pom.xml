@@ -83,7 +83,7 @@
         <configuration>
           <annotationProcessors>
             <annotationProcessor>
-              dev.gamekit.processors.WidgetBuilderFieldProcessor
+              dev.gamekit.processors.WidgetBuilderProcessor
             </annotationProcessor>
           </annotationProcessors>
 

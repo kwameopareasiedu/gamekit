@@ -1,5 +1,6 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.settings.ImageInterpolation;
 import dev.gamekit.utils.Constraints;
@@ -12,6 +13,7 @@ import java.util.Objects;
 import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link Leaf} which renders a {@link BufferedImage} to the screen */
+@WidgetBuilder
 public class Image extends Leaf {
   @WidgetBuilderField
   protected BufferedImage image;
@@ -20,16 +22,12 @@ public class Image extends Leaf {
   @WidgetBuilderField
   protected ImageInterpolation interpolation = ImageInterpolation.DEFAULT;
 
-  public Image(ImageConfig config, BufferedImage image) {
-    super(config.image(image));
+  public Image(ImageConfig... config) {
+    super(config);
   }
 
-  public static Image create(ImageConfig config, BufferedImage image) {
-    return new Image(config, image);
-  }
-
-  public static Image create(BufferedImage image) {
-    return new Image(new ImageConfig(), image);
+  public static Image create(ImageConfig... config) {
+    return new Image(config);
   }
 
   public static ImageConfig config() {

@@ -1,5 +1,6 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.enums.MainAxisAlignment;
@@ -9,9 +10,10 @@ import java.util.Objects;
 import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link MultiChildParent} which arranges its children linearly along one axis */
+@WidgetBuilder
 public abstract class Flex extends MultiChildParent {
   @WidgetBuilderField
-  protected int gapSize = 12;
+  protected Integer gapSize = 12;
   @WidgetBuilderField
   protected MainAxisAlignment mainAxisAlignment = MainAxisAlignment.START;
   @WidgetBuilderField

@@ -1,8 +1,10 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.utils.Constraints;
 
 /** A {@link MultiChildParent} which stacks its children on top of each other */
+@WidgetBuilder
 public class Stack extends MultiChildParent {
   public Stack(StackConfig... config) {
     super(config);

@@ -1,5 +1,7 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.annotations.WidgetBuilder;
+import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.utils.Constraints;
 
 import java.awt.*;
@@ -9,21 +11,15 @@ import static dev.gamekit.utils.Math.clamp;
 import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link SingleChildParent} which renders its child with transparency */
+@WidgetBuilder
 public class Opacity extends SingleChildParent {
-  protected double opacity;
+  @WidgetBuilderField
+  protected Double opacity;
 
   private AlphaComposite composite;
 
-  public Opacity(OpacityConfig config, Widget child) {
-    super(config, child);
-  }
-
-  public static Opacity create(OpacityConfig config, Widget child) {
-    return new Opacity(config, child);
-  }
-
-  public static OpacityConfig config() {
-    return new OpacityConfig();
+  public Opacity(OpacityConfig... config) {
+    super(config);
   }
 
   @Override
@@ -39,7 +35,9 @@ public class Opacity extends SingleChildParent {
     this.opacity = clamp(coalesce(config.opacity, 1.0), 0, 1);
 
     if (this.composite == null || this.composite.getAlpha() != opacity)
-      this.composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) this.opacity);
+      this.composite = AlphaComposite.getInstance(
+        AlphaComposite.SRC_OVER, this.opacity.floatValue()
+      );
 
     super.performInit();
   }
@@ -77,14 +75,5 @@ public class Opacity extends SingleChildParent {
     g.setComposite(composite);
     super.performRender(g);
     g.setComposite(originalComposite);
-  }
-
-  public static class OpacityConfig extends SingleChildParentConfig {
-    protected Double opacity;
-
-    public OpacityConfig opacity(double opacity) {
-      this.opacity = opacity;
-      return this;
-    }
   }
 }

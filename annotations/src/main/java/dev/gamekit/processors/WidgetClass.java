@@ -1,0 +1,35 @@
+package dev.gamekit.processors;
+
+import dev.gamekit.annotations.WidgetBuilder;
+
+import java.util.List;
+
+/**
+ * {@link WidgetField} holds type information for {@code Widgets} annotated with
+ * {@link WidgetBuilder}
+ */
+public class WidgetClass {
+  public final String builderName;
+  public final String builderVarName;
+  public final String builderSimpleName;
+  public final String builderPackageName;
+  public final String superBuilderName;
+  public final List<WidgetField> allFields;
+  public final List<WidgetField> ownFields;
+
+  public WidgetClass(
+    String name,
+    String superName,
+    List<WidgetField> allFields,
+    List<WidgetField> ownFields
+  ) {
+    this.allFields = allFields;
+    this.ownFields = ownFields;
+
+    builderName = name + "Config";
+    builderPackageName = builderName.substring(0, builderName.lastIndexOf("."));
+    builderSimpleName = builderName.substring(builderName.lastIndexOf(".") + 1);
+    builderVarName = builderSimpleName.substring(0, 1).toLowerCase() + builderSimpleName.substring(1);
+    superBuilderName = superName != null ? superName + "Config" : null;
+  }
+}

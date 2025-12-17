@@ -1,15 +1,15 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /** A parent which contains multiple child {@link Widget}s */
+@WidgetBuilder
 public abstract class MultiChildParent extends Parent {
-  @WidgetBuilderField
-  protected ArrayList<Widget> children;
+  @WidgetBuilderField(setterArgType = "dev.gamekit.ui.widgets.Widget...")
+  protected Widget[] children;
 
   public MultiChildParent(MultiChildParentConfig... config) {
     super(config);
@@ -22,7 +22,7 @@ public abstract class MultiChildParent extends Parent {
         throw new IllegalArgumentException("MultiChildParent child cannot be null");
     }
 
-    this.children = new ArrayList<>(List.of(((MultiChildParentConfig) config).children));
+    this.children = ((MultiChildParentConfig) config).children;
 
     for (Widget child : this.children) {
       child.parent = this;
@@ -50,21 +50,21 @@ public abstract class MultiChildParent extends Parent {
       child.unmount();
   }
 
-  public ArrayList<Widget> getChildren() {
+  public Widget[] getChildren() {
     return children;
   }
 
   public final void updateChild(int index, Widget newChild) {
-    if (index >= children.size())
+    if (index >= children.length)
       throw new ArrayIndexOutOfBoundsException(
         String.format(
           "Children length: %d, Index: %d",
-          children.size(), index
+          children.length, index
         )
       );
-    children.get(index).parent = null;
-    children.set(index, newChild);
-    children.get(index).parent = this;
+    children[index].parent = null;
+    children[index] = newChild;
+    children[index].parent = this;
   }
 
   //  public static abstract class MultiChildParentConfig extends ParentConfig { }

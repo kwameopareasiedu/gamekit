@@ -1,5 +1,7 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.annotations.WidgetBuilder;
+import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.utils.Constraints;
 import dev.gamekit.ui.enums.Alignment;
 
@@ -8,20 +10,19 @@ import java.util.Objects;
 import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link SingleChildParent} which aligns its single child within itself */
+@WidgetBuilder
 public class Align extends SingleChildParent {
+  @WidgetBuilderField
   protected Alignment horizontalAlignment;
+  @WidgetBuilderField
   protected Alignment verticalAlignment;
 
-  public Align(AlignConfig config, Widget child) {
-    super(config, child);
+  public Align(AlignConfig... config) {
+    super(config);
   }
 
-  public static Align create(AlignConfig config, Widget child) {
-    return new Align(config, child);
-  }
-
-  public static AlignConfig config() {
-    return new AlignConfig();
+  public static Align create(AlignConfig... config) {
+    return new Align(config);
   }
 
   @Override
@@ -73,20 +74,5 @@ public class Align extends SingleChildParent {
     };
 
     child.computedBounds.setPosition(hOffset, vOffset);
-  }
-
-  public static class AlignConfig extends SingleChildParentConfig {
-    protected Alignment horizontalAlignment;
-    protected Alignment verticalAlignment;
-
-    public AlignConfig horizontalAlignment(Alignment horizontalAlignment) {
-      this.horizontalAlignment = horizontalAlignment;
-      return this;
-    }
-
-    public AlignConfig verticalAlignment(Alignment verticalAlignment) {
-      this.verticalAlignment = verticalAlignment;
-      return this;
-    }
   }
 }

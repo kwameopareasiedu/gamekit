@@ -1,5 +1,7 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.annotations.WidgetBuilder;
+import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.utils.Constraints;
 
 import java.util.Objects;
@@ -7,19 +9,17 @@ import java.util.Objects;
 import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link SingleChildParent} which scales the computed size of its child */
+@WidgetBuilder
 public class Scaled extends SingleChildParent {
-  protected double scale;
+  @WidgetBuilderField
+  protected Double scale;
 
-  public Scaled(ScaledConfig config, Widget child) {
-    super(config, child);
+  public Scaled(ScaledConfig... config) {
+    super(config);
   }
 
-  public static Scaled create(ScaledConfig config, Widget child) {
-    return new Scaled(config, child);
-  }
-
-  public static ScaledConfig config() {
-    return new ScaledConfig();
+  public static Scaled create(ScaledConfig... config) {
+    return new Scaled(config);
   }
 
   @Override
@@ -62,14 +62,5 @@ public class Scaled extends SingleChildParent {
         computedBounds.height, computedBounds.height
       )
     );
-  }
-
-  public static class ScaledConfig extends SingleChildParentConfig {
-    protected Double scale;
-
-    public ScaledConfig scale(double scale) {
-      this.scale = scale;
-      return this;
-    }
   }
 }

@@ -1,5 +1,6 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.core.IO;
 import dev.gamekit.core.UI;
@@ -15,6 +16,7 @@ import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link Leaf} which renders text to the screen */
 @SuppressWarnings("MagicConstant")
+@WidgetBuilder
 public class Text extends Leaf {
   public static final Font DEFAULT_FONT = IO.getResourceFont("font-default.ttf");
   public static final int PLAIN = Font.PLAIN;
@@ -53,8 +55,8 @@ public class Text extends Leaf {
     super(config);
   }
 
-  public static Text create(String text) {
-    return new Text(TextConfig.text(text));
+  public static Text create(TextConfig... config) {
+    return new Text(config);
   }
 
   @Override

@@ -1,5 +1,6 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.utils.Constraints;
 
 import java.awt.*;
@@ -8,6 +9,7 @@ import java.awt.*;
  * A {@link Leaf} with no size which renders nothing. Empty should be used in places where
  * {@code null} would have been preferable
  */
+@WidgetBuilder
 public class Empty extends Leaf {
   public static Empty create() {
     return new Empty();

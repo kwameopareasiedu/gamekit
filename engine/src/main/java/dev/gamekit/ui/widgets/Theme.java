@@ -1,8 +1,10 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.annotations.WidgetBuilder;
+import dev.gamekit.annotations.WidgetBuilderField;
+import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.utils.Constraints;
 import dev.gamekit.utils.Spacing;
-import dev.gamekit.ui.enums.Alignment;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -11,62 +13,95 @@ import java.util.Objects;
 import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link SingleChildParent} which provides theme variables to its child tree */
+@WidgetBuilder
 public class Theme extends SingleChildParent {
-  private static final Theme DEFAULT_THEME = create(config(), Empty.create());
+  private static final Theme DEFAULT_THEME = create(ThemeConfig.child(Empty.create()));
 
+  @WidgetBuilderField
   public BufferedImage panelBackground;
+  @WidgetBuilderField
   public Spacing panelEdgeInsets;
 
+  @WidgetBuilderField
   public BufferedImage buttonDefaultBackground;
+  @WidgetBuilderField
   public BufferedImage buttonHoverBackground;
+  @WidgetBuilderField
   public BufferedImage buttonPressedBackground;
+  @WidgetBuilderField
   public Spacing buttonEdgeInsets;
 
+  @WidgetBuilderField
   public Font textFont;
+  @WidgetBuilderField
   public Integer textFontSize;
+  @WidgetBuilderField
   public Integer textFontStyle;
+  @WidgetBuilderField
   public Color textColor;
+  @WidgetBuilderField
   public Color textBackgroundColor;
+  @WidgetBuilderField
   public Alignment textAlignment;
+  @WidgetBuilderField
   public Boolean textShadowEnabled;
+  @WidgetBuilderField
   public Integer textShadowOffsetX;
+  @WidgetBuilderField
   public Integer textShadowOffsetY;
+  @WidgetBuilderField
   public Color textShadowColor;
 
+  @WidgetBuilderField
   public BufferedImage fieldDefaultBackground;
+  @WidgetBuilderField
   public BufferedImage fieldFocusBackground;
+  @WidgetBuilderField
   public Spacing fieldEdgeInsets;
+  @WidgetBuilderField
   public Spacing fieldPadding;
 
+  @WidgetBuilderField
   public BufferedImage checkboxDefaultIcon;
+  @WidgetBuilderField
   public BufferedImage checkboxToggledIcon;
+  @WidgetBuilderField
   public Spacing checkboxIconEdgeInsets;
+  @WidgetBuilderField
   public Integer checkboxIconWidth;
+  @WidgetBuilderField
   public Integer checkboxIconHeight;
+  @WidgetBuilderField
   public Integer checkboxGapSize;
 
+  @WidgetBuilderField
   public BufferedImage progressTrackBackground;
+  @WidgetBuilderField
   public BufferedImage progressFillBackground;
+  @WidgetBuilderField
   public Spacing progressTrackEdgeInsets;
+  @WidgetBuilderField
   public Spacing progressFillEdgeInsets;
+  @WidgetBuilderField
   public Spacing progressFillMargin;
+  @WidgetBuilderField
   public Progress.FillMode progressFillMode;
 
+  @WidgetBuilderField
   public BufferedImage sliderThumbBackground;
+  @WidgetBuilderField
   public Spacing sliderThumbEdgeInsets;
+  @WidgetBuilderField
   public Integer sliderThumbWidth;
+  @WidgetBuilderField
   public Integer sliderThumbHeight;
 
-  public Theme(ThemeConfig config, Widget child) {
-    super(config, child);
+  public Theme(ThemeConfig... config) {
+    super(config);
   }
 
-  public static Theme create(ThemeConfig params, Widget child) {
-    return new Theme(params, child);
-  }
-
-  public static ThemeConfig config() {
-    return new ThemeConfig();
+  public static Theme create(ThemeConfig... params) {
+    return new Theme(params);
   }
 
   public static Theme getDefault() {
@@ -196,215 +231,5 @@ public class Theme extends SingleChildParent {
       constraints.constrainWidth(intrinsicSize.width),
       constraints.constrainHeight(intrinsicSize.height)
     );
-  }
-
-  public static class ThemeConfig extends SingleChildParentConfig {
-    protected BufferedImage panelBackground;
-    protected Spacing panelEdgeInsets;
-
-    protected BufferedImage buttonDefaultBackground;
-    protected BufferedImage buttonHoverBackground;
-    protected BufferedImage buttonPressedBackground;
-    protected Spacing buttonEdgeInsets;
-
-    protected Font textFont;
-    protected Integer textFontSize;
-    protected Integer textFontStyle;
-    protected Color textColor;
-    protected Color textBackgroundColor;
-    protected Alignment textAlignment;
-    protected Boolean textShadowEnabled;
-    protected Integer textShadowOffsetX;
-    protected Integer textShadowOffsetY;
-    protected Color textShadowColor;
-
-    protected BufferedImage fieldDefaultBackground;
-    protected BufferedImage fieldFocusBackground;
-    protected Spacing fieldEdgeInsets;
-    protected Spacing fieldPadding;
-
-    protected BufferedImage checkboxDefaultIcon;
-    protected BufferedImage checkboxToggledIcon;
-    protected Spacing checkboxEdgeInsets;
-    protected Integer checkboxIconWidth;
-    protected Integer checkboxIconHeight;
-    protected Integer checkboxGapSize;
-
-    protected BufferedImage progressTrackBackground;
-    protected BufferedImage progressFillBackground;
-    protected Spacing progressTrackEdgeInsets;
-    protected Spacing progressFillEdgeInsets;
-    protected Spacing progressFillMargin;
-    protected Progress.FillMode progressFillMode;
-
-    protected BufferedImage sliderThumbBackground;
-    protected Spacing sliderThumbEdgeInsets;
-    protected Integer sliderThumbWidth;
-    protected Integer sliderThumbHeight;
-
-    public ThemeConfig panelBackground(BufferedImage panelBackground) {
-      this.panelBackground = panelBackground;
-      return this;
-    }
-
-    public ThemeConfig panelEdgeInsets(int top, int right, int bottom, int left) {
-      this.panelEdgeInsets = new Spacing(top, right, bottom, left);
-      return this;
-    }
-
-    public ThemeConfig buttonDefaultBackground(BufferedImage buttonDefaultBackground) {
-      this.buttonDefaultBackground = buttonDefaultBackground;
-      return this;
-    }
-
-    public ThemeConfig buttonHoverBackground(BufferedImage buttonHoverBackground) {
-      this.buttonHoverBackground = buttonHoverBackground;
-      return this;
-    }
-
-    public ThemeConfig buttonPressedBackground(BufferedImage buttonPressedBackground) {
-      this.buttonPressedBackground = buttonPressedBackground;
-      return this;
-    }
-
-    public ThemeConfig buttonEdgeInsets(int top, int right, int bottom, int left) {
-      this.buttonEdgeInsets = new Spacing(top, right, bottom, left);
-      return this;
-    }
-
-    public ThemeConfig textFont(Font font) {
-      this.textFont = font;
-      return this;
-    }
-
-    public ThemeConfig textFontSize(int fontSize) {
-      this.textFontSize = fontSize;
-      return this;
-    }
-
-    public ThemeConfig textFontStyle(int fontStyle) {
-      this.textFontStyle = fontStyle;
-      return this;
-    }
-
-    public ThemeConfig textColor(Color color) {
-      this.textColor = color;
-      return this;
-    }
-
-    public ThemeConfig textBackgroundColor(Color backgroundColor) {
-      this.textBackgroundColor = backgroundColor;
-      return this;
-    }
-
-    public ThemeConfig textAlignment(Alignment textAlignment) {
-      this.textAlignment = textAlignment;
-      return this;
-    }
-
-    public ThemeConfig textShadow(
-      boolean shadowEnabled,
-      int shadowOffsetX,
-      int shadowOffsetY,
-      Color shadowColor
-    ) {
-      this.textShadowEnabled = shadowEnabled;
-      this.textShadowOffsetX = shadowOffsetX;
-      this.textShadowOffsetY = shadowOffsetY;
-      this.textShadowColor = shadowColor;
-      return this;
-    }
-
-    public ThemeConfig fieldDefaultBackground(BufferedImage fieldDefaultBackground) {
-      this.fieldDefaultBackground = fieldDefaultBackground;
-      return this;
-    }
-
-    public ThemeConfig fieldFocusBackground(BufferedImage fieldFocusBackground) {
-      this.fieldFocusBackground = fieldFocusBackground;
-      return this;
-    }
-
-    public ThemeConfig fieldEdgeInsets(int top, int right, int bottom, int left) {
-      this.fieldEdgeInsets = new Spacing(top, right, bottom, left);
-      return this;
-    }
-
-    public ThemeConfig fieldPadding(int top, int right, int bottom, int left) {
-      this.fieldPadding = new Spacing(top, right, bottom, left);
-      return this;
-    }
-
-    public ThemeConfig checkboxDefaultIcon(BufferedImage checkboxDefaultIcon) {
-      this.checkboxDefaultIcon = checkboxDefaultIcon;
-      return this;
-    }
-
-    public ThemeConfig checkboxToggledIcon(BufferedImage checkboxToggledIcon) {
-      this.checkboxToggledIcon = checkboxToggledIcon;
-      return this;
-    }
-
-    public ThemeConfig checkboxEdgeInsets(int top, int right, int bottom, int left) {
-      this.checkboxEdgeInsets = new Spacing(top, right, bottom, left);
-      return this;
-    }
-
-    public ThemeConfig checkboxIconSize(Integer checkboxIconWidth, Integer checkboxIconHeight) {
-      this.checkboxIconWidth = checkboxIconWidth;
-      this.checkboxIconHeight = checkboxIconHeight;
-      return this;
-    }
-
-    public ThemeConfig checkboxGapSize(Integer checkboxGapSize) {
-      this.checkboxGapSize = checkboxGapSize;
-      return this;
-    }
-
-    public ThemeConfig progressTrackBackground(BufferedImage progressTrackBackground) {
-      this.progressTrackBackground = progressTrackBackground;
-      return this;
-    }
-
-    public ThemeConfig progressTrackEdgeInsets(int top, int right, int bottom, int left) {
-      this.progressTrackEdgeInsets = new Spacing(top, right, bottom, left);
-      return this;
-    }
-
-    public ThemeConfig progressFillBackground(BufferedImage progressFillBackground) {
-      this.progressFillBackground = progressFillBackground;
-      return this;
-    }
-
-    public ThemeConfig progressFillEdgeInsets(int top, int right, int bottom, int left) {
-      this.progressFillEdgeInsets = new Spacing(top, right, bottom, left);
-      return this;
-    }
-
-    public ThemeConfig progressFillMargin(int top, int right, int bottom, int left) {
-      this.progressFillMargin = new Spacing(top, right, bottom, left);
-      return this;
-    }
-
-    public ThemeConfig progressFillMode(Progress.FillMode progressFillMode) {
-      this.progressFillMode = progressFillMode;
-      return this;
-    }
-
-    public ThemeConfig sliderThumbBackground(BufferedImage sliderThumbBackground) {
-      this.sliderThumbBackground = sliderThumbBackground;
-      return this;
-    }
-
-    public ThemeConfig sliderThumbEdgeInsets(int top, int right, int bottom, int left) {
-      this.sliderThumbEdgeInsets = new Spacing(top, right, bottom, left);
-      return this;
-    }
-
-    public ThemeConfig sliderThumbSize(int sliderThumbWidth, int sliderThumbHeight) {
-      this.sliderThumbWidth = sliderThumbWidth;
-      this.sliderThumbHeight = sliderThumbHeight;
-      return this;
-    }
   }
 }
