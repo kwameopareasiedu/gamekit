@@ -5,7 +5,6 @@ import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.utils.Constraints;
 
 import java.awt.*;
-import java.util.Objects;
 
 /** A {@link Leaf} which leaves a gap space */
 @WidgetBuilder
@@ -21,13 +20,6 @@ public class Gap extends Leaf {
 
   public static Gap create(GapConfig... config) {
     return new Gap(config);
-  }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    return widget instanceof Gap imageWidget &&
-      Objects.equals(width, imageWidget.width) &&
-      Objects.equals(height, imageWidget.height);
   }
 
   @Override
@@ -52,19 +44,4 @@ public class Gap extends Leaf {
 
   @Override
   protected void performRender(Graphics2D g) { /* No-op */ }
-
-//  public static class GapConfig extends LeafConfig {
-//    protected Integer width;
-//    protected Integer height;
-//
-//    private GapConfig width(Integer width) {
-//      this.width = width;
-//      return this;
-//    }
-//
-//    private GapConfig height(Integer height) {
-//      this.height = height;
-//      return this;
-//    }
-//  }
 }

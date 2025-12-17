@@ -10,7 +10,6 @@ import dev.gamekit.utils.Spacing;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Objects;
 
 import static dev.gamekit.utils.Misc.coalesce;
 
@@ -56,24 +55,10 @@ public class Progress extends Leaf implements NinePatch {
   }
 
   @Override
-  public boolean stateEquals(Widget widget) {
-    return widget instanceof Progress progressWidget &&
-      Objects.equals(trackBackground, progressWidget.trackBackground) &&
-      Objects.equals(fillBackground, progressWidget.fillBackground) &&
-      Objects.equals(trackEdgeInsets, progressWidget.trackEdgeInsets) &&
-      Objects.equals(fillEdgeInsets, progressWidget.fillEdgeInsets) &&
-      Objects.equals(fillMargin, progressWidget.fillMargin) &&
-      Objects.equals(fillMode, progressWidget.fillMode) &&
-      Objects.equals(minValue, progressWidget.minValue) &&
-      Objects.equals(maxValue, progressWidget.maxValue) &&
-      Objects.equals(value, progressWidget.value);
-  }
-
-  @Override
   protected void performInit() {
     super.performInit();
 
-    ProgressConfig<?> config = (ProgressConfig<?>) super.config;
+    ProgressConfig config = (ProgressConfig) super.config;
     Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
 
     if (config.value == null)
@@ -157,70 +142,11 @@ public class Progress extends Leaf implements NinePatch {
     }
   }
 
-  //  @SuppressWarnings("unchecked")
-  //  public static class ProgressConfig<T extends ProgressConfig<T>> extends LeafConfig {
-  //    protected BufferedImage trackBackground;
-  //    protected BufferedImage fillBackground;
-  //    protected Spacing trackEdgeInsets;
-  //    protected Spacing fillEdgeInsets;
-  //    protected Spacing fillMargin;
-  //    protected FillMode fillMode;
-  //    protected Double minValue;
-  //    protected Double maxValue;
-  //    protected Double value;
-  //
-  //    private T value(double value) {
-  //      this.value = value;
-  //      return (T) this;
-  //    }
-  //
-  //    public T range(double minValue, double maxValue) {
-  //      this.minValue = minValue;
-  //      this.maxValue = maxValue;
-  //      return (T) this;
-  //    }
-  //
-  //    public T trackBackground(BufferedImage trackBackground) {
-  //      this.trackBackground = trackBackground;
-  //      return (T) this;
-  //    }
-  //
-  //    public T trackEdgeInsets(int top, int right, int bottom, int left) {
-  //      this.trackEdgeInsets = new Spacing(top, right, bottom, left);
-  //      return (T) this;
-  //    }
-  //
-  //    public T fillBackground(BufferedImage fillBackground) {
-  //      this.fillBackground = fillBackground;
-  //      return (T) this;
-  //    }
-  //
-  //    public T fillEdgeInsets(int top, int right, int bottom, int left) {
-  //      this.fillEdgeInsets = new Spacing(top, right, bottom, left);
-  //      return (T) this;
-  //    }
-  //
-  //    public T fillMargin(int top, int right, int bottom, int left) {
-  //      this.fillMargin = new Spacing(top, right, bottom, left);
-  //      return (T) this;
-  //    }
-  //
-  //    public T fillMode(FillMode fillMode) {
-  //      this.fillMode = fillMode;
-  //      return (T) this;
-  //    }
-  //  }
-
-  /** Enumeration which determines how a {@link Progress} fill is rendered */
+  /** Enumeration which determines how a {@link Progress#fillBackground} fill is rendered */
   public enum FillMode {
-    /**
-     * Mode to render the {@link Progress#fillBackground} without scaling but use a clip to control
-     * the visible portion
-     */
+    /** Mode to render without scaling but use a clip to control the visible portion */
     CLIP,
-    /**
-     * Mode to render the {@link Progress#fillBackground}, scaling its entirety using 9-patch scaling
-     */
+    /** Mode to render, scaling its entirety using 9-patch scaling */
     SCALE
   }
 }

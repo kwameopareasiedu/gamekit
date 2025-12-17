@@ -57,11 +57,10 @@ public abstract class Widget {
     return parent;
   }
 
-  /**
-   * Delegate method for subclasses to compare with other {@link Widget widgets}
-   * @deprecated Will be replaced with a final version which compares configs directly
-   */
-  public abstract boolean stateEquals(Widget widget);
+  /** Checks if the {@link Config} object of this widget is equivalent to another {@link Widget} */
+  public final boolean stateEquals(Widget widget) {
+    return config.equals(widget.config);
+  }
 
   /**
    * Called to initialize the widget after it has been inserted into the widget tree and

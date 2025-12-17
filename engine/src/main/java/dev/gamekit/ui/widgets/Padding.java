@@ -5,8 +5,6 @@ import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.utils.Constraints;
 import dev.gamekit.utils.Spacing;
 
-import java.util.Objects;
-
 import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link SingleChildParent} which adds padding around its single child */
@@ -21,12 +19,6 @@ public class Padding extends SingleChildParent {
 
   public static Padding create(PaddingConfig... config) {
     return new Padding(config);
-  }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    return widget instanceof Padding paddingWidget &&
-        Objects.equals(padding, paddingWidget.padding);
   }
 
   @Override

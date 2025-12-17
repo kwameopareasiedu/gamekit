@@ -15,11 +15,6 @@ public class Stack extends MultiChildParent {
   }
 
   @Override
-  public boolean stateEquals(Widget widget) {
-    return widget instanceof Stack;
-  }
-
-  @Override
   protected void performLayout(Constraints constraints) {
     double maxWidth = 0, maxHeight = 0;
 
@@ -49,6 +44,4 @@ public class Stack extends MultiChildParent {
       );
     }
   }
-
-//  public static class StackConfig extends MultiChildParentConfig { }
 }

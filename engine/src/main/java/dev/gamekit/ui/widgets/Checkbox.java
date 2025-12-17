@@ -12,7 +12,6 @@ import dev.gamekit.utils.Spacing;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Objects;
 
 import static dev.gamekit.utils.Misc.coalesce;
 
@@ -53,18 +52,6 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
   }
 
   @Override
-  public boolean stateEquals(Widget widget) {
-    return widget instanceof Checkbox checkboxWidget &&
-      Objects.equals(defaultIcon, checkboxWidget.defaultIcon) &&
-      Objects.equals(toggledIcon, checkboxWidget.toggledIcon) &&
-      Objects.equals(iconEdgeInsets, checkboxWidget.iconEdgeInsets) &&
-      Objects.equals(iconWidth, checkboxWidget.iconWidth) &&
-      Objects.equals(iconHeight, checkboxWidget.iconHeight) &&
-      Objects.equals(gapSize, checkboxWidget.gapSize) &&
-      Objects.equals(toggled, checkboxWidget.toggled);
-  }
-
-  @Override
   protected void performInit() {
     CheckboxConfig config = (CheckboxConfig) super.config;
     Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
@@ -76,7 +63,7 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
     this.iconWidth = coalesce(config.iconWidth, theme.checkboxIconWidth, 24);
     this.iconHeight = coalesce(config.iconHeight, theme.checkboxIconHeight, 24);
     this.gapSize = coalesce(config.gapSize, theme.checkboxGapSize, 12);
-    this.toggled = coalesce(config.value, false);
+    this.toggled = coalesce(config.toggled, false);
     this.changeListener = coalesce(config.changeListener, null);
 
     super.performInit();

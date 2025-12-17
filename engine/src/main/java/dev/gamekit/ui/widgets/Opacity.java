@@ -5,7 +5,6 @@ import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.utils.Constraints;
 
 import java.awt.*;
-import java.util.Objects;
 
 import static dev.gamekit.utils.Math.clamp;
 import static dev.gamekit.utils.Misc.coalesce;
@@ -20,12 +19,6 @@ public class Opacity extends SingleChildParent {
 
   public Opacity(OpacityConfig... config) {
     super(config);
-  }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    return widget instanceof Opacity opacityWidget &&
-      Objects.equals(opacity, opacityWidget.opacity);
   }
 
   @Override

@@ -3,14 +3,13 @@ package dev.gamekit.ui.widgets;
 import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.core.IO;
-import dev.gamekit.utils.Constraints;
-import dev.gamekit.utils.Spacing;
 import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.mixins.NinePatch;
+import dev.gamekit.utils.Constraints;
+import dev.gamekit.utils.Spacing;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Objects;
 
 import static dev.gamekit.utils.Misc.coalesce;
 
@@ -31,13 +30,6 @@ public class Panel extends SingleChildParent implements NinePatch, MouseEvent.Ha
 
   public static Panel create(PanelConfig... config) {
     return new Panel(config);
-  }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    return widget instanceof Panel panelWidget &&
-      Objects.equals(background, panelWidget.background)
-      && Objects.equals(edgeInsets, panelWidget.edgeInsets);
   }
 
   @Override

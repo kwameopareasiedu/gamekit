@@ -8,7 +8,6 @@ import dev.gamekit.utils.Spacing;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Objects;
 
 import static dev.gamekit.utils.Misc.coalesce;
 
@@ -109,54 +108,6 @@ public class Theme extends SingleChildParent {
   }
 
   @Override
-  public boolean stateEquals(Widget widget) {
-    return widget instanceof Theme themeWidget &&
-
-      Objects.equals(panelBackground, themeWidget.panelBackground) &&
-      Objects.equals(panelEdgeInsets, themeWidget.panelEdgeInsets) &&
-
-      Objects.equals(buttonDefaultBackground, themeWidget.buttonDefaultBackground) &&
-      Objects.equals(buttonHoverBackground, themeWidget.buttonHoverBackground) &&
-      Objects.equals(buttonPressedBackground, themeWidget.buttonPressedBackground) &&
-      Objects.equals(buttonEdgeInsets, themeWidget.buttonEdgeInsets) &&
-
-      Objects.equals(textFont, themeWidget.textFont) &&
-      Objects.equals(textFontStyle, themeWidget.textFontStyle) &&
-      Objects.equals(textFontSize, themeWidget.textFontSize) &&
-      Objects.equals(textColor, themeWidget.textColor) &&
-      Objects.equals(textBackgroundColor, themeWidget.textBackgroundColor) &&
-      Objects.equals(textAlignment, themeWidget.textAlignment) &&
-      Objects.equals(textShadowEnabled, themeWidget.textShadowEnabled) &&
-      Objects.equals(textShadowOffsetX, themeWidget.textShadowOffsetX) &&
-      Objects.equals(textShadowOffsetY, themeWidget.textShadowOffsetY) &&
-      Objects.equals(textShadowColor, themeWidget.textShadowColor) &&
-
-      Objects.equals(fieldDefaultBackground, themeWidget.fieldDefaultBackground) &&
-      Objects.equals(fieldFocusBackground, themeWidget.fieldFocusBackground) &&
-      Objects.equals(fieldEdgeInsets, themeWidget.fieldEdgeInsets) &&
-      Objects.equals(fieldPadding, themeWidget.fieldPadding) &&
-
-      Objects.equals(checkboxDefaultIcon, themeWidget.checkboxDefaultIcon) &&
-      Objects.equals(checkboxToggledIcon, themeWidget.checkboxToggledIcon) &&
-      Objects.equals(checkboxIconEdgeInsets, themeWidget.checkboxIconEdgeInsets) &&
-      Objects.equals(checkboxIconWidth, themeWidget.checkboxIconWidth) &&
-      Objects.equals(checkboxIconHeight, themeWidget.checkboxIconHeight) &&
-      Objects.equals(checkboxGapSize, themeWidget.checkboxGapSize) &&
-
-      Objects.equals(progressTrackBackground, themeWidget.progressTrackBackground) &&
-      Objects.equals(progressFillBackground, themeWidget.progressFillBackground) &&
-      Objects.equals(progressTrackEdgeInsets, themeWidget.progressTrackEdgeInsets) &&
-      Objects.equals(progressFillEdgeInsets, themeWidget.progressFillEdgeInsets) &&
-      Objects.equals(progressFillMargin, themeWidget.progressFillMargin) &&
-      Objects.equals(progressFillMode, themeWidget.progressFillMode) &&
-
-      Objects.equals(sliderThumbBackground, themeWidget.sliderThumbBackground) &&
-      Objects.equals(sliderThumbEdgeInsets, themeWidget.sliderThumbEdgeInsets) &&
-      Objects.equals(sliderThumbWidth, themeWidget.sliderThumbWidth) &&
-      Objects.equals(sliderThumbHeight, themeWidget.sliderThumbHeight);
-  }
-
-  @Override
   protected void performInit() {
     ThemeConfig config = (ThemeConfig) super.config;
     Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
@@ -192,7 +143,7 @@ public class Theme extends SingleChildParent {
 
     this.checkboxDefaultIcon = coalesce(config.checkboxDefaultIcon, theme.checkboxDefaultIcon);
     this.checkboxToggledIcon = coalesce(config.checkboxToggledIcon, theme.checkboxToggledIcon);
-    this.checkboxIconEdgeInsets = coalesce(config.checkboxEdgeInsets, theme.checkboxIconEdgeInsets);
+    this.checkboxIconEdgeInsets = coalesce(config.checkboxIconEdgeInsets, theme.checkboxIconEdgeInsets);
     this.checkboxIconWidth = coalesce(config.checkboxIconWidth, theme.checkboxIconWidth);
     this.checkboxIconHeight = coalesce(config.checkboxIconHeight, theme.checkboxIconHeight);
     this.checkboxGapSize = coalesce(config.checkboxGapSize, theme.checkboxGapSize);

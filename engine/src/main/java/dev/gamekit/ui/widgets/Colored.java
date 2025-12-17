@@ -5,7 +5,6 @@ import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.utils.Constraints;
 
 import java.awt.*;
-import java.util.Objects;
 
 import static dev.gamekit.utils.Misc.coalesce;
 
@@ -23,13 +22,6 @@ public class Colored extends Leaf {
 
   public static Colored create(ColoredConfig... config) {
     return new Colored(config);
-  }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    return widget instanceof Colored coloredWidget &&
-      Objects.equals(color, coloredWidget.color) &&
-      Objects.equals(borderRadius, coloredWidget.borderRadius);
   }
 
   @Override
@@ -64,19 +56,4 @@ public class Colored extends Leaf {
       borderRadius, borderRadius
     );
   }
-
-//  public static class ColoredConfig extends LeafConfig {
-//    protected Color color;
-//    protected Integer borderRadius;
-//
-//    public ColoredConfig color(Color color) {
-//      this.color = color;
-//      return this;
-//    }
-//
-//    public ColoredConfig borderRadius(int borderRadius) {
-//      this.borderRadius = borderRadius;
-//      return this;
-//    }
-//  }
 }

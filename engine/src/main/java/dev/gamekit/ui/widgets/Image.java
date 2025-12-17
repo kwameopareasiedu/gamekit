@@ -3,12 +3,11 @@ package dev.gamekit.ui.widgets;
 import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.settings.ImageInterpolation;
-import dev.gamekit.utils.Constraints;
 import dev.gamekit.ui.enums.ImageFit;
+import dev.gamekit.utils.Constraints;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Objects;
 
 import static dev.gamekit.utils.Misc.coalesce;
 
@@ -32,14 +31,6 @@ public class Image extends Leaf {
 
   public static ImageConfig config() {
     return new ImageConfig();
-  }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    return widget instanceof Image imageWidget &&
-      Objects.equals(image, imageWidget.image) &&
-      Objects.equals(fit, imageWidget.fit) &&
-      Objects.equals(interpolation, imageWidget.interpolation);
   }
 
   @Override
@@ -131,25 +122,4 @@ public class Image extends Leaf {
     if (clipChanged)
       g.setClip(originalClip);
   }
-
-//  public static class ImageConfig extends LeafConfig {
-//    protected BufferedImage image;
-//    protected ImageFit fit;
-//    protected ImageInterpolation interpolation;
-//
-//    private ImageConfig image(BufferedImage image) {
-//      this.image = image;
-//      return this;
-//    }
-//
-//    public ImageConfig fit(ImageFit fit) {
-//      this.fit = fit;
-//      return this;
-//    }
-//
-//    public ImageConfig interpolation(ImageInterpolation interpolation) {
-//      this.interpolation = interpolation;
-//      return this;
-//    }
-//  }
 }

@@ -17,9 +17,4 @@ public class Center extends Align {
   public static Center create(Widget child) {
     return new Center(child);
   }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    return widget instanceof Center;
-  }
 }

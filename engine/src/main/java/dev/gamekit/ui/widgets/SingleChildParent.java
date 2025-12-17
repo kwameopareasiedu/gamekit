@@ -53,6 +53,4 @@ public abstract class SingleChildParent extends Parent {
     child = newChild;
     newChild.parent = this;
   }
-
-  //  public abstract static class SingleChildParentConfig extends ParentConfig { }
 }

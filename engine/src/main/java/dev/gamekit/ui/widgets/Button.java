@@ -10,7 +10,6 @@ import dev.gamekit.utils.Spacing;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Objects;
 
 import static dev.gamekit.utils.Misc.coalesce;
 
@@ -44,15 +43,6 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
 
   public static Button create(ButtonConfig... config) {
     return new Button(config);
-  }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    return widget instanceof Button buttonWidget &&
-      Objects.equals(defaultBackground, buttonWidget.defaultBackground) &&
-      Objects.equals(hoverBackground, buttonWidget.hoverBackground) &&
-      Objects.equals(pressedBackground, buttonWidget.pressedBackground) &&
-      Objects.equals(edgeInsets, buttonWidget.edgeInsets);
   }
 
   @Override

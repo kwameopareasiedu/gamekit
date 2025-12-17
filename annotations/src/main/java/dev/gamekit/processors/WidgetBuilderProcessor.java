@@ -114,9 +114,13 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
             processingEnv.getFiler().createSourceFile(widgetClass.builderName);
 
           try (PrintWriter out = new PrintWriter(fileObject.openOutputStream())) {
-
+            // Builder package declaration
             out.printf("package %s;\n\n", widgetClass.builderPackageName);
 
+            // Builder import directives
+            out.printf("import java.util.Objects;\n\n");
+
+            // Builder class declaration
             if (widgetClass.superBuilderName != null) {
               out.printf(
                 "public class %s extends %s implements dev.gamekit.ui.widgets.Widget.Config {\n",
@@ -130,12 +134,14 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
               );
             }
 
+            // Builder instance fields declaration
             for (WidgetField field : widgetClass.ownFields) {
               out.printf("\tpublic %s %s = null;\n", field.type(), field.name());
             }
 
             out.println();
 
+            // Builder static setters declaration
             for (WidgetField field : widgetClass.allFields) {
               out.printf(
                 "\tpublic static %s %s(%s %s) {\n",
@@ -147,8 +153,9 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
               out.printf("\t}\n\n");
             }
 
+            // Builder mergeWith method override
             out.printf("\t@Override\n");
-            out.printf("\tpublic Widget.Config mergeWith(Widget.Config[] configs) {\n");
+            out.printf("\tpublic dev.gamekit.ui.widgets.Widget.Config mergeWith(dev.gamekit.ui.widgets.Widget.Config[] configs) {\n");
             out.printf(
               "\t\t%s buffer = new %s();\n\n",
               widgetClass.builderName, widgetClass.builderName
@@ -171,8 +178,29 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
             out.printf("\t\t}\n\n");
 
             out.printf("\t\treturn buffer;\n");
+            out.printf("\t}\n\n");
+
+            // Builder equals method override
+            out.printf("\t@Override\n");
+            out.printf("\tpublic boolean equals(Object obj) {\n");
+            out.printf(
+              "\t\treturn obj instanceof %s %s\n",
+              widgetClass.builderSimpleName,
+              widgetClass.builderVarName
+            );
+
+            if (!widgetClass.allFields.isEmpty()) {
+              for (WidgetField field : widgetClass.allFields) {
+                out.printf("\t\t\t&& Objects.equals(%s, %s.%s)\n",
+                  field.name(), widgetClass.builderVarName, field.name()
+                );
+              }
+            }
+
+            out.printf(";\n");
             out.printf("\t}\n");
 
+            // Builder class end brace
             out.printf("}");
           }
         } catch (IOException e) {

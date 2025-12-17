@@ -60,22 +60,6 @@ public class Text extends Leaf {
   }
 
   @Override
-  public boolean stateEquals(Widget widget) {
-    return widget instanceof Text textWidget &&
-      Objects.equals(text, textWidget.text) &&
-      Objects.equals(font, textWidget.font) &&
-      Objects.equals(fontSize, textWidget.fontSize) &&
-      Objects.equals(fontStyle, textWidget.fontStyle) &&
-      Objects.equals(color, textWidget.color) &&
-      Objects.equals(backgroundColor, textWidget.backgroundColor) &&
-      Objects.equals(alignment, textWidget.alignment) &&
-      Objects.equals(shadowEnabled, textWidget.shadowEnabled) &&
-      Objects.equals(shadowOffsetX, textWidget.shadowOffsetX) &&
-      Objects.equals(shadowOffsetY, textWidget.shadowOffsetY) &&
-      Objects.equals(shadowColor, textWidget.shadowColor);
-  }
-
-  @Override
   protected void performInit() {
     super.performInit();
 
@@ -281,69 +265,6 @@ public class Text extends Leaf {
     g.setColor(originalColor);
     g.setStroke(originalStroke);
   }
-
-  //  @SuppressWarnings("unchecked")
-  //  public static class TextConfig<T extends TextConfig<T>> extends LeafConfig {
-  //    protected String text;
-  //    protected Font font;
-  //    protected Integer fontStyle;
-  //    protected Integer fontSize;
-  //    protected Color color;
-  //    protected Color backgroundColor;
-  //    protected Alignment alignment;
-  //    protected Boolean shadowEnabled;
-  //    protected Integer shadowOffsetX;
-  //    protected Integer shadowOffsetY;
-  //    protected Color shadowColor;
-  //
-  //    private T text(String text) {
-  //      this.text = text;
-  //      return (T) this;
-  //    }
-  //
-  //    public T font(Font font) {
-  //      this.font = font;
-  //      return (T) this;
-  //    }
-  //
-  //    public T fontSize(int fontSize) {
-  //      this.fontSize = fontSize;
-  //      return (T) this;
-  //    }
-  //
-  //    public T fontStyle(int fontStyle) {
-  //      this.fontStyle = fontStyle;
-  //      return (T) this;
-  //    }
-  //
-  //    public T color(Color color) {
-  //      this.color = color;
-  //      return (T) this;
-  //    }
-  //
-  //    public T backgroundColor(Color backgroundColor) {
-  //      this.backgroundColor = backgroundColor;
-  //      return (T) this;
-  //    }
-  //
-  //    public T alignment(Alignment alignment) {
-  //      this.alignment = alignment;
-  //      return (T) this;
-  //    }
-  //
-  //    public T shadow(
-  //      boolean shadowEnabled,
-  //      int shadowOffsetX,
-  //      int shadowOffsetY,
-  //      Color shadowColor
-  //    ) {
-  //      this.shadowEnabled = shadowEnabled;
-  //      this.shadowOffsetX = shadowOffsetX;
-  //      this.shadowOffsetY = shadowOffsetY;
-  //      this.shadowColor = shadowColor;
-  //      return (T) this;
-  //    }
-  //  }
 
   /** A store for a character symbol and its absolute bounds */
   public static class Symbol extends Bounds {

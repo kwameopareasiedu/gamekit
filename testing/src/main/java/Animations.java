@@ -6,23 +6,20 @@ import dev.gamekit.core.Scene;
 import dev.gamekit.settings.Resolution;
 import dev.gamekit.settings.Settings;
 import dev.gamekit.settings.WindowMode;
-import dev.gamekit.ui.widgets.Align;
-import dev.gamekit.ui.widgets.Padding;
-import dev.gamekit.ui.widgets.Text;
-import dev.gamekit.ui.widgets.Widget;
+import dev.gamekit.ui.widgets.*;
+import dev.gamekit.utils.Spacing;
 
 import java.awt.*;
 
 public class Animations extends Scene {
 
+  double animationValue = 0;
   private final Animation bounceAnimation = new Animation(
     4000, Animation.RepeatMode.ALTERNATE, AnimationCurve.EASE_IN_OUT_BOUNCE
   ).setValueListener((value) -> {
     animationValue = value;
     updateUI();
   });
-
-  double animationValue = 0;
 
   public Animations() {
     super("Animation Testing");
@@ -53,11 +50,16 @@ public class Animations extends Scene {
   @Override
   public Widget createUI() {
     return Align.create(
-      Align.config(),
-      Padding.create(
-        Padding.config().padding(48, 16, 48, 16),
-        Text.create(
-          String.format("Value: %f", animationValue)
+      AlignConfig.child(
+        Padding.create(
+          PaddingConfig.padding(new Spacing(48, 16, 48, 16)),
+          PaddingConfig.child(
+            Text.create(
+              TextConfig.text(
+                String.format("Value: %f", animationValue)
+              )
+            )
+          )
         )
       )
     );

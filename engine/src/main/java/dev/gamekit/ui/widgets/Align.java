@@ -2,10 +2,8 @@ package dev.gamekit.ui.widgets;
 
 import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
-import dev.gamekit.utils.Constraints;
 import dev.gamekit.ui.enums.Alignment;
-
-import java.util.Objects;
+import dev.gamekit.utils.Constraints;
 
 import static dev.gamekit.utils.Misc.coalesce;
 
@@ -23,13 +21,6 @@ public class Align extends SingleChildParent {
 
   public static Align create(AlignConfig... config) {
     return new Align(config);
-  }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    return widget instanceof Align alignWidget &&
-      Objects.equals(horizontalAlignment, alignWidget.horizontalAlignment)
-      && Objects.equals(verticalAlignment, alignWidget.verticalAlignment);
   }
 
   @Override

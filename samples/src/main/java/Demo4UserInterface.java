@@ -1,3 +1,5 @@
+import dev.gamekit.annotations.WidgetBuilder;
+import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.core.Application;
 import dev.gamekit.core.IO;
 import dev.gamekit.core.Scene;
@@ -15,7 +17,6 @@ import dev.gamekit.utils.Spacing;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Objects;
 
 /**
  * This demo shows how to build user interfaces and performs the following actions:
@@ -74,10 +75,13 @@ public class Demo4UserInterface extends Scene {
             Padding.create(
               PaddingConfig.padding(new Spacing(0, 24, 0, 24)),
               PaddingConfig.child(
-                Sized.create(
-                  Sized.config().width(480).height(480),
-                  Image.create(
-                    ImageConfig.image(LOGO)
+                FixedSize.create(
+                  FixedSizeConfig.width(480.0),
+                  FixedSizeConfig.height(480.0),
+                  FixedSizeConfig.child(
+                    Image.create(
+                      ImageConfig.image(LOGO)
+                    )
                   )
                 )
               )
@@ -129,10 +133,10 @@ public class Demo4UserInterface extends Scene {
                             )
                           )
                         ),
-                        Sized.create(
-                          Sized.width(256),
-                          Sized.intrinsicHeight(),
-                          Sized.child(
+                        IntrinsicSize.create(
+                          IntrinsicSizeConfig.width(256),
+                          IntrinsicSizeConfig.intrinsicHeight(),
+                          IntrinsicSizeConfig.child(
                             Slider.create(
                               SliderConfig.value(sliderValue),
                               SliderConfig.minValue(0.0),
@@ -147,10 +151,10 @@ public class Demo4UserInterface extends Scene {
                             )
                           )
                         ),
-                        Sized.create(
-                          SizedConfig.width(256),
-                          SizedConfig.height(48),
-                          SizedConfig.child(
+                        FixedSize.create(
+                          FixedSizeConfig.width(256.0),
+                          FixedSizeConfig.height(48.0),
+                          FixedSizeConfig.child(
                             Progress.create(
                               ProgressConfig.value(sliderValue),
                               ProgressConfig.maxValue(100.0),
@@ -187,11 +191,14 @@ public class Demo4UserInterface extends Scene {
         Align.create(
           AlignConfig.horizontalAlignment(Alignment.CENTER),
           AlignConfig.child(
-            Sized.create(
-              Sized.config().fractionalWidth(1).fractionalHeight(0.15),
-              Image.create(
-                ImageConfig.fit(ImageFit.CROP),
-                ImageConfig.image(SCRIM)
+            FractionalSize.create(
+              FractionalSizeConfig.widthRatio(1.0),
+              FractionalSizeConfig.heightRatio(0.15),
+              FractionalSizeConfig.child(
+                Image.create(
+                  ImageConfig.fit(ImageFit.CROP),
+                  ImageConfig.image(SCRIM)
+                )
               )
             )
           )
@@ -201,49 +208,60 @@ public class Demo4UserInterface extends Scene {
           AlignConfig.horizontalAlignment(Alignment.CENTER),
           AlignConfig.verticalAlignment(Alignment.END),
           AlignConfig.child(
-            Sized.create(
-              Sized.config().fractionalWidth(1).fractionalHeight(0.15),
-              Stack.create(
-                StackConfig.children(
-                  Sized.create(
-                    Sized.config().fractionalWidth(1).fractionalHeight(1),
-                    Image.create(
-                      ImageConfig.fit(ImageFit.STRETCH),
-                      ImageConfig.image(SCRIM)
-                    )
-                  ),
-                  Sized.create(
-                    Sized.config().fractionalWidth(1).fractionalHeight(1),
-                    Row.create(
-                      RowConfig.mainAxisAlignment(MainAxisAlignment.END),
-                      RowConfig.crossAxisAlignment(CrossAxisAlignment.CENTER),
-                      RowConfig.gapSize(24),
-                      RowConfig.children(
-
-                        Sized.create(
-                          Sized.config().width(48).height(48),
-                          Colored.create(
-                            ColoredConfig.color(Color.RED),
-                            ColoredConfig.borderRadius(4)
-                          )
-                        ),
-                        Button.create(
-                          ButtonConfig.edgeInsets(new Spacing(12, 12, 18, 12)),
-                          ButtonConfig.child(
-                            Text.create(
-                              TextConfig.fontSize(12),
-                              TextConfig.fontStyle(Text.BOLD),
-                              TextConfig.text("Create Account")
-                            )
-                          )
-                        ),
-                        Button.create(
-                          ButtonConfig.edgeInsets(new Spacing(12, 12, 18, 12)),
-                          ButtonConfig.child(
-                            Text.create(
-                              TextConfig.fontSize(12),
-                              TextConfig.fontStyle(Text.BOLD),
-                              TextConfig.text("Login")
+            FractionalSize.create(
+              FractionalSizeConfig.widthRatio(1.0),
+              FractionalSizeConfig.heightRatio(0.15),
+              FractionalSizeConfig.child(
+                Stack.create(
+                  StackConfig.children(
+                    FractionalSize.create(
+                      FractionalSizeConfig.widthRatio(1.0),
+                      FractionalSizeConfig.heightRatio(1.0),
+                      FractionalSizeConfig.child(
+                        Image.create(
+                          ImageConfig.fit(ImageFit.STRETCH),
+                          ImageConfig.image(SCRIM)
+                        )
+                      )
+                    ),
+                    FractionalSize.create(
+                      FractionalSizeConfig.widthRatio(1.0),
+                      FractionalSizeConfig.heightRatio(1.0),
+                      FractionalSizeConfig.child(
+                        Row.create(
+                          RowConfig.mainAxisAlignment(MainAxisAlignment.END),
+                          RowConfig.crossAxisAlignment(CrossAxisAlignment.CENTER),
+                          RowConfig.gapSize(24),
+                          RowConfig.children(
+                            FixedSize.create(
+                              FixedSizeConfig.width(48.0),
+                              FixedSizeConfig.height(48.0),
+                              FixedSizeConfig.child(
+                                Colored.create(
+                                  ColoredConfig.color(Color.RED),
+                                  ColoredConfig.borderRadius(4)
+                                )
+                              )
+                            ),
+                            Button.create(
+                              ButtonConfig.edgeInsets(new Spacing(12, 12, 18, 12)),
+                              ButtonConfig.child(
+                                Text.create(
+                                  TextConfig.fontSize(12),
+                                  TextConfig.fontStyle(Text.BOLD),
+                                  TextConfig.text("Create Account")
+                                )
+                              )
+                            ),
+                            Button.create(
+                              ButtonConfig.edgeInsets(new Spacing(12, 12, 18, 12)),
+                              ButtonConfig.child(
+                                Text.create(
+                                  TextConfig.fontSize(12),
+                                  TextConfig.fontStyle(Text.BOLD),
+                                  TextConfig.text("Login")
+                                )
+                              )
                             )
                           )
                         )
@@ -259,7 +277,9 @@ public class Demo4UserInterface extends Scene {
     );
   }
 
+  @WidgetBuilder
   static class MainMenuButton extends Compose {
+    @WidgetBuilderField
     protected String text;
 
     public MainMenuButton(String text, MouseEvent.Handler mouseListener) {
@@ -291,13 +311,13 @@ public class Demo4UserInterface extends Scene {
       return new MainMenuButton(text, mouseListener);
     }
 
-    @Override
-    public boolean stateEquals(Widget widget) {
-      if (widget instanceof MainMenuButton mainMenuButton)
-        return Objects.equals(text, mainMenuButton.text);
-
-      return false;
-    }
+    //    @Override
+    //    public boolean stateEquals(Widget widget) {
+    //      if (widget instanceof MainMenuButton mainMenuButton)
+    //        return Objects.equals(text, mainMenuButton.text);
+    //
+    //      return false;
+    //    }
 
     @Override
     protected void performUpdate(Widget widget) {
@@ -305,7 +325,9 @@ public class Demo4UserInterface extends Scene {
     }
   }
 
+  @WidgetBuilder
   static class SubMenuButton extends Compose {
+    @WidgetBuilderField
     protected String text;
 
     public SubMenuButton(String text) {
@@ -334,13 +356,13 @@ public class Demo4UserInterface extends Scene {
       return new SubMenuButton(text);
     }
 
-    @Override
-    public boolean stateEquals(Widget widget) {
-      if (widget instanceof SubMenuButton subMenuButton)
-        return Objects.equals(text, subMenuButton.text);
-
-      return false;
-    }
+    //    @Override
+    //    public boolean stateEquals(Widget widget) {
+    //      if (widget instanceof SubMenuButton subMenuButton)
+    //        return Objects.equals(text, subMenuButton.text);
+    //
+    //      return false;
+    //    }
 
     @Override
     protected void performUpdate(Widget widget) {

@@ -13,7 +13,6 @@ import dev.gamekit.utils.Spacing;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Objects;
 
 import static dev.gamekit.utils.Math.clamp;
 import static dev.gamekit.utils.Misc.coalesce;
@@ -47,15 +46,6 @@ public class Slider extends Progress implements NinePatch, MouseEvent.Handler {
 
   public static Slider create(SliderConfig... config) {
     return new Slider(config);
-  }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    return widget instanceof Slider sliderWidget && super.stateEquals(widget) &&
-      Objects.equals(thumbBackground, sliderWidget.thumbBackground) &&
-      Objects.equals(thumbEdgeInsets, sliderWidget.thumbEdgeInsets) &&
-      Objects.equals(thumbWidth, sliderWidget.thumbWidth) &&
-      Objects.equals(thumbHeight, sliderWidget.thumbHeight);
   }
 
   @Override
@@ -140,33 +130,4 @@ public class Slider extends Progress implements NinePatch, MouseEvent.Handler {
       case RELEASE -> mouseDown = false;
     }
   }
-
-  //  public static class SliderConfig extends ProgressConfig<SliderConfig> {
-  //    protected BufferedImage thumbBackground;
-  //    protected Spacing thumbEdgeInsets;
-  //    protected Integer thumbWidth;
-  //    protected Integer thumbHeight;
-  //    protected ChangeEvent.Handler<Double> changeListener;
-  //
-  //    public SliderConfig thumbBackground(BufferedImage thumbBackground) {
-  //      this.thumbBackground = thumbBackground;
-  //      return this;
-  //    }
-  //
-  //    public SliderConfig thumbEdgeInsets(int top, int right, int bottom, int left) {
-  //      this.thumbEdgeInsets = new Spacing(top, right, bottom, left);
-  //      return this;
-  //    }
-  //
-  //    public SliderConfig thumbSize(int thumbWidth, int thumbHeight) {
-  //      this.thumbWidth = thumbWidth;
-  //      this.thumbHeight = thumbHeight;
-  //      return this;
-  //    }
-  //
-  //    public SliderConfig changeListener(ChangeEvent.Handler<Double> changeListener) {
-  //      this.changeListener = changeListener;
-  //      return this;
-  //    }
-  //  }
 }

@@ -15,7 +15,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static dev.gamekit.utils.Math.clamp;
 import static dev.gamekit.utils.Misc.coalesce;
@@ -75,16 +74,6 @@ public class Field extends Text
 
   public static Field create(FieldConfig... config) {
     return new Field(config);
-  }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    return widget instanceof Field fieldWidget &&
-      super.stateEquals(widget) &&
-      Objects.equals(defaultBackground, fieldWidget.defaultBackground) &&
-      Objects.equals(focusBackground, fieldWidget.focusBackground) &&
-      Objects.equals(edgeInsets, fieldWidget.edgeInsets) &&
-      Objects.equals(padding, fieldWidget.padding);
   }
 
   @Override
@@ -239,51 +228,6 @@ public class Field extends Text
     super.performUnmount();
     cursorAnimation.end();
   }
-
-  //  public static class FieldConfig extends TextConfig<FieldConfig> {
-  //    protected BufferedImage defaultBackground;
-  //    protected BufferedImage focusBackground;
-  //    protected Spacing edgeInsets;
-  //    protected Spacing padding;
-  //    protected FocusEvent.Handler focusListener;
-  //    protected KeyCharEvent.Handler keyCharListener;
-  //    protected ChangeEvent.Handler<String> changeListener;
-  //
-  //    public FieldConfig defaultBackground(BufferedImage defaultBackground) {
-  //      this.defaultBackground = defaultBackground;
-  //      return this;
-  //    }
-  //
-  //    public FieldConfig focusBackground(BufferedImage focusBackground) {
-  //      this.focusBackground = focusBackground;
-  //      return this;
-  //    }
-  //
-  //    public FieldConfig edgeInsets(int top, int right, int bottom, int left) {
-  //      this.edgeInsets = new Spacing(top, right, bottom, left);
-  //      return this;
-  //    }
-  //
-  //    public FieldConfig padding(int top, int right, int bottom, int left) {
-  //      this.padding = new Spacing(top, right, bottom, left);
-  //      return this;
-  //    }
-  //
-  //    public FieldConfig focusListener(FocusEvent.Handler focusListener) {
-  //      this.focusListener = focusListener;
-  //      return this;
-  //    }
-  //
-  //    public FieldConfig keyCharListener(KeyCharEvent.Handler keyCharListener) {
-  //      this.keyCharListener = keyCharListener;
-  //      return this;
-  //    }
-  //
-  //    public FieldConfig changeListener(ChangeEvent.Handler<String> changeListener) {
-  //      this.changeListener = changeListener;
-  //      return this;
-  //    }
-  //  }
 
   /**
    * {@link TextModel} is a document model for {@link Field} widgets which manages the

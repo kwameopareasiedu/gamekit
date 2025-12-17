@@ -86,8 +86,6 @@
               dev.gamekit.processors.WidgetBuilderProcessor
             </annotationProcessor>
           </annotationProcessors>
-
-          <proc>only</proc>
         </configuration>
       </plugin>
 

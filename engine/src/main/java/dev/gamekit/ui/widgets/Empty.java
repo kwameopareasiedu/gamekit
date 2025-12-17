@@ -16,11 +16,6 @@ public class Empty extends Leaf {
   }
 
   @Override
-  public boolean stateEquals(Widget widget) {
-    return widget instanceof Empty;
-  }
-
-  @Override
   protected void performLayout(Constraints constraints) {
     computedBounds.setSize(
       constraints.constrainWidth(0),
