@@ -1,13 +1,14 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.core.IO;
-import dev.gamekit.utils.Constraints;
-import dev.gamekit.utils.Spacing;
 import dev.gamekit.ui.events.ChangeEvent;
 import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.mixins.NinePatch;
 import dev.gamekit.utils.Bounds;
+import dev.gamekit.utils.Constraints;
 import dev.gamekit.utils.Position;
+import dev.gamekit.utils.Spacing;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -21,28 +22,29 @@ public class Slider extends Progress implements NinePatch, MouseEvent.Handler {
   public static final BufferedImage THUMB_BG =
     IO.getResourceImage("default-sprites.png", 470, 346, 32, 32);
 
+  @WidgetBuilderField
   protected BufferedImage thumbBackground;
+  @WidgetBuilderField
   protected Spacing thumbEdgeInsets;
+  @WidgetBuilderField
   protected Integer thumbWidth;
+  @WidgetBuilderField
   protected Integer thumbHeight;
+  @WidgetBuilderField
   protected ChangeEvent.Handler<Double> changeListener;
 
   private final Bounds thumbAbsoluteBounds;
   private final Position lastMousePosition;
   private boolean mouseDown = false;
 
-  public Slider(SliderConfig config, Double value) {
-    super(config, value);
+  public Slider(SliderConfig... config) {
+    super(config);
     thumbAbsoluteBounds = new Bounds();
     lastMousePosition = new Position();
   }
 
   public static Slider create(SliderConfig config, double value) {
     return new Slider(config, value);
-  }
-
-  public static SliderConfig config() {
-    return new SliderConfig();
   }
 
   @Override
@@ -62,8 +64,7 @@ public class Slider extends Progress implements NinePatch, MouseEvent.Handler {
     Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
 
     this.thumbBackground = coalesce(config.thumbBackground, theme.sliderThumbBackground, THUMB_BG);
-    this.thumbEdgeInsets =
-      coalesce(config.thumbEdgeInsets, theme.sliderThumbEdgeInsets, new Spacing(8));
+    this.thumbEdgeInsets = coalesce(config.thumbEdgeInsets, theme.sliderThumbEdgeInsets, new Spacing(8));
     this.thumbWidth = coalesce(config.thumbWidth, theme.sliderThumbWidth, 32);
     this.thumbHeight = coalesce(config.thumbHeight, theme.sliderThumbHeight, 32);
     this.changeListener = coalesce(config.changeListener, null);
@@ -138,32 +139,32 @@ public class Slider extends Progress implements NinePatch, MouseEvent.Handler {
     }
   }
 
-  public static class SliderConfig extends ProgressConfig<SliderConfig> {
-    protected BufferedImage thumbBackground;
-    protected Spacing thumbEdgeInsets;
-    protected Integer thumbWidth;
-    protected Integer thumbHeight;
-    protected ChangeEvent.Handler<Double> changeListener;
-
-    public SliderConfig thumbBackground(BufferedImage thumbBackground) {
-      this.thumbBackground = thumbBackground;
-      return this;
-    }
-
-    public SliderConfig thumbEdgeInsets(int top, int right, int bottom, int left) {
-      this.thumbEdgeInsets = new Spacing(top, right, bottom, left);
-      return this;
-    }
-
-    public SliderConfig thumbSize(int thumbWidth, int thumbHeight) {
-      this.thumbWidth = thumbWidth;
-      this.thumbHeight = thumbHeight;
-      return this;
-    }
-
-    public SliderConfig changeListener(ChangeEvent.Handler<Double> changeListener) {
-      this.changeListener = changeListener;
-      return this;
-    }
-  }
+  //  public static class SliderConfig extends ProgressConfig<SliderConfig> {
+  //    protected BufferedImage thumbBackground;
+  //    protected Spacing thumbEdgeInsets;
+  //    protected Integer thumbWidth;
+  //    protected Integer thumbHeight;
+  //    protected ChangeEvent.Handler<Double> changeListener;
+  //
+  //    public SliderConfig thumbBackground(BufferedImage thumbBackground) {
+  //      this.thumbBackground = thumbBackground;
+  //      return this;
+  //    }
+  //
+  //    public SliderConfig thumbEdgeInsets(int top, int right, int bottom, int left) {
+  //      this.thumbEdgeInsets = new Spacing(top, right, bottom, left);
+  //      return this;
+  //    }
+  //
+  //    public SliderConfig thumbSize(int thumbWidth, int thumbHeight) {
+  //      this.thumbWidth = thumbWidth;
+  //      this.thumbHeight = thumbHeight;
+  //      return this;
+  //    }
+  //
+  //    public SliderConfig changeListener(ChangeEvent.Handler<Double> changeListener) {
+  //      this.changeListener = changeListener;
+  //      return this;
+  //    }
+  //  }
 }

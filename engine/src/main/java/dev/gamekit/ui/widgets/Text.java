@@ -1,10 +1,11 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.core.IO;
 import dev.gamekit.core.UI;
-import dev.gamekit.utils.Constraints;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.utils.Bounds;
+import dev.gamekit.utils.Constraints;
 
 import java.awt.*;
 import java.util.*;
@@ -20,36 +21,40 @@ public class Text extends Leaf {
   public static final int BOLD = Font.BOLD;
   public static final int ITALIC = Font.ITALIC;
 
+  @WidgetBuilderField
   protected String text;
+  @WidgetBuilderField
   protected Font font;
+  @WidgetBuilderField
   protected Integer fontSize;
+  @WidgetBuilderField
   protected Integer fontStyle;
+  @WidgetBuilderField
   protected Color color;
+  @WidgetBuilderField
   protected Color backgroundColor;
+  @WidgetBuilderField
   protected Alignment alignment;
+  @WidgetBuilderField
   protected Boolean shadowEnabled;
+  @WidgetBuilderField
   protected Integer shadowOffsetX;
+  @WidgetBuilderField
   protected Integer shadowOffsetY;
+  @WidgetBuilderField
   protected Color shadowColor;
+
   protected List<Symbol> symbols;
 
   private Font renderFont;
   private FontMetrics fontMetrics;
 
-  public Text(TextConfig<?> config, String text) {
-    super(config.text(text));
-  }
-
-  public static Text create(TextConfig<?> params, String text) {
-    return new Text(params, text);
+  public Text(TextConfig... config) {
+    super(config);
   }
 
   public static Text create(String text) {
-    return new Text(new TextConfig<>(), text);
-  }
-
-  public static TextConfig<?> config() {
-    return new TextConfig<>();
+    return new Text(TextConfig.text(text));
   }
 
   @Override
@@ -72,7 +77,7 @@ public class Text extends Leaf {
   protected void performInit() {
     super.performInit();
 
-    TextConfig<?> config = (TextConfig<?>) super.config;
+    TextConfig config = (TextConfig) super.config;
     Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
 
     if (config.text == null)
@@ -275,68 +280,68 @@ public class Text extends Leaf {
     g.setStroke(originalStroke);
   }
 
-  @SuppressWarnings("unchecked")
-  public static class TextConfig<T extends TextConfig<T>> extends LeafConfig {
-    protected String text;
-    protected Font font;
-    protected Integer fontStyle;
-    protected Integer fontSize;
-    protected Color color;
-    protected Color backgroundColor;
-    protected Alignment alignment;
-    protected Boolean shadowEnabled;
-    protected Integer shadowOffsetX;
-    protected Integer shadowOffsetY;
-    protected Color shadowColor;
-
-    private T text(String text) {
-      this.text = text;
-      return (T) this;
-    }
-
-    public T font(Font font) {
-      this.font = font;
-      return (T) this;
-    }
-
-    public T fontSize(int fontSize) {
-      this.fontSize = fontSize;
-      return (T) this;
-    }
-
-    public T fontStyle(int fontStyle) {
-      this.fontStyle = fontStyle;
-      return (T) this;
-    }
-
-    public T color(Color color) {
-      this.color = color;
-      return (T) this;
-    }
-
-    public T backgroundColor(Color backgroundColor) {
-      this.backgroundColor = backgroundColor;
-      return (T) this;
-    }
-
-    public T alignment(Alignment alignment) {
-      this.alignment = alignment;
-      return (T) this;
-    }
-
-    public T shadow(
-      boolean shadowEnabled,
-      int shadowOffsetX,
-      int shadowOffsetY,
-      Color shadowColor
-    ) {
-      this.shadowEnabled = shadowEnabled;
-      this.shadowOffsetX = shadowOffsetX;
-      this.shadowOffsetY = shadowOffsetY;
-      this.shadowColor = shadowColor;
-      return (T) this;
-    }
-  }
+  //  @SuppressWarnings("unchecked")
+  //  public static class TextConfig<T extends TextConfig<T>> extends LeafConfig {
+  //    protected String text;
+  //    protected Font font;
+  //    protected Integer fontStyle;
+  //    protected Integer fontSize;
+  //    protected Color color;
+  //    protected Color backgroundColor;
+  //    protected Alignment alignment;
+  //    protected Boolean shadowEnabled;
+  //    protected Integer shadowOffsetX;
+  //    protected Integer shadowOffsetY;
+  //    protected Color shadowColor;
+  //
+  //    private T text(String text) {
+  //      this.text = text;
+  //      return (T) this;
+  //    }
+  //
+  //    public T font(Font font) {
+  //      this.font = font;
+  //      return (T) this;
+  //    }
+  //
+  //    public T fontSize(int fontSize) {
+  //      this.fontSize = fontSize;
+  //      return (T) this;
+  //    }
+  //
+  //    public T fontStyle(int fontStyle) {
+  //      this.fontStyle = fontStyle;
+  //      return (T) this;
+  //    }
+  //
+  //    public T color(Color color) {
+  //      this.color = color;
+  //      return (T) this;
+  //    }
+  //
+  //    public T backgroundColor(Color backgroundColor) {
+  //      this.backgroundColor = backgroundColor;
+  //      return (T) this;
+  //    }
+  //
+  //    public T alignment(Alignment alignment) {
+  //      this.alignment = alignment;
+  //      return (T) this;
+  //    }
+  //
+  //    public T shadow(
+  //      boolean shadowEnabled,
+  //      int shadowOffsetX,
+  //      int shadowOffsetY,
+  //      Color shadowColor
+  //    ) {
+  //      this.shadowEnabled = shadowEnabled;
+  //      this.shadowOffsetX = shadowOffsetX;
+  //      this.shadowOffsetY = shadowOffsetY;
+  //      this.shadowColor = shadowColor;
+  //      return (T) this;
+  //    }
+  //  }
 
   /** A store for a character symbol and its absolute bounds */
   public static class Symbol extends Bounds {

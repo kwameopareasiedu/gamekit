@@ -7,9 +7,7 @@ package dev.gamekit.ui.widgets;
  * individually in said widgets
  */
 public abstract class Leaf extends Widget {
-  public Leaf(LeafConfig config) {
+  public Leaf(Config... config) {
     super(config);
   }
-
-  public static abstract class LeafConfig extends WidgetConfig { }
 }

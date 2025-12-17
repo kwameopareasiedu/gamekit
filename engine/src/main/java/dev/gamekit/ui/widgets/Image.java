@@ -1,5 +1,6 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.settings.ImageInterpolation;
 import dev.gamekit.utils.Constraints;
 import dev.gamekit.ui.enums.ImageFit;
@@ -12,9 +13,12 @@ import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link Leaf} which renders a {@link BufferedImage} to the screen */
 public class Image extends Leaf {
+  @WidgetBuilderField
   protected BufferedImage image;
-  protected ImageFit fit;
-  protected ImageInterpolation interpolation;
+  @WidgetBuilderField
+  protected ImageFit fit = ImageFit.FIT;
+  @WidgetBuilderField
+  protected ImageInterpolation interpolation = ImageInterpolation.DEFAULT;
 
   public Image(ImageConfig config, BufferedImage image) {
     super(config.image(image));
@@ -130,24 +134,24 @@ public class Image extends Leaf {
       g.setClip(originalClip);
   }
 
-  public static class ImageConfig extends LeafConfig {
-    protected BufferedImage image;
-    protected ImageFit fit;
-    protected ImageInterpolation interpolation;
-
-    private ImageConfig image(BufferedImage image) {
-      this.image = image;
-      return this;
-    }
-
-    public ImageConfig fit(ImageFit fit) {
-      this.fit = fit;
-      return this;
-    }
-
-    public ImageConfig interpolation(ImageInterpolation interpolation) {
-      this.interpolation = interpolation;
-      return this;
-    }
-  }
+//  public static class ImageConfig extends LeafConfig {
+//    protected BufferedImage image;
+//    protected ImageFit fit;
+//    protected ImageInterpolation interpolation;
+//
+//    private ImageConfig image(BufferedImage image) {
+//      this.image = image;
+//      return this;
+//    }
+//
+//    public ImageConfig fit(ImageFit fit) {
+//      this.fit = fit;
+//      return this;
+//    }
+//
+//    public ImageConfig interpolation(ImageInterpolation interpolation) {
+//      this.interpolation = interpolation;
+//      return this;
+//    }
+//  }
 }

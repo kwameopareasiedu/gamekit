@@ -109,36 +109,46 @@ public class Demo4UserInterface extends Scene {
                 )
               ),
               Sized.create(
-                Sized.config().width(256).intrinsicHeight(),
-                Slider.create(
-                  Slider.config().range(0, 100).fillMode(Slider.FillMode.CLIP)
-                    .thumbBackground(THUMB).thumbEdgeInsets(10, 10, 10, 10)
-                    .changeListener(e -> {
+                Sized.width(256),
+                Sized.intrinsicHeight(),
+                Sized.child(
+                  Slider.create(
+                    Slider.range(0, 100),
+                    Slider.fillMode(Slider.FillMode.CLIP),
+                    Slider.thumbBackground(THUMB),
+                    Slider.thumbEdgeInsets(10, 10, 10, 10),
+                    Slider.changeListener(e -> {
                       sliderValue = e.value;
                       updateUI();
                     }),
-                  sliderValue
+                    sliderValue
+                  )
                 )
               ),
               Sized.create(
-                Sized.config().width(256).height(48),
-                Progress.create(
-                  Progress.config().range(0, 100).trackBackground(PROGRESS_TRACK)
-                    .trackEdgeInsets(0, 0, 0, 0).fillMargin(0, 12, 0, 12)
-                    .fillBackground(PROGRESS_FILL).fillEdgeInsets(0, 1, 0, 1)
-                    .fillMode(Progress.FillMode.CLIP),
-                  sliderValue
+                SizedConfig.width(256),
+                SizedConfig.height(48),
+                SizedConfig.child(
+                  Progress.create(
+                    ProgressConfig.range(0, 100),
+                    ProgressConfig.trackBackground(PROGRESS_TRACK),
+                    ProgressConfig.trackEdgeInsets(0, 0, 0, 0).fillMargin(0, 12, 0, 12),
+                    ProgressConfig.fillBackground(PROGRESS_FILL).fillEdgeInsets(0, 1, 0, 1),
+                    ProgressConfig.fillMode(Progress.FillMode.CLIP),
+                    sliderValue
+                  )
                 )
               ),
               Column.create(
-                Column.config()
-                  .mainAxisAlignment(MainAxisAlignment.START)
-                  .crossAxisAlignment(CrossAxisAlignment.START)
-                  .gapSize(12),
-                SubMenuButton.create("Commander Customization"),
-                SubMenuButton.create("Options"),
-                SubMenuButton.create("Credits"),
-                SubMenuButton.create("Exit Game")
+                ColumnConfig.mainAxisAlignment(MainAxisAlignment.START),
+                ColumnConfig.crossAxisAlignment(CrossAxisAlignment.START),
+                ColumnConfig.gapSize(12),
+                ColumnConfig.children(
+                  SubMenuButton.create("Commander Customization"),
+                  SubMenuButton.create("Options"),
+                  SubMenuButton.create("Credits"),
+                  SubMenuButton.create("Exit Game")
+                )
               )
             )
           )

@@ -9,12 +9,8 @@ import java.awt.*;
  * {@code null} would have been preferable
  */
 public class Empty extends Leaf {
-  public Empty(LeafConfig config) {
-    super(config);
-  }
-
   public static Empty create() {
-    return new Empty(new LeafConfig() { });
+    return new Empty();
   }
 
   @Override

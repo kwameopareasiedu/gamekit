@@ -1,5 +1,6 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.utils.Constraints;
 
 import java.util.Objects;
@@ -12,9 +13,13 @@ import static dev.gamekit.utils.Misc.coalesce;
  * child's intrinsic size or a fractional size relative to this {@link Sized}'s parent
  */
 public class Sized extends SingleChildParent {
+  @WidgetBuilderField
   protected DimensionType widthType;
+  @WidgetBuilderField
   protected DimensionType heightType;
+  @WidgetBuilderField
   protected double width;
+  @WidgetBuilderField
   protected double height;
 
   public Sized(SizedConfig config, Widget child) {
@@ -107,6 +112,10 @@ public class Sized extends SingleChildParent {
     );
   }
 
+  protected enum DimensionType {
+    FIXED, INTRINSIC, FRACTIONAL
+  }
+
   public static class SizedConfig extends SingleChildParentConfig {
     protected DimensionType widthType;
     protected DimensionType heightType;
@@ -148,9 +157,5 @@ public class Sized extends SingleChildParent {
       this.height = clamp(height, 0, 1);
       return this;
     }
-  }
-
-  protected enum DimensionType {
-    FIXED, INTRINSIC, FRACTIONAL
   }
 }

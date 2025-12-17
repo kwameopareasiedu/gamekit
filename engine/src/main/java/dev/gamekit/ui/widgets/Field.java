@@ -1,13 +1,14 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.animation.Animation;
+import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.core.IO;
 import dev.gamekit.core.Input;
-import dev.gamekit.utils.Constraints;
-import dev.gamekit.utils.Spacing;
 import dev.gamekit.ui.events.*;
 import dev.gamekit.ui.mixins.NinePatch;
 import dev.gamekit.utils.Bounds;
+import dev.gamekit.utils.Constraints;
+import dev.gamekit.utils.Spacing;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -30,13 +31,21 @@ public class Field extends Text
   public static final BufferedImage FOCUS_BG =
     IO.getResourceImage("default-sprites.png", 646, 135, 96, 32);
 
+  @WidgetBuilderField
   protected BufferedImage defaultBackground;
+  @WidgetBuilderField
   protected BufferedImage focusBackground;
+  @WidgetBuilderField
   protected Spacing edgeInsets;
+  @WidgetBuilderField
   protected Spacing padding;
+  @WidgetBuilderField
   protected FocusEvent.Handler focusListener;
+  @WidgetBuilderField
   protected KeyCharEvent.Handler keyCharListener;
+  @WidgetBuilderField
   protected ChangeEvent.Handler<String> changeListener;
+
   protected boolean focused;
 
   private final Bounds contentAbsoluteBounds;
@@ -88,8 +97,7 @@ public class Field extends Text
 
     color = coalesce(config.color, theme.textColor, Color.BLACK);
     edgeInsets = coalesce(config.edgeInsets, theme.fieldEdgeInsets, new Spacing(2));
-    defaultBackground =
-      coalesce(config.defaultBackground, theme.fieldDefaultBackground, DEFAULT_BG);
+    defaultBackground = coalesce(config.defaultBackground, theme.fieldDefaultBackground, DEFAULT_BG);
     focusBackground = coalesce(config.focusBackground, theme.fieldFocusBackground, FOCUS_BG);
     padding = coalesce(config.padding, theme.fieldPadding, new Spacing(4));
     focusListener = coalesce(config.focusListener, null);
@@ -233,50 +241,50 @@ public class Field extends Text
     cursorAnimation.end();
   }
 
-  public static class FieldConfig extends TextConfig<FieldConfig> {
-    protected BufferedImage defaultBackground;
-    protected BufferedImage focusBackground;
-    protected Spacing edgeInsets;
-    protected Spacing padding;
-    protected FocusEvent.Handler focusListener;
-    protected KeyCharEvent.Handler keyCharListener;
-    protected ChangeEvent.Handler<String> changeListener;
-
-    public FieldConfig defaultBackground(BufferedImage defaultBackground) {
-      this.defaultBackground = defaultBackground;
-      return this;
-    }
-
-    public FieldConfig focusBackground(BufferedImage focusBackground) {
-      this.focusBackground = focusBackground;
-      return this;
-    }
-
-    public FieldConfig edgeInsets(int top, int right, int bottom, int left) {
-      this.edgeInsets = new Spacing(top, right, bottom, left);
-      return this;
-    }
-
-    public FieldConfig padding(int top, int right, int bottom, int left) {
-      this.padding = new Spacing(top, right, bottom, left);
-      return this;
-    }
-
-    public FieldConfig focusListener(FocusEvent.Handler focusListener) {
-      this.focusListener = focusListener;
-      return this;
-    }
-
-    public FieldConfig keyCharListener(KeyCharEvent.Handler keyCharListener) {
-      this.keyCharListener = keyCharListener;
-      return this;
-    }
-
-    public FieldConfig changeListener(ChangeEvent.Handler<String> changeListener) {
-      this.changeListener = changeListener;
-      return this;
-    }
-  }
+  //  public static class FieldConfig extends TextConfig<FieldConfig> {
+  //    protected BufferedImage defaultBackground;
+  //    protected BufferedImage focusBackground;
+  //    protected Spacing edgeInsets;
+  //    protected Spacing padding;
+  //    protected FocusEvent.Handler focusListener;
+  //    protected KeyCharEvent.Handler keyCharListener;
+  //    protected ChangeEvent.Handler<String> changeListener;
+  //
+  //    public FieldConfig defaultBackground(BufferedImage defaultBackground) {
+  //      this.defaultBackground = defaultBackground;
+  //      return this;
+  //    }
+  //
+  //    public FieldConfig focusBackground(BufferedImage focusBackground) {
+  //      this.focusBackground = focusBackground;
+  //      return this;
+  //    }
+  //
+  //    public FieldConfig edgeInsets(int top, int right, int bottom, int left) {
+  //      this.edgeInsets = new Spacing(top, right, bottom, left);
+  //      return this;
+  //    }
+  //
+  //    public FieldConfig padding(int top, int right, int bottom, int left) {
+  //      this.padding = new Spacing(top, right, bottom, left);
+  //      return this;
+  //    }
+  //
+  //    public FieldConfig focusListener(FocusEvent.Handler focusListener) {
+  //      this.focusListener = focusListener;
+  //      return this;
+  //    }
+  //
+  //    public FieldConfig keyCharListener(KeyCharEvent.Handler keyCharListener) {
+  //      this.keyCharListener = keyCharListener;
+  //      return this;
+  //    }
+  //
+  //    public FieldConfig changeListener(ChangeEvent.Handler<String> changeListener) {
+  //      this.changeListener = changeListener;
+  //      return this;
+  //    }
+  //  }
 
   /**
    * {@link TextModel} is a document model for {@link Field} widgets which manages the
@@ -295,9 +303,9 @@ public class Field extends Text
     public static final int PRINTABLE_ASCII_END = 126;
 
     private final List<Symbol> symbols;
+    private final StringBuilder textBuilder;
     private boolean cursorVisible;
     private int cursorIndex;
-    private final StringBuilder textBuilder;
 
     public TextModel() {
       symbols = new ArrayList<>();

@@ -9,7 +9,7 @@ import java.awt.*;
  * to the box-constraint model used.
  */
 public abstract class Parent extends Widget {
-  public Parent(ParentConfig config) {
+  public Parent(Config... config) {
     super(config);
   }
 
@@ -19,5 +19,5 @@ public abstract class Parent extends Widget {
    */
   protected void renderAppearance(Graphics2D g) { /* No-op */ }
 
-  public static abstract class ParentConfig extends WidgetConfig { }
+//  public static abstract class ParentConfig extends WidgetConfig { }
 }

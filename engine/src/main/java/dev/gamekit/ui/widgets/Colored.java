@@ -1,5 +1,6 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.utils.Constraints;
 
 import java.awt.*;
@@ -9,19 +10,17 @@ import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link Leaf} which renders a solid color background */
 public class Colored extends Leaf {
+  @WidgetBuilderField
   protected Color color;
-  protected int borderRadius;
+  @WidgetBuilderField
+  protected Integer borderRadius;
 
-  public Colored(ColoredConfig config) {
+  public Colored(ColoredConfig... config) {
     super(config);
   }
 
-  public static Colored create(ColoredConfig config) {
+  public static Colored create(ColoredConfig... config) {
     return new Colored(config);
-  }
-
-  public static ColoredConfig config() {
-    return new ColoredConfig();
   }
 
   @Override
@@ -64,18 +63,18 @@ public class Colored extends Leaf {
     );
   }
 
-  public static class ColoredConfig extends LeafConfig {
-    protected Color color;
-    protected Integer borderRadius;
-
-    public ColoredConfig color(Color color) {
-      this.color = color;
-      return this;
-    }
-
-    public ColoredConfig borderRadius(int borderRadius) {
-      this.borderRadius = borderRadius;
-      return this;
-    }
-  }
+//  public static class ColoredConfig extends LeafConfig {
+//    protected Color color;
+//    protected Integer borderRadius;
+//
+//    public ColoredConfig color(Color color) {
+//      this.color = color;
+//      return this;
+//    }
+//
+//    public ColoredConfig borderRadius(int borderRadius) {
+//      this.borderRadius = borderRadius;
+//      return this;
+//    }
+//  }
 }
