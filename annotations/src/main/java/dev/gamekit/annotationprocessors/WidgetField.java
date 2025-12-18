@@ -1,4 +1,4 @@
-package dev.gamekit.processors;
+package dev.gamekit.annotationprocessors;
 
 import dev.gamekit.annotations.WidgetBuilderField;
 

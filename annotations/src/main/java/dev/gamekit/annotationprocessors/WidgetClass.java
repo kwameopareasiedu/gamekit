@@ -1,4 +1,4 @@
-package dev.gamekit.processors;
+package dev.gamekit.annotationprocessors;
 
 import dev.gamekit.annotations.WidgetBuilder;
 
@@ -31,5 +31,18 @@ public class WidgetClass {
     builderSimpleName = builderName.substring(builderName.lastIndexOf(".") + 1);
     builderVarName = builderSimpleName.substring(0, 1).toLowerCase() + builderSimpleName.substring(1);
     superBuilderName = superName != null ? superName + "Config" : null;
+  }
+
+  @Override
+  public String toString() {
+    return "WidgetClass{" +
+      "\nbuilderName='" + builderName + '\'' +
+      "\nbuilderVarName='" + builderVarName + '\'' +
+      "\nbuilderSimpleName='" + builderSimpleName + '\'' +
+      "\nbuilderPackageName='" + builderPackageName + '\'' +
+      "\nsuperBuilderName='" + superBuilderName + '\'' +
+      "\nallFields=" + allFields.size() +
+      "\nownFields=" + ownFields.size() +
+      "\n}\n";
   }
 }

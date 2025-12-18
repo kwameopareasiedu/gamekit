@@ -114,6 +114,7 @@ public class Demo4UserInterface extends Scene {
                           FieldConfig.padding(new Spacing(12, 12, 12, 12)),
                           FieldConfig.changeListener(ev -> {
                             fieldValue = ev.value;
+                            logger.debug("Field value: {}", fieldValue);
                             updateUI();
                           }),
                           FieldConfig.text(fieldValue)

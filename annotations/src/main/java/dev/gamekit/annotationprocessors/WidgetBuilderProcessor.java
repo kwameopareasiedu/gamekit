@@ -1,4 +1,4 @@
-package dev.gamekit.processors;
+package dev.gamekit.annotationprocessors;
 
 import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
@@ -29,7 +29,6 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
   public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
     for (TypeElement annotation : annotations) {
       Set<? extends Element> annotatedClasses = roundEnv.getElementsAnnotatedWith(annotation);
-      //      Map<String, List<WidgetField>> widgetFieldMap = new HashMap<>();
       List<WidgetClass> widgetClasses = new ArrayList<>();
 
       for (Element annotatedClassElement : annotatedClasses) {

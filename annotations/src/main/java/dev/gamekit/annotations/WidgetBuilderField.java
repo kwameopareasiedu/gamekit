@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * enclosing widget's generated builder class.
  */
 @Target(ElementType.FIELD)
-@Retention(RetentionPolicy.SOURCE)
+@Retention(RetentionPolicy.CLASS)
 public @interface WidgetBuilderField {
   /**
    * A custom fully qualified type to use as the argument type of the setter method generated

@@ -11,6 +11,7 @@
 
   <artifactId>annotations</artifactId>
   <version>0.1.0</version>
+  <packaging>jar</packaging>
 
   <properties>
     <maven.compiler.source>18</maven.compiler.source>

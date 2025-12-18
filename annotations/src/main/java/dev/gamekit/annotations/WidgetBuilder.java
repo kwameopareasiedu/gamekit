@@ -11,5 +11,5 @@ import java.lang.annotation.Target;
  * PS: Compilation will fail if this annotation is used on non-Widget classes
  */
 @Target(ElementType.TYPE)
-@Retention(RetentionPolicy.SOURCE)
+@Retention(RetentionPolicy.CLASS)
 public @interface WidgetBuilder { }
