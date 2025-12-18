@@ -9,8 +9,10 @@ import java.awt.*;
 @WidgetBuilder
 public abstract class MultiChildParent extends Parent {
   @WidgetBuilderField(
-    setterArgType = "dev.gamekit.ui.widgets.Widget...",
-    includeInStateMatch = false
+    customSetterType = "dev.gamekit.ui.widgets.Widget...",
+    comparable = false,
+    updatable = false,
+    themable = false
   )
   protected Widget[] children;
 

@@ -16,29 +16,27 @@ import static dev.gamekit.utils.Misc.coalesce;
 /** A {@link Leaf} widget which displays a progress bar */
 @WidgetBuilder
 public class Progress extends Leaf implements NinePatch {
-  public static final BufferedImage TRACK_BG =
-    IO.getResourceImage("default-sprites.png", 470, 232, 96, 32);
-  public static final BufferedImage FILL_BG =
-    IO.getResourceImage("default-sprites.png", 470, 289, 96, 32);
+  public static final BufferedImage TRACK_BG = IO.getResourceImage("default-sprites.png", 470, 232, 96, 32);
+  public static final BufferedImage FILL_BG = IO.getResourceImage("default-sprites.png", 470, 289, 96, 32);
 
   @WidgetBuilderField
-  protected BufferedImage trackBackground = TRACK_BG;
+  protected BufferedImage trackBackground;
   @WidgetBuilderField
-  protected BufferedImage fillBackground = FILL_BG;
+  protected BufferedImage fillBackground;
   @WidgetBuilderField
-  protected Spacing trackEdgeInsets = new Spacing(8);
+  protected Spacing trackEdgeInsets;
   @WidgetBuilderField
-  protected Spacing fillEdgeInsets = new Spacing(8);
+  protected Spacing fillEdgeInsets;
   @WidgetBuilderField
-  protected Spacing fillMargin = new Spacing(0);
+  protected Spacing fillMargin;
   @WidgetBuilderField
-  protected FillMode fillMode = FillMode.SCALE;
+  protected FillMode fillMode;
   @WidgetBuilderField
-  protected Double minValue = 0.0;
+  protected Double minValue;
   @WidgetBuilderField
-  protected Double maxValue = 100.0;
+  protected Double maxValue;
   @WidgetBuilderField
-  protected Double value = 50.0;
+  protected Double value;
 
   protected double valueRatio = 0;
 
@@ -78,9 +76,9 @@ public class Progress extends Leaf implements NinePatch {
     this.fillEdgeInsets = coalesce(config.fillEdgeInsets, theme.progressFillEdgeInsets, new Spacing(8));
     this.fillMargin = coalesce(config.fillMargin, theme.progressFillMargin, new Spacing(0));
     this.fillMode = coalesce(config.fillMode, theme.progressFillMode, FillMode.SCALE);
-    this.minValue = config.minValue;
-    this.maxValue = config.maxValue;
-    this.value = config.value;
+    this.minValue = coalesce(config.minValue, 0.0);
+    this.maxValue = coalesce(config.maxValue, 100.0);
+    this.value = coalesce(config.value, 50.0);
 
     valueRatio = (value - minValue) / (maxValue - minValue);
   }

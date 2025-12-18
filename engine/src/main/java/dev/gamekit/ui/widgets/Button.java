@@ -28,7 +28,7 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
   protected BufferedImage pressedBackground;
   @WidgetBuilderField
   protected Spacing edgeInsets;
-  @WidgetBuilderField
+  @WidgetBuilderField(comparable = false, themable = false)
   protected MouseEvent.Handler mouseListener;
 
   protected boolean mouseEntered;

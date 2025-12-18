@@ -8,7 +8,7 @@ import java.awt.*;
 /** A parent which contains only one child {@link Widget} */
 @WidgetBuilder
 public abstract class SingleChildParent extends Parent {
-  @WidgetBuilderField(includeInStateMatch = false)
+  @WidgetBuilderField(comparable = false, updatable = false, themable = false)
   protected Widget child;
 
   public SingleChildParent(SingleChildParentConfig... config) {

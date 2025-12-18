@@ -20,8 +20,7 @@ import static dev.gamekit.utils.Misc.coalesce;
 /** A {@link Progress} widget extension which adjusts a value by moving a slider */
 @WidgetBuilder
 public class Slider extends Progress implements NinePatch, MouseEvent.Handler {
-  public static final BufferedImage THUMB_BG =
-    IO.getResourceImage("default-sprites.png", 470, 346, 32, 32);
+  public static final BufferedImage THUMB_BG = IO.getResourceImage("default-sprites.png", 470, 346, 32, 32);
 
   @WidgetBuilderField
   protected BufferedImage thumbBackground;
@@ -31,7 +30,7 @@ public class Slider extends Progress implements NinePatch, MouseEvent.Handler {
   protected Integer thumbWidth;
   @WidgetBuilderField
   protected Integer thumbHeight;
-  @WidgetBuilderField(includeInStateMatch = false)
+  @WidgetBuilderField(comparable = false, themable = false)
   protected ChangeEvent.Handler<Double> changeListener;
 
   private final Bounds thumbAbsoluteBounds;

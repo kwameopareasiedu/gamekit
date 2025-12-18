@@ -37,11 +37,11 @@ public class Field extends Text
   protected Spacing edgeInsets;
   @WidgetBuilderField
   protected Spacing padding;
-  @WidgetBuilderField(includeInStateMatch = false)
+  @WidgetBuilderField(comparable = false, themable = false)
   protected FocusEvent.Handler focusListener;
-  @WidgetBuilderField(includeInStateMatch = false)
+  @WidgetBuilderField(comparable = false, themable = false)
   protected KeyCharEvent.Handler keyCharListener;
-  @WidgetBuilderField(includeInStateMatch = false)
+  @WidgetBuilderField(comparable = false, themable = false)
   protected ChangeEvent.Handler<String> changeListener;
 
   protected boolean focused;

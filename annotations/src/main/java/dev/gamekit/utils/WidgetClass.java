@@ -1,14 +1,13 @@
-package dev.gamekit.annotationprocessors;
+package dev.gamekit.utils;
 
 import dev.gamekit.annotations.WidgetBuilder;
 
 import java.util.List;
 
-/**
- * {@link WidgetField} holds type information for {@code Widgets} annotated with
- * {@link WidgetBuilder}
- */
+/** {@link WidgetField} holds type information for {@code Widgets} annotated with {@link WidgetBuilder} */
 public class WidgetClass {
+  public final String name;
+  public final String simpleName;
   public final String builderName;
   public final String builderVarName;
   public final String builderSimpleName;
@@ -23,9 +22,11 @@ public class WidgetClass {
     List<WidgetField> allFields,
     List<WidgetField> ownFields
   ) {
+    this.name = name;
     this.allFields = allFields;
     this.ownFields = ownFields;
 
+    simpleName = name.substring(name.lastIndexOf(".") + 1);
     builderName = name + "Config";
     builderPackageName = builderName.substring(0, builderName.lastIndexOf("."));
     builderSimpleName = builderName.substring(builderName.lastIndexOf(".") + 1);

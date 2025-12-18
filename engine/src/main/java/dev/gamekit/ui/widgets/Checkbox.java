@@ -35,7 +35,7 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
   protected Integer gapSize;
   @WidgetBuilderField
   protected Boolean toggled;
-  @WidgetBuilderField
+  @WidgetBuilderField(comparable = false, themable = false)
   protected ChangeEvent.Handler<Boolean> changeListener;
 
   private final Bounds iconAbsoluteBounds;

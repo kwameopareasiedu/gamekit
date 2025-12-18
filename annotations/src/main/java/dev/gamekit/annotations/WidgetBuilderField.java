@@ -6,21 +6,21 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * {@link WidgetBuilderField} marks fields of a {@code Widget} as needing to be part of the
- * enclosing widget's generated builder class.
+ * {@link WidgetBuilderField} marks fields of a {@code Widget} as needing to be part of the enclosing widget's
+ * generated builder class.
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.CLASS)
 public @interface WidgetBuilderField {
-  /**
-   * A custom fully qualified type to use as the argument type of the setter method generated
-   * for the annotated widget field
-   */
-  String setterArgType() default "";
+  /** A fully qualified type to use as the argument type of the generated setter method for the annotated field */
+  String customSetterType() default "";
 
-  /**
-   * Indicates that the annotated field should take part in state comparison in the generated
-   * config builder class
-   */
-  boolean includeInStateMatch() default true;
+  /** Indicates that the annotated field is used in state comparison in the generated builder class equals method */
+  boolean comparable() default true;
+
+  /** Indicates that the annotated field can be used to update a corresponding field in the associated widget */
+  boolean updatable() default true;
+
+  /** Indicates that the annotated field should be included in the generated Theme widget class */
+  boolean themable() default true;
 }

@@ -14,12 +14,12 @@ import static dev.gamekit.utils.Misc.coalesce;
 /** A {@link Leaf} which renders a {@link BufferedImage} to the screen */
 @WidgetBuilder
 public class Image extends Leaf {
-  @WidgetBuilderField
+  @WidgetBuilderField(themable = false)
   protected BufferedImage image;
   @WidgetBuilderField
-  protected ImageFit fit = ImageFit.FIT;
+  protected ImageFit fit;
   @WidgetBuilderField
-  protected ImageInterpolation interpolation = ImageInterpolation.DEFAULT;
+  protected ImageInterpolation interpolation;
 
   public Image(ImageConfig... config) {
     super(config);

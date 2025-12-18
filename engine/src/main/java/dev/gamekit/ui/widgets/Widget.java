@@ -255,6 +255,9 @@ public abstract class Widget {
   public interface Config {
     /** Returns a new config which merges this and provided config objects */
     Config mergeWith(Config[] configs);
+
+    /** Updates matching widget state variables with its own variables */
+    void updateWidget(Widget widget);
   }
 
   /**
