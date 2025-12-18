@@ -44,8 +44,9 @@ public class Vector {
     double diffY = v2.y - v1.y;
     double angle = java.lang.Math.atan2(diffX, diffY);
 
-    if (angle < 0)
+    if (angle < 0) {
       angle = TWO_PI + angle;
+    }
 
     return angle;
   }

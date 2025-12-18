@@ -3,8 +3,8 @@ package dev.gamekit.audio;
 import static dev.gamekit.utils.Math.clamp;
 
 /**
- * {@link AudioGroup} are attached to multiple a group of {@link AudioClip} objects in order to
- * group control their properties
+ * {@link AudioGroup} are attached to multiple a group of {@link AudioClip} objects in order to group control their
+ * properties
  * <p>
  * A common use-case is setting the volume of all background music and all sound effects in a game
  */

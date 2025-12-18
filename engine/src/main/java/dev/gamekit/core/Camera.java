@@ -75,9 +75,15 @@ public final class Camera {
     Camera.invZoom = 1.0 / Camera.zoom;
   }
 
-  public static double getX() { return x; }
+  /** Returns the {@code x} translation of the {@link Camera} */
+  public static double getX() {
+    return x;
+  }
 
-  public static double getY() { return y; }
+  /** Returns the {@code y} translation of the {@link Camera} */
+  public static double getY() {
+    return y;
+  }
 
   /** Applies the camera's position and zoom to the current window's transform matrix */
   static void updateWindow() {
@@ -89,6 +95,7 @@ public final class Camera {
     window.getDisplayGraphics().setTransform(TRANSFORM);
   }
 
+  /** Resets {@link Camera} translation and zoom parameters */
   static void reset() {
     x = y = 0;
     zoom = 1;

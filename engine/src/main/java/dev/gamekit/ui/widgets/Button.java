@@ -16,12 +16,9 @@ import static dev.gamekit.utils.Misc.coalesce;
 /** A {@link Widget} which can be clicked to trigger an action */
 @WidgetBuilder
 public class Button extends SingleChildParent implements NinePatch, MouseEvent.Handler {
-  public static final BufferedImage DEFAULT_BG =
-    IO.getResourceImage("default-sprites.png", 64, 64, 350, 120);
-  public static final BufferedImage HOVER_BG =
-    IO.getResourceImage("default-sprites.png", 64, 232, 350, 120);
-  public static final BufferedImage PRESSED_BG =
-    IO.getResourceImage("default-sprites.png", 64, 400, 350, 120);
+  public static final BufferedImage DEFAULT_BG = IO.getResourceImage("default-sprites.png", 64, 64, 350, 120);
+  public static final BufferedImage HOVER_BG = IO.getResourceImage("default-sprites.png", 64, 232, 350, 120);
+  public static final BufferedImage PRESSED_BG = IO.getResourceImage("default-sprites.png", 64, 400, 350, 120);
 
   @WidgetBuilderField
   protected BufferedImage defaultBackground;
@@ -50,14 +47,10 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
     ButtonConfig config = (ButtonConfig) super.config;
     Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
 
-    this.edgeInsets =
-      coalesce(config.edgeInsets, theme.buttonEdgeInsets, new Spacing(24));
-    this.defaultBackground =
-      coalesce(config.defaultBackground, theme.buttonDefaultBackground, DEFAULT_BG);
-    this.hoverBackground =
-      coalesce(config.hoverBackground, theme.buttonHoverBackground, HOVER_BG);
-    this.pressedBackground =
-      coalesce(config.pressedBackground, theme.buttonPressedBackground, PRESSED_BG);
+    this.edgeInsets = coalesce(config.edgeInsets, theme.buttonEdgeInsets, new Spacing(24));
+    this.defaultBackground = coalesce(config.defaultBackground, theme.buttonDefaultBackground, DEFAULT_BG);
+    this.hoverBackground = coalesce(config.hoverBackground, theme.buttonHoverBackground, HOVER_BG);
+    this.pressedBackground = coalesce(config.pressedBackground, theme.buttonPressedBackground, PRESSED_BG);
     this.mouseListener = coalesce(config.mouseListener, null);
 
     super.performInit();
@@ -94,8 +87,9 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
     else if (mouseEntered)
       bgImage = hoverBackground;
 
-    if (bgImage != null && edgeInsets != null)
+    if (bgImage != null && edgeInsets != null) {
       renderWith9PatchScaling(bgImage, absoluteBounds, edgeInsets, g);
+    }
   }
 
   @Override

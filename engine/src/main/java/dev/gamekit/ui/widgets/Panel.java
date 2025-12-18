@@ -16,8 +16,7 @@ import static dev.gamekit.utils.Misc.coalesce;
 /** A {@link SingleChildParent} which uses the 9-patch algorithm to render a background */
 @WidgetBuilder
 public class Panel extends SingleChildParent implements NinePatch, MouseEvent.Handler {
-  public static final BufferedImage DEFAULT_BG =
-    IO.getResourceImage("default-sprites.png", 470, 64, 120, 120);
+  public static final BufferedImage DEFAULT_BG = IO.getResourceImage("default-sprites.png", 470, 64, 120, 120);
 
   @WidgetBuilderField
   protected BufferedImage background;

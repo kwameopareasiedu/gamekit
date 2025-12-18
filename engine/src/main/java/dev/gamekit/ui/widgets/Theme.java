@@ -115,14 +115,10 @@ public class Theme extends SingleChildParent {
     this.panelBackground = coalesce(config.panelBackground, theme.panelBackground);
     this.panelEdgeInsets = coalesce(config.panelEdgeInsets, theme.panelEdgeInsets);
 
-    this.buttonDefaultBackground =
-      coalesce(config.buttonDefaultBackground, theme.buttonDefaultBackground);
-    this.buttonHoverBackground =
-      coalesce(config.buttonHoverBackground, theme.buttonHoverBackground);
-    this.buttonPressedBackground =
-      coalesce(config.buttonPressedBackground, theme.buttonPressedBackground);
-    this.buttonEdgeInsets =
-      coalesce(config.buttonEdgeInsets, theme.buttonEdgeInsets);
+    this.buttonDefaultBackground = coalesce(config.buttonDefaultBackground, theme.buttonDefaultBackground);
+    this.buttonHoverBackground = coalesce(config.buttonHoverBackground, theme.buttonHoverBackground);
+    this.buttonPressedBackground = coalesce(config.buttonPressedBackground, theme.buttonPressedBackground);
+    this.buttonEdgeInsets = coalesce(config.buttonEdgeInsets, theme.buttonEdgeInsets);
 
     this.textFont = coalesce(config.textFont, theme.textFont);
     this.textFontSize = coalesce(config.textFontSize, theme.textFontSize);
@@ -135,8 +131,7 @@ public class Theme extends SingleChildParent {
     this.textShadowOffsetY = coalesce(config.textShadowOffsetY, theme.textShadowOffsetY);
     this.textShadowColor = coalesce(config.textShadowColor, theme.textShadowColor);
 
-    this.fieldDefaultBackground =
-      coalesce(config.fieldDefaultBackground, theme.fieldDefaultBackground);
+    this.fieldDefaultBackground = coalesce(config.fieldDefaultBackground, theme.fieldDefaultBackground);
     this.fieldFocusBackground = coalesce(config.fieldFocusBackground, theme.fieldFocusBackground);
     this.fieldEdgeInsets = coalesce(config.fieldEdgeInsets, theme.fieldEdgeInsets);
     this.fieldPadding = coalesce(config.fieldPadding, theme.fieldPadding);
@@ -148,21 +143,15 @@ public class Theme extends SingleChildParent {
     this.checkboxIconHeight = coalesce(config.checkboxIconHeight, theme.checkboxIconHeight);
     this.checkboxGapSize = coalesce(config.checkboxGapSize, theme.checkboxGapSize);
 
-    this.progressTrackBackground =
-      coalesce(config.progressTrackBackground, theme.progressTrackBackground);
-    this.progressFillBackground =
-      coalesce(config.progressFillBackground, theme.progressFillBackground);
-    this.progressTrackEdgeInsets =
-      coalesce(config.progressTrackEdgeInsets, theme.progressTrackEdgeInsets);
-    this.progressFillEdgeInsets =
-      coalesce(config.progressFillEdgeInsets, theme.progressFillEdgeInsets);
+    this.progressTrackBackground = coalesce(config.progressTrackBackground, theme.progressTrackBackground);
+    this.progressFillBackground = coalesce(config.progressFillBackground, theme.progressFillBackground);
+    this.progressTrackEdgeInsets = coalesce(config.progressTrackEdgeInsets, theme.progressTrackEdgeInsets);
+    this.progressFillEdgeInsets = coalesce(config.progressFillEdgeInsets, theme.progressFillEdgeInsets);
     this.progressFillMargin = coalesce(config.progressFillMargin, theme.progressFillMargin);
     this.progressFillMode = coalesce(config.progressFillMode, theme.progressFillMode);
 
-    this.sliderThumbBackground =
-      coalesce(config.sliderThumbBackground, theme.sliderThumbBackground);
-    this.sliderThumbEdgeInsets =
-      coalesce(config.sliderThumbEdgeInsets, theme.sliderThumbEdgeInsets);
+    this.sliderThumbBackground = coalesce(config.sliderThumbBackground, theme.sliderThumbBackground);
+    this.sliderThumbEdgeInsets = coalesce(config.sliderThumbEdgeInsets, theme.sliderThumbEdgeInsets);
     this.sliderThumbWidth = coalesce(config.sliderThumbWidth, theme.sliderThumbWidth);
     this.sliderThumbHeight = coalesce(config.sliderThumbHeight, theme.sliderThumbHeight);
 
@@ -173,10 +162,7 @@ public class Theme extends SingleChildParent {
   protected void performLayout(Constraints constraints) {
     child.layout(constraints);
 
-    intrinsicSize.set(
-      child.computedBounds.width,
-      child.computedBounds.height
-    );
+    intrinsicSize.set(child.computedBounds.width, child.computedBounds.height);
 
     computedBounds.setSize(
       constraints.constrainWidth(intrinsicSize.width),

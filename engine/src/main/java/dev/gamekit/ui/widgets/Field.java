@@ -25,12 +25,9 @@ import static dev.gamekit.utils.Misc.coalesce;
 // TODO: Implement key char and key code modifier detection
 @WidgetBuilder
 public class Field extends Text
-  implements NinePatch, FocusEvent.Handler, MouseEvent.Handler,
-  KeyCharEvent.Handler, KeyCodeEvent.Handler {
-  public static final BufferedImage DEFAULT_BG =
-    IO.getResourceImage("default-sprites.png", 646, 64, 96, 32);
-  public static final BufferedImage FOCUS_BG =
-    IO.getResourceImage("default-sprites.png", 646, 135, 96, 32);
+  implements NinePatch, FocusEvent.Handler, MouseEvent.Handler, KeyCharEvent.Handler, KeyCodeEvent.Handler {
+  public static final BufferedImage DEFAULT_BG = IO.getResourceImage("default-sprites.png", 646, 64, 96, 32);
+  public static final BufferedImage FOCUS_BG = IO.getResourceImage("default-sprites.png", 646, 135, 96, 32);
 
   @WidgetBuilderField
   protected BufferedImage defaultBackground;
@@ -40,11 +37,11 @@ public class Field extends Text
   protected Spacing edgeInsets;
   @WidgetBuilderField
   protected Spacing padding;
-  @WidgetBuilderField
+  @WidgetBuilderField(includeInStateMatch = false)
   protected FocusEvent.Handler focusListener;
-  @WidgetBuilderField
+  @WidgetBuilderField(includeInStateMatch = false)
   protected KeyCharEvent.Handler keyCharListener;
-  @WidgetBuilderField
+  @WidgetBuilderField(includeInStateMatch = false)
   protected ChangeEvent.Handler<String> changeListener;
 
   protected boolean focused;
@@ -119,13 +116,7 @@ public class Field extends Text
     double contentAbsoluteWidth = absoluteBounds.width - padding.getHorizontal();
     double contentAbsoluteHeight = absoluteBounds.height - padding.getVertical();
 
-    contentAbsoluteBounds.set(
-      contentAbsoluteX,
-      contentAbsoluteY,
-      contentAbsoluteWidth,
-      contentAbsoluteHeight
-    );
-
+    contentAbsoluteBounds.set(contentAbsoluteX, contentAbsoluteY, contentAbsoluteWidth, contentAbsoluteHeight);
     tempAbsoluteBounds.set(absoluteBounds);
     absoluteBounds.set(contentAbsoluteBounds);
     super.performPostLayout();
@@ -210,15 +201,15 @@ public class Field extends Text
       keyCharListener.handleEvent(ev);
 
     if (!ev.isHandled() && changeListener != null) {
-      boolean updatedTextModel;
+      boolean textModelUpdated;
 
       switch (ev.charPressed) {
-        case Input.KEY_BACK_SPACE -> updatedTextModel = textModel.leftDeleteAtCursor();
-        case Input.KEY_DELETE -> updatedTextModel = textModel.rightDeleteAtCursor();
-        default -> updatedTextModel = textModel.insertSymbolAtCursor(ev.charPressed);
+        case Input.KEY_BACK_SPACE -> textModelUpdated = textModel.leftDeleteAtCursor();
+        case Input.KEY_DELETE -> textModelUpdated = textModel.rightDeleteAtCursor();
+        default -> textModelUpdated = textModel.insertSymbolAtCursor(ev.charPressed);
       }
 
-      if (updatedTextModel)
+      if (textModelUpdated)
         changeListener.handleEvent(new ChangeEvent<>(textModel.getTextFromSymbols()));
     }
   }
@@ -230,14 +221,14 @@ public class Field extends Text
   }
 
   /**
-   * {@link TextModel} is a document model for {@link Field} widgets which manages the
-   * text symbols and manipulations of these symbols based on a cursor.
+   * {@link TextModel} is a document model for {@link Field} widgets which manages the text symbols and manipulations
+   * of these symbols based on a cursor.
    * <p>
-   * Actions in the {@link Field} are submitted to this model which updates the symbols and cursor,
-   * returning the resulting text from the symbols.
+   * Actions in the {@link Field} are submitted to this model which updates the symbols and cursor, returning the
+   * resulting text from the symbols.
    * <p>
-   * NB: <i>The cursor is always to the <b>right</b> of its current symbol and a null symbol
-   * indicates no text in the associated {@link Field} widget</i>
+   * NB: <i>The cursor is always to the <b>right</b> of its current symbol and a null symbol indicates no text in the
+   * {@link Field} widget</i>
    */
   public static class TextModel {
     public static final int CURSOR_WIDTH = 2;
@@ -274,8 +265,8 @@ public class Field extends Text
     }
 
     /**
-     * When the mouse is down in the associated {@link Field}, this method updates the cursor
-     * position by determining which symbol is the closest to the event location
+     * When the mouse is down in the associated {@link Field}, this method updates the cursor position by determining
+     * which symbol is the closest to the event location
      */
     public void updateCursorPosition(int mouseX, int mouseY) {
       boolean mousePointInSymbolBounds = false;
@@ -284,14 +275,10 @@ public class Field extends Text
         Symbol sym = symbols.get(symIdx);
 
         if (sym.contains(mouseX, mouseY)) {
-          boolean mouseDownInLeftHalfOfSymbolBounds =
-            sym.x < mouseX && mouseX < sym.x + 0.5 * sym.width;
-
-          cursorIndex = mouseDownInLeftHalfOfSymbolBounds
-            ? (symIdx > 0) ? symIdx - 1 : CURSOR_ORIGIN_INDEX
-            : symIdx;
-
+          boolean mouseDownInLeftHalfOfSymbolBounds = sym.x < mouseX && mouseX < sym.x + 0.5 * sym.width;
+          cursorIndex = mouseDownInLeftHalfOfSymbolBounds ? (symIdx > 0) ? symIdx - 1 : CURSOR_ORIGIN_INDEX : symIdx;
           mousePointInSymbolBounds = true;
+
           break;
         }
       }
@@ -299,13 +286,8 @@ public class Field extends Text
       if (!mousePointInSymbolBounds) {
         if (!symbols.isEmpty()) {
           Symbol lastSymbol = symbols.get(symbols.size() - 1);
-
-          boolean mousePointToRightOfLastSymbolBounds =
-            mouseX > lastSymbol.x + lastSymbol.width;
-
-          cursorIndex = mousePointToRightOfLastSymbolBounds
-            ? symbols.size() - 1
-            : CURSOR_ORIGIN_INDEX;
+          boolean mousePointToRightOfLastSymbolBounds = mouseX > lastSymbol.x + lastSymbol.width;
+          cursorIndex = mousePointToRightOfLastSymbolBounds ? symbols.size() - 1 : CURSOR_ORIGIN_INDEX;
         } else {
           cursorIndex = CURSOR_ORIGIN_INDEX;
         }
@@ -313,8 +295,8 @@ public class Field extends Text
     }
 
     /**
-     * Inserts a character symbol at the cursor. Returns {@code true} if the character is a
-     * printable ASCII character and was successfully inserted and {@code false} otherwise
+     * Inserts a character symbol at the cursor. Returns {@code true} if the character is a printable ASCII character
+     * and was successfully inserted and {@code false} otherwise
      */
     public boolean insertSymbolAtCursor(char ch) {
       boolean charIsPrintable = PRINTABLE_ASCII_START <= ch && ch <= PRINTABLE_ASCII_END;

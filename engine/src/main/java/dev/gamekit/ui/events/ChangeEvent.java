@@ -12,6 +12,7 @@ public class ChangeEvent<T> extends InputEvent {
 
   /** Handler interface for {@link ChangeEvent mouse events} */
   public interface Handler<T> extends InputEvent.Handler {
+    /** Called to handle a {@link ChangeEvent} */
     void handleEvent(ChangeEvent<T> ev);
   }
 }

@@ -10,8 +10,7 @@ import static dev.gamekit.utils.Math.clamp;
 /**
  * {@link Input} handles keyboard and mouse input detection for use in the application.
  * <p>
- * Input includes static constants which map to Java's {@link KeyEvent} constants so they can be
- * used interchangeably.
+ * Input includes static constants which map to Java's {@link KeyEvent} constants so they can be used interchangeably.
  */
 @SuppressWarnings("unused")
 public final class Input implements KeyListener, MouseListener, MouseMotionListener {
@@ -282,9 +281,8 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   /**
    * Returns the mouse position relative to the screen resolution size.
    * <p>
-   * <i>NB: For added performance, the returned {@link Position} is reused across multiple
-   * invocations, so you should not keep a reference to it. Rather, retrieve the x and y values
-   * and store them if you need to</i>
+   * <i>NB: For added performance, the returned {@link Position} is reused across multiple invocations, so you should
+   * not keep a reference to it. Rather, retrieve the x and y values and store them if you need to</i>
    */
   public static Position getMousePosition() {
     Window.Info info = Window.getInstance().getInfo();
@@ -312,6 +310,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
   /**
    * Prevents Window input events from affecting the current input state.
+   * <p>
    * This makes for predictable reads in the scene's update function
    */
   static void freeze() {
@@ -333,70 +332,67 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
   @Override
   public void keyPressed(KeyEvent e) {
-    if (frozen)
-      return;
+    if (frozen) return;
 
     int keyCode = e.getKeyCode();
 
-    if (keyCode >= 0 && keyCode < KEY_COUNT)
+    if (keyCode >= 0 && keyCode < KEY_COUNT) {
       keyStates[keyCode].update(true);
+    }
 
     keyCodePressed = e.getKeyCode();
   }
 
   @Override
   public void keyReleased(KeyEvent e) {
-    if (frozen)
-      return;
+    if (frozen) return;
 
     int keyCode = e.getKeyCode();
 
-    if (keyCode >= 0 && keyCode < KEY_COUNT)
+    if (keyCode >= 0 && keyCode < KEY_COUNT) {
       keyStates[keyCode].update(false);
+    }
   }
 
   @Override
   public void keyTyped(KeyEvent e) {
-    if (frozen)
-      return;
+    if (frozen) return;
 
     characterPressed = e.getKeyChar();
   }
 
   @Override
   public void mousePressed(MouseEvent e) {
-    if (frozen)
-      return;
+    if (frozen) return;
 
     int buttonCode = e.getButton();
 
-    if (buttonCode >= 1)
+    if (buttonCode >= 1) {
       buttonStates[buttonCode - 1].update(true);
+    }
   }
 
   @Override
   public void mouseReleased(MouseEvent e) {
-    if (frozen)
-      return;
+    if (frozen) return;
 
     int buttonCode = e.getButton();
 
-    if (buttonCode >= 1)
+    if (buttonCode >= 1) {
       buttonStates[buttonCode - 1].update(false);
+    }
   }
 
   @Override
   public void mouseDragged(MouseEvent e) {
-    if (frozen)
-      return;
+    if (frozen) return;
 
     absoluteMousePosition.set(e.getX(), e.getY());
   }
 
   @Override
   public void mouseMoved(MouseEvent e) {
-    if (frozen)
-      return;
+    if (frozen) return;
 
     absoluteMousePosition.set(e.getX(), e.getY());
   }
@@ -418,6 +414,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
     /**
      * Updates the key state
+     *
      * @param isPressed Whether the action has been pressed
      */
     protected void update(boolean isPressed) {

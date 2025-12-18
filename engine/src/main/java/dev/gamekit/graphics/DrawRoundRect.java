@@ -11,9 +11,7 @@ public class DrawRoundRect extends DrawShape<DrawRoundRect> {
   private final int arcHeight;
   private final boolean filled;
 
-  public DrawRoundRect(
-    int x, int y, int width, int height, int arcWidth, int arcHeight, boolean filled
-  ) {
+  public DrawRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight, boolean filled) {
     this.x = x;
     this.y = y;
     this.width = width;

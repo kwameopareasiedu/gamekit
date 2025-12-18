@@ -13,14 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * {@link Application} is the heart of a GameKit program. A game or application must extend this
- * class to do anything with the engine.
+ * {@link Application} is the heart of a GameKit program. A game or application must extend this class to do anything
+ * with the engine.
  * <p>
- * It runs a fixed-step game update loop which protects against lag spikes. It also loads scenes,
- * schedule animations and timeouts and quit the running instance. Use
- * {@link Application#getInstance} to get the current instance from anywhere in your project
- * to access its methods.
+ * It runs a fixed-step game update loop which protects against lag spikes. It also loads scenes, schedule animations
+ * and timeouts and quit the running instance.
  * <p>
+ * NB: <i>Use {@link Application#getInstance} to get the current instance from anywhere in your project to access its
+ * methods.</i>
  */
 @SuppressWarnings({ "BusyWait", "SynchronizeOnNonFinalField" })
 public abstract class Application {
@@ -84,10 +84,7 @@ public abstract class Application {
     logger.debug("Primed next scene: {}", scene.name);
   }
 
-  /**
-   * Schedule and returns a {@link Timeout timeout} to be executed immediately after the end of the
-   * current frame
-   */
+  /** Schedule and returns a {@link Timeout timeout} to be executed immediately after the end of the current frame */
   public Timeout scheduleTask(VoidCallback callback) {
     return scheduleTask(callback, 0);
   }
@@ -96,11 +93,11 @@ public abstract class Application {
    * Schedule and returns a {@link Timeout task} to be executed after a specified time.
    * <p>
    * If {@code timeoutMs} is zero, {@code task} is executed immediately after the current frame
+   *
    * @see #scheduleTask(VoidCallback)
    */
   public Timeout scheduleTask(VoidCallback callback, long timeoutMs) {
-    if (timeoutMs < 0)
-      throw new IllegalArgumentException("Timeout cannot be negative");
+    if (timeoutMs < 0) throw new IllegalArgumentException("Timeout cannot be negative");
 
     Timeout timeout = new Timeout(timeoutMs, callback);
     newTimeouts.add(timeout);
@@ -108,25 +105,23 @@ public abstract class Application {
   }
 
   /**
-   * Schedule an {@link Animation} to play. Animations are updated before {@link Scene#update}
-   * to ensure current values are available to the scene's next update cycle.
+   * Schedule an {@link Animation} to play. Animations are updated before {@link Scene#update} to ensure current
+   * values are available to the scene's next update cycle.
    * <p>
-   * NB: <i>{@link Animation#start} calls this method internally, so there is no need to
-   * explicitly invoke this</i>
+   * NB: <i>{@link Animation#start} calls this method internally, so there is no need to explicitly invoke this</i>
    */
   public void playAnimation(Animation animation) {
-    if (animation != null && !animations.contains(animation))
+    if (animation != null && !animations.contains(animation)) {
       animations.add(animation);
+    }
   }
 
   /**
-   * Quit the current {@link Application} by dispatching a {@link WindowEvent#WINDOW_CLOSING}
-   * event to the {@link Window} {@link javax.swing.JFrame frame}
+   * Quit the current {@link Application} by dispatching a {@link WindowEvent#WINDOW_CLOSING} event to the
+   * {@link Window} {@link javax.swing.JFrame frame}
    */
   public void quit() {
-    window.getFrame().dispatchEvent(
-      new WindowEvent(window.getFrame(), WindowEvent.WINDOW_CLOSING)
-    );
+    window.getFrame().dispatchEvent(new WindowEvent(window.getFrame(), WindowEvent.WINDOW_CLOSING));
   }
 
   /** Begins the game loop of this application */
@@ -195,8 +190,7 @@ public abstract class Application {
     for (Timeout timeout : timeouts)
       timeout.update();
 
-    if (currentScene != null)
-      currentScene._update();
+    if (currentScene != null) currentScene._update();
 
     animations.removeIf(Animation::isEnded);
     timeouts.removeIf(Timeout::isCompleted);
@@ -204,13 +198,12 @@ public abstract class Application {
 
   /** Called in each frame to render the current scene */
   private void render() {
-    if (currentScene != null)
-      currentScene._render();
+    if (currentScene != null) currentScene._render();
   }
 
   /**
-   * Applies the camera's transformation on the {@link Window} scene buffer and draws the current
-   * scene to the {@link Window}
+   * Applies the {@link Camera} transformation on the {@link Window} scene buffer and draws the current scene to the
+   * {@link Window}
    */
   private void draw() {
     if (currentScene != null) {
@@ -254,8 +247,7 @@ public abstract class Application {
   protected void dispose() throws InterruptedException {
     logger.debug("Disposing application");
 
-    if (currentScene != null)
-      currentScene._dispose();
+    if (currentScene != null) currentScene._dispose();
 
     audioThread.interrupt();
     audioThread.join(500);

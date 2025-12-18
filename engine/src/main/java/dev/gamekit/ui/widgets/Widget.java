@@ -14,19 +14,17 @@ import java.awt.*;
 /**
  * A widget is an abstract representation of a portion of a {@link Scene scene's} user interface.
  * <p>
- * Widgets are used to describe all aspects of a user interface, including physical aspects such
- * as text and buttons to layout effects like padding and alignment.
+ * Widgets are used to describe all aspects of a user interface, including physical aspects such as text and buttons
+ * to layout effects like padding and alignment.
  * <p>
- * Widgets form a hierarchy based on composition. Each widget nests inside its parent and can
- * receive context from the parent.
+ * Widgets form a hierarchy based on composition. Each widget nests inside its parent and can receive context from
+ * the parent.
  * <p>
- * To create a user interface in a scene, you override its {@code createUI} method and return the
- * desired widget hierarchy.
+ * To create a user interface in a scene, you override its {@code createUI} method and return the desired widget
+ * hierarchy.
  * <p>
- * Widget layout is based on the
- * <a href="https://docs.flutter.dev/ui/layout/constraints">box-constraint</a>
- * model which is used in Flutter, where constraints go down the tree, size go up and parents set
- * positions
+ * Widget layout is based on the <a href="https://docs.flutter.dev/ui/layout/constraints">box-constraint</a>
+ * model which is used in Flutter, where constraints go down the tree, size go up and parents set positions
  */
 public abstract class Widget {
   public static boolean DEBUG_DRAW = false;
@@ -98,7 +96,7 @@ public abstract class Widget {
    * Since this method is marked as {@code final}, subclasses should override the
    * {@link #performUpdate} method instead to perform any state updates
    */
-  public final void update(Widget widget) {
+  public final void updateState(Widget widget) {
     this.config = widget.config;
     performUpdate(widget);
     init(host);

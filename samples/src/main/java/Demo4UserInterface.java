@@ -1,5 +1,3 @@
-import dev.gamekit.annotations.WidgetBuilder;
-import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.core.Application;
 import dev.gamekit.core.IO;
 import dev.gamekit.core.Scene;
@@ -8,12 +6,13 @@ import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.enums.ImageFit;
 import dev.gamekit.ui.enums.MainAxisAlignment;
-import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.widgets.*;
 import dev.gamekit.ui.widgets.Button;
 import dev.gamekit.ui.widgets.Checkbox;
 import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.utils.Spacing;
+import utils.MainMenuButton;
+import utils.SubMenuButton;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -69,7 +68,6 @@ public class Demo4UserInterface extends Scene {
         Image.create(
           ImageConfig.image(BACKDROP)
         ),
-
         Align.create(
           AlignConfig.child(
             Padding.create(
@@ -88,7 +86,6 @@ public class Demo4UserInterface extends Scene {
             )
           )
         ),
-
         Align.create(
           AlignConfig.verticalAlignment(Alignment.CENTER),
           AlignConfig.child(
@@ -188,7 +185,6 @@ public class Demo4UserInterface extends Scene {
             )
           )
         ),
-
         Align.create(
           AlignConfig.horizontalAlignment(Alignment.CENTER),
           AlignConfig.child(
@@ -204,7 +200,6 @@ public class Demo4UserInterface extends Scene {
             )
           )
         ),
-
         Align.create(
           AlignConfig.horizontalAlignment(Alignment.CENTER),
           AlignConfig.verticalAlignment(Alignment.END),
@@ -276,98 +271,5 @@ public class Demo4UserInterface extends Scene {
         )
       )
     );
-  }
-
-  @WidgetBuilder
-  static class MainMenuButton extends Compose {
-    @WidgetBuilderField
-    protected String text;
-
-    public MainMenuButton(String text, MouseEvent.Handler mouseListener) {
-      super(
-        ComposeConfig.child(
-          Button.create(
-            ButtonConfig.edgeInsets(new Spacing(12, 12, 16, 12)),
-            ButtonConfig.mouseListener(mouseListener),
-            ButtonConfig.child(
-              Padding.create(
-                PaddingConfig.padding(new Spacing(12, 12, 16, 12)),
-                PaddingConfig.child(
-                  Text.create(
-                    TextConfig.fontSize(20),
-                    TextConfig.fontStyle(Text.BOLD),
-                    TextConfig.text(text)
-                  )
-                )
-              )
-            )
-          )
-        )
-      );
-
-      this.text = text;
-    }
-
-    public static MainMenuButton create(String text, MouseEvent.Handler mouseListener) {
-      return new MainMenuButton(text, mouseListener);
-    }
-
-    //    @Override
-    //    public boolean stateEquals(Widget widget) {
-    //      if (widget instanceof MainMenuButton mainMenuButton)
-    //        return Objects.equals(text, mainMenuButton.text);
-    //
-    //      return false;
-    //    }
-
-    @Override
-    protected void performUpdate(Widget widget) {
-      this.text = ((MainMenuButton) widget).text;
-    }
-  }
-
-  @WidgetBuilder
-  static class SubMenuButton extends Compose {
-    @WidgetBuilderField
-    protected String text;
-
-    public SubMenuButton(String text) {
-      super(
-        ComposeConfig.child(
-          Button.create(
-            ButtonConfig.edgeInsets(new Spacing(6, 6, 8, 6)),
-            ButtonConfig.child(
-              Padding.create(
-                PaddingConfig.padding(new Spacing(12, 12, 16, 12)),
-                PaddingConfig.child(
-                  Text.create(
-                    TextConfig.text(text)
-                  )
-                )
-              )
-            )
-          )
-        )
-      );
-
-      this.text = text;
-    }
-
-    public static SubMenuButton create(String text) {
-      return new SubMenuButton(text);
-    }
-
-    //    @Override
-    //    public boolean stateEquals(Widget widget) {
-    //      if (widget instanceof SubMenuButton subMenuButton)
-    //        return Objects.equals(text, subMenuButton.text);
-    //
-    //      return false;
-    //    }
-
-    @Override
-    protected void performUpdate(Widget widget) {
-      this.text = ((SubMenuButton) widget).text;
-    }
   }
 }

@@ -3,10 +3,8 @@ package dev.gamekit.audio;
 import static dev.gamekit.utils.Math.clamp;
 
 /**
- * {@link AudioClip2D} is a {@link AudioClip} which updates its audio parameters without
- * spatialization.
- * <p>
- * An {@link AudioClip2D} sounds the same as if you played it through a media player
+ * {@link AudioClip2D} is a {@link AudioClip} which plays back consistently at the same volume and pan regardless of
+ * the audio listener's position. It's best suited for ambient sounds, menu music and non-diegetic audio.
  */
 public class AudioClip2D extends AudioClip {
   // Cached effective volume since log10() is expensive to compute every frame

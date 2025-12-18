@@ -3,8 +3,8 @@ package dev.gamekit.graphics;
 import java.awt.*;
 
 /**
- * {@link DrawPolygon} renders a polygon from a list of points which must even in the format {@code
- * [px1, py1, px2, py2, ..., pxn, pyn]}
+ * {@link DrawPolygon} renders a polygon from a list of point pairs in the format
+ * {@code [px1, py1, px2, py2, ..., pxn, pyn]}
  */
 public class DrawPolygon extends DrawShape<DrawPolygon> {
   private final Polygon polygon;

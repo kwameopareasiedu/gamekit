@@ -2,7 +2,7 @@ package dev.gamekit.graphics;
 
 import java.awt.*;
 
-/** {@link DrawCall} is an instruction to the renderer to render something */
+/** {@link DrawCall} is an instruction to the draw thread to render something */
 @SuppressWarnings("unchecked")
 public abstract class DrawCall<T extends DrawCall<T>> {
   private int rotationPointX;
@@ -10,10 +10,7 @@ public abstract class DrawCall<T extends DrawCall<T>> {
   private double rotationAngle;
   private AlphaComposite opacityComposite;
 
-  /**
-   * Called internally by the engine to modify the provided {@link Graphics2D} object with the
-   * call's draw logic
-   */
+  /** Called internally by the engine to modify the provided {@link Graphics2D} object with the call's draw logic */
   public final void apply(Graphics2D g) {
     if (rotationAngle != 0) {
       g.translate(rotationPointX, -rotationPointY);

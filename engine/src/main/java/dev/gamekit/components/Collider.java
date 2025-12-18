@@ -14,17 +14,11 @@ import org.dyn4j.geometry.Vector2;
 import java.awt.*;
 import java.util.UUID;
 
-/**
- * {@link Collider} defines the physics shape of an entity for the purposes of physics collision
- * detection.
- */
+/** {@link Collider} defines the physics shape of an entity for the purposes of physics collision detection */
 public abstract class Collider extends Component {
-  private static final Stroke SENSOR_DEBUG_STROKE = new BasicStroke(
-    1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{ 10, 2 }, 0
-  );
-
   public static boolean DEBUG_DRAW = false;
-
+  private static final Stroke SENSOR_DEBUG_STROKE = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL,
+    0, new float[]{ 10, 2 }, 0);
   protected final ColliderFixture fixture;
   protected Physics.CollisionListener collisionListener;
 
@@ -33,19 +27,20 @@ public abstract class Collider extends Component {
     fixture.setCollider(this);
   }
 
+  /** Returns the custom metadata object */
+  public Object getMetaData() {
+    return fixture.getUserData();
+  }
+
   /**
    * Sets a custom object with user-defined attributes as the metadata.
    * <p>
    * This can be used to, for example, add tags which can identify it in a future collision
+   *
    * @see org.dyn4j.dynamics.BodyFixture#setUserData(Object)
    */
   public void setMetaData(Object metadata) {
     fixture.setUserData(metadata);
-  }
-
-  /** Returns the custom metadata object */
-  public Object getMetaData() {
-    return fixture.getUserData();
   }
 
   /** Sets the local offset relative to the entity's {@link RigidBody} */
@@ -53,17 +48,15 @@ public abstract class Collider extends Component {
     fixture.getShape().translate(x / Physics.PIXELS_PER_METER, y / Physics.PIXELS_PER_METER);
   }
 
-  /**
-   * Sets a {@link Physics.CollisionListener} to be notified when this collider collides with
-   * another collider
-   */
+  /** Sets a {@link Physics.CollisionListener} to be notified when this collider collides with another collider */
   public void setCollisionListener(Physics.CollisionListener collisionListener) {
     this.collisionListener = collisionListener;
   }
 
   /**
-   * Set the collision category this collider resides in, and a layer mask indicating which layers
-   * this collider can collide with
+   * Set the collision category this collider resides in, and a layer mask indicating which layers this collider can
+   * collide with
+   *
    * @see org.dyn4j.collision.CategoryFilter
    */
   public void setCollisionFilter(long category, long mask) {
@@ -97,8 +90,9 @@ public abstract class Collider extends Component {
 
   @Override
   protected void start() {
-    if (collisionListener != null)
+    if (collisionListener != null) {
       Physics.addCollisionListener(fixture.id, collisionListener);
+    }
   }
 
   @Override
@@ -120,8 +114,7 @@ public abstract class Collider extends Component {
         int radius = (int) (circle.getRadius() * Physics.PIXELS_PER_METER);
 
         Renderer.drawCircle(shapePositionX, shapePositionY, radius)
-          .withColor(Color.CYAN).withStroke(stroke)
-          .withRotation(positionX, positionY, rotation);
+          .withColor(Color.CYAN).withStroke(stroke).withRotation(positionX, positionY, rotation);
         Renderer.drawVerticalLine(shapePositionX, shapePositionY, shapePositionY + radius)
           .withRotation(positionX, positionY, rotation);
       } else if (shape instanceof Rectangle rect) {
@@ -129,27 +122,22 @@ public abstract class Collider extends Component {
         int height = (int) (rect.getHeight() * Physics.PIXELS_PER_METER);
 
         Renderer.drawRect(shapePositionX, shapePositionY, width, height)
-          .withColor(Color.CYAN).withStroke(stroke)
-          .withRotation(positionX, positionY, rotation);
+          .withColor(Color.CYAN).withStroke(stroke).withRotation(positionX, positionY, rotation);
         Renderer.drawVerticalLine(shapePositionX, shapePositionY, shapePositionY + height / 2)
           .withRotation(positionX, positionY, rotation);
       }
 
-      Renderer.fillCircle(shapePositionX, shapePositionY, 2).withColor(Color.ORANGE)
-        .withRotation(positionX, positionY, rotation);
+      Renderer.fillCircle(shapePositionX, shapePositionY, 2)
+        .withColor(Color.ORANGE).withRotation(positionX, positionY, rotation);
     }
   }
 
   @Override
   protected void dispose() {
-    if (collisionListener != null)
-      Physics.removeCollisionListener(fixture.id, collisionListener);
+    if (collisionListener != null) Physics.removeCollisionListener(fixture.id, collisionListener);
   }
 
-  /**
-   * {@link ColliderFixture} extends {@link BodyFixture} adding a reference to its parent
-   * {@link Collider}
-   */
+  /** {@link ColliderFixture} extends {@link BodyFixture} adding a reference to its parent {@link Collider} */
   public static class ColliderFixture extends BodyFixture {
     public final String id = UUID.randomUUID().toString();
 

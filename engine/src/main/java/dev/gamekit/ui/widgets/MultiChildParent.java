@@ -5,7 +5,7 @@ import dev.gamekit.annotations.WidgetBuilderField;
 
 import java.awt.*;
 
-/** A parent which contains multiple child {@link Widget}s */
+/** A parent which contains multiple child {@link Widget widgets} */
 @WidgetBuilder
 public abstract class MultiChildParent extends Parent {
   @WidgetBuilderField(
@@ -69,6 +69,4 @@ public abstract class MultiChildParent extends Parent {
     children[index] = newChild;
     children[index].parent = this;
   }
-
-  //  public static abstract class MultiChildParentConfig extends ParentConfig { }
 }

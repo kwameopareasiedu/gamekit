@@ -120,7 +120,7 @@ public class Demo5Audio extends Scene {
         ),
         Text.create(
           TextConfig.alignment(Alignment.CENTER),
-          TextConfig.text("Move the mouse from left to right to pan the audio")
+          TextConfig.text("Move the mouse from left to right to pan the audio ")
         ),
         Row.create(
           RowConfig.mainAxisAlignment(MainAxisAlignment.CENTER),

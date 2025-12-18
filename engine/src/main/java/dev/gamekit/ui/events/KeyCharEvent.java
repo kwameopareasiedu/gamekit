@@ -10,6 +10,7 @@ public class KeyCharEvent extends InputEvent {
 
   /** Handler interface for {@link KeyCharEvent key char events} */
   public interface Handler extends InputEvent.Handler {
+    /** Called to handle a {@link KeyCharEvent} */
     void handleEvent(KeyCharEvent ev);
   }
 }

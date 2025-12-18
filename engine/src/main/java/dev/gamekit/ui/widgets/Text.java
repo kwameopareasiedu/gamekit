@@ -9,7 +9,9 @@ import dev.gamekit.utils.Bounds;
 import dev.gamekit.utils.Constraints;
 
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static dev.gamekit.utils.Misc.coalesce;
@@ -81,9 +83,7 @@ public class Text extends Leaf {
     shadowOffsetY = coalesce(config.shadowOffsetY, theme.textShadowOffsetY, 0);
     shadowColor = coalesce(config.shadowColor, theme.textShadowColor, Color.WHITE);
 
-    renderFont = font != null
-      ? font.deriveFont(fontStyle, fontSize)
-      : DEFAULT_FONT.deriveFont(fontStyle, fontSize);
+    renderFont = font != null ? font.deriveFont(fontStyle, fontSize) : DEFAULT_FONT.deriveFont(fontStyle, fontSize);
     fontMetrics = host.getFontMetrics(renderFont);
   }
 
@@ -97,18 +97,15 @@ public class Text extends Leaf {
 
     intrinsicSize.set(textWidth, textHeight);
 
-    computedBounds.setSize(
-      constraints.constrainWidth(intrinsicSize.width),
-      constraints.constrainHeight(intrinsicSize.height)
-    );
+    computedBounds.setSize(constraints.constrainWidth(intrinsicSize.width),
+      constraints.constrainHeight(intrinsicSize.height));
 
     if (textWidth > computedBounds.width) {
       String[] tokens = text.split(" ");
       String separator = " ";
 
-      boolean singleTokenExceedingComputedWidth = Arrays.stream(tokens).anyMatch(
-        token -> fontMetrics.stringWidth(token) > computedBounds.width
-      );
+      boolean singleTokenExceedingComputedWidth =
+        Arrays.stream(tokens).anyMatch(token -> fontMetrics.stringWidth(token) > computedBounds.width);
 
       if (singleTokenExceedingComputedWidth) {
         tokens = text.split("");
@@ -131,19 +128,15 @@ public class Text extends Leaf {
         lineBuilder.append(token).append(separator);
         currentLineWidth += tokenWidth;
 
-        if (currentLineWidth > maxLineWidth)
-          maxLineWidth = currentLineWidth;
+        if (currentLineWidth > maxLineWidth) maxLineWidth = currentLineWidth;
       }
 
-      if (!lineBuilder.isEmpty())
-        lines.add(lineBuilder.toString());
+      if (!lineBuilder.isEmpty()) lines.add(lineBuilder.toString());
 
       intrinsicSize.set(maxLineWidth, textHeight * lines.size());
 
-      computedBounds.setSize(
-        constraints.constrainWidth(intrinsicSize.width),
-        constraints.constrainHeight(intrinsicSize.height)
-      );
+      computedBounds.setSize(constraints.constrainWidth(intrinsicSize.width),
+        constraints.constrainHeight(intrinsicSize.height));
 
       for (String line : lines) {
         int lineWidth = fontMetrics.stringWidth(line);
@@ -158,19 +151,16 @@ public class Text extends Leaf {
       }
     } else {
       lines.add(text);
-      lineOffsets.add(
-        switch (alignment) {
-          case CENTER -> computedBounds.width / 2 - intrinsicSize.width / 2.0;
-          case END -> computedBounds.width - intrinsicSize.width;
-          default -> 0.0;
-        }
-      );
+      lineOffsets.add(switch (alignment) {
+        case CENTER -> computedBounds.width / 2 - intrinsicSize.width / 2.0;
+        case END -> computedBounds.width - intrinsicSize.width;
+        default -> 0.0;
+      });
     }
 
     for (int i = 0; i < lines.size(); i++) {
       String line = lines.get(i);
-      if (line.isEmpty())
-        continue;
+      if (line.isEmpty()) continue;
 
       double lineOffset = lineOffsets.get(i);
       String[] lineCharacters = line.split("");
@@ -179,13 +169,7 @@ public class Text extends Leaf {
       for (String ch : lineCharacters) {
         int chWidth = fontMetrics.stringWidth(ch);
 
-        symbols.add(
-          new Symbol(
-            ch.charAt(0),
-            lineOffset, lineYPosition,
-            chWidth, fontSize
-          )
-        );
+        symbols.add(new Symbol(ch.charAt(0), lineOffset, lineYPosition, chWidth, fontSize));
 
         lineOffset += chWidth;
       }
@@ -199,10 +183,7 @@ public class Text extends Leaf {
     super.performPostLayout();
 
     for (Symbol symbol : symbols) {
-      symbol.setPosition(
-        absoluteBounds.x + symbol.x,
-        absoluteBounds.y + symbol.y
-      );
+      symbol.setPosition(absoluteBounds.x + symbol.x, absoluteBounds.y + symbol.y);
     }
   }
 
@@ -240,11 +221,7 @@ public class Text extends Leaf {
     g.setColor(color);
 
     for (Symbol symbol : symbols) {
-      g.drawString(
-        String.valueOf(symbol.value),
-        (int) symbol.x,
-        (int) (symbol.y + symbol.height)
-      );
+      g.drawString(String.valueOf(symbol.value), (int) symbol.x, (int) (symbol.y + symbol.height));
     }
 
     if (Widget.DEBUG_DRAW) {
@@ -252,12 +229,7 @@ public class Text extends Leaf {
       g.setStroke(UI.DEBUG_STROKE);
 
       for (Symbol symbol : symbols) {
-        g.drawRect(
-          (int) symbol.x,
-          (int) symbol.y,
-          (int) symbol.width,
-          (int) symbol.height
-        );
+        g.drawRect((int) symbol.x, (int) symbol.y, (int) symbol.width, (int) symbol.height);
       }
     }
 

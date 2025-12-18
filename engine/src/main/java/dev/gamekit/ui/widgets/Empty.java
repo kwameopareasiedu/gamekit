@@ -5,10 +5,7 @@ import dev.gamekit.utils.Constraints;
 
 import java.awt.*;
 
-/**
- * A {@link Leaf} with no size which renders nothing. Empty should be used in places where
- * {@code null} would have been preferable
- */
+/** A {@link Leaf} with no size and appearance, used in places where {@code null} would have been preferable */
 @WidgetBuilder
 public class Empty extends Leaf {
   public Empty() {

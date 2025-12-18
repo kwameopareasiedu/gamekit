@@ -14,11 +14,9 @@ public class CircleAudioShape extends AudioShape {
   @Override
   public double getDistance(Vector sourcePos, Vector listenerPos) {
     double clampedSquaredDistance = clamp(
-      Vector.squaredDistance(sourcePos, listenerPos),
-      minDistanceSquared, maxDistanceSquared
+      Vector.squaredDistance(sourcePos, listenerPos), minDistanceSquared, maxDistanceSquared
     );
 
-    return minDistance + (clampedSquaredDistance - minDistanceSquared) /
-      squaredDistanceDiff * distanceDiff;
+    return minDistance + (clampedSquaredDistance - minDistanceSquared) / squaredDistanceDiff * distanceDiff;
   }
 }

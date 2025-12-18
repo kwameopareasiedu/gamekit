@@ -12,13 +12,10 @@ public final class Audio {
 
   /** Loads an {@link AudioClip} into memory with a unique key */
   public static void preload(Object key, AudioClip audioClip) {
-    if (audioClip == null)
-      throw new IllegalArgumentException("Audio clip cannot be null");
+    if (audioClip == null) throw new IllegalArgumentException("Audio clip cannot be null");
 
     if (CLIP_CACHE.containsKey(key))
-      throw new RuntimeException(
-        String.format("Audio clip with key: %s already exists", key)
-      );
+      throw new RuntimeException(String.format("Audio clip with key: %s already exists", key));
 
     CLIP_CACHE.put(key, audioClip);
   }
@@ -27,9 +24,7 @@ public final class Audio {
   @SuppressWarnings("unchecked")
   public static <T extends AudioClip> T get(Object key) {
     if (!CLIP_CACHE.containsKey(key))
-      throw new RuntimeException(
-        String.format("Audio clip with key: %s does not exist", key)
-      );
+      throw new RuntimeException(String.format("Audio clip with key: %s does not exist", key));
 
     return (T) CLIP_CACHE.get(key);
   }

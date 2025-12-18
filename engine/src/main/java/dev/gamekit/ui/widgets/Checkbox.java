@@ -18,10 +18,8 @@ import static dev.gamekit.utils.Misc.coalesce;
 /** A {@link SingleChildParent} input widget which toggles between two states */
 @WidgetBuilder
 public class Checkbox extends SingleChildParent implements MouseEvent.Handler, NinePatch {
-  public static final BufferedImage DEFAULT_ICON =
-    IO.getResourceImage("default-sprites.png", 646, 206, 32, 32);
-  public static final BufferedImage TOGGLED_ICON =
-    IO.getResourceImage("default-sprites.png", 646, 277, 32, 32);
+  public static final BufferedImage DEFAULT_ICON = IO.getResourceImage("default-sprites.png", 646, 206, 32, 32);
+  public static final BufferedImage TOGGLED_ICON = IO.getResourceImage("default-sprites.png", 646, 277, 32, 32);
 
   @WidgetBuilderField
   protected BufferedImage defaultIcon;
@@ -58,8 +56,7 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
 
     this.defaultIcon = coalesce(config.defaultIcon, theme.checkboxDefaultIcon, DEFAULT_ICON);
     this.toggledIcon = coalesce(config.toggledIcon, theme.checkboxToggledIcon, TOGGLED_ICON);
-    this.iconEdgeInsets =
-      coalesce(config.iconEdgeInsets, theme.checkboxIconEdgeInsets, new Spacing(8));
+    this.iconEdgeInsets = coalesce(config.iconEdgeInsets, theme.checkboxIconEdgeInsets, new Spacing(8));
     this.iconWidth = coalesce(config.iconWidth, theme.checkboxIconWidth, 24);
     this.iconHeight = coalesce(config.iconHeight, theme.checkboxIconHeight, 24);
     this.gapSize = coalesce(config.gapSize, theme.checkboxGapSize, 12);

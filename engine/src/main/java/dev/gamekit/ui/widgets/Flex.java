@@ -11,11 +11,11 @@ import static dev.gamekit.utils.Misc.coalesce;
 @WidgetBuilder
 public abstract class Flex extends MultiChildParent {
   @WidgetBuilderField
-  protected Integer gapSize = 12;
+  protected Integer gapSize;
   @WidgetBuilderField
-  protected MainAxisAlignment mainAxisAlignment = MainAxisAlignment.START;
+  protected MainAxisAlignment mainAxisAlignment;
   @WidgetBuilderField
-  protected CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.START;
+  protected CrossAxisAlignment crossAxisAlignment;
 
   public Flex(FlexConfig... config) {
     super(config);

@@ -9,10 +9,10 @@ import javax.sound.sampled.FloatControl;
 import static dev.gamekit.utils.Math.clamp;
 
 /**
- * {@link AudioClip3D} is a {@link AudioClip} which uses spatialization to update its parameters
- * in relation to the {@link AudioListener}.
+ * {@link AudioClip3D} is a {@link AudioClip} whose volume and sound change with respect to their position from the
+ * {@link AudioListener}.
  * <p>
- * {@link AudioClip3D} is best for positional sounds within a game
+ * {@link AudioClip3D} is best for positional sounds within a game.
  */
 public class AudioClip3D extends AudioClip {
   protected static final Vector UP = new Vector(0, 1);
@@ -27,13 +27,8 @@ public class AudioClip3D extends AudioClip {
   private double effectiveVolume = -1;
   private double effectivePan = 0;
 
-  public AudioClip3D(
-    String resPath,
-    AudioGroup group,
-    double maxVolume,
-    AudioAttenuation attenuation,
-    AudioShape shape
-  ) {
+  public AudioClip3D(String resPath, AudioGroup group, double maxVolume, AudioAttenuation attenuation,
+                     AudioShape shape) {
     super(resPath, group, maxVolume);
     this.attenuation = attenuation;
     this.shape = shape;
@@ -55,17 +50,10 @@ public class AudioClip3D extends AudioClip {
   @Override
   public void performUpdate() {
     Vector listenerPos = AudioListener.getPosition();
-
-    listenerVector.set(
-      listenerPos.x - position.x,
-      listenerPos.y - position.y
-    );
+    listenerVector.set(listenerPos.x - position.x, listenerPos.y - position.y);
 
     double distanceToListener = shape.getDistance(position, listenerPos);
-    double attenuation = this.attenuation.attenuate(
-      distanceToListener, shape.minDistance, shape.maxDistance
-    );
-
+    double attenuation = this.attenuation.attenuate(distanceToListener, shape.minDistance, shape.maxDistance);
     double effectiveVolume = !group.isMuted() ? group.getMaxVolume() * maxVolume * attenuation : 0;
     double effectivePan = Math.abs(Vector.dot(listenerVector, UP)) - 1;
 
@@ -82,8 +70,7 @@ public class AudioClip3D extends AudioClip {
     if (listenerPos.x < position.x) effectivePan *= -1;
 
     if (this.effectivePan != effectivePan) {
-      if (panControl != null)
-        panControl.setValue((float) effectivePan);
+      if (panControl != null) panControl.setValue((float) effectivePan);
 
       this.effectivePan = effectivePan;
     }

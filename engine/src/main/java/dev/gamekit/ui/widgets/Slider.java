@@ -31,7 +31,7 @@ public class Slider extends Progress implements NinePatch, MouseEvent.Handler {
   protected Integer thumbWidth;
   @WidgetBuilderField
   protected Integer thumbHeight;
-  @WidgetBuilderField
+  @WidgetBuilderField(includeInStateMatch = false)
   protected ChangeEvent.Handler<Double> changeListener;
 
   private final Bounds thumbAbsoluteBounds;

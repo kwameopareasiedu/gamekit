@@ -10,9 +10,9 @@ import static dev.gamekit.utils.Misc.coalesce;
 @WidgetBuilder
 public class FixedSize extends SingleChildParent {
   @WidgetBuilderField
-  protected Double width = 64.0;
+  protected Double width;
   @WidgetBuilderField
-  protected Double height = 64.0;
+  protected Double height;
 
   public FixedSize(FixedSizeConfig... config) {
     super(config);

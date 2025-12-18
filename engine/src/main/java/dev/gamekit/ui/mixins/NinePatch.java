@@ -1,9 +1,9 @@
 package dev.gamekit.ui.mixins;
 
 import dev.gamekit.core.UI;
-import dev.gamekit.utils.Spacing;
 import dev.gamekit.ui.widgets.Widget;
 import dev.gamekit.utils.Bounds;
+import dev.gamekit.utils.Spacing;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
