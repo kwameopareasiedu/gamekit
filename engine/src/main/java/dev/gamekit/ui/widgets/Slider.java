@@ -52,7 +52,7 @@ public class Slider extends Progress implements NinePatch, MouseEvent.Handler {
     super.performInit();
 
     SliderConfig config = (SliderConfig) super.config;
-    Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
+    ThemeOld theme = coalesce(getAncestorOfType(ThemeOld.class), ThemeOld.getDefault());
 
     this.thumbBackground = coalesce(config.thumbBackground, theme.sliderThumbBackground, THUMB_BG);
     this.thumbEdgeInsets = coalesce(config.thumbEdgeInsets, theme.sliderThumbEdgeInsets, new Spacing(8));

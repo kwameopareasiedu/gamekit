@@ -57,7 +57,7 @@ public class Progress extends Leaf implements NinePatch {
     super.performInit();
 
     ProgressConfig config = (ProgressConfig) super.config;
-    Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
+    ThemeOld theme = coalesce(getAncestorOfType(ThemeOld.class), ThemeOld.getDefault());
 
     if (config.value == null)
       throw new IllegalArgumentException("Progress value cannot be null");

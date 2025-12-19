@@ -52,7 +52,7 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
   @Override
   protected void performInit() {
     CheckboxConfig config = (CheckboxConfig) super.config;
-    Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
+    ThemeOld theme = coalesce(getAncestorOfType(ThemeOld.class), ThemeOld.getDefault());
 
     this.defaultIcon = coalesce(config.defaultIcon, theme.checkboxDefaultIcon, DEFAULT_ICON);
     this.toggledIcon = coalesce(config.toggledIcon, theme.checkboxToggledIcon, TOGGLED_ICON);

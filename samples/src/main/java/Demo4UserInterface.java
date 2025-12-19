@@ -92,7 +92,7 @@ public class Demo4UserInterface extends Scene {
             Padding.create(
               PaddingConfig.padding(new Spacing(256, 8, 16, 96)),
               PaddingConfig.child(
-                Theme.create(
+                ThemeOld.create(
                   ThemeConfig.textFontSize(10),
                   ThemeConfig.textFontStyle(Text.ITALIC),
                   ThemeConfig.child(

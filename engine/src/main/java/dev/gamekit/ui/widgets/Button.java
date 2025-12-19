@@ -45,7 +45,7 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
   @Override
   protected void performInit() {
     ButtonConfig config = (ButtonConfig) super.config;
-    Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
+    ThemeOld theme = coalesce(getAncestorOfType(ThemeOld.class), ThemeOld.getDefault());
 
     this.edgeInsets = coalesce(config.edgeInsets, theme.buttonEdgeInsets, new Spacing(24));
     this.defaultBackground = coalesce(config.defaultBackground, theme.buttonDefaultBackground, DEFAULT_BG);

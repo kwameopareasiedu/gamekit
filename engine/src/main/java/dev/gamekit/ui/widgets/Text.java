@@ -66,7 +66,7 @@ public class Text extends Leaf {
     super.performInit();
 
     TextConfig config = (TextConfig) super.config;
-    Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
+    ThemeOld theme = coalesce(getAncestorOfType(ThemeOld.class), ThemeOld.getDefault());
 
     if (config.text == null)
       throw new IllegalArgumentException("Text text cannot be null");

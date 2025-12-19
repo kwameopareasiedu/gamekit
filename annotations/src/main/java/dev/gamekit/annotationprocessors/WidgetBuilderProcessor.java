@@ -5,10 +5,7 @@ import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.utils.WidgetClass;
 import dev.gamekit.utils.WidgetField;
 
-import javax.annotation.processing.AbstractProcessor;
-import javax.annotation.processing.RoundEnvironment;
-import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.annotation.processing.SupportedSourceVersion;
+import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
@@ -206,6 +203,101 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
       }
 
       // Generate Theme widget
+      try {
+        JavaFileObject fileObject = processingEnv.getFiler().createSourceFile("dev.gamekit.ui.widgets.Theme");
+
+        try (PrintWriter out = new PrintWriter(fileObject.openOutputStream())) {
+          // Theme widget package declaration
+          out.printf("package dev.gamekit.ui.widgets;\n\n");
+
+          // Theme widget package declaration
+          out.printf("@dev.gamekit.annotations.WidgetBuilder\n");
+          out.printf("public class Theme extends dev.gamekit.ui.widgets.SingleChildParent {\n");
+
+          // Theme widget field declarations
+          List<WidgetClass> widgetsWithOwnThemableFields = widgetClasses.stream().filter(
+            clazz -> !clazz.ownFields.isEmpty()
+              && !clazz.ownFields.stream().filter(WidgetField::themable).toList().isEmpty()
+          ).toList();
+
+          for (WidgetClass clazz : widgetsWithOwnThemableFields) {
+            List<WidgetField> themableFields = clazz.ownFields.stream().filter(WidgetField::themable).toList();
+
+            for (WidgetField field : themableFields) {
+              out.printf("\t@dev.gamekit.annotations.WidgetBuilderField\n");
+              out.printf(
+                "\tpublic %s %s%s;\n",
+                field.type(),
+                clazz.simpleName.substring(0, 1).toLowerCase() + clazz.simpleName.substring(1),
+                field.name().substring(0, 1).toUpperCase() + field.name().substring(1)
+              );
+            }
+
+            out.println();
+          }
+
+          // Theme widget constructor and static creator method declarations
+          out.println("""
+              public Theme(ThemeConfig... config) {
+                super(config);
+              }
+            
+              public static Theme create(ThemeConfig... config) {
+                return new Theme(config);
+              }
+            """);
+
+          // Theme widget performInit method override
+          out.printf("\t@Override\n");
+          out.printf("\tprotected void performInit() {\n");
+          out.printf("\t\tdev.gamekit.ui.widgets.ThemeConfig config = " +
+            "(dev.gamekit.ui.widgets.ThemeConfig) super.config;\n");
+          out.println("\t\tdev.gamekit.ui.widgets.Theme theme = " +
+            "dev.gamekit.utils.Misc.coalesce(getAncestorOfType(dev.gamekit.ui.widgets.Theme.class), new Theme());\n");
+
+          for (WidgetClass clazz : widgetsWithOwnThemableFields) {
+            List<WidgetField> themableFields = clazz.ownFields.stream().filter(WidgetField::themable).toList();
+
+            for (WidgetField field : themableFields) {
+              String fieldUsageName =
+                clazz.simpleName.substring(0, 1).toLowerCase() + clazz.simpleName.substring(1) +
+                  field.name().substring(0, 1).toUpperCase() + field.name().substring(1);
+
+              out.printf(
+                "\t\t%s = dev.gamekit.utils.Misc.coalesce(config.%s, theme.%s);\n",
+                fieldUsageName, fieldUsageName, fieldUsageName
+              );
+            }
+
+            out.println();
+          }
+
+          out.printf("\t\tsuper.performInit();\n");
+          out.printf("\t}\n\n");
+
+          // Theme widget performLayout method override
+          out.println("""
+              @Override
+              protected void performLayout(dev.gamekit.utils.Constraints constraints) {
+                child.layout(constraints);
+            
+                intrinsicSize.set(child.computedBounds.width, child.computedBounds.height);
+            
+                computedBounds.setSize(
+                  constraints.constrainWidth(intrinsicSize.width),
+                  constraints.constrainHeight(intrinsicSize.height)
+                );
+              }
+            """);
+
+          // Theme widget class end brace
+          out.printf("}");
+        }
+      } catch (FilerException ignored) {
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+
+      }
     }
 
     return false;

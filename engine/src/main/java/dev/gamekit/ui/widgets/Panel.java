@@ -34,7 +34,7 @@ public class Panel extends SingleChildParent implements NinePatch, MouseEvent.Ha
   @Override
   protected void performInit() {
     PanelConfig config = (PanelConfig) super.config;
-    Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
+    ThemeOld theme = coalesce(getAncestorOfType(ThemeOld.class), ThemeOld.getDefault());
 
     this.background = coalesce(config.background, theme.panelBackground, DEFAULT_BG);
     this.edgeInsets = coalesce(config.edgeInsets, theme.panelEdgeInsets, new Spacing());

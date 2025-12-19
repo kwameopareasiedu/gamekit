@@ -78,7 +78,7 @@ public class Field extends Text
     super.performInit();
 
     FieldConfig config = (FieldConfig) super.config;
-    Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
+    ThemeOld theme = coalesce(getAncestorOfType(ThemeOld.class), ThemeOld.getDefault());
 
     color = coalesce(config.color, theme.textColor, Color.BLACK);
     edgeInsets = coalesce(config.edgeInsets, theme.fieldEdgeInsets, new Spacing(2));
