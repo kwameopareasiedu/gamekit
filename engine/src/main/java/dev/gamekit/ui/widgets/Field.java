@@ -3,7 +3,6 @@ package dev.gamekit.ui.widgets;
 import dev.gamekit.animation.Animation;
 import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
-import dev.gamekit.core.IO;
 import dev.gamekit.core.Input;
 import dev.gamekit.ui.events.*;
 import dev.gamekit.ui.mixins.NinePatch;
@@ -17,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static dev.gamekit.utils.Math.clamp;
-import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link Text} widget extension which accepts text input */
 // TODO: Implement sliding window for text rendering
@@ -26,16 +24,13 @@ import static dev.gamekit.utils.Misc.coalesce;
 @WidgetBuilder
 public class Field extends Text
   implements NinePatch, FocusEvent.Handler, MouseEvent.Handler, KeyCharEvent.Handler, KeyCodeEvent.Handler {
-  public static final BufferedImage DEFAULT_BG = IO.getResourceImage("default-sprites.png", 646, 64, 96, 32);
-  public static final BufferedImage FOCUS_BG = IO.getResourceImage("default-sprites.png", 646, 135, 96, 32);
-
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "dev.gamekit.core.IO.getResourceImage(\"default-sprites.png\", 646, 64, 96, 32)")
   protected BufferedImage defaultBackground;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "dev.gamekit.core.IO.getResourceImage(\"default-sprites.png\", 646, 135, 96, 32)")
   protected BufferedImage focusBackground;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing(2)")
   protected Spacing edgeInsets;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing(4)")
   protected Spacing padding;
   @WidgetBuilderField(comparable = false, themable = false)
   protected FocusEvent.Handler focusListener;
@@ -76,18 +71,6 @@ public class Field extends Text
   @Override
   protected void performInit() {
     super.performInit();
-
-    FieldConfig config = (FieldConfig) super.config;
-    ThemeOld theme = coalesce(getAncestorOfType(ThemeOld.class), ThemeOld.getDefault());
-
-    color = coalesce(config.color, theme.textColor, Color.BLACK);
-    edgeInsets = coalesce(config.edgeInsets, theme.fieldEdgeInsets, new Spacing(2));
-    defaultBackground = coalesce(config.defaultBackground, theme.fieldDefaultBackground, DEFAULT_BG);
-    focusBackground = coalesce(config.focusBackground, theme.fieldFocusBackground, FOCUS_BG);
-    padding = coalesce(config.padding, theme.fieldPadding, new Spacing(4));
-    focusListener = coalesce(config.focusListener, null);
-    keyCharListener = coalesce(config.keyCharListener, null);
-    changeListener = coalesce(config.changeListener, null);
 
     cursorAnimation.start();
   }

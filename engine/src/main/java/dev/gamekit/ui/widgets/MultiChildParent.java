@@ -23,8 +23,7 @@ public abstract class MultiChildParent extends Parent {
   @Override
   protected void performInit() {
     for (Widget child : ((MultiChildParentConfig) config).children) {
-      if (child == null)
-        throw new IllegalArgumentException("MultiChildParent child cannot be null");
+      if (child == null) throw new IllegalArgumentException("MultiChildParent child cannot be null");
     }
 
     this.children = ((MultiChildParentConfig) config).children;

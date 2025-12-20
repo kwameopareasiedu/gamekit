@@ -1,16 +1,10 @@
 package utils;
 
-import dev.gamekit.annotations.WidgetBuilder;
-import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.widgets.*;
 import dev.gamekit.utils.Spacing;
 
-@WidgetBuilder
 public class MainMenuButton extends Compose {
-  @WidgetBuilderField
-  protected String text;
-
   public MainMenuButton(String text, MouseEvent.Handler mouseListener) {
     super(
       ComposeConfig.child(
@@ -32,24 +26,9 @@ public class MainMenuButton extends Compose {
         )
       )
     );
-
-    this.text = text;
   }
 
   public static MainMenuButton create(String text, MouseEvent.Handler mouseListener) {
     return new MainMenuButton(text, mouseListener);
-  }
-
-  //    @Override
-  //    public boolean stateEquals(Widget widget) {
-  //      if (widget instanceof MainMenuButton mainMenuButton)
-  //        return Objects.equals(text, mainMenuButton.text);
-  //
-  //      return false;
-  //    }
-
-  @Override
-  protected void performUpdate(Widget widget) {
-    this.text = ((MainMenuButton) widget).text;
   }
 }

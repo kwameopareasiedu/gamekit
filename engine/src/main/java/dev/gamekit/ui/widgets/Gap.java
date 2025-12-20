@@ -9,10 +9,10 @@ import java.awt.*;
 /** A {@link Leaf} which leaves a gap space */
 @WidgetBuilder
 public class Gap extends Leaf {
-  @WidgetBuilderField
-  protected Integer width = 8;
-  @WidgetBuilderField
-  protected Integer height = 8;
+  @WidgetBuilderField(fallback = "8")
+  protected Integer width;
+  @WidgetBuilderField(fallback = "8")
+  protected Integer height;
 
   public Gap(GapConfig... config) {
     super(config);
@@ -20,16 +20,6 @@ public class Gap extends Leaf {
 
   public static Gap create(GapConfig... config) {
     return new Gap(config);
-  }
-
-  @Override
-  protected void performInit() {
-    GapConfig config = (GapConfig) super.config;
-
-    this.width = config.width;
-    this.height = config.height;
-
-    super.performInit();
   }
 
   @Override

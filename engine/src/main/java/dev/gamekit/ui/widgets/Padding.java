@@ -5,12 +5,10 @@ import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.utils.Constraints;
 import dev.gamekit.utils.Spacing;
 
-import static dev.gamekit.utils.Misc.coalesce;
-
 /** A {@link SingleChildParent} which adds padding around its single child */
 @WidgetBuilder
 public class Padding extends SingleChildParent {
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing()")
   protected Spacing padding;
 
   public Padding(PaddingConfig... config) {
@@ -19,15 +17,6 @@ public class Padding extends SingleChildParent {
 
   public static Padding create(PaddingConfig... config) {
     return new Padding(config);
-  }
-
-  @Override
-  protected void performInit() {
-    PaddingConfig config = (PaddingConfig) super.config;
-
-    padding = coalesce(config.padding, new Spacing());
-
-    super.performInit();
   }
 
   @Override

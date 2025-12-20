@@ -11,31 +11,29 @@ import dev.gamekit.utils.Spacing;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-import static dev.gamekit.utils.Misc.coalesce;
-
 /** A {@link Leaf} widget which displays a progress bar */
 @WidgetBuilder
 public class Progress extends Leaf implements NinePatch {
   public static final BufferedImage TRACK_BG = IO.getResourceImage("default-sprites.png", 470, 232, 96, 32);
   public static final BufferedImage FILL_BG = IO.getResourceImage("default-sprites.png", 470, 289, 96, 32);
 
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "dev.gamekit.core.IO.getResourceImage(\"default-sprites.png\", 470, 232, 96, 32)")
   protected BufferedImage trackBackground;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "dev.gamekit.core.IO.getResourceImage(\"default-sprites.png\", 470, 289, 96, 32)")
   protected BufferedImage fillBackground;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing(8)")
   protected Spacing trackEdgeInsets;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing(8)")
   protected Spacing fillEdgeInsets;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing(0)")
   protected Spacing fillMargin;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Progress.FillMode.SCALE")
   protected FillMode fillMode;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "0.0")
   protected Double minValue;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "100.0")
   protected Double maxValue;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "50.0")
   protected Double value;
 
   protected double valueRatio = 0;
@@ -56,29 +54,12 @@ public class Progress extends Leaf implements NinePatch {
   protected void performInit() {
     super.performInit();
 
-    ProgressConfig config = (ProgressConfig) super.config;
-    ThemeOld theme = coalesce(getAncestorOfType(ThemeOld.class), ThemeOld.getDefault());
-
-    if (config.value == null)
-      throw new IllegalArgumentException("Progress value cannot be null");
-    if (config.minValue == null)
-      throw new IllegalArgumentException("Progress minValue cannot be null");
-    else if (config.maxValue == null)
-      throw new IllegalArgumentException("Progress maxValue cannot be null");
-    else if (config.minValue > config.maxValue)
-      throw new IllegalArgumentException("Progress minValue cannot be more than maxValue");
-    else if (config.value < config.minValue || config.value > config.maxValue)
+    if (value == null) throw new IllegalArgumentException("Progress value cannot be null");
+    if (minValue == null) throw new IllegalArgumentException("Progress minValue cannot be null");
+    else if (maxValue == null) throw new IllegalArgumentException("Progress maxValue cannot be null");
+    else if (minValue > maxValue) throw new IllegalArgumentException("Progress minValue cannot be more than maxValue");
+    else if (value < minValue || value > maxValue)
       throw new IllegalArgumentException("Progress value must be between minValue and maxValue");
-
-    this.trackBackground = coalesce(config.trackBackground, theme.progressTrackBackground, TRACK_BG);
-    this.fillBackground = coalesce(config.fillBackground, theme.progressFillBackground, FILL_BG);
-    this.trackEdgeInsets = coalesce(config.trackEdgeInsets, theme.progressTrackEdgeInsets, new Spacing(8));
-    this.fillEdgeInsets = coalesce(config.fillEdgeInsets, theme.progressFillEdgeInsets, new Spacing(8));
-    this.fillMargin = coalesce(config.fillMargin, theme.progressFillMargin, new Spacing(0));
-    this.fillMode = coalesce(config.fillMode, theme.progressFillMode, FillMode.SCALE);
-    this.minValue = coalesce(config.minValue, 0.0);
-    this.maxValue = coalesce(config.maxValue, 100.0);
-    this.value = coalesce(config.value, 50.0);
 
     valueRatio = (value - minValue) / (maxValue - minValue);
   }

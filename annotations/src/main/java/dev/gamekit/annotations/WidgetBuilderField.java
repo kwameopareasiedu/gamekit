@@ -15,6 +15,9 @@ public @interface WidgetBuilderField {
   /** A fully qualified type to use as the argument type of the generated setter method for the annotated field */
   String customSetterType() default "";
 
+  /** A fully qualified declaration of the fallback value to set for the annotated field */
+  String fallback() default "";
+
   /** Indicates that the annotated field is used in state comparison in the generated builder class equals method */
   boolean comparable() default true;
 

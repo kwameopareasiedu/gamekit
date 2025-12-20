@@ -2,7 +2,6 @@ package dev.gamekit.ui.widgets;
 
 import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
-import dev.gamekit.core.IO;
 import dev.gamekit.ui.events.ChangeEvent;
 import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.mixins.NinePatch;
@@ -15,20 +14,17 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 import static dev.gamekit.utils.Math.clamp;
-import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link Progress} widget extension which adjusts a value by moving a slider */
 @WidgetBuilder
 public class Slider extends Progress implements NinePatch, MouseEvent.Handler {
-  public static final BufferedImage THUMB_BG = IO.getResourceImage("default-sprites.png", 470, 346, 32, 32);
-
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "dev.gamekit.core.IO.getResourceImage(\"default-sprites.png\", 470, 346, 32, 32)")
   protected BufferedImage thumbBackground;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing(8)")
   protected Spacing thumbEdgeInsets;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "32")
   protected Integer thumbWidth;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "32")
   protected Integer thumbHeight;
   @WidgetBuilderField(comparable = false, themable = false)
   protected ChangeEvent.Handler<Double> changeListener;
@@ -48,23 +44,7 @@ public class Slider extends Progress implements NinePatch, MouseEvent.Handler {
   }
 
   @Override
-  protected void performInit() {
-    super.performInit();
-
-    SliderConfig config = (SliderConfig) super.config;
-    ThemeOld theme = coalesce(getAncestorOfType(ThemeOld.class), ThemeOld.getDefault());
-
-    this.thumbBackground = coalesce(config.thumbBackground, theme.sliderThumbBackground, THUMB_BG);
-    this.thumbEdgeInsets = coalesce(config.thumbEdgeInsets, theme.sliderThumbEdgeInsets, new Spacing(8));
-    this.thumbWidth = coalesce(config.thumbWidth, theme.sliderThumbWidth, 32);
-    this.thumbHeight = coalesce(config.thumbHeight, theme.sliderThumbHeight, 32);
-    this.changeListener = coalesce(config.changeListener, null);
-  }
-
-  @Override
   protected void performLayout(Constraints constraints) {
-    //    super.performLayout(constraints);
-
     intrinsicSize.set(
       constraints.maxWidth(),
       trackBackground != null

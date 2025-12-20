@@ -5,14 +5,12 @@ import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.utils.Constraints;
 
-import static dev.gamekit.utils.Misc.coalesce;
-
 /** A {@link SingleChildParent} which aligns its single child within itself */
 @WidgetBuilder
 public class Align extends SingleChildParent {
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "dev.gamekit.ui.enums.Alignment.START")
   protected Alignment horizontalAlignment;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "dev.gamekit.ui.enums.Alignment.START")
   protected Alignment verticalAlignment;
 
   public Align(AlignConfig... config) {
@@ -21,16 +19,6 @@ public class Align extends SingleChildParent {
 
   public static Align create(AlignConfig... config) {
     return new Align(config);
-  }
-
-  @Override
-  protected void performInit() {
-    AlignConfig config = (AlignConfig) super.config;
-
-    this.horizontalAlignment = coalesce(config.horizontalAlignment, Alignment.START);
-    this.verticalAlignment = coalesce(config.verticalAlignment, Alignment.START);
-
-    super.performInit();
   }
 
   @Override

@@ -14,8 +14,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static dev.gamekit.utils.Misc.coalesce;
-
 /** A {@link Leaf} which renders text to the screen */
 @SuppressWarnings("MagicConstant")
 @WidgetBuilder
@@ -25,27 +23,27 @@ public class Text extends Leaf {
   public static final int BOLD = Font.BOLD;
   public static final int ITALIC = Font.ITALIC;
 
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "\"Hello GameKit\"")
   protected String text;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "dev.gamekit.core.IO.getResourceFont(\"font-default.ttf\")")
   protected Font font;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "20")
   protected Integer fontSize;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Text.PLAIN")
   protected Integer fontStyle;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "java.awt.Color.WHITE")
   protected Color color;
   @WidgetBuilderField
   protected Color backgroundColor;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "dev.gamekit.ui.enums.Alignment.START")
   protected Alignment alignment;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "false")
   protected Boolean shadowEnabled;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "0")
   protected Integer shadowOffsetX;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "0")
   protected Integer shadowOffsetY;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "java.awt.Color.WHITE")
   protected Color shadowColor;
 
   protected List<Symbol> symbols;
@@ -65,25 +63,10 @@ public class Text extends Leaf {
   protected void performInit() {
     super.performInit();
 
-    TextConfig config = (TextConfig) super.config;
-    ThemeOld theme = coalesce(getAncestorOfType(ThemeOld.class), ThemeOld.getDefault());
+    if (text == null) throw new IllegalArgumentException("Text text cannot be null");
+    if (font == null) throw new IllegalArgumentException("Text font cannot be null");
 
-    if (config.text == null)
-      throw new IllegalArgumentException("Text text cannot be null");
-
-    text = config.text;
-    font = coalesce(config.font, theme.textFont, DEFAULT_FONT);
-    fontSize = coalesce(config.fontSize, theme.textFontSize, 20);
-    fontStyle = coalesce(config.fontStyle, theme.textFontStyle, PLAIN);
-    color = coalesce(config.color, theme.textColor, Color.WHITE);
-    backgroundColor = coalesce(config.backgroundColor, theme.textBackgroundColor, null);
-    alignment = coalesce(config.alignment, theme.textAlignment, Alignment.START);
-    shadowEnabled = coalesce(config.shadowEnabled, theme.textShadowEnabled, false);
-    shadowOffsetX = coalesce(config.shadowOffsetX, theme.textShadowOffsetX, 0);
-    shadowOffsetY = coalesce(config.shadowOffsetY, theme.textShadowOffsetY, 0);
-    shadowColor = coalesce(config.shadowColor, theme.textShadowColor, Color.WHITE);
-
-    renderFont = font != null ? font.deriveFont(fontStyle, fontSize) : DEFAULT_FONT.deriveFont(fontStyle, fontSize);
+    renderFont = font.deriveFont(fontStyle, fontSize);
     fontMetrics = host.getFontMetrics(renderFont);
   }
 

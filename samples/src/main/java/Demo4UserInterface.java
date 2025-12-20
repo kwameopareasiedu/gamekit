@@ -29,10 +29,8 @@ public class Demo4UserInterface extends Scene {
   private static final BufferedImage LOGO = IO.getResourceImage("planetfall-logo.png");
   private static final BufferedImage SCRIM = IO.getResourceImage("transparent-black.png");
   private static final BufferedImage THUMB = IO.getResourceImage("slider-thumb.png");
-  private static final BufferedImage PROGRESS_TRACK =
-    IO.getResourceImage("progress.png", 0, 4, 48, 8);
-  private static final BufferedImage PROGRESS_FILL =
-    IO.getResourceImage("progress.png", 50, 4, 4, 8);
+  private static final BufferedImage PROGRESS_TRACK = IO.getResourceImage("progress.png", 0, 4, 48, 8);
+  private static final BufferedImage PROGRESS_FILL = IO.getResourceImage("progress.png", 50, 4, 4, 8);
 
   private String fieldValue = "Hello";
   private boolean checkboxValue = false;
@@ -92,9 +90,9 @@ public class Demo4UserInterface extends Scene {
             Padding.create(
               PaddingConfig.padding(new Spacing(256, 8, 16, 96)),
               PaddingConfig.child(
-                ThemeOld.create(
-                  ThemeConfig.textFontSize(10),
-                  ThemeConfig.textFontStyle(Text.ITALIC),
+                Theme.create(
+//                  ThemeConfig.textFontSize(10),
+//                  ThemeConfig.textFontStyle(Text.ITALIC),
                   ThemeConfig.child(
                     Column.create(
                       ColumnConfig.mainAxisAlignment(MainAxisAlignment.START),

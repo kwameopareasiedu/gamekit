@@ -4,12 +4,10 @@ import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.utils.Constraints;
 
-import static dev.gamekit.utils.Misc.coalesce;
-
 /** A {@link SingleChildParent} which scales the computed size of its child */
 @WidgetBuilder
 public class Scaled extends SingleChildParent {
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "1.0")
   protected Double scale;
 
   public Scaled(ScaledConfig... config) {
@@ -18,15 +16,6 @@ public class Scaled extends SingleChildParent {
 
   public static Scaled create(ScaledConfig... config) {
     return new Scaled(config);
-  }
-
-  @Override
-  protected void performInit() {
-    ScaledConfig config = (ScaledConfig) super.config;
-
-    scale = Math.max(0, coalesce(config.scale, 1.0));
-
-    super.performInit();
   }
 
   @Override

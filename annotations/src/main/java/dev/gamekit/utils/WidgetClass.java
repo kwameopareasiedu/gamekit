@@ -6,44 +6,54 @@ import java.util.List;
 
 /** {@link WidgetField} holds type information for {@code Widgets} annotated with {@link WidgetBuilder} */
 public class WidgetClass {
-  public final String name;
-  public final String simpleName;
-  public final String builderName;
+  /** E.g: For a widget {@code Field}, this is {@code dev.gamekit.ui.widgets.Field} */
+  public final String typeName;
+  /** E.g: For a widget {@code Field}, this is {@code Field} */
+  public final String simpleTypeName;
+  /** E.g: For a widget {@code Field}, this is {@code field} */
+  public final String varName;
+  /** E.g: For a widget {@code Field}, this is {@code dev.gamekit.ui.widgets.FieldConfig} */
+  public final String builderTypeName;
+  /** E.g: For a widget {@code Field}, this is {@code FieldConfig} */
+  public final String builderSimpleTypeName;
+  /** E.g: For a widget {@code Field}, this is {@code fieldConfig} */
   public final String builderVarName;
-  public final String builderSimpleName;
+  /** E.g: For a widget {@code Field}, this is {@code dev.gamekit.ui.widgets} */
   public final String builderPackageName;
-  public final String superBuilderName;
-  public final List<WidgetField> allFields;
-  public final List<WidgetField> ownFields;
+  /** E.g: For a widget {@code Field}, this is {@code dev.gamekit.ui.widgets.Text} */
+  public final String superClassTypeName;
+  /** E.g: For a widget {@code Field}, this is {@code dev.gamekit.ui.widgets.TextConfig} */
+  public final String superClassBuilderTypeName;
+  public final List<WidgetField> fields;
 
-  public WidgetClass(
-    String name,
-    String superName,
-    List<WidgetField> allFields,
-    List<WidgetField> ownFields
-  ) {
-    this.name = name;
-    this.allFields = allFields;
-    this.ownFields = ownFields;
+  public WidgetClass(String typeName, String superClassTypeName, List<WidgetField> fields) {
+    this.typeName = typeName;
+    this.superClassTypeName = superClassTypeName;
+    this.fields = fields;
 
-    simpleName = name.substring(name.lastIndexOf(".") + 1);
-    builderName = name + "Config";
-    builderPackageName = builderName.substring(0, builderName.lastIndexOf("."));
-    builderSimpleName = builderName.substring(builderName.lastIndexOf(".") + 1);
-    builderVarName = builderSimpleName.substring(0, 1).toLowerCase() + builderSimpleName.substring(1);
-    superBuilderName = superName != null ? superName + "Config" : null;
+    simpleTypeName = typeName.substring(typeName.lastIndexOf(".") + 1);
+    varName = simpleTypeName.substring(0, 1).toLowerCase() + simpleTypeName.substring(1);
+    builderTypeName = typeName + "Config";
+    builderSimpleTypeName = builderTypeName.substring(builderTypeName.lastIndexOf(".") + 1);
+    builderVarName = builderSimpleTypeName.substring(0, 1).toLowerCase() + builderSimpleTypeName.substring(1);
+    builderPackageName = builderTypeName.substring(0, builderTypeName.lastIndexOf("."));
+
+    superClassBuilderTypeName = superClassTypeName != null ? superClassTypeName + "Config" : null;
   }
 
   @Override
   public String toString() {
     return "WidgetClass{" +
-      "\nbuilderName='" + builderName + '\'' +
+      "\ntypeName='" + typeName + '\'' +
+      "\nsimpleTypeName='" + simpleTypeName + '\'' +
+      "\nvarName='" + varName + '\'' +
+      "\nbuilderTypeName='" + builderTypeName + '\'' +
+      "\nbuilderSimpleTypeName='" + builderSimpleTypeName + '\'' +
       "\nbuilderVarName='" + builderVarName + '\'' +
-      "\nbuilderSimpleName='" + builderSimpleName + '\'' +
       "\nbuilderPackageName='" + builderPackageName + '\'' +
-      "\nsuperBuilderName='" + superBuilderName + '\'' +
-      "\nallFields=" + allFields.size() +
-      "\nownFields=" + ownFields.size() +
+      "\nsuperClassTypeName='" + superClassTypeName + '\'' +
+      "\nsuperClassBuilderTypeName='" + superClassBuilderTypeName + '\'' +
+      "\nfields=" + fields.size() +
       "\n}\n";
   }
 }

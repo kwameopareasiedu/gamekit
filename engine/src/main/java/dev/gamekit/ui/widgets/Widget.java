@@ -67,13 +67,15 @@ public abstract class Widget {
    * If the widget is updated some time after first initialization, this method is called
    * afterward to re-initialize the widget.
    * <p>
-   * A common use-case is to look up ancestors for additional information (E.g. Theme look-up)
+   * Since the {@link #config} has either been set in the constructor or updated via the {@link #updateState} method,
+   * it is used to update this widget instance.
    * <p>
    * Since this method is marked as {@code final}, subclasses should override the
    * {@link #performInit} method instead to perform any post-mount operations
    */
   public final void init(Host host) {
     this.host = host;
+    config.updateWidget(this);
     performInit();
   }
 
@@ -253,11 +255,11 @@ public abstract class Widget {
 
   /** Base class for all widget constructor configurations */
   public interface Config {
-    /** Returns a new config which merges this and provided config objects */
-    Config mergeWith(Config[] configs);
-
     /** Updates matching widget state variables with its own variables */
     void updateWidget(Widget widget);
+
+    /** Returns a new config which merges this and provided config objects */
+    Config mergeWith(Config[] configs);
   }
 
   /**

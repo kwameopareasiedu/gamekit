@@ -11,8 +11,6 @@ import dev.gamekit.utils.Spacing;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-import static dev.gamekit.utils.Misc.coalesce;
-
 /** A {@link Widget} which can be clicked to trigger an action */
 @WidgetBuilder
 public class Button extends SingleChildParent implements NinePatch, MouseEvent.Handler {
@@ -20,13 +18,13 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
   public static final BufferedImage HOVER_BG = IO.getResourceImage("default-sprites.png", 64, 232, 350, 120);
   public static final BufferedImage PRESSED_BG = IO.getResourceImage("default-sprites.png", 64, 400, 350, 120);
 
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "dev.gamekit.core.IO.getResourceImage(\"default-sprites.png\", 64, 64, 350, 120)")
   protected BufferedImage defaultBackground;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "dev.gamekit.core.IO.getResourceImage(\"default-sprites.png\", 64, 232, 350, 120)")
   protected BufferedImage hoverBackground;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "dev.gamekit.core.IO.getResourceImage(\"default-sprites.png\", 64, 400, 350, 120)")
   protected BufferedImage pressedBackground;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing(24)")
   protected Spacing edgeInsets;
   @WidgetBuilderField(comparable = false, themable = false)
   protected MouseEvent.Handler mouseListener;
@@ -40,20 +38,6 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
 
   public static Button create(ButtonConfig... config) {
     return new Button(config);
-  }
-
-  @Override
-  protected void performInit() {
-    ButtonConfig config = (ButtonConfig) super.config;
-    ThemeOld theme = coalesce(getAncestorOfType(ThemeOld.class), ThemeOld.getDefault());
-
-    this.edgeInsets = coalesce(config.edgeInsets, theme.buttonEdgeInsets, new Spacing(24));
-    this.defaultBackground = coalesce(config.defaultBackground, theme.buttonDefaultBackground, DEFAULT_BG);
-    this.hoverBackground = coalesce(config.hoverBackground, theme.buttonHoverBackground, HOVER_BG);
-    this.pressedBackground = coalesce(config.pressedBackground, theme.buttonPressedBackground, PRESSED_BG);
-    this.mouseListener = coalesce(config.mouseListener, null);
-
-    super.performInit();
   }
 
   @Override

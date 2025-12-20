@@ -4,15 +4,13 @@ import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.utils.Constraints;
 
-import static dev.gamekit.utils.Misc.coalesce;
-
 /** A {@link SingleChildParent} which enforces a fractional size of itself on its child */
 @WidgetBuilder
 public class FractionalSize extends SingleChildParent {
-  @WidgetBuilderField
-  protected Double widthRatio = 1.0;
-  @WidgetBuilderField
-  protected Double heightRatio = 1.0;
+  @WidgetBuilderField(fallback = "1.0")
+  protected Double widthRatio;
+  @WidgetBuilderField(fallback = "1.0")
+  protected Double heightRatio;
 
   public FractionalSize(FractionalSizeConfig... config) {
     super(config);
@@ -20,16 +18,6 @@ public class FractionalSize extends SingleChildParent {
 
   public static FractionalSize create(FractionalSizeConfig... config) {
     return new FractionalSize(config);
-  }
-
-  @Override
-  protected void performInit() {
-    FractionalSizeConfig config = (FractionalSizeConfig) super.config;
-
-    this.widthRatio = coalesce(config.widthRatio, 1.0);
-    this.heightRatio = coalesce(config.heightRatio, 1.0);
-
-    super.performInit();
   }
 
   @Override

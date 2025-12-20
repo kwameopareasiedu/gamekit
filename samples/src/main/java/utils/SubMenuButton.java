@@ -1,15 +1,9 @@
 package utils;
 
-import dev.gamekit.annotations.WidgetBuilder;
-import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.ui.widgets.*;
 import dev.gamekit.utils.Spacing;
 
-@WidgetBuilder
 public class SubMenuButton extends Compose {
-  @WidgetBuilderField
-  protected String text;
-
   public SubMenuButton(String text) {
     super(
       ComposeConfig.child(
@@ -28,24 +22,9 @@ public class SubMenuButton extends Compose {
         )
       )
     );
-
-    this.text = text;
   }
 
   public static SubMenuButton create(String text) {
     return new SubMenuButton(text);
-  }
-
-  //    @Override
-  //    public boolean stateEquals(Widget widget) {
-  //      if (widget instanceof SubMenuButton subMenuButton)
-  //        return Objects.equals(text, subMenuButton.text);
-  //
-  //      return false;
-  //    }
-
-  @Override
-  protected void performUpdate(Widget widget) {
-    this.text = ((SubMenuButton) widget).text;
   }
 }

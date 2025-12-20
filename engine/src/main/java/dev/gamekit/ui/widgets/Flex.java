@@ -5,30 +5,17 @@ import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.enums.MainAxisAlignment;
 
-import static dev.gamekit.utils.Misc.coalesce;
-
 /** A {@link MultiChildParent} which arranges its children linearly along one axis */
 @WidgetBuilder
 public abstract class Flex extends MultiChildParent {
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "10")
   protected Integer gapSize;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "dev.gamekit.ui.enums.MainAxisAlignment.START")
   protected MainAxisAlignment mainAxisAlignment;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "dev.gamekit.ui.enums.CrossAxisAlignment.START")
   protected CrossAxisAlignment crossAxisAlignment;
 
   public Flex(FlexConfig... config) {
     super(config);
-  }
-
-  @Override
-  protected void performInit() {
-    FlexConfig config = (FlexConfig) super.config;
-
-    this.gapSize = coalesce(config.gapSize, 12);
-    this.mainAxisAlignment = coalesce(config.mainAxisAlignment, MainAxisAlignment.START);
-    this.crossAxisAlignment = coalesce(config.crossAxisAlignment, CrossAxisAlignment.START);
-
-    super.performInit();
   }
 }

@@ -9,16 +9,14 @@ import dev.gamekit.utils.Constraints;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-import static dev.gamekit.utils.Misc.coalesce;
-
 /** A {@link Leaf} which renders a {@link BufferedImage} to the screen */
 @WidgetBuilder
 public class Image extends Leaf {
   @WidgetBuilderField(themable = false)
   protected BufferedImage image;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "dev.gamekit.ui.enums.ImageFit.FIT")
   protected ImageFit fit;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "dev.gamekit.settings.ImageInterpolation.DEFAULT")
   protected ImageInterpolation interpolation;
 
   public Image(ImageConfig... config) {
@@ -31,20 +29,6 @@ public class Image extends Leaf {
 
   public static ImageConfig config() {
     return new ImageConfig();
-  }
-
-  @Override
-  protected void performInit() {
-    ImageConfig config = (ImageConfig) super.config;
-
-    if (config.image == null)
-      throw new IllegalArgumentException("Image image cannot be null");
-
-    this.image = config.image;
-    this.fit = coalesce(config.fit, ImageFit.FIT);
-    this.interpolation = coalesce(config.interpolation, ImageInterpolation.DEFAULT);
-
-    super.performInit();
   }
 
   @Override

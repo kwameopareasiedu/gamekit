@@ -6,14 +6,12 @@ import dev.gamekit.utils.Constraints;
 
 import java.awt.*;
 
-import static dev.gamekit.utils.Misc.coalesce;
-
 /** A {@link Leaf} which renders a solid color background */
 @WidgetBuilder
 public class Colored extends Leaf {
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "java.awt.Color.GRAY")
   protected Color color;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "0")
   protected Integer borderRadius;
 
   public Colored(ColoredConfig... config) {
@@ -22,16 +20,6 @@ public class Colored extends Leaf {
 
   public static Colored create(ColoredConfig... config) {
     return new Colored(config);
-  }
-
-  @Override
-  protected void performInit() {
-    super.performInit();
-
-    ColoredConfig config = (ColoredConfig) super.config;
-
-    this.color = coalesce(config.color, Color.GRAY);
-    this.borderRadius = coalesce(config.borderRadius, 0);
   }
 
   @Override
