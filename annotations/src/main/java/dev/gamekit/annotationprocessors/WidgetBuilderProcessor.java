@@ -127,13 +127,13 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
       JavaFileObject fileObject = processingEnv.getFiler().createSourceFile(widgetClass.builderTypeName);
 
       try (PrintWriter out = new PrintWriter(fileObject.openOutputStream())) {
-        // Builder package declaration
+        // Config package declaration
         out.printf("package %s;\n\n", widgetClass.builderPackageName);
 
-        // Builder import declarations
+        // Config import declarations
         out.printf("import dev.gamekit.utils.Misc;\n\n");
 
-        // Builder class declaration
+        // Config class declaration
         if (widgetClass.superClassBuilderTypeName != null) {
           out.printf("public class %s extends %s implements Widget.Config {\n",
             widgetClass.builderSimpleTypeName, widgetClass.superClassBuilderTypeName);
@@ -142,7 +142,7 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
             widgetClass.builderSimpleTypeName);
         }
 
-        // Builder instance fields declaration
+        // Config instance fields declaration
         List<WidgetField> widgetClassOwnFields =
           widgetClass.fields.stream().filter(field -> field.classTypeName.equals(widgetClass.typeName)).toList();
 
@@ -153,7 +153,7 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
           if (i == widgetClassOwnFields.size() - 1) out.println();
         }
 
-        // Builder static setters declaration
+        // Config static setters declaration
         for (WidgetField field : widgetClass.fields) {
           out.printf("\tpublic static %s %s(%s %s) {\n",
             widgetClass.builderTypeName, field.varName, field.setterTypeName, field.varName);
@@ -163,7 +163,7 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
           out.printf("\t}\n\n");
         }
 
-        // Builder equals method override
+        // Config equals method override
         out.printf("\t@Override\n");
         out.printf("\tpublic boolean equals(Object obj) {\n");
 
@@ -180,7 +180,7 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
         out.printf("\t}\n\n");
 
 
-        // Builder updateWidget method override
+        // Config updateWidget method override
         out.printf("\t@Override\n");
         out.printf("\tpublic void updateWidget(Widget widget) {\n");
         out.printf("\t\t%s %sWidget = (%s) widget;\n", widgetClass.typeName, widgetClass.varName, widgetClass.typeName);
@@ -202,7 +202,7 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
 
         out.printf("\t}\n\n");
 
-        // Builder mergeWith method override
+        // Config mergeWith method override
         out.printf("\t@Override\n");
         out.printf("\tpublic Widget.Config mergeWith(Widget.Config[] configs) {\n");
         out.printf("\t\t%s resolved = new %s();\n\n",
@@ -221,7 +221,7 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
         out.printf("\t\treturn resolved;\n");
         out.printf("\t}\n\n");
 
-        // Builder class end brace
+        // Config class end brace
         out.printf("}");
       }
     } catch (IOException e) {
