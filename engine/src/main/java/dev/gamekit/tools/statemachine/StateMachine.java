@@ -6,10 +6,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * {@link StateMachine} manages a finite set of {@link FiniteState states} and the transitions
- * between them
- */
+/** {@link StateMachine} manages a finite set of {@link FiniteState states} and the transitions  between them */
 public class StateMachine<K extends Enum<K>> {
   public static boolean DEBUG = false;
 
@@ -45,15 +42,13 @@ public class StateMachine<K extends Enum<K>> {
     K nextStateKey = currentState.getNextStateKey();
 
     if (nextStateKey != null && nextStateKey != currentState.key) {
-      if (DEBUG)
-        logger.debug("Exiting {}", currentState.getClass().getName());
+      if (DEBUG) logger.debug("Exiting {}", currentState.getClass().getName());
 
       currentState.exit();
       currentState = stateMap.get(nextStateKey);
       currentState.enter();
 
-      if (DEBUG)
-        logger.debug("Entering {}", currentState.getClass().getName());
+      if (DEBUG) logger.debug("Entering {}", currentState.getClass().getName());
     }
 
     currentState.update();

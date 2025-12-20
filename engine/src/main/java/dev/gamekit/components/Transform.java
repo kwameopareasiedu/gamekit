@@ -28,9 +28,7 @@ public class Transform extends Component {
   public void validate(Entity ignored, List<Component> components) {
     for (Component component : components) {
       if (component instanceof Transform) {
-        throw new IllegalArgumentException(
-          "Entity cannot have more than one Transform component"
-        );
+        throw new IllegalArgumentException("Entity cannot have more than one Transform component");
       }
     }
   }
@@ -65,10 +63,7 @@ public class Transform extends Component {
     double offsetX = x - globalPosition.x;
     double offsetY = y - globalPosition.y;
 
-    localPosition.set(
-      localPosition.x + offsetX,
-      localPosition.y + offsetY
-    );
+    localPosition.set(localPosition.x + offsetX, localPosition.y + offsetY);
   }
 
   /** Returns the local rotation (radian) */
@@ -103,15 +98,8 @@ public class Transform extends Component {
     while (parentEntity != null) {
       Transform parentTransform = parentEntity.findComponent(Transform.class);
 
-      globalPosition.set(
-        globalPosition.x + parentTransform.localPosition.x,
-        globalPosition.y + parentTransform.localPosition.y
-      );
-
-      parentTransform.globalPosition.rotatePoint(
-        globalPosition,
-        parentTransform.globalRotation
-      );
+      globalPosition.set(globalPosition.x + parentTransform.localPosition.x, globalPosition.y + parentTransform.localPosition.y);
+      parentTransform.globalPosition.rotatePoint(globalPosition, parentTransform.globalRotation);
 
       globalRotation += parentTransform.localRotation;
 

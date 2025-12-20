@@ -41,15 +41,9 @@ public final class Window {
     if (settings.fullScreen) {
       frame.setUndecorated(true);
 
-      GraphicsEnvironment
-        .getLocalGraphicsEnvironment()
-        .getDefaultScreenDevice()
-        .setFullScreenWindow(frame);
+      GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(frame);
 
-      Dimension d = new Dimension(
-        Resolution.NATIVE.width(),
-        Resolution.NATIVE.height()
-      );
+      Dimension d = new Dimension(Resolution.NATIVE.width(), Resolution.NATIVE.height());
 
       frame.setMinimumSize(d);
       frame.setPreferredSize(d);
@@ -148,15 +142,8 @@ public final class Window {
       int dx2 = dx1 + scaledWidth;
       int dy2 = dy1 + scaledHeight;
 
-      renderGraphics.drawImage(
-        displayBuffer, dx1, dy1, dx2, dy2,
-        0, 0, displayWidth, displayHeight, null
-      );
-
-      renderGraphics.drawImage(
-        uiBuffer, dx1, dy1, dx2, dy2,
-        0, 0, displayWidth, displayHeight, null
-      );
+      renderGraphics.drawImage(displayBuffer, dx1, dy1, dx2, dy2, 0, 0, displayWidth, displayHeight, null);
+      renderGraphics.drawImage(uiBuffer, dx1, dy1, dx2, dy2, 0, 0, displayWidth, displayHeight, null);
     } else {
       renderGraphics.drawImage(displayBuffer, null, 0, 0);
       renderGraphics.drawImage(uiBuffer, null, 0, 0);

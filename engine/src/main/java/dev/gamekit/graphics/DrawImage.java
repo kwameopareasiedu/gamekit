@@ -50,7 +50,8 @@ public class DrawImage extends DrawCall<DrawImage> {
 
   @Override
   protected void cleanup(Graphics2D g) {
-    if (prevInterpolation != null)
+    if (prevInterpolation != null) {
       prevInterpolation.apply(g);
+    }
   }
 }

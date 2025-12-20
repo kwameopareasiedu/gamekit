@@ -1,44 +1,24 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.utils.Constraints;
+import dev.gamekit.annotations.WidgetBuilder;
+import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.ui.enums.Alignment;
-
-import java.util.Objects;
-
-import static dev.gamekit.utils.Misc.coalesce;
+import dev.gamekit.utils.Constraints;
 
 /** A {@link SingleChildParent} which aligns its single child within itself */
+@WidgetBuilder
 public class Align extends SingleChildParent {
+  @WidgetBuilderField(fallback = "dev.gamekit.ui.enums.Alignment.START")
   protected Alignment horizontalAlignment;
+  @WidgetBuilderField(fallback = "dev.gamekit.ui.enums.Alignment.START")
   protected Alignment verticalAlignment;
 
-  public Align(AlignConfig config, Widget child) {
-    super(config, child);
+  public Align(AlignConfig... config) {
+    super(config);
   }
 
-  public static Align create(AlignConfig config, Widget child) {
-    return new Align(config, child);
-  }
-
-  public static AlignConfig config() {
-    return new AlignConfig();
-  }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    return widget instanceof Align alignWidget &&
-      Objects.equals(horizontalAlignment, alignWidget.horizontalAlignment)
-      && Objects.equals(verticalAlignment, alignWidget.verticalAlignment);
-  }
-
-  @Override
-  protected void performInit() {
-    AlignConfig config = (AlignConfig) super.config;
-
-    this.horizontalAlignment = coalesce(config.horizontalAlignment, Alignment.START);
-    this.verticalAlignment = coalesce(config.verticalAlignment, Alignment.START);
-
-    super.performInit();
+  public static Align create(AlignConfig... config) {
+    return new Align(config);
   }
 
   @Override
@@ -73,20 +53,5 @@ public class Align extends SingleChildParent {
     };
 
     child.computedBounds.setPosition(hOffset, vOffset);
-  }
-
-  public static class AlignConfig extends SingleChildParentConfig {
-    protected Alignment horizontalAlignment;
-    protected Alignment verticalAlignment;
-
-    public AlignConfig horizontalAlignment(Alignment horizontalAlignment) {
-      this.horizontalAlignment = horizontalAlignment;
-      return this;
-    }
-
-    public AlignConfig verticalAlignment(Alignment verticalAlignment) {
-      this.verticalAlignment = verticalAlignment;
-      return this;
-    }
   }
 }

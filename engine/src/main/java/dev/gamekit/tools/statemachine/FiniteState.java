@@ -1,9 +1,6 @@
 package dev.gamekit.tools.statemachine;
 
-/**
- * A state represents a behaviour in a state machine. Subclasses should extend to represent
- * concrete behaviours
- */
+/** A state represents a behaviour in a state machine. Subclasses should extend to represent concrete behaviours */
 public abstract class FiniteState<K extends Enum<K>> {
   public final K key;
 
@@ -24,9 +21,6 @@ public abstract class FiniteState<K extends Enum<K>> {
    */
   public abstract K getNextStateKey();
 
-  /**
-   * Called to run cleanup logic for the state when the state machine is transitioning to
-   * another state
-   */
+  /** Called to run cleanup logic for the state when the state machine is transitioning to  another state */
   protected void exit() { /* No-op */ }
 }

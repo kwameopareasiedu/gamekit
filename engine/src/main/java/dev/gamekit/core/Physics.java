@@ -17,23 +17,17 @@ import java.util.List;
 public final class Physics {
   public static final double PIXELS_PER_METER = 128.0;
 
-  private static final World<Body> WORLD;
-  private static final HashMap<String, CollisionListener> COLLISION_LISTENER_MAP;
+  private static final World<Body> WORLD = new World<>();
+  private static final HashMap<String, CollisionListener> COLLISION_LISTENER_MAP = new HashMap<>();
   private static final Logger LOGGER = LogManager.getLogger(Physics.class);
-  private static final List<Body> NEW_BODIES;
-  private static final List<Body> DESTROYED_BODIES;
+  private static final List<Body> NEW_BODIES = new ArrayList<>();
+  private static final List<Body> DESTROYED_BODIES = new ArrayList<>();
 
   static {
-    WORLD = new World<>();
-    COLLISION_LISTENER_MAP = new HashMap<>();
-    NEW_BODIES = new ArrayList<>();
-    DESTROYED_BODIES = new ArrayList<>();
-
     WORLD.addCollisionListener(new CollisionListenerAdapter<>() {
       @Override
       public boolean collision(ManifoldCollisionData<Body, BodyFixture> collision) {
-        if (COLLISION_LISTENER_MAP.isEmpty())
-          return true;
+        if (COLLISION_LISTENER_MAP.isEmpty()) return true;
 
         Collider.ColliderFixture fx1 = (Collider.ColliderFixture) collision.getFixture1();
         Collider.ColliderFixture fx2 = (Collider.ColliderFixture) collision.getFixture2();
@@ -58,15 +52,14 @@ public final class Physics {
 
   /**
    * Performs a simulation step of the physics world
+   *
    * @see org.dyn4j.world.AbstractPhysicsWorld#update(double)
    */
   static void update() {
     double elapsedTime = Application.FRAME_INTERVAL_MS / 1000.0;
 
     if (WORLD.update(elapsedTime)) {
-      COLLISION_LISTENER_MAP.forEach(
-        (body, listener) -> listener.update()
-      );
+      COLLISION_LISTENER_MAP.forEach((body, listener) -> listener.update());
 
       synchronized (NEW_BODIES) {
         for (Body body : NEW_BODIES)
@@ -137,10 +130,10 @@ public final class Physics {
       currentColliderMap.put(otherFixture.id, otherFixture.getCollider());
     }
 
-    public void onCollisionEnter(Collider otherCollider) { }
+    public void onCollisionEnter(Collider otherCollider) { /* No-op */ }
 
-    public void onCollisionStay(Collider otherCollider) { }
+    public void onCollisionStay(Collider otherCollider) { /* No-op */ }
 
-    public void onCollisionExit(Collider otherCollider) { }
+    public void onCollisionExit(Collider otherCollider) { /* No-op */ }
   }
 }

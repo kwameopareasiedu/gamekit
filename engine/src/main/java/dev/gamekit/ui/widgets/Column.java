@@ -1,24 +1,18 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.utils.Constraints;
+import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.ui.enums.MainAxisAlignment;
+import dev.gamekit.utils.Constraints;
 
 /** A {@link Flex} which arranges its children vertically */
+@WidgetBuilder
 public class Column extends Flex {
-  public Column(ColumnConfig<? extends ColumnConfig<?>> config, Widget... children) {
-    super(config, children);
+  public Column(ColumnConfig... config) {
+    super(config);
   }
 
-  public static Column create(ColumnConfig<? extends ColumnConfig<?>> config, Widget... children) {
-    return new Column(config, children);
-  }
-
-  public static Column create(Widget... children) {
-    return new Column(new ColumnConfig<>(), children);
-  }
-
-  public static ColumnConfig<? extends ColumnConfig<?>> config() {
-    return new ColumnConfig<>();
+  public static Column create(ColumnConfig... config) {
+    return new Column(config);
   }
 
   @Override
@@ -51,7 +45,7 @@ public class Column extends Flex {
     );
 
     double freeSpace = Math.max(0, computedBounds.height - intrinsicSize.height);
-    double spaceBetween = freeSpace / Math.max(children.size() - 1, 1);
+    double spaceBetween = freeSpace / Math.max(children.length - 1, 1);
 
     double newY = switch (mainAxisAlignment) {
       case CENTER -> computedBounds.height / 2 - intrinsicSize.height / 2;
@@ -85,12 +79,4 @@ public class Column extends Flex {
       }
     }
   }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    return widget instanceof Column columnWidget &&
-      super.stateEquals(columnWidget);
-  }
-
-  public static class ColumnConfig<T extends ColumnConfig<T>> extends FlexConfig<T> { }
 }

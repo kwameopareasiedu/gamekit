@@ -1,98 +1,72 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.annotations.WidgetBuilder;
+import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.core.IO;
 import dev.gamekit.core.UI;
-import dev.gamekit.utils.Constraints;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.utils.Bounds;
+import dev.gamekit.utils.Constraints;
 
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-
-import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link Leaf} which renders text to the screen */
 @SuppressWarnings("MagicConstant")
+@WidgetBuilder
 public class Text extends Leaf {
   public static final Font DEFAULT_FONT = IO.getResourceFont("font-default.ttf");
   public static final int PLAIN = Font.PLAIN;
   public static final int BOLD = Font.BOLD;
   public static final int ITALIC = Font.ITALIC;
 
+  @WidgetBuilderField(fallback = "\"Hello GameKit\"")
   protected String text;
+  @WidgetBuilderField(fallback = "dev.gamekit.core.IO.getResourceFont(\"font-default.ttf\")")
   protected Font font;
+  @WidgetBuilderField(fallback = "20")
   protected Integer fontSize;
+  @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Text.PLAIN")
   protected Integer fontStyle;
+  @WidgetBuilderField(fallback = "java.awt.Color.WHITE")
   protected Color color;
+  @WidgetBuilderField
   protected Color backgroundColor;
+  @WidgetBuilderField(fallback = "dev.gamekit.ui.enums.Alignment.START")
   protected Alignment alignment;
+  @WidgetBuilderField(fallback = "false")
   protected Boolean shadowEnabled;
+  @WidgetBuilderField(fallback = "0")
   protected Integer shadowOffsetX;
+  @WidgetBuilderField(fallback = "0")
   protected Integer shadowOffsetY;
+  @WidgetBuilderField(fallback = "java.awt.Color.WHITE")
   protected Color shadowColor;
+
   protected List<Symbol> symbols;
 
   private Font renderFont;
   private FontMetrics fontMetrics;
 
-  public Text(TextConfig<?> config, String text) {
-    super(config.text(text));
+  public Text(TextConfig... config) {
+    super(config);
   }
 
-  public static Text create(TextConfig<?> params, String text) {
-    return new Text(params, text);
-  }
-
-  public static Text create(String text) {
-    return new Text(new TextConfig<>(), text);
-  }
-
-  public static TextConfig<?> config() {
-    return new TextConfig<>();
-  }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    return widget instanceof Text textWidget &&
-      Objects.equals(text, textWidget.text) &&
-      Objects.equals(font, textWidget.font) &&
-      Objects.equals(fontSize, textWidget.fontSize) &&
-      Objects.equals(fontStyle, textWidget.fontStyle) &&
-      Objects.equals(color, textWidget.color) &&
-      Objects.equals(backgroundColor, textWidget.backgroundColor) &&
-      Objects.equals(alignment, textWidget.alignment) &&
-      Objects.equals(shadowEnabled, textWidget.shadowEnabled) &&
-      Objects.equals(shadowOffsetX, textWidget.shadowOffsetX) &&
-      Objects.equals(shadowOffsetY, textWidget.shadowOffsetY) &&
-      Objects.equals(shadowColor, textWidget.shadowColor);
+  public static Text create(TextConfig... config) {
+    return new Text(config);
   }
 
   @Override
   protected void performInit() {
     super.performInit();
 
-    TextConfig<?> config = (TextConfig<?>) super.config;
-    Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
+    if (text == null) throw new IllegalArgumentException("Text text cannot be null");
+    if (font == null) throw new IllegalArgumentException("Text font cannot be null");
 
-    if (config.text == null)
-      throw new IllegalArgumentException("Text text cannot be null");
-
-    text = config.text;
-    font = coalesce(config.font, theme.textFont, DEFAULT_FONT);
-    fontSize = coalesce(config.fontSize, theme.textFontSize, 20);
-    fontStyle = coalesce(config.fontStyle, theme.textFontStyle, PLAIN);
-    color = coalesce(config.color, theme.textColor, Color.WHITE);
-    backgroundColor = coalesce(config.backgroundColor, theme.textBackgroundColor, null);
-    alignment = coalesce(config.alignment, theme.textAlignment, Alignment.START);
-    shadowEnabled = coalesce(config.shadowEnabled, theme.textShadowEnabled, false);
-    shadowOffsetX = coalesce(config.shadowOffsetX, theme.textShadowOffsetX, 0);
-    shadowOffsetY = coalesce(config.shadowOffsetY, theme.textShadowOffsetY, 0);
-    shadowColor = coalesce(config.shadowColor, theme.textShadowColor, Color.WHITE);
-
-    renderFont = font != null
-      ? font.deriveFont(fontStyle, fontSize)
-      : DEFAULT_FONT.deriveFont(fontStyle, fontSize);
+    renderFont = font.deriveFont(fontStyle, fontSize);
     fontMetrics = host.getFontMetrics(renderFont);
   }
 
@@ -106,18 +80,15 @@ public class Text extends Leaf {
 
     intrinsicSize.set(textWidth, textHeight);
 
-    computedBounds.setSize(
-      constraints.constrainWidth(intrinsicSize.width),
-      constraints.constrainHeight(intrinsicSize.height)
-    );
+    computedBounds.setSize(constraints.constrainWidth(intrinsicSize.width),
+      constraints.constrainHeight(intrinsicSize.height));
 
     if (textWidth > computedBounds.width) {
       String[] tokens = text.split(" ");
       String separator = " ";
 
-      boolean singleTokenExceedingComputedWidth = Arrays.stream(tokens).anyMatch(
-        token -> fontMetrics.stringWidth(token) > computedBounds.width
-      );
+      boolean singleTokenExceedingComputedWidth =
+        Arrays.stream(tokens).anyMatch(token -> fontMetrics.stringWidth(token) > computedBounds.width);
 
       if (singleTokenExceedingComputedWidth) {
         tokens = text.split("");
@@ -140,19 +111,15 @@ public class Text extends Leaf {
         lineBuilder.append(token).append(separator);
         currentLineWidth += tokenWidth;
 
-        if (currentLineWidth > maxLineWidth)
-          maxLineWidth = currentLineWidth;
+        if (currentLineWidth > maxLineWidth) maxLineWidth = currentLineWidth;
       }
 
-      if (!lineBuilder.isEmpty())
-        lines.add(lineBuilder.toString());
+      if (!lineBuilder.isEmpty()) lines.add(lineBuilder.toString());
 
       intrinsicSize.set(maxLineWidth, textHeight * lines.size());
 
-      computedBounds.setSize(
-        constraints.constrainWidth(intrinsicSize.width),
-        constraints.constrainHeight(intrinsicSize.height)
-      );
+      computedBounds.setSize(constraints.constrainWidth(intrinsicSize.width),
+        constraints.constrainHeight(intrinsicSize.height));
 
       for (String line : lines) {
         int lineWidth = fontMetrics.stringWidth(line);
@@ -167,19 +134,16 @@ public class Text extends Leaf {
       }
     } else {
       lines.add(text);
-      lineOffsets.add(
-        switch (alignment) {
-          case CENTER -> computedBounds.width / 2 - intrinsicSize.width / 2.0;
-          case END -> computedBounds.width - intrinsicSize.width;
-          default -> 0.0;
-        }
-      );
+      lineOffsets.add(switch (alignment) {
+        case CENTER -> computedBounds.width / 2 - intrinsicSize.width / 2.0;
+        case END -> computedBounds.width - intrinsicSize.width;
+        default -> 0.0;
+      });
     }
 
     for (int i = 0; i < lines.size(); i++) {
       String line = lines.get(i);
-      if (line.isEmpty())
-        continue;
+      if (line.isEmpty()) continue;
 
       double lineOffset = lineOffsets.get(i);
       String[] lineCharacters = line.split("");
@@ -188,13 +152,7 @@ public class Text extends Leaf {
       for (String ch : lineCharacters) {
         int chWidth = fontMetrics.stringWidth(ch);
 
-        symbols.add(
-          new Symbol(
-            ch.charAt(0),
-            lineOffset, lineYPosition,
-            chWidth, fontSize
-          )
-        );
+        symbols.add(new Symbol(ch.charAt(0), lineOffset, lineYPosition, chWidth, fontSize));
 
         lineOffset += chWidth;
       }
@@ -208,10 +166,7 @@ public class Text extends Leaf {
     super.performPostLayout();
 
     for (Symbol symbol : symbols) {
-      symbol.setPosition(
-        absoluteBounds.x + symbol.x,
-        absoluteBounds.y + symbol.y
-      );
+      symbol.setPosition(absoluteBounds.x + symbol.x, absoluteBounds.y + symbol.y);
     }
   }
 
@@ -249,11 +204,7 @@ public class Text extends Leaf {
     g.setColor(color);
 
     for (Symbol symbol : symbols) {
-      g.drawString(
-        String.valueOf(symbol.value),
-        (int) symbol.x,
-        (int) (symbol.y + symbol.height)
-      );
+      g.drawString(String.valueOf(symbol.value), (int) symbol.x, (int) (symbol.y + symbol.height));
     }
 
     if (Widget.DEBUG_DRAW) {
@@ -261,81 +212,13 @@ public class Text extends Leaf {
       g.setStroke(UI.DEBUG_STROKE);
 
       for (Symbol symbol : symbols) {
-        g.drawRect(
-          (int) symbol.x,
-          (int) symbol.y,
-          (int) symbol.width,
-          (int) symbol.height
-        );
+        g.drawRect((int) symbol.x, (int) symbol.y, (int) symbol.width, (int) symbol.height);
       }
     }
 
     g.setFont(originalFont);
     g.setColor(originalColor);
     g.setStroke(originalStroke);
-  }
-
-  @SuppressWarnings("unchecked")
-  public static class TextConfig<T extends TextConfig<T>> extends LeafConfig {
-    protected String text;
-    protected Font font;
-    protected Integer fontStyle;
-    protected Integer fontSize;
-    protected Color color;
-    protected Color backgroundColor;
-    protected Alignment alignment;
-    protected Boolean shadowEnabled;
-    protected Integer shadowOffsetX;
-    protected Integer shadowOffsetY;
-    protected Color shadowColor;
-
-    private T text(String text) {
-      this.text = text;
-      return (T) this;
-    }
-
-    public T font(Font font) {
-      this.font = font;
-      return (T) this;
-    }
-
-    public T fontSize(int fontSize) {
-      this.fontSize = fontSize;
-      return (T) this;
-    }
-
-    public T fontStyle(int fontStyle) {
-      this.fontStyle = fontStyle;
-      return (T) this;
-    }
-
-    public T color(Color color) {
-      this.color = color;
-      return (T) this;
-    }
-
-    public T backgroundColor(Color backgroundColor) {
-      this.backgroundColor = backgroundColor;
-      return (T) this;
-    }
-
-    public T alignment(Alignment alignment) {
-      this.alignment = alignment;
-      return (T) this;
-    }
-
-    public T shadow(
-      boolean shadowEnabled,
-      int shadowOffsetX,
-      int shadowOffsetY,
-      Color shadowColor
-    ) {
-      this.shadowEnabled = shadowEnabled;
-      this.shadowOffsetX = shadowOffsetX;
-      this.shadowOffsetY = shadowOffsetY;
-      this.shadowColor = shadowColor;
-      return (T) this;
-    }
   }
 
   /** A store for a character symbol and its absolute bounds */

@@ -1,24 +1,18 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.utils.Constraints;
+import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.ui.enums.MainAxisAlignment;
+import dev.gamekit.utils.Constraints;
 
 /** A {@link Flex} which arranges its children horizontally */
+@WidgetBuilder
 public class Row extends Flex {
-  public Row(RowConfig<? extends RowConfig<?>> config, Widget... children) {
-    super(config, children);
+  public Row(RowConfig... config) {
+    super(config);
   }
 
-  public static Row create(RowConfig<? extends RowConfig<?>> config, Widget... children) {
-    return new Row(config, children);
-  }
-
-  public static Row create(Widget... children) {
-    return new Row(new RowConfig<>(), children);
-  }
-
-  public static RowConfig<? extends RowConfig<?>> config() {
-    return new RowConfig<>();
+  public static Row create(RowConfig... config) {
+    return new Row(config);
   }
 
   @Override
@@ -52,7 +46,7 @@ public class Row extends Flex {
     );
 
     double freeSpace = Math.max(0, computedBounds.width - intrinsicSize.width);
-    double spaceBetween = freeSpace / Math.max(children.size() - 1, 1);
+    double spaceBetween = freeSpace / Math.max(children.length - 1, 1);
 
     double newX = switch (mainAxisAlignment) {
       case CENTER -> computedBounds.width / 2 - intrinsicSize.width / 2;
@@ -86,12 +80,4 @@ public class Row extends Flex {
       }
     }
   }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    return widget instanceof Row rowWidget &&
-      super.stateEquals(rowWidget);
-  }
-
-  public static class RowConfig<T extends RowConfig<T>> extends FlexConfig<T> { }
 }

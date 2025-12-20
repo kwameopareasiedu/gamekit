@@ -3,10 +3,8 @@ import dev.gamekit.core.Input;
 import dev.gamekit.core.Renderer;
 import dev.gamekit.core.Scene;
 import dev.gamekit.ui.enums.Alignment;
-import dev.gamekit.ui.widgets.Align;
-import dev.gamekit.ui.widgets.Padding;
-import dev.gamekit.ui.widgets.Text;
-import dev.gamekit.ui.widgets.Widget;
+import dev.gamekit.ui.widgets.*;
+import dev.gamekit.utils.Spacing;
 
 import java.awt.*;
 
@@ -23,18 +21,17 @@ import static dev.gamekit.utils.Math.cycle;
  * </ul>
  */
 public class Demo3Input extends Scene {
-  public Demo3Input() {
-    super("Main Scene");
-  }
-
   private static final Color[] COLORS = new Color[]{
     Color.RED,
     Color.YELLOW,
     Color.GREEN,
     Color.BLUE,
   };
-
   private int colorIndex = 0;
+
+  public Demo3Input() {
+    super("Main Scene");
+  }
 
   public static void main(String[] args) {
     Application game = new Application("Demo 3 - Input") { };
@@ -60,12 +57,17 @@ public class Demo3Input extends Scene {
   @Override
   protected Widget createUI() {
     return Align.create(
-      Align.config().horizontalAlignment(Alignment.CENTER).verticalAlignment(Alignment.END),
-      Padding.create(
-        Padding.config().padding(48, 48, 48, 48),
-        Text.create(
-          Text.config().alignment(Alignment.CENTER),
-          "Click the Left Mouse Button or press the Space Bar to change color"
+      AlignConfig.horizontalAlignment(Alignment.CENTER),
+      AlignConfig.verticalAlignment(Alignment.END),
+      AlignConfig.child(
+        Padding.create(
+          PaddingConfig.padding(new Spacing(48, 48, 48, 48)),
+          PaddingConfig.child(
+            Text.create(
+              TextConfig.alignment(Alignment.CENTER),
+              TextConfig.text("Click the Left Mouse Button or press the Space Bar to change color")
+            )
+          )
         )
       )
     );

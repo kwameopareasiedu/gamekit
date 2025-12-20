@@ -22,6 +22,7 @@ public class Spacing {
 
   /**
    * Creates a new spacing with vertical and horizontal values
+   *
    * @param vertical   Vertical spacing (Top and bottom)
    * @param horizontal Horizontal spacing (Left and right)
    */

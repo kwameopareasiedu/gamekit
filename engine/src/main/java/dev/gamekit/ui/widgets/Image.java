@@ -1,57 +1,34 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.annotations.WidgetBuilder;
+import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.settings.ImageInterpolation;
-import dev.gamekit.utils.Constraints;
 import dev.gamekit.ui.enums.ImageFit;
+import dev.gamekit.utils.Constraints;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Objects;
-
-import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link Leaf} which renders a {@link BufferedImage} to the screen */
+@WidgetBuilder
 public class Image extends Leaf {
+  @WidgetBuilderField(themable = false)
   protected BufferedImage image;
+  @WidgetBuilderField(fallback = "dev.gamekit.ui.enums.ImageFit.FIT")
   protected ImageFit fit;
+  @WidgetBuilderField(fallback = "dev.gamekit.settings.ImageInterpolation.DEFAULT")
   protected ImageInterpolation interpolation;
 
-  public Image(ImageConfig config, BufferedImage image) {
-    super(config.image(image));
+  public Image(ImageConfig... config) {
+    super(config);
   }
 
-  public static Image create(ImageConfig config, BufferedImage image) {
-    return new Image(config, image);
-  }
-
-  public static Image create(BufferedImage image) {
-    return new Image(new ImageConfig(), image);
+  public static Image create(ImageConfig... config) {
+    return new Image(config);
   }
 
   public static ImageConfig config() {
     return new ImageConfig();
-  }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    return widget instanceof Image imageWidget &&
-      Objects.equals(image, imageWidget.image) &&
-      Objects.equals(fit, imageWidget.fit) &&
-      Objects.equals(interpolation, imageWidget.interpolation);
-  }
-
-  @Override
-  protected void performInit() {
-    ImageConfig config = (ImageConfig) super.config;
-
-    if (config.image == null)
-      throw new IllegalArgumentException("Image image cannot be null");
-
-    this.image = config.image;
-    this.fit = coalesce(config.fit, ImageFit.FIT);
-    this.interpolation = coalesce(config.interpolation, ImageInterpolation.DEFAULT);
-
-    super.performInit();
   }
 
   @Override
@@ -128,26 +105,5 @@ public class Image extends Leaf {
 
     if (clipChanged)
       g.setClip(originalClip);
-  }
-
-  public static class ImageConfig extends LeafConfig {
-    protected BufferedImage image;
-    protected ImageFit fit;
-    protected ImageInterpolation interpolation;
-
-    private ImageConfig image(BufferedImage image) {
-      this.image = image;
-      return this;
-    }
-
-    public ImageConfig fit(ImageFit fit) {
-      this.fit = fit;
-      return this;
-    }
-
-    public ImageConfig interpolation(ImageInterpolation interpolation) {
-      this.interpolation = interpolation;
-      return this;
-    }
   }
 }

@@ -1,31 +1,37 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.annotations.WidgetBuilder;
+import dev.gamekit.annotations.WidgetBuilderField;
+
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
-/** A parent which contains multiple child {@link Widget}s */
+/** A parent which contains multiple child {@link Widget widgets} */
+@WidgetBuilder
 public abstract class MultiChildParent extends Parent {
-  protected final ArrayList<Widget> children;
+  @WidgetBuilderField(
+    customSetterType = "dev.gamekit.ui.widgets.Widget...",
+    comparable = false,
+    updatable = false,
+    themable = false
+  )
+  protected Widget[] children;
 
-  public MultiChildParent(MultiChildParentConfig config, Widget... children) {
+  public MultiChildParent(MultiChildParentConfig... config) {
     super(config);
-
-    for (Widget child : children) {
-      if (child == null)
-        throw new IllegalArgumentException("MultiChildParent child cannot be null");
-    }
-
-    this.children = new ArrayList<>(List.of(children));
-
-    for (Widget child : this.children)
-      child.parent = this;
   }
 
   @Override
   protected void performInit() {
-    for (Widget child : this.children)
+    for (Widget child : ((MultiChildParentConfig) config).children) {
+      if (child == null) throw new IllegalArgumentException("MultiChildParent child cannot be null");
+    }
+
+    this.children = ((MultiChildParentConfig) config).children;
+
+    for (Widget child : this.children) {
+      child.parent = this;
       child.init(host);
+    }
   }
 
   @Override
@@ -48,22 +54,20 @@ public abstract class MultiChildParent extends Parent {
       child.unmount();
   }
 
-  public ArrayList<Widget> getChildren() {
+  public Widget[] getChildren() {
     return children;
   }
 
   public final void updateChild(int index, Widget newChild) {
-    if (index >= children.size())
+    if (index >= children.length)
       throw new ArrayIndexOutOfBoundsException(
         String.format(
           "Children length: %d, Index: %d",
-          children.size(), index
+          children.length, index
         )
       );
-    children.get(index).parent = null;
-    children.set(index, newChild);
-    children.get(index).parent = this;
+    children[index].parent = null;
+    children[index] = newChild;
+    children[index].parent = this;
   }
-
-  public static abstract class MultiChildParentConfig extends ParentConfig { }
 }

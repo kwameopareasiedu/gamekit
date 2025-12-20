@@ -22,8 +22,7 @@ public class Sprite extends Component {
   private double opacity = 1;
 
   public Sprite(BufferedImage image, ImageInterpolation interpolation) {
-    if (image == null)
-      throw new IllegalArgumentException("Image cannot be null");
+    if (image == null) throw new IllegalArgumentException("Image cannot be null");
 
     this.image = image;
     this.interpolation = interpolation;

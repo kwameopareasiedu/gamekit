@@ -6,15 +6,16 @@ import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.enums.ImageFit;
 import dev.gamekit.ui.enums.MainAxisAlignment;
-import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.widgets.*;
 import dev.gamekit.ui.widgets.Button;
 import dev.gamekit.ui.widgets.Checkbox;
 import dev.gamekit.ui.widgets.Image;
+import dev.gamekit.utils.Spacing;
+import utils.MainMenuButton;
+import utils.SubMenuButton;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Objects;
 
 /**
  * This demo shows how to build user interfaces and performs the following actions:
@@ -28,10 +29,8 @@ public class Demo4UserInterface extends Scene {
   private static final BufferedImage LOGO = IO.getResourceImage("planetfall-logo.png");
   private static final BufferedImage SCRIM = IO.getResourceImage("transparent-black.png");
   private static final BufferedImage THUMB = IO.getResourceImage("slider-thumb.png");
-  private static final BufferedImage PROGRESS_TRACK =
-    IO.getResourceImage("progress.png", 0, 4, 48, 8);
-  private static final BufferedImage PROGRESS_FILL =
-    IO.getResourceImage("progress.png", 50, 4, 4, 8);
+  private static final BufferedImage PROGRESS_TRACK = IO.getResourceImage("progress.png", 0, 4, 48, 8);
+  private static final BufferedImage PROGRESS_FILL = IO.getResourceImage("progress.png", 50, 4, 4, 8);
 
   private String fieldValue = "Hello";
   private boolean checkboxValue = false;
@@ -63,136 +62,205 @@ public class Demo4UserInterface extends Scene {
   @Override
   public Widget createUI() {
     return Stack.create(
-      Image.create(BACKDROP),
-
-      Align.create(
-        Align.config(),
-        Padding.create(
-          Padding.config().padding(0, 24, 0, 24),
-          Sized.create(
-            Sized.config().width(480).height(480),
-            Image.create(LOGO)
-          )
-        )
-      ),
-
-      Align.create(
-        Align.config().verticalAlignment(Alignment.CENTER),
-        Padding.create(
-          Padding.config().padding(256, 8, 16, 96),
-          Theme.create(
-            Theme.config().textFontSize(10).textFontStyle(Text.ITALIC),
-            Column.create(
-              Column.config()
-                .mainAxisAlignment(MainAxisAlignment.START)
-                .crossAxisAlignment(CrossAxisAlignment.STRETCH)
-                .gapSize(24),
-              MainMenuButton.create("Tutorial", e -> System.out.println("0: " + e.type)),
-              MainMenuButton.create("New Planet", e -> System.out.println("1: " + e.type)),
-              Field.create(
-                Field.config().fontSize(28).fontStyle(Text.PLAIN).edgeInsets(12, 12, 12, 12)
-                  .padding(12, 12, 12, 12).changeListener(ev -> {
-                    fieldValue = ev.value;
-                    updateUI();
-                  }),
-                fieldValue
-              ),
-              Checkbox.create(
-                Checkbox.config().value(checkboxValue).iconEdgeInsets(4, 4, 4, 4)
-                  .changeListener(ev -> {
-                    checkboxValue = ev.value;
-                    updateUI();
-                  }),
-                Text.create(
-                  Text.config().fontSize(32).fontStyle(Text.PLAIN),
-                  "Active"
+      StackConfig.children(
+        Image.create(
+          ImageConfig.image(BACKDROP)
+        ),
+        Align.create(
+          AlignConfig.child(
+            Padding.create(
+              PaddingConfig.padding(new Spacing(0, 24, 0, 24)),
+              PaddingConfig.child(
+                FixedSize.create(
+                  FixedSizeConfig.width(480.0),
+                  FixedSizeConfig.height(480.0),
+                  FixedSizeConfig.child(
+                    Image.create(
+                      ImageConfig.image(LOGO)
+                    )
+                  )
                 )
-              ),
-              Sized.create(
-                Sized.config().width(256).intrinsicHeight(),
-                Slider.create(
-                  Slider.config().range(0, 100).fillMode(Slider.FillMode.CLIP)
-                    .thumbBackground(THUMB).thumbEdgeInsets(10, 10, 10, 10)
-                    .changeListener(e -> {
-                      sliderValue = e.value;
-                      updateUI();
-                    }),
-                  sliderValue
-                )
-              ),
-              Sized.create(
-                Sized.config().width(256).height(48),
-                Progress.create(
-                  Progress.config().range(0, 100).trackBackground(PROGRESS_TRACK)
-                    .trackEdgeInsets(0, 0, 0, 0).fillMargin(0, 12, 0, 12)
-                    .fillBackground(PROGRESS_FILL).fillEdgeInsets(0, 1, 0, 1)
-                    .fillMode(Progress.FillMode.CLIP),
-                  sliderValue
-                )
-              ),
-              Column.create(
-                Column.config()
-                  .mainAxisAlignment(MainAxisAlignment.START)
-                  .crossAxisAlignment(CrossAxisAlignment.START)
-                  .gapSize(12),
-                SubMenuButton.create("Commander Customization"),
-                SubMenuButton.create("Options"),
-                SubMenuButton.create("Credits"),
-                SubMenuButton.create("Exit Game")
               )
             )
           )
-        )
-      ),
+        ),
+        Align.create(
+          AlignConfig.verticalAlignment(Alignment.CENTER),
+          AlignConfig.child(
+            Padding.create(
+              PaddingConfig.padding(new Spacing(256, 8, 16, 96)),
+              PaddingConfig.child(
+                Theme.create(
+//                  ThemeConfig.textFontSize(10),
+//                  ThemeConfig.textFontStyle(Text.ITALIC),
+                  ThemeConfig.child(
+                    Column.create(
+                      ColumnConfig.mainAxisAlignment(MainAxisAlignment.START),
+                      ColumnConfig.crossAxisAlignment(CrossAxisAlignment.STRETCH),
+                      ColumnConfig.gapSize(24),
+                      ColumnConfig.children(
 
-      Align.create(
-        Align.config().horizontalAlignment(Alignment.CENTER),
-        Sized.create(
-          Sized.config().fractionalWidth(1).fractionalHeight(0.15),
-          Image.create(
-            Image.config().fit(ImageFit.CROP),
-            SCRIM
-          )
-        )
-      ),
-
-      Align.create(
-        Align.config().horizontalAlignment(Alignment.CENTER).verticalAlignment(Alignment.END),
-        Sized.create(
-          Sized.config().fractionalWidth(1).fractionalHeight(0.15),
-          Stack.create(
-            Sized.create(
-              Sized.config().fractionalWidth(1).fractionalHeight(1),
-              Image.create(
-                Image.config().fit(ImageFit.STRETCH),
-                SCRIM
+                        MainMenuButton.create("Tutorial", e -> System.out.println("0: " + e.type)),
+                        MainMenuButton.create("New Planet", e -> System.out.println("1: " + e.type)),
+                        Field.create(
+                          FieldConfig.fontSize(28),
+                          FieldConfig.fontStyle(Text.PLAIN),
+                          FieldConfig.edgeInsets(new Spacing(12, 12, 12, 12)),
+                          FieldConfig.padding(new Spacing(12, 12, 12, 12)),
+                          FieldConfig.changeListener(ev -> {
+                            fieldValue = ev.value;
+                            logger.debug("Field value: {}", fieldValue);
+                            updateUI();
+                          }),
+                          FieldConfig.text(fieldValue)
+                        ),
+                        Checkbox.create(
+                          CheckboxConfig.toggled(checkboxValue),
+                          CheckboxConfig.iconEdgeInsets(new Spacing(4, 4, 4, 4)),
+                          CheckboxConfig.changeListener(ev -> {
+                            checkboxValue = ev.value;
+                            updateUI();
+                          }),
+                          CheckboxConfig.child(
+                            Text.create(
+                              TextConfig.fontSize(32),
+                              TextConfig.fontStyle(Text.PLAIN),
+                              TextConfig.text("Active")
+                            )
+                          )
+                        ),
+                        IntrinsicSize.create(
+                          //  IntrinsicSizeConfig.width(256),
+                          //  IntrinsicSizeConfig.intrinsicHeight(),
+                          IntrinsicSizeConfig.child(
+                            Slider.create(
+                              SliderConfig.value(sliderValue),
+                              SliderConfig.minValue(0.0),
+                              SliderConfig.maxValue(100.0),
+                              SliderConfig.fillMode(Slider.FillMode.CLIP),
+                              SliderConfig.thumbBackground(THUMB),
+                              SliderConfig.thumbEdgeInsets(new Spacing(10, 10, 10, 10)),
+                              SliderConfig.changeListener(e -> {
+                                sliderValue = e.value;
+                                updateUI();
+                              })
+                            )
+                          )
+                        ),
+                        FixedSize.create(
+                          FixedSizeConfig.width(256.0),
+                          FixedSizeConfig.height(48.0),
+                          FixedSizeConfig.child(
+                            Progress.create(
+                              ProgressConfig.value(sliderValue),
+                              ProgressConfig.minValue(0.0),
+                              ProgressConfig.maxValue(100.0),
+                              ProgressConfig.trackBackground(PROGRESS_TRACK),
+                              ProgressConfig.trackEdgeInsets(new Spacing(0, 0, 0, 0)),
+                              ProgressConfig.fillMargin(new Spacing(0, 12, 0, 12)),
+                              ProgressConfig.fillBackground(PROGRESS_FILL),
+                              ProgressConfig.fillEdgeInsets(new Spacing(0, 1, 0, 1)),
+                              ProgressConfig.fillMode(Progress.FillMode.CLIP)
+                            )
+                          )
+                        ),
+                        Column.create(
+                          ColumnConfig.mainAxisAlignment(MainAxisAlignment.START),
+                          ColumnConfig.crossAxisAlignment(CrossAxisAlignment.START),
+                          ColumnConfig.gapSize(12),
+                          ColumnConfig.children(
+                            SubMenuButton.create("Commander Customization"),
+                            SubMenuButton.create("Options"),
+                            SubMenuButton.create("Credits"),
+                            SubMenuButton.create("Exit Game")
+                          )
+                        )
+                      )
+                    )
+                  )
+                )
               )
-            ),
-            Sized.create(
-              Sized.config().fractionalWidth(1).fractionalHeight(1),
-              Row.create(
-                Row.config()
-                  .mainAxisAlignment(MainAxisAlignment.END)
-                  .crossAxisAlignment(CrossAxisAlignment.CENTER)
-                  .gapSize(24),
-                Sized.create(
-                  Sized.config().width(48).height(48),
-                  Colored.create(
-                    Colored.config().color(Color.RED).borderRadius(4)
-                  )
-                ),
-                Button.create(
-                  Button.config().edgeInsets(12, 12, 18, 12),
-                  Text.create(
-                    Text.config().fontSize(12).fontStyle(Text.BOLD),
-                    "Create Account"
-                  )
-                ),
-                Button.create(
-                  Button.config().edgeInsets(12, 12, 18, 12),
-                  Text.create(
-                    Text.config().fontSize(12).fontStyle(Text.BOLD),
-                    "Login"
+            )
+          )
+        ),
+        Align.create(
+          AlignConfig.horizontalAlignment(Alignment.CENTER),
+          AlignConfig.child(
+            FractionalSize.create(
+              FractionalSizeConfig.widthRatio(1.0),
+              FractionalSizeConfig.heightRatio(0.15),
+              FractionalSizeConfig.child(
+                Image.create(
+                  ImageConfig.fit(ImageFit.CROP),
+                  ImageConfig.image(SCRIM)
+                )
+              )
+            )
+          )
+        ),
+        Align.create(
+          AlignConfig.horizontalAlignment(Alignment.CENTER),
+          AlignConfig.verticalAlignment(Alignment.END),
+          AlignConfig.child(
+            FractionalSize.create(
+              FractionalSizeConfig.widthRatio(1.0),
+              FractionalSizeConfig.heightRatio(0.15),
+              FractionalSizeConfig.child(
+                Stack.create(
+                  StackConfig.children(
+                    FractionalSize.create(
+                      FractionalSizeConfig.widthRatio(1.0),
+                      FractionalSizeConfig.heightRatio(1.0),
+                      FractionalSizeConfig.child(
+                        Image.create(
+                          ImageConfig.fit(ImageFit.STRETCH),
+                          ImageConfig.image(SCRIM)
+                        )
+                      )
+                    ),
+                    FractionalSize.create(
+                      FractionalSizeConfig.widthRatio(1.0),
+                      FractionalSizeConfig.heightRatio(1.0),
+                      FractionalSizeConfig.child(
+                        Row.create(
+                          RowConfig.mainAxisAlignment(MainAxisAlignment.END),
+                          RowConfig.crossAxisAlignment(CrossAxisAlignment.CENTER),
+                          RowConfig.gapSize(24),
+                          RowConfig.children(
+                            FixedSize.create(
+                              FixedSizeConfig.width(48.0),
+                              FixedSizeConfig.height(48.0),
+                              FixedSizeConfig.child(
+                                Colored.create(
+                                  ColoredConfig.color(Color.RED),
+                                  ColoredConfig.borderRadius(4)
+                                )
+                              )
+                            ),
+                            Button.create(
+                              ButtonConfig.edgeInsets(new Spacing(12, 12, 18, 12)),
+                              ButtonConfig.child(
+                                Text.create(
+                                  TextConfig.fontSize(12),
+                                  TextConfig.fontStyle(Text.BOLD),
+                                  TextConfig.text("Create Account")
+                                )
+                              )
+                            ),
+                            Button.create(
+                              ButtonConfig.edgeInsets(new Spacing(12, 12, 18, 12)),
+                              ButtonConfig.child(
+                                Text.create(
+                                  TextConfig.fontSize(12),
+                                  TextConfig.fontStyle(Text.BOLD),
+                                  TextConfig.text("Login")
+                                )
+                              )
+                            )
+                          )
+                        )
+                      )
+                    )
                   )
                 )
               )
@@ -201,83 +269,5 @@ public class Demo4UserInterface extends Scene {
         )
       )
     );
-  }
-
-  static class MainMenuButton extends Compose {
-    protected String text;
-
-    public MainMenuButton(String text, MouseEvent.Handler mouseListener) {
-      super(
-        new ComposeConfig() { },
-        Button.create(
-          Button.config().edgeInsets(12, 12, 16, 12).mouseListener(mouseListener),
-          Padding.create(
-            Padding.config().padding(12, 12, 16, 12),
-            Text.create(
-              Text.config().fontSize(20).fontStyle(Text.BOLD),
-              text
-            )
-          )
-        )
-      );
-
-      this.text = text;
-    }
-
-    public static MainMenuButton create(String text, MouseEvent.Handler mouseListener) {
-      return new MainMenuButton(text, mouseListener);
-    }
-
-    @Override
-    public boolean stateEquals(Widget widget) {
-      if (widget instanceof MainMenuButton mainMenuButton)
-        return Objects.equals(text, mainMenuButton.text);
-
-      return false;
-    }
-
-    @Override
-    protected void performUpdate(Widget widget) {
-      this.text = ((MainMenuButton) widget).text;
-    }
-  }
-
-  static class SubMenuButton extends Compose {
-    protected String text;
-
-    public SubMenuButton(String text) {
-      super(
-        new ComposeConfig() { },
-        Button.create(
-          Button.config().edgeInsets(6, 6, 8, 6),
-          Padding.create(
-            Padding.config().padding(12, 12, 16, 12),
-            Text.create(
-              Text.config(),
-              text
-            )
-          )
-        )
-      );
-
-      this.text = text;
-    }
-
-    public static SubMenuButton create(String text) {
-      return new SubMenuButton(text);
-    }
-
-    @Override
-    public boolean stateEquals(Widget widget) {
-      if (widget instanceof SubMenuButton subMenuButton)
-        return Objects.equals(text, subMenuButton.text);
-
-      return false;
-    }
-
-    @Override
-    protected void performUpdate(Widget widget) {
-      this.text = ((SubMenuButton) widget).text;
-    }
   }
 }

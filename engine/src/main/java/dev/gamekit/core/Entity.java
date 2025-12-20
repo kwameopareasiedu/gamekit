@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * {@link Entity} represents objects that exist in the game world. An entity can also contain and
- * manage the lifecycles of children entities.
+ * {@link Entity} represents objects that exist in the game world. An entity can also contain and manage the
+ * lifecycles of children entities.
  * <p>
- * An {@link Entity} has lifecycle methods which are called by the engine to set up, update,
- * render and dispose themselves.
+ * An {@link Entity} has lifecycle methods which are called by the engine to set up, update, render and dispose
+ * themselves.
  */
 @SuppressWarnings("unchecked")
 public abstract class Entity {
@@ -49,16 +49,13 @@ public abstract class Entity {
   }
 
   /**
-   * Adds a child to this entity, at the end of the current frame, invoking the child's
-   * {@link Entity#start} method if it is new or {@link Entity#restart} if it was previously
-   * inactivated.
+   * Adds a child to this entity, at the end of the current frame, invoking the child's {@link Entity#start} method
+   * if it is new or {@link Entity#restart} if it was previously inactivated.
    */
   public void addChild(Entity child) {
-    if (children.contains(child))
-      return;
+    if (children.contains(child)) return;
 
-    if (child.parent != null)
-      throw new IllegalStateException("Cannot add child with parent. Remove from parent first");
+    if (child.parent != null) throw new IllegalStateException("Cannot add child with parent. Remove from parent first");
 
     switch (child.state) {
       case DOOMED, DEAD -> throw new IllegalStateException("Cannot add a doomed or dead child");
@@ -77,10 +74,7 @@ public abstract class Entity {
     });
   }
 
-  /**
-   * Removes a child from this entity at the end of the current frame, invoking the child's
-   * {@link Entity#stop} method
-   */
+  /** Removes a child from this entity at the end of the current frame, invoking its {@link Entity#stop} method */
   public void removeChild(Entity child) {
     if (children.contains(child)) {
       child.state = State.INACTIVE;
@@ -99,18 +93,13 @@ public abstract class Entity {
     return findComponent(clazz, (Component.Filter<T>) Component.TRUTHY_FILTER);
   }
 
-  /**
-   * Returns a {@link Component} of the specified class, matching the provided filter else
-   * {@code null}
-   */
+  /** Returns a {@link Component} of the specified class, matching the provided filter else {@code null} */
   public <T extends Component> T findComponent(Class<T> clazz, Component.Filter<T> filter) {
     // Optimization for finding the Transform component
-    if (clazz == Transform.class)
-      return (T) components.get(0);
+    if (clazz == Transform.class) return (T) components.get(0);
 
     for (Component component : components) {
-      if (clazz.isInstance(component) && filter.filter((T) component))
-        return (T) component;
+      if (clazz.isInstance(component) && filter.filter((T) component)) return (T) component;
     }
 
     return null;
@@ -119,23 +108,22 @@ public abstract class Entity {
   /**
    * Returns a list of {@link Component components} of the specified class
    * <p>
-   * <i>NB: For added performance, the returned {@link ArrayList<T>} is reused across multiple
-   * invocations so you should not keep a reference to it</i>
+   * <i>NB: For added performance, the returned {@link ArrayList<T>} is reused across multiple invocations so you
+   * should not keep a reference to it</i>
    */
   public <T extends Component> List<T> findComponents(Class<T> clazz) {
     componentSearchList.clear();
 
     for (Component component : components) {
-      if (clazz.isInstance(component))
-        componentSearchList.add(component);
+      if (clazz.isInstance(component)) componentSearchList.add(component);
     }
 
     return (List<T>) componentSearchList;
   }
 
   /**
-   * Schedules the entity for removal at the end of the current frame and immediately sets the
-   * state to {@link State#DOOMED}
+   * Schedules the entity for removal at the end of the current frame and immediately sets the state to
+   * {@link State#DOOMED}
    */
   public void destroy() {
     if (state == State.ACTIVE) {
@@ -192,10 +180,7 @@ public abstract class Entity {
     state = State.ACTIVE;
   }
 
-  /**
-   * Called by a new parent {@link Entity} after previously being stopped, to re-initialize this
-   * entity
-   */
+  /** Called by a new parent {@link Entity} after previously being stopped, to re-initialize this entity */
   void _restart(Entity parent) {
     this.parent = parent;
     restart();
@@ -205,13 +190,15 @@ public abstract class Entity {
   /** Called by the parent {@link Entity} to update the entity */
   void _update() {
     if (state == State.ACTIVE) {
-      for (Component component : components)
+      for (Component component : components) {
         component._update();
+      }
 
       update();
 
-      for (Entity child : children)
+      for (Entity child : children) {
         child._update();
+      }
     }
   }
 
@@ -220,11 +207,13 @@ public abstract class Entity {
     if (state == State.ACTIVE) {
       render();
 
-      for (Component component : components)
+      for (Component component : components) {
         component._render();
+      }
 
-      for (Entity child : children)
+      for (Entity child : children) {
         child._render();
+      }
     }
   }
 
@@ -233,8 +222,9 @@ public abstract class Entity {
     for (Entity child : children)
       child._dispose();
 
-    for (Component component : components)
+    for (Component component : components) {
       component._dispose();
+    }
 
     dispose();
 
@@ -243,24 +233,21 @@ public abstract class Entity {
     state = State.DEAD;
   }
 
-  /** Represents the state an {@link Entity} can be in */
+  /** Constants for an {@link Entity} state */
   public enum State {
     /** Represents a newly created instance of an {@link Entity} */
     NEW,
     /**
-     * Represents an {@link Entity} which has been added to another entity or the scene. Only
-     * entities in this state can run update/render lifecycle methods
+     * Represents an {@link Entity} which has been added to another entity or the scene.
+     * Only entities in this state can run update/render lifecycle methods
      */
     ACTIVE,
     /**
-     * Represents an {@link Entity} which was previously a child of another entity or the scene
+     * Represents an {@link Entity} which was previously a child of another entity or the scene,
      * but has been removed. The entity is not destroyed, but doesn't run any lifecycle methods
      */
     INACTIVE,
-    /**
-     * Represents an {@link Entity} which has been marked for destruction at the end of the current
-     * frame
-     */
+    /** Represents an {@link Entity} which has been marked for destruction at the end of the current frame */
     DOOMED,
     /** Represents an {@link Entity} which has been destroyed */
     DEAD

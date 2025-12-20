@@ -16,6 +16,7 @@
     <module>engine</module>
     <module>testing</module>
     <module>samples</module>
+    <module>annotations</module>
   </modules>
 
   <properties>

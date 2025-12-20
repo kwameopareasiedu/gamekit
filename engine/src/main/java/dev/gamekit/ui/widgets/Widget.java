@@ -14,19 +14,17 @@ import java.awt.*;
 /**
  * A widget is an abstract representation of a portion of a {@link Scene scene's} user interface.
  * <p>
- * Widgets are used to describe all aspects of a user interface, including physical aspects such
- * as text and buttons to layout effects like padding and alignment.
+ * Widgets are used to describe all aspects of a user interface, including physical aspects such as text and buttons
+ * to layout effects like padding and alignment.
  * <p>
- * Widgets form a hierarchy based on composition. Each widget nests inside its parent and can
- * receive context from the parent.
+ * Widgets form a hierarchy based on composition. Each widget nests inside its parent and can receive context from
+ * the parent.
  * <p>
- * To create a user interface in a scene, you override its {@code createUI} method and return the
- * desired widget hierarchy.
+ * To create a user interface in a scene, you override its {@code createUI} method and return the desired widget
+ * hierarchy.
  * <p>
- * Widget layout is based on the
- * <a href="https://docs.flutter.dev/ui/layout/constraints">box-constraint</a>
- * model which is used in Flutter, where constraints go down the tree, size go up and parents set
- * positions
+ * Widget layout is based on the <a href="https://docs.flutter.dev/ui/layout/constraints">box-constraint</a>
+ * model which is used in Flutter, where constraints go down the tree, size go up and parents set positions
  */
 public abstract class Widget {
   public static boolean DEBUG_DRAW = false;
@@ -36,15 +34,16 @@ public abstract class Widget {
   protected final Bounds computedBounds;
   protected final Size intrinsicSize;
   protected Constraints constraints;
-  protected WidgetConfig config;
+  protected Config config;
   protected Widget parent;
   protected Host host;
 
-  public Widget(WidgetConfig config) {
-    if (config == null)
+  /** Creates a new widget with a list of configurations */
+  public Widget(Config... configs) {
+    if (configs == null)
       throw new IllegalArgumentException("Widget config cannot be null");
 
-    this.config = config;
+    this.config = configs[0].mergeWith(configs);
     this.absoluteBounds = new Bounds(0, 0, 0, 0);
     this.computedBounds = new Bounds(0, 0, 0, 0);
     this.intrinsicSize = new Size(0, 0);
@@ -56,8 +55,10 @@ public abstract class Widget {
     return parent;
   }
 
-  /** Delegate method which determines if this widget's state matches another {@code widget} */
-  public abstract boolean stateEquals(Widget widget);
+  /** Checks if the {@link Config} object of this widget is equivalent to another {@link Widget} */
+  public final boolean stateEquals(Widget widget) {
+    return config.equals(widget.config);
+  }
 
   /**
    * Called to initialize the widget after it has been inserted into the widget tree and
@@ -66,17 +67,19 @@ public abstract class Widget {
    * If the widget is updated some time after first initialization, this method is called
    * afterward to re-initialize the widget.
    * <p>
-   * A common use-case is to look up ancestors for additional information (E.g. Theme look-up)
+   * Since the {@link #config} has either been set in the constructor or updated via the {@link #updateState} method,
+   * it is used to update this widget instance.
    * <p>
    * Since this method is marked as {@code final}, subclasses should override the
    * {@link #performInit} method instead to perform any post-mount operations
    */
   public final void init(Host host) {
     this.host = host;
+    config.updateWidget(this);
     performInit();
   }
 
-  /** Delegate method which performs initialization logic in subclasses */
+  /** Delegate method for subclasses to perform additional initialization operations */
   protected void performInit() { /* No-op */ }
 
   /**
@@ -84,23 +87,24 @@ public abstract class Widget {
    * comparing the types and states.
    * <p>
    * For widgets that only need state updates, this method is called with the updated widget
-   * containing the new state.
+   * containing the new configuration.
    * <p>
    * It is guaranteed that the type of the incoming widget will be the same as this widget so it
-   * is safe to cast the incoming widget to this widget's class.
+   * is safe to cast the incoming widget to this widget's config class (E.g. the config class for
+   * the {@code Image} widget will be the {@code ImageConfig}).
    * <p>
    * {@link #init} method is called afterward to re-initialize the widget.
    * <p>
    * Since this method is marked as {@code final}, subclasses should override the
    * {@link #performUpdate} method instead to perform any state updates
    */
-  public final void update(Widget widget) {
+  public final void updateState(Widget widget) {
     this.config = widget.config;
     performUpdate(widget);
     init(host);
   }
 
-  /** Delegate method performs the state update for this widget */
+  /** Delegate method for subclasses to perform additional state update operations */
   protected void performUpdate(Widget widget) { /* No-op */ }
 
   /**
@@ -122,8 +126,9 @@ public abstract class Widget {
   }
 
   /**
-   * Delegate method which performs the actual layout and is passed the constraints from the
-   * {@link #layout} method.
+   * Delegate method for subclasses to perform the actual layout
+   * <p>
+   * It is passed the {@link Constraints} object which it <b>must</b> always respect
    */
   protected abstract void performLayout(Constraints constraints);
 
@@ -144,10 +149,27 @@ public abstract class Widget {
    * {@link #performPostLayout} method instead to perform any post layout logic
    */
   public final void postLayout() {
-    computeAbsoluteBounds();
+    // Compute absolute position by adding computed position of this widget and its ancestors
+    double absoluteX = computedBounds.x;
+    double absoluteY = computedBounds.y;
+    Widget visitedParent = this.parent;
+
+    while (visitedParent != null) {
+      absoluteX += visitedParent.computedBounds.x;
+      absoluteY += visitedParent.computedBounds.y;
+      visitedParent = visitedParent.parent;
+    }
+
+    absoluteBounds.set(
+      absoluteX, absoluteY,
+      computedBounds.width,
+      computedBounds.height
+    );
+
     performPostLayout();
   }
 
+  /** Delegate method for subclasses to perform additional post-layout operations */
   protected void performPostLayout() { /* No-op */ }
 
   /**
@@ -178,8 +200,9 @@ public abstract class Widget {
   }
 
   /**
-   * Delegate method which performs the actual rendering and is passed a {@link Graphics2D}
-   * object of the widget's {@code canvasImage}.
+   * Delegate method for subclasses to performs the actual rendering.
+   * <p>
+   * The {@link Graphics2D} object of the widget's {@code canvasImage} to perform drawing
    */
   protected abstract void performRender(Graphics2D g);
 
@@ -196,7 +219,7 @@ public abstract class Widget {
     performUnmount();
   }
 
-  /** Delegate method for subclasses to perform unmount operations */
+  /** Delegate method for subclasses to perform additional unmount operations */
   protected void performUnmount() { /* No-op */ }
 
   /** Determines if the point {@code (x,y)} falls within the absolute bounds of this widget */
@@ -205,28 +228,6 @@ public abstract class Widget {
     double absoluteBottom = absoluteBounds.y + absoluteBounds.height;
     return absoluteBounds.x <= x && x <= absoluteRight &&
       absoluteBounds.y <= y && y <= absoluteBottom;
-  }
-
-  /**
-   * Computes the absolute bounds, starting with the computed size and walking up its ancestry,
-   * to determine the absolute position
-   */
-  protected void computeAbsoluteBounds() {
-    double absoluteX = computedBounds.x;
-    double absoluteY = computedBounds.y;
-    Widget parent = this.parent;
-
-    while (parent != null) {
-      absoluteX += parent.computedBounds.x;
-      absoluteY += parent.computedBounds.y;
-      parent = parent.parent;
-    }
-
-    absoluteBounds.set(
-      absoluteX, absoluteY,
-      computedBounds.width,
-      computedBounds.height
-    );
   }
 
   /**
@@ -252,18 +253,25 @@ public abstract class Widget {
     return null;
   }
 
+  /** Base class for all widget constructor configurations */
+  public interface Config {
+    /** Updates matching widget state variables with its own variables */
+    void updateWidget(Widget widget);
+
+    /** Returns a new config which merges this and provided config objects */
+    Config mergeWith(Config[] configs);
+  }
+
   /**
    * Interface for the host containing a {@link Widget}, allowing widgets to invoke necessary
    * methods on it
    */
   public interface Host {
+
     /** Returns the font metrics for the given font from the {@link Window} object */
     FontMetrics getFontMetrics(Font font);
 
     /** Triggers a re-render of the {@link Widget widget} tree */
     void triggerRender();
   }
-
-  /** Base class for all widget constructor configurations */
-  public static abstract class WidgetConfig { }
 }

@@ -1,12 +1,12 @@
 package dev.gamekit.core;
 
 import dev.gamekit.settings.Settings;
-import dev.gamekit.utils.Constraints;
 import dev.gamekit.ui.events.*;
 import dev.gamekit.ui.widgets.MultiChildParent;
 import dev.gamekit.ui.widgets.Parent;
 import dev.gamekit.ui.widgets.SingleChildParent;
 import dev.gamekit.ui.widgets.Widget;
+import dev.gamekit.utils.Constraints;
 import dev.gamekit.utils.Position;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,9 +21,7 @@ import java.util.Objects;
 public final class UI implements Widget.Host {
   public static final Color TRANSPARENT_COLOR = new Color(0x0000000, true);
   public static final Color DEBUG_COLOR = Color.GREEN;
-  public static final BasicStroke DEBUG_STROKE = new BasicStroke(
-    1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND
-  );
+  public static final BasicStroke DEBUG_STROKE = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
   private static final Logger LOGGER = LogManager.getLogger(UI.class);
   private static UI instance;
@@ -44,10 +42,6 @@ public final class UI implements Widget.Host {
   private boolean needsUpdate = false;
   private boolean needsRender = false;
   private boolean needsDraw = false;
-
-  static UI getInstance() {
-    return instance;
-  }
 
   public UI(Scene scene) {
     Settings settings = Application.getInstance().getSettings();
@@ -72,6 +66,10 @@ public final class UI implements Widget.Host {
     settings.dithering.apply(canvasGraphics);
 
     UI.instance = this;
+  }
+
+  static UI getInstance() {
+    return instance;
   }
 
   @Override
@@ -101,15 +99,13 @@ public final class UI implements Widget.Host {
     needsUpdate = true;
   }
 
+  /** Clears the render canvas */
   void clear() {
     canvasGraphics.setBackground(TRANSPARENT_COLOR);
     canvasGraphics.clearRect(0, 0, canvasImage.getWidth(), canvasImage.getHeight());
   }
 
-  /**
-   * Called to update updates the UI state. This involves recomputing layout, generating input
-   * events and dispatching them
-   */
+  /** Update updates the UI tree, recomputes layout, generates and dispatches input events */
   void update() {
     if (tree != null && needsUpdate) {
       LOGGER.debug("Updating UI");
@@ -121,10 +117,7 @@ public final class UI implements Widget.Host {
     dispatchInputEvents();
   }
 
-  /**
-   * Called to render the UI unto the canvas which is drawn to the {@link Window} by the draw
-   * thread at a later time
-   */
+  /** Renders the UI tree to the canvas which is drawn to the {@link Window} by the draw thread at a later time */
   void render() {
     if (tree != null && needsRender && !needsDraw) {
       LOGGER.debug("Rendering UI");
@@ -157,15 +150,14 @@ public final class UI implements Widget.Host {
 
   /** Called to unmount the {@link Widget} tree before being disposed */
   void unmount() {
-    if (tree != null)
-      tree.unmount();
+    if (tree != null) tree.unmount();
   }
 
   /**
-   * Updates the widget tree using a "diffing" algorithm
+   * Updates the widget tree using a "diffing" algorithm.
    * <p>
-   * This "diffing" algorithm involves generating a new widget tree with the new state,
-   * comparing it to the current widget tree and updating widgets whose states have changed.
+   * This "diffing" algorithm involves generating a new widget tree with the new state, comparing it to the current
+   * widget tree and updating or replacing widgets whose states have changed.
    */
   private void updateTree() {
     List<Widget> currentWidgetQueue = new ArrayList<>();
@@ -180,42 +172,42 @@ public final class UI implements Widget.Host {
     newWidgetQueue.add(newTree);
 
     while (!currentWidgetQueue.isEmpty() && !newWidgetQueue.isEmpty()) {
-      Widget treeWidget = currentWidgetQueue.remove(0);
+      Widget currentWidget = currentWidgetQueue.remove(0);
       Widget newWidget = newWidgetQueue.remove(0);
 
-      boolean typeMatch = treeWidget.getClass().equals(newWidget.getClass());
-      boolean stateMatch = treeWidget.stateEquals(newWidget);
+      boolean typeMatch = currentWidget.getClass().equals(newWidget.getClass());
+      boolean stateMatch = currentWidget.stateEquals(newWidget);
 
       if (!typeMatch) {
-        Parent treeWidgetParent = (Parent) treeWidget.getParent();
+        Parent currentWidgetParent = (Parent) currentWidget.getParent();
 
-        treeWidget.unmount();
+        currentWidget.unmount();
 
-        if (treeWidgetParent == null) {
+        if (currentWidgetParent == null) {
           tree = newWidget;
-        } else if (treeWidgetParent instanceof SingleChildParent treeWidgetSingleChildParent) {
-          treeWidgetSingleChildParent.updateChild(newWidget);
-        } else if (treeWidgetParent instanceof MultiChildParent treeWidgetMultiChildParent) {
-          int index = treeWidgetMultiChildParent.getChildren().indexOf(treeWidget);
-          treeWidgetMultiChildParent.updateChild(index, newWidget);
+        } else if (currentWidgetParent instanceof SingleChildParent currentWidgetSingleChildParent) {
+          currentWidgetSingleChildParent.updateChild(newWidget);
+        } else if (currentWidgetParent instanceof MultiChildParent currentWidgetMultiChildParent) {
+          int index = List.of(currentWidgetMultiChildParent.getChildren()).indexOf(currentWidget);
+          currentWidgetMultiChildParent.updateChild(index, newWidget);
         }
 
         treeUpdated = true;
       } else if (!stateMatch) {
-        treeWidget.update(newWidget);
+        currentWidget.updateState(newWidget);
         treeUpdated = true;
       }
 
-      if (treeWidget instanceof SingleChildParent currentParent
-        && newWidget instanceof SingleChildParent newParent) {
+      if (currentWidget instanceof SingleChildParent currentParent && newWidget instanceof SingleChildParent newParent) {
         // Add child of SingleChildParent to queue for processing
         currentWidgetQueue.add(currentParent.getChild());
         newWidgetQueue.add(newParent.getChild());
-      } else if (treeWidget instanceof MultiChildParent currentParent
-        && newWidget instanceof MultiChildParent newParent) {
+      } else if (currentWidget instanceof MultiChildParent currentParent && newWidget instanceof MultiChildParent newParent) {
         // Add children of MultiChildParent to queue for processing
-        currentWidgetQueue.addAll(currentParent.getChildren());
-        newWidgetQueue.addAll(newParent.getChildren());
+        List<Widget> currentParentChildrenWidgets = List.of(currentParent.getChildren());
+        List<Widget> newParentChildrenWidgets = List.of(newParent.getChildren());
+        currentWidgetQueue.addAll(currentParentChildrenWidgets);
+        newWidgetQueue.addAll(newParentChildrenWidgets);
       }
     }
 
@@ -228,8 +220,7 @@ public final class UI implements Widget.Host {
 
   /** Monitors {@link Input} and generates events for input actions */
   private void generateInputEvents() {
-    if (tree == null)
-      return;
+    if (tree == null) return;
 
     eventStore.clear();
     currentHitTestList.clear();
@@ -237,16 +228,13 @@ public final class UI implements Widget.Host {
     Position mousePosition = Input.getMousePosition();
 
     traverseTree(tree, TraverseDirection.IN, widget -> {
-      if (widget instanceof InputEvent.Handler &&
-        widget.hitTest(mousePosition.x, mousePosition.y)) {
+      if (widget instanceof InputEvent.Handler && widget.hitTest(mousePosition.x, mousePosition.y)) {
         currentHitTestList.add(widget);
       }
     });
 
     // Assign the last hit test widget as the hover widget
-    Widget hoverWidget = !currentHitTestList.isEmpty()
-      ? currentHitTestList.get(currentHitTestList.size() - 1)
-      : null;
+    Widget hoverWidget = !currentHitTestList.isEmpty() ? currentHitTestList.get(currentHitTestList.size() - 1) : null;
 
     // Generate mouse motion events if the mouse position has changed
     if (!Objects.equals(this.mousePosition, mousePosition)) {
@@ -280,28 +268,22 @@ public final class UI implements Widget.Host {
         Input.BUTTON_LMB
       );
 
-      // If the hover widget is not the focus widget, a new widget has the focus now, so generate a
-      // blur event for the last focused widget
+      // If the hover widget is not the focus widget, a new widget has the focus now,
+      // so generate a blur event for the last focused widget
       if (focusWidget != hoverWidget) {
         lastFocusWidget = focusWidget;
-
-        eventStore.blurEvent = new FocusEvent(
-          FocusEvent.Type.BLUR
-        );
+        eventStore.blurEvent = new FocusEvent(FocusEvent.Type.BLUR);
       }
 
       // Since the mouse is down, the hover widget becomes the focus widget
       focusWidget = hoverWidget;
 
-      // Also generate a focus event
-      eventStore.focusEvent = new FocusEvent(
-        FocusEvent.Type.FOCUS
-      );
+      // Also generate a focus event for the newly focused widget
+      eventStore.focusEvent = new FocusEvent(FocusEvent.Type.FOCUS);
 
-      // If no widget is currently being activated, the hover widget also becomes the active
-      // widget until the mouse is released
-      if (activeWidget == null)
-        activeWidget = hoverWidget;
+      // If no widget is currently being activated, the hover widget
+      // also becomes the active widget until the mouse is released
+      if (activeWidget == null) activeWidget = hoverWidget;
     }
 
     // Generate mouse press events if LMB is being pressed
@@ -352,16 +334,14 @@ public final class UI implements Widget.Host {
     }
 
     // Generate a key char event if a character key has been pressed
-    if (Input.getPressedCharacter() != 0)
-      eventStore.keyCharEvent = new KeyCharEvent(
-        Input.getPressedCharacter()
-      );
+    if (Input.getPressedCharacter() != 0) {
+      eventStore.keyCharEvent = new KeyCharEvent(Input.getPressedCharacter());
+    }
 
     // Generate a key code event if an action key has been pressed
-    if (Input.getPressedKeyCode() != 0)
-      eventStore.keyCodeEvent = new KeyCodeEvent(
-        Input.getPressedKeyCode()
-      );
+    if (Input.getPressedKeyCode() != 0) {
+      eventStore.keyCodeEvent = new KeyCodeEvent(Input.getPressedKeyCode());
+    }
 
     this.mousePosition.set(mousePosition);
   }
@@ -371,8 +351,7 @@ public final class UI implements Widget.Host {
     // Dispatch mouse motion event to widgets under mouse
     if (eventStore.mouseMotionEvent != null) {
       for (Widget widget : currentHitTestList) {
-        if (widget instanceof MouseEvent.Handler eventHandler &&
-          !eventStore.mouseMotionEvent.isHandled())
+        if (widget instanceof MouseEvent.Handler eventHandler && !eventStore.mouseMotionEvent.isHandled())
           eventHandler.handleEvent(eventStore.mouseMotionEvent);
       }
     }
@@ -381,9 +360,8 @@ public final class UI implements Widget.Host {
     if (eventStore.mouseEnterEvent != null) {
       for (Widget widget : currentHitTestList) {
         if (activeWidget == null || widget == activeWidget) {
-          if (!previousHitTestList.contains(widget) &&
-            widget instanceof MouseEvent.Handler eventHandler &&
-            !eventStore.mouseEnterEvent.isHandled())
+          if (!previousHitTestList.contains(widget) && widget instanceof MouseEvent.Handler eventHandler
+            && !eventStore.mouseEnterEvent.isHandled())
             eventHandler.handleEvent(eventStore.mouseEnterEvent);
         }
       }
@@ -393,12 +371,10 @@ public final class UI implements Widget.Host {
     if (activeWidget != null) {
       traverseTree(activeWidget, TraverseDirection.OUT, widget -> {
         if (widget instanceof MouseEvent.Handler eventHandler) {
-          if (eventStore.mouseDownEvent != null &&
-            !eventStore.mouseDownEvent.isHandled())
+          if (eventStore.mouseDownEvent != null && !eventStore.mouseDownEvent.isHandled())
             eventHandler.handleEvent(eventStore.mouseDownEvent);
 
-          if (eventStore.mousePressEvent != null &&
-            !eventStore.mousePressEvent.isHandled())
+          if (eventStore.mousePressEvent != null && !eventStore.mousePressEvent.isHandled())
             eventHandler.handleEvent(eventStore.mousePressEvent);
         }
       });
@@ -408,12 +384,10 @@ public final class UI implements Widget.Host {
     if (lastActiveWidget != null) {
       traverseTree(lastActiveWidget, TraverseDirection.OUT, widget -> {
         if (widget instanceof MouseEvent.Handler eventHandler) {
-          if (eventStore.mouseReleaseEvent != null &&
-            !eventStore.mouseReleaseEvent.isHandled())
+          if (eventStore.mouseReleaseEvent != null && !eventStore.mouseReleaseEvent.isHandled())
             eventHandler.handleEvent(eventStore.mouseReleaseEvent);
 
-          if (eventStore.mouseClickEvent != null &&
-            !eventStore.mouseClickEvent.isHandled())
+          if (eventStore.mouseClickEvent != null && !eventStore.mouseClickEvent.isHandled())
             eventHandler.handleEvent(eventStore.mouseClickEvent);
         }
       });
@@ -423,9 +397,8 @@ public final class UI implements Widget.Host {
     if (eventStore.mouseExitEvent != null) {
       for (Widget widget : previousHitTestList) {
         if (activeWidget == null || widget == activeWidget) {
-          if (!currentHitTestList.contains(widget) &&
-            widget instanceof MouseEvent.Handler eventHandler &&
-            !eventStore.mouseExitEvent.isHandled())
+          if (!currentHitTestList.contains(widget) && widget instanceof MouseEvent.Handler eventHandler
+            && !eventStore.mouseExitEvent.isHandled())
             eventHandler.handleEvent(eventStore.mouseExitEvent);
         }
       }
@@ -433,33 +406,29 @@ public final class UI implements Widget.Host {
 
     // Dispatch focus event
     if (eventStore.focusEvent != null) {
-      if (focusWidget != null &&
-        !eventStore.focusEvent.isHandled() &&
-        focusWidget instanceof FocusEvent.Handler eventHandler)
+      if (focusWidget != null && !eventStore.focusEvent.isHandled()
+        && focusWidget instanceof FocusEvent.Handler eventHandler)
         eventHandler.handleEvent(eventStore.focusEvent);
     }
 
     // Dispatch blur event
     if (eventStore.blurEvent != null) {
-      if (lastFocusWidget != null &&
-        !eventStore.blurEvent.isHandled() &&
-        lastFocusWidget instanceof FocusEvent.Handler eventHandler)
+      if (lastFocusWidget != null && !eventStore.blurEvent.isHandled()
+        && lastFocusWidget instanceof FocusEvent.Handler eventHandler)
         eventHandler.handleEvent(eventStore.blurEvent);
     }
 
     // Dispatch key char event
     if (eventStore.keyCharEvent != null) {
-      if (focusWidget != null &&
-        !eventStore.keyCharEvent.isHandled() &&
-        focusWidget instanceof KeyCharEvent.Handler eventHandler)
+      if (focusWidget != null && !eventStore.keyCharEvent.isHandled()
+        && focusWidget instanceof KeyCharEvent.Handler eventHandler)
         eventHandler.handleEvent(eventStore.keyCharEvent);
     }
 
     // Dispatch key code event
     if (eventStore.keyCodeEvent != null) {
-      if (focusWidget != null &&
-        !eventStore.keyCodeEvent.isHandled() &&
-        focusWidget instanceof KeyCodeEvent.Handler eventHandler)
+      if (focusWidget != null && !eventStore.keyCodeEvent.isHandled()
+        && focusWidget instanceof KeyCodeEvent.Handler eventHandler)
         eventHandler.handleEvent(eventStore.keyCodeEvent);
     }
 
@@ -469,19 +438,13 @@ public final class UI implements Widget.Host {
     lastFocusWidget = null;
   }
 
-  private void traverseTree(
-    Widget tree,
-    TraverseDirection direction,
-    TreeWidgetVisitor visitor
-  ) {
+  private void traverseTree(Widget tree, TraverseDirection direction, TreeWidgetVisitor visitor) {
     visitor.visit(tree);
 
     switch (direction) {
       case OUT -> {
         Widget parent = tree.getParent();
-
-        if (parent == null)
-          return;
+        if (parent == null) return;
 
         traverseTree(parent, direction, visitor);
       }
@@ -489,7 +452,7 @@ public final class UI implements Widget.Host {
         if (tree instanceof SingleChildParent parent) {
           traverseTree(parent.getChild(), direction, visitor);
         } else if (tree instanceof MultiChildParent parent) {
-          List<Widget> children = parent.getChildren();
+          Widget[] children = parent.getChildren();
 
           for (Widget child : children)
             traverseTree(child, direction, visitor);

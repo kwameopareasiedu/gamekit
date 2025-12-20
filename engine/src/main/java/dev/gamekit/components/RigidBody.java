@@ -16,12 +16,12 @@ import java.util.List;
 /**
  * {@link RigidBody} enables physics-based motion for the entity.
  * <p>
- * During its {@link #update} phase and after a physics simulation step is complete, this
- * component will update the attached entity's {@link Transform} component's position and rotation
+ * During its {@link #update} phase and after a physics simulation step is complete, this component will update the
+ * attached entity's {@link Transform} component's position and rotation
  * <p>
- * <strong>NB</strong>: Once a {@link RigidBody} is added to an entity, position and rotation
- * changes <strong>must</strong> be done with the {@link RigidBody} component and not directly
- * on the {@link Transform} component
+ * <strong>NB</strong>: Once a {@link RigidBody} is added to an entity, position and rotation changes
+ * <strong>must</strong> be done with the {@link RigidBody} component and not directly on the {@link Transform}
+ * component
  */
 public class RigidBody extends Component {
   public static boolean DEBUG_DRAW = false;
@@ -48,6 +48,7 @@ public class RigidBody extends Component {
 
   /**
    * Sets the world gravity multiplier on this {@link RigidBody}
+   *
    * @see org.dyn4j.dynamics.PhysicsBody#setGravityScale(double)
    */
   public void setGravityScale(double scale) {
@@ -56,10 +57,7 @@ public class RigidBody extends Component {
 
   /** Sets the world position of this {@link RigidBody} */
   public void setPosition(double x, double y) {
-    body.getTransform().setTranslation(
-      x / Physics.PIXELS_PER_METER,
-      y / Physics.PIXELS_PER_METER
-    );
+    body.getTransform().setTranslation(x / Physics.PIXELS_PER_METER, y / Physics.PIXELS_PER_METER);
   }
 
   /** Sets the global rotation (radian) of this {@link RigidBody} about its center */
@@ -70,26 +68,17 @@ public class RigidBody extends Component {
   /**
    * Sets the global rotation (radian) of this {@link RigidBody} about a point {@code (px, py)}
    * <p>
-   * Rotating about a non-center point changes the position, so the starting position
-   * {@code (sx, sy)} is required
+   * Rotating about a non-center point changes the position, so the starting position {@code (sx, sy)} is required
    */
   public void setRotation(double rad, double px, double py, double sx, double sy) {
     body.getTransform().setRotation(0);
-
-    body.getTransform().setTranslation(
-      sx / Physics.PIXELS_PER_METER,
-      sy / Physics.PIXELS_PER_METER
-    );
-
-    body.rotate(
-      -rad,
-      px / Physics.PIXELS_PER_METER,
-      py / Physics.PIXELS_PER_METER
-    );
+    body.getTransform().setTranslation(sx / Physics.PIXELS_PER_METER, sy / Physics.PIXELS_PER_METER);
+    body.rotate(-rad, px / Physics.PIXELS_PER_METER, py / Physics.PIXELS_PER_METER);
   }
 
   /**
    * Sets the linear velocity of this {@link RigidBody}
+   *
    * @see org.dyn4j.dynamics.PhysicsBody#setLinearVelocity(double, double)
    */
   public void setLinearVelocity(double x, double y) {
@@ -98,6 +87,7 @@ public class RigidBody extends Component {
 
   /**
    * Applies a linear force vector to this {@link RigidBody}
+   *
    * @see org.dyn4j.dynamics.PhysicsBody#applyForce(Vector2)
    */
   public void applyForce(double x, double y) {
@@ -106,6 +96,7 @@ public class RigidBody extends Component {
 
   /**
    * Applies a linear impulse vector to this {@link RigidBody}
+   *
    * @see org.dyn4j.dynamics.PhysicsBody#applyImpulse(Vector2)
    */
   public void applyImpulse(double x, double y) {
@@ -114,6 +105,7 @@ public class RigidBody extends Component {
 
   /**
    * Applies a torque about the center of this {@link RigidBody}
+   *
    * @see org.dyn4j.dynamics.PhysicsBody#applyTorque(double)
    */
   public void applyTorque(double torque) {
@@ -125,11 +117,8 @@ public class RigidBody extends Component {
     for (Component component : components) {
       if (component instanceof RigidBody) {
         // Ensure only one RigidBody on the entity
-        if (component != this) {
-          throw new IllegalArgumentException(
-            "Entity cannot have more than one RigidBody component"
-          );
-        }
+        if (component != this)
+          throw new IllegalArgumentException("Entity cannot have more than one RigidBody component");
 
         // Ensure no entity ancestor has a RigidBody component
         Entity parentEntity = entity.getParent();
@@ -141,8 +130,8 @@ public class RigidBody extends Component {
 
             throw new IllegalArgumentException(
               String.format(
-                "Entities with a RigidBody component [%s] cannot have descendants [%s] which " +
-                  "also have a RigidBody component",
+                "Entities with a RigidBody component [%s] cannot have descendants [%s] which also have a RigidBody " +
+                  "component",
                 ancestorClassName, descendantClassName
               )
             );
@@ -185,8 +174,7 @@ public class RigidBody extends Component {
     if (DEBUG_DRAW) {
       Transform tx = entity.findComponent(Transform.class);
       Vector globalPosition = tx.getGlobalPosition();
-      Renderer.fillCircle((int) globalPosition.x, (int) globalPosition.y, 3)
-        .withColor(Color.RED);
+      Renderer.fillCircle((int) globalPosition.x, (int) globalPosition.y, 3).withColor(Color.RED);
     }
   }
 

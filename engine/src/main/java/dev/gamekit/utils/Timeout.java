@@ -9,10 +9,8 @@ public class Timeout {
   VoidCallback callback;
 
   public Timeout(long durationMs, VoidCallback callback) {
-    if (durationMs < 0)
-      throw new RuntimeException("Timeout duration cannot be negative");
-    if (callback == null)
-      throw new RuntimeException("Timeout task cannot be null");
+    if (durationMs < 0) throw new RuntimeException("Timeout duration cannot be negative");
+    if (callback == null) throw new RuntimeException("Timeout task cannot be null");
     this.durationMs = durationMs;
     this.completed = false;
     this.callback = callback;
@@ -29,17 +27,13 @@ public class Timeout {
   }
 
   /**
-   * Called internally by the application to update the timeout by decrementing its duration till
-   * it reaches 0. When the duration reaches zero, then the task's {@link VoidCallback#run} method
-   * is executed.
+   * Called internally by the application to update the timeout by decrementing its duration till it reaches 0.
+   * When the duration reaches zero, then the task's {@link VoidCallback#run} method is executed.
    */
   public void update() {
-    if (completed)
-      return;
+    if (completed) return;
 
-    durationMs = java.lang.Math.max(
-      0, durationMs - Application.FRAME_INTERVAL_MS
-    );
+    durationMs = java.lang.Math.max(0, durationMs - Application.FRAME_INTERVAL_MS);
 
     if (durationMs == 0) {
       completed = true;

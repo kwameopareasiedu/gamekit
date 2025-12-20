@@ -7,19 +7,14 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 /**
- * {@link Renderer} dispatches {@link DrawCall draw calls} which are processed by the render
- * thread to draw on the current {@link Window}
+ * {@link Renderer} dispatches {@link DrawCall draw calls} which are processed by the render thread to draw on the
+ * current {@link Window}
  */
 @SuppressWarnings("JavaExistingMethodCanBeUsed")
 public final class Renderer {
-  private static final ArrayList<DrawCall<?>> BUFFER;
-  private static boolean committed;
-  private static boolean completed;
-
-  static {
-    BUFFER = new ArrayList<>();
-    committed = completed = false;
-  }
+  private static final ArrayList<DrawCall<?>> BUFFER = new ArrayList<>();
+  private static boolean committed = false;
+  private static boolean completed = false;
 
   private Renderer() { }
 
@@ -64,18 +59,14 @@ public final class Renderer {
   }
 
   /** Fills a <b>center-origin</b> rounded rect at (x, y) with size, height, arc size and height */
-  public static DrawRoundRect fillRoundRect(
-    int x, int y, int width, int height, int arcWidth, int arcHeight
-  ) {
+  public static DrawRoundRect fillRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) {
     DrawRoundRect call = new DrawRoundRect(x, y, width, height, arcWidth, arcHeight, true);
     BUFFER.add(call);
     return call;
   }
 
   /** Draws a <b>center-origin</b> rounded rect at (x, y) with size, height, arc size and height */
-  public static DrawRoundRect drawRoundRect(
-    int x, int y, int width, int height, int arcWidth, int arcHeight
-  ) {
+  public static DrawRoundRect drawRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) {
     DrawRoundRect call = new DrawRoundRect(x, y, width, height, arcWidth, arcHeight, false);
     BUFFER.add(call);
     return call;
@@ -119,20 +110,14 @@ public final class Renderer {
     return call;
   }
 
-  /**
-   * Draws a polygon from a list of points which must even in the format {@code [px1, py1, px2,
-   * py2, ..., pxn, pyn]
-   */
+  /** Draws a polygon from a list of points which must even in the format {@code [px1, py1, px2, py2, ..., pxn, pyn] */
   public static DrawPolygon drawPolygon(int[] points) {
     DrawPolygon call = new DrawPolygon(points, false);
     BUFFER.add(call);
     return call;
   }
 
-  /**
-   * Fills a polygon from a list of points which must even in the format {@code [px1, py1, px2,
-   * py2, ..., pxn, pyn]
-   */
+  /** Fills a polygon from a list of points which must even in the format {@code [px1, py1, px2, py2, ..., pxn, pyn] */
   public static DrawPolygon fillPolygon(int[] points) {
     DrawPolygon call = new DrawPolygon(points, true);
     BUFFER.add(call);
@@ -153,8 +138,9 @@ public final class Renderer {
 
   /** Applies accumulated draw calls to the provided {@link Graphics2D} object */
   static void draw(Graphics2D g) {
-    for (DrawCall<?> call : BUFFER)
+    for (DrawCall<?> call : BUFFER) {
       call.apply(g);
+    }
 
     completed = true;
   }

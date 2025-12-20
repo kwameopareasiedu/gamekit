@@ -18,11 +18,9 @@ import java.util.prefs.Preferences;
 /**
  * {@link IO} handles resource access
  * <p>
- * {@link IO} caches resources loaded, prevent multiple disk reads for the same and improving
- * performance.
+ * {@link IO} caches resources loaded, prevent multiple disk reads for the same and improving performance.
  * <p>
- * It also keeps track of opened {@link InputStream} objects and closes them when the current
- * application exits
+ * It also keeps track of opened {@link InputStream} objects and closes them when the current application exits
  */
 public final class IO {
   private static final Logger LOGGER = LogManager.getLogger(IO.class);
@@ -41,8 +39,7 @@ public final class IO {
   /**
    * Opens and returns a stream to a file which may or may not be a resource file.
    * <p>
-   * The path can either be an absolute path or relative to the working directory the java
-   * command is invoked in
+   * The path can either be an absolute path or relative to the working directory the java command is invoked in
    * <p>
    * Throws a {@link FileNotFoundException} if the path is not a valid file.
    */
@@ -55,8 +52,7 @@ public final class IO {
   /** Read and cache an image <b>resource file</b> */
   public static BufferedImage getResourceImage(String resPath) {
     try {
-      if (CACHE.containsKey(resPath))
-        return (BufferedImage) CACHE.get(resPath);
+      if (CACHE.containsKey(resPath)) return (BufferedImage) CACHE.get(resPath);
 
       LOGGER.debug("Loading resource image at {}", resPath);
       BufferedImage image = ImageIO.read(getResourceStream(resPath));
@@ -87,8 +83,7 @@ public final class IO {
   /** Read and cache a font <b>resource file</b> */
   public static Font getResourceFont(String resPath) {
     try {
-      if (CACHE.containsKey(resPath))
-        return (Font) CACHE.get(resPath);
+      if (CACHE.containsKey(resPath)) return (Font) CACHE.get(resPath);
 
       LOGGER.debug("Loading resource font at {}", resPath);
       Font font = Font.createFont(Font.TRUETYPE_FONT, getResourceStream(resPath));
@@ -104,8 +99,7 @@ public final class IO {
   /**
    * Writes data to the file at the specified path.
    * <p>
-   * The path can either be an absolute path or relative to the working directory the java
-   * command is invoked in
+   * The path can either be an absolute path or relative to the working directory the java command is invoked in
    */
   public static boolean writeFile(String path, String content, boolean overwrite) {
     File file = new File(path);
@@ -173,8 +167,7 @@ public final class IO {
   }
 
   /**
-   * Returns a string value from the application's {@link Preferences} node associated with the
-   * specified key.
+   * Returns a string value from the application's {@link Preferences} node associated with the specified key.
    * <p>
    * If no value is found, the given default value is returned instead.
    */
@@ -183,8 +176,7 @@ public final class IO {
   }
 
   /**
-   * Returns an integer value from the application's {@link Preferences} node associated with the
-   * specified key.
+   * Returns an integer value from the application's {@link Preferences} node associated with the specified key.
    * <p>
    * If no value is found, the given default value is returned instead.
    */
@@ -193,8 +185,7 @@ public final class IO {
   }
 
   /**
-   * Returns a boolean value from the application's {@link Preferences} node associated with the
-   * specified key.
+   * Returns a boolean value from the application's {@link Preferences} node associated with thespecified key.
    * <p>
    * If no value is found, the given default value is returned instead.
    */
@@ -203,8 +194,7 @@ public final class IO {
   }
 
   /**
-   * Returns a double value from the application's {@link Preferences} node associated with the
-   * specified key.
+   * Returns a double value from the application's {@link Preferences} node associated with thespecified key.
    * <p>
    * If no value is found, the given default value is returned instead.
    */
@@ -213,8 +203,7 @@ public final class IO {
   }
 
   /**
-   * Returns a float value from the application's {@link Preferences} node associated with the
-   * specified key.
+   * Returns a float value from the application's {@link Preferences} node associated with the specified key.
    * <p>
    * If no value is found, the given default value is returned instead.
    */
@@ -223,8 +212,7 @@ public final class IO {
   }
 
   /**
-   * Returns a long value from the application's {@link Preferences} node associated with the
-   * specified key.
+   * Returns a long value from the application's {@link Preferences} node associated with the specified key.
    * <p>
    * If no value is found, the given default value is returned instead.
    */
@@ -233,8 +221,7 @@ public final class IO {
   }
 
   /**
-   * Returns a byte array value from the application's {@link Preferences} node associated with the
-   * specified key.
+   * Returns a byte array value from the application's {@link Preferences} node associated with the specified key.
    * <p>
    * If no value is found, the given default value is returned instead.
    */
@@ -271,12 +258,10 @@ public final class IO {
   /**
    * Returns the {@link Preferences} node associated with the current {@link Application} instance.
    * <p>
-   * The preference path is computed from the application's title and hence is always the same for
-   * a title string.
+   * The preference path is computed from the application's title and hence is always the same for a title string.
    */
   private static Preferences getApplicationPreferenceNode() {
-    if (Application.getInstance() == null)
-      throw new IllegalStateException("No instance of Application running");
+    if (Application.getInstance() == null) throw new IllegalStateException("No instance of Application running");
 
     String applicationTitle = Application.getInstance().getSettings().title;
     String preferencePath = "_" + applicationTitle.trim().replaceAll("\\W", "_");

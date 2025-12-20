@@ -26,9 +26,8 @@ public class AnimatedSprite extends Sprite implements ValueCallback<Animation.St
   /**
    * Creates a new {@link AnimatedSprite}.
    * <p>
-   * The {@code coordinates} should be of the format {@code [x1, y1, x2, y2, ..., xn, yn]}, where
-   * each  {@code (x, y)} pair represents the top-left point of the individual sprites in the
-   * sprite sheet
+   * The {@code coordinates} should be of the format {@code [x1, y1, x2, y2, ..., xn, yn]}, where each  {@code (x, y)}
+   * pair represents the top-left point of the individual sprites in the sprite sheet
    */
   public AnimatedSprite(
     BufferedImage spriteSheet,
@@ -43,9 +42,8 @@ public class AnimatedSprite extends Sprite implements ValueCallback<Animation.St
   }
 
   /**
-   * Updates the sprite sheet and computes the sprites based on the given {@code spriteWidth},
-   * {@code spriteHeight} and {@code coordinates}. Each coordinates pair represents the top-left
-   * corner of a sprite in the sprite sheet
+   * Updates the sprite sheet and computes the sprites based on the given {@code spriteWidth}, {@code spriteHeight}
+   * and {@code coordinates}. Each coordinates pair represents the top-left corner of a sprite in the sprite sheet
    */
   public void setSpriteSheet(
     BufferedImage spriteSheet,

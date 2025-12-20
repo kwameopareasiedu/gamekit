@@ -1,5 +1,6 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.utils.Constraints;
 
 import java.awt.*;
@@ -9,9 +10,10 @@ import java.awt.*;
  * <p>
  * {@link Compose} delegates its layout and rendering to the supplied widget tree
  */
+@WidgetBuilder
 public abstract class Compose extends SingleChildParent {
-  protected Compose(ComposeConfig config, Widget child) {
-    super(config, child);
+  protected Compose(ComposeConfig... config) {
+    super(config);
   }
 
   @Override
@@ -31,6 +33,4 @@ public abstract class Compose extends SingleChildParent {
   public final void performRender(Graphics2D g) {
     getChild().performRender(g);
   }
-
-  public abstract static class ComposeConfig extends SingleChildParentConfig { }
 }

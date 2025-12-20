@@ -13,8 +13,8 @@ import static dev.gamekit.utils.Math.clamp;
 /**
  * {@link AudioClip} is abstract class which stores and handles playback for audio in GameKit.
  * <p>
- * All {@link AudioClip} must belong to an {@link AudioGroup}. This makes it possible to control
- * the properties of all audio clips in specific groups by adjusting the group's properties.
+ * All {@link AudioClip} must belong to an {@link AudioGroup}. This makes it possible to control the properties of
+ * all audio clips in specific groups by adjusting the group's properties.
  */
 public abstract class AudioClip {
   protected final Logger logger = LogManager.getLogger(getClass());
@@ -70,8 +70,7 @@ public abstract class AudioClip {
 
   /** Called internally to update the clip's parameters */
   public final void update() {
-    if (clip.isRunning())
-      performUpdate();
+    if (clip.isRunning()) performUpdate();
   }
 
   /** Delegate method which performs the actual update and must be overridden in subclasses */
@@ -89,8 +88,7 @@ public abstract class AudioClip {
 
   @SuppressWarnings("unchecked")
   protected <T extends Control> T getControl(T.Type controlType) {
-    if (clip != null && clip.isControlSupported(controlType))
-      return (T) clip.getControl(controlType);
+    if (clip != null && clip.isControlSupported(controlType)) return (T) clip.getControl(controlType);
     return null;
   }
 
@@ -99,9 +97,7 @@ public abstract class AudioClip {
       logger.debug("Loading audio clip at {}", resPath);
 
       Clip clip = AudioSystem.getClip();
-      clip.open(AudioSystem.getAudioInputStream(
-        new BufferedInputStream(IO.getResourceStream(resPath))
-      ));
+      clip.open(AudioSystem.getAudioInputStream(new BufferedInputStream(IO.getResourceStream(resPath))));
       return clip;
     } catch (LineUnavailableException e) {
       logger.error("Could not get audio clip resource from system mixer", e);

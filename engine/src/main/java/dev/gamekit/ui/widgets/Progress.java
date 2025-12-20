@@ -1,94 +1,65 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.annotations.WidgetBuilder;
+import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.core.IO;
-import dev.gamekit.utils.Constraints;
-import dev.gamekit.utils.Spacing;
 import dev.gamekit.ui.mixins.NinePatch;
 import dev.gamekit.utils.Bounds;
+import dev.gamekit.utils.Constraints;
+import dev.gamekit.utils.Spacing;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Objects;
-
-import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link Leaf} widget which displays a progress bar */
+@WidgetBuilder
 public class Progress extends Leaf implements NinePatch {
-  public static final BufferedImage TRACK_BG =
-    IO.getResourceImage("default-sprites.png", 470, 232, 96, 32);
-  public static final BufferedImage FILL_BG =
-    IO.getResourceImage("default-sprites.png", 470, 289, 96, 32);
+  public static final BufferedImage TRACK_BG = IO.getResourceImage("default-sprites.png", 470, 232, 96, 32);
+  public static final BufferedImage FILL_BG = IO.getResourceImage("default-sprites.png", 470, 289, 96, 32);
 
+  @WidgetBuilderField(fallback = "dev.gamekit.core.IO.getResourceImage(\"default-sprites.png\", 470, 232, 96, 32)")
   protected BufferedImage trackBackground;
+  @WidgetBuilderField(fallback = "dev.gamekit.core.IO.getResourceImage(\"default-sprites.png\", 470, 289, 96, 32)")
   protected BufferedImage fillBackground;
+  @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing(8)")
   protected Spacing trackEdgeInsets;
+  @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing(8)")
   protected Spacing fillEdgeInsets;
+  @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing(0)")
   protected Spacing fillMargin;
+  @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Progress.FillMode.SCALE")
   protected FillMode fillMode;
+  @WidgetBuilderField(fallback = "0.0")
   protected Double minValue;
+  @WidgetBuilderField(fallback = "100.0")
   protected Double maxValue;
+  @WidgetBuilderField(fallback = "50.0")
   protected Double value;
+
   protected double valueRatio = 0;
 
   private final Bounds fillAbsoluteBounds;
 
-  public Progress(ProgressConfig<?> config, Double value) {
-    super(config.value(value));
+  public Progress(ProgressConfig... config) {
+    super(config);
+
     fillAbsoluteBounds = new Bounds();
   }
 
-  public static Progress create(ProgressConfig<?> config, double value) {
-    return new Progress(config, value);
-  }
-
-  public static ProgressConfig<?> config() {
-    return new ProgressConfig<>();
-  }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    return widget instanceof Progress progressWidget &&
-      Objects.equals(trackBackground, progressWidget.trackBackground) &&
-      Objects.equals(fillBackground, progressWidget.fillBackground) &&
-      Objects.equals(trackEdgeInsets, progressWidget.trackEdgeInsets) &&
-      Objects.equals(fillEdgeInsets, progressWidget.fillEdgeInsets) &&
-      Objects.equals(fillMargin, progressWidget.fillMargin) &&
-      Objects.equals(fillMode, progressWidget.fillMode) &&
-      Objects.equals(minValue, progressWidget.minValue) &&
-      Objects.equals(maxValue, progressWidget.maxValue) &&
-      Objects.equals(value, progressWidget.value);
+  public static Progress create(ProgressConfig... config) {
+    return new Progress(config);
   }
 
   @Override
   protected void performInit() {
     super.performInit();
 
-    ProgressConfig<?> config = (ProgressConfig<?>) super.config;
-    Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
-
-    if (config.value == null)
-      throw new IllegalArgumentException("Progress value cannot be null");
-    if (config.minValue == null)
-      throw new IllegalArgumentException("Progress minValue cannot be null");
-    else if (config.maxValue == null)
-      throw new IllegalArgumentException("Progress maxValue cannot be null");
-    else if (config.minValue > config.maxValue)
-      throw new IllegalArgumentException("Progress minValue cannot be more than maxValue");
-    else if (config.value < config.minValue || config.value > config.maxValue)
+    if (value == null) throw new IllegalArgumentException("Progress value cannot be null");
+    if (minValue == null) throw new IllegalArgumentException("Progress minValue cannot be null");
+    else if (maxValue == null) throw new IllegalArgumentException("Progress maxValue cannot be null");
+    else if (minValue > maxValue) throw new IllegalArgumentException("Progress minValue cannot be more than maxValue");
+    else if (value < minValue || value > maxValue)
       throw new IllegalArgumentException("Progress value must be between minValue and maxValue");
-
-    this.trackBackground =
-      coalesce(config.trackBackground, theme.progressTrackBackground, TRACK_BG);
-    this.fillBackground = coalesce(config.fillBackground, theme.progressFillBackground, FILL_BG);
-    this.trackEdgeInsets =
-      coalesce(config.trackEdgeInsets, theme.progressTrackEdgeInsets, new Spacing(8));
-    this.fillEdgeInsets =
-      coalesce(config.fillEdgeInsets, theme.progressFillEdgeInsets, new Spacing(8));
-    this.fillMargin = coalesce(config.fillMargin, theme.progressFillMargin, new Spacing(0));
-    this.fillMode = coalesce(config.fillMode, theme.progressFillMode, FillMode.SCALE);
-    this.minValue = config.minValue;
-    this.maxValue = config.maxValue;
-    this.value = config.value;
 
     valueRatio = (value - minValue) / (maxValue - minValue);
   }
@@ -150,70 +121,11 @@ public class Progress extends Leaf implements NinePatch {
     }
   }
 
-  @SuppressWarnings("unchecked")
-  public static class ProgressConfig<T extends ProgressConfig<T>> extends LeafConfig {
-    protected BufferedImage trackBackground;
-    protected BufferedImage fillBackground;
-    protected Spacing trackEdgeInsets;
-    protected Spacing fillEdgeInsets;
-    protected Spacing fillMargin;
-    protected FillMode fillMode;
-    protected Double minValue;
-    protected Double maxValue;
-    protected Double value;
-
-    private T value(double value) {
-      this.value = value;
-      return (T) this;
-    }
-
-    public T range(double minValue, double maxValue) {
-      this.minValue = minValue;
-      this.maxValue = maxValue;
-      return (T) this;
-    }
-
-    public T trackBackground(BufferedImage trackBackground) {
-      this.trackBackground = trackBackground;
-      return (T) this;
-    }
-
-    public T trackEdgeInsets(int top, int right, int bottom, int left) {
-      this.trackEdgeInsets = new Spacing(top, right, bottom, left);
-      return (T) this;
-    }
-
-    public T fillBackground(BufferedImage fillBackground) {
-      this.fillBackground = fillBackground;
-      return (T) this;
-    }
-
-    public T fillEdgeInsets(int top, int right, int bottom, int left) {
-      this.fillEdgeInsets = new Spacing(top, right, bottom, left);
-      return (T) this;
-    }
-
-    public T fillMargin(int top, int right, int bottom, int left) {
-      this.fillMargin = new Spacing(top, right, bottom, left);
-      return (T) this;
-    }
-
-    public T fillMode(FillMode fillMode) {
-      this.fillMode = fillMode;
-      return (T) this;
-    }
-  }
-
-  /** Enumeration which determines how a {@link Progress} fill is rendered */
+  /** Enumeration which determines how a {@link Progress#fillBackground} fill is rendered */
   public enum FillMode {
-    /**
-     * Mode to render the {@link Progress#fillBackground} without scaling but use a clip to control
-     * the visible portion
-     */
+    /** Mode to render without scaling but use a clip to control the visible portion */
     CLIP,
-    /**
-     * Mode to render the {@link Progress#fillBackground}, scaling its entirety using 9-patch scaling
-     */
+    /** Mode to render, scaling its entirety using 9-patch scaling */
     SCALE
   }
 }

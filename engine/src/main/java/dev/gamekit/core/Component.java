@@ -6,13 +6,11 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 
 /**
- * While an {@link Entity} can have all functionality written entirely in its own class, it's
- * usually a good idea to separate independent functionality from each other, and this is where
- * components come in.
+ * While an {@link Entity} can have all functionality written entirely in its own class, it's usually a good idea to
+ * separate independent functionality from each other, and this is where components come in.
  * <p>
- * {@link Component} represents predefined behaviours that can then be attached to {@link Entity
- * entities}. These behaviors include, but are not limited to, physics, lighting and network
- * components.
+ * {@link Component} represents predefined behaviours that can then be attached to {@link Entity entities}.
+ * These behaviors include, but are not limited to, physics, lighting and network components.
  */
 public abstract class Component {
   static final Component.Filter<Component> TRUTHY_FILTER = (ignored) -> true;
@@ -30,16 +28,15 @@ public abstract class Component {
   /**
    * Called before {@link #start} to run validation logic on the components.
    * <p>
-   * This method should throw an exception with an appropriate description if validation failed
-   * and <b>must not</b> modify the provided component list.
+   * This method should throw an exception with an appropriate description if validation failed and <b>must not</b>
+   * modify the provided component list.
    */
   public void validate(Entity entity, List<Component> components) { /* No-op */ }
 
   /**
    * Called when attached to an {@link Entity} to set up the component
    * <p>
-   * NB: <i>The value of {@link #entity} is set before this method is called and can safely be
-   * accessed here.</i>
+   * NB: <i>The value of {@link #entity} is set before this method is called and can safely be accessed here.</i>
    */
   protected void start() { /* No-op */ }
 
@@ -57,12 +54,10 @@ public abstract class Component {
   protected void dispose() { /* No-op */ }
 
   /**
-   * Called <b>once</b> by the host {@link Entity} before {@link #_start} with the list of new
-   * components from {@link Entity#getComponents} for validation before adding the components to
-   * the entity.
+   * Called <b>once</b> by the host {@link Entity} before {@link #_start} with the list of new components from
+   * {@link Entity#getComponents} for validation before adding the components to the entity.
    * <p>
-   * If validation logic fails, this method should throw an exception with an appropriate
-   * description
+   * If validation logic fails, this method should throw an exception with an appropriate description
    */
   void _validate(Entity entity, List<Component> components) {
     validate(entity, components);

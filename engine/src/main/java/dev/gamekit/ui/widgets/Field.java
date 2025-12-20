@@ -1,42 +1,44 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.animation.Animation;
-import dev.gamekit.core.IO;
+import dev.gamekit.annotations.WidgetBuilder;
+import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.core.Input;
-import dev.gamekit.utils.Constraints;
-import dev.gamekit.utils.Spacing;
 import dev.gamekit.ui.events.*;
 import dev.gamekit.ui.mixins.NinePatch;
 import dev.gamekit.utils.Bounds;
+import dev.gamekit.utils.Constraints;
+import dev.gamekit.utils.Spacing;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static dev.gamekit.utils.Math.clamp;
-import static dev.gamekit.utils.Misc.coalesce;
 
 /** A {@link Text} widget extension which accepts text input */
 // TODO: Implement sliding window for text rendering
 // TODO: Implement text selection
 // TODO: Implement key char and key code modifier detection
+@WidgetBuilder
 public class Field extends Text
-  implements NinePatch, FocusEvent.Handler, MouseEvent.Handler,
-  KeyCharEvent.Handler, KeyCodeEvent.Handler {
-  public static final BufferedImage DEFAULT_BG =
-    IO.getResourceImage("default-sprites.png", 646, 64, 96, 32);
-  public static final BufferedImage FOCUS_BG =
-    IO.getResourceImage("default-sprites.png", 646, 135, 96, 32);
-
+  implements NinePatch, FocusEvent.Handler, MouseEvent.Handler, KeyCharEvent.Handler, KeyCodeEvent.Handler {
+  @WidgetBuilderField(fallback = "dev.gamekit.core.IO.getResourceImage(\"default-sprites.png\", 646, 64, 96, 32)")
   protected BufferedImage defaultBackground;
+  @WidgetBuilderField(fallback = "dev.gamekit.core.IO.getResourceImage(\"default-sprites.png\", 646, 135, 96, 32)")
   protected BufferedImage focusBackground;
+  @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing(2)")
   protected Spacing edgeInsets;
+  @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing(4)")
   protected Spacing padding;
+  @WidgetBuilderField(comparable = false, themable = false)
   protected FocusEvent.Handler focusListener;
+  @WidgetBuilderField(comparable = false, themable = false)
   protected KeyCharEvent.Handler keyCharListener;
+  @WidgetBuilderField(comparable = false, themable = false)
   protected ChangeEvent.Handler<String> changeListener;
+
   protected boolean focused;
 
   private final Bounds contentAbsoluteBounds;
@@ -44,8 +46,9 @@ public class Field extends Text
   private final Animation cursorAnimation;
   private final TextModel textModel;
 
-  public Field(FieldConfig config, String text) {
-    super(config, text);
+  public Field(FieldConfig... config) {
+    super(config);
+
     contentAbsoluteBounds = new Bounds();
     tempAbsoluteBounds = new Bounds();
     cursorAnimation = new Animation(500, Animation.RepeatMode.RESTART);
@@ -61,40 +64,13 @@ public class Field extends Text
     });
   }
 
-  public static Field create(FieldConfig config, String text) {
-    return new Field(config, text);
-  }
-
-  public static FieldConfig config() {
-    return new FieldConfig();
-  }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    return widget instanceof Field fieldWidget &&
-      super.stateEquals(widget) &&
-      Objects.equals(defaultBackground, fieldWidget.defaultBackground) &&
-      Objects.equals(focusBackground, fieldWidget.focusBackground) &&
-      Objects.equals(edgeInsets, fieldWidget.edgeInsets) &&
-      Objects.equals(padding, fieldWidget.padding);
+  public static Field create(FieldConfig... config) {
+    return new Field(config);
   }
 
   @Override
   protected void performInit() {
     super.performInit();
-
-    FieldConfig config = (FieldConfig) super.config;
-    Theme theme = coalesce(getAncestorOfType(Theme.class), Theme.getDefault());
-
-    color = coalesce(config.color, theme.textColor, Color.BLACK);
-    edgeInsets = coalesce(config.edgeInsets, theme.fieldEdgeInsets, new Spacing(2));
-    defaultBackground =
-      coalesce(config.defaultBackground, theme.fieldDefaultBackground, DEFAULT_BG);
-    focusBackground = coalesce(config.focusBackground, theme.fieldFocusBackground, FOCUS_BG);
-    padding = coalesce(config.padding, theme.fieldPadding, new Spacing(4));
-    focusListener = coalesce(config.focusListener, null);
-    keyCharListener = coalesce(config.keyCharListener, null);
-    changeListener = coalesce(config.changeListener, null);
 
     cursorAnimation.start();
   }
@@ -123,13 +99,7 @@ public class Field extends Text
     double contentAbsoluteWidth = absoluteBounds.width - padding.getHorizontal();
     double contentAbsoluteHeight = absoluteBounds.height - padding.getVertical();
 
-    contentAbsoluteBounds.set(
-      contentAbsoluteX,
-      contentAbsoluteY,
-      contentAbsoluteWidth,
-      contentAbsoluteHeight
-    );
-
+    contentAbsoluteBounds.set(contentAbsoluteX, contentAbsoluteY, contentAbsoluteWidth, contentAbsoluteHeight);
     tempAbsoluteBounds.set(absoluteBounds);
     absoluteBounds.set(contentAbsoluteBounds);
     super.performPostLayout();
@@ -214,15 +184,15 @@ public class Field extends Text
       keyCharListener.handleEvent(ev);
 
     if (!ev.isHandled() && changeListener != null) {
-      boolean updatedTextModel;
+      boolean textModelUpdated;
 
       switch (ev.charPressed) {
-        case Input.KEY_BACK_SPACE -> updatedTextModel = textModel.leftDeleteAtCursor();
-        case Input.KEY_DELETE -> updatedTextModel = textModel.rightDeleteAtCursor();
-        default -> updatedTextModel = textModel.insertSymbolAtCursor(ev.charPressed);
+        case Input.KEY_BACK_SPACE -> textModelUpdated = textModel.leftDeleteAtCursor();
+        case Input.KEY_DELETE -> textModelUpdated = textModel.rightDeleteAtCursor();
+        default -> textModelUpdated = textModel.insertSymbolAtCursor(ev.charPressed);
       }
 
-      if (updatedTextModel)
+      if (textModelUpdated)
         changeListener.handleEvent(new ChangeEvent<>(textModel.getTextFromSymbols()));
     }
   }
@@ -233,60 +203,15 @@ public class Field extends Text
     cursorAnimation.end();
   }
 
-  public static class FieldConfig extends TextConfig<FieldConfig> {
-    protected BufferedImage defaultBackground;
-    protected BufferedImage focusBackground;
-    protected Spacing edgeInsets;
-    protected Spacing padding;
-    protected FocusEvent.Handler focusListener;
-    protected KeyCharEvent.Handler keyCharListener;
-    protected ChangeEvent.Handler<String> changeListener;
-
-    public FieldConfig defaultBackground(BufferedImage defaultBackground) {
-      this.defaultBackground = defaultBackground;
-      return this;
-    }
-
-    public FieldConfig focusBackground(BufferedImage focusBackground) {
-      this.focusBackground = focusBackground;
-      return this;
-    }
-
-    public FieldConfig edgeInsets(int top, int right, int bottom, int left) {
-      this.edgeInsets = new Spacing(top, right, bottom, left);
-      return this;
-    }
-
-    public FieldConfig padding(int top, int right, int bottom, int left) {
-      this.padding = new Spacing(top, right, bottom, left);
-      return this;
-    }
-
-    public FieldConfig focusListener(FocusEvent.Handler focusListener) {
-      this.focusListener = focusListener;
-      return this;
-    }
-
-    public FieldConfig keyCharListener(KeyCharEvent.Handler keyCharListener) {
-      this.keyCharListener = keyCharListener;
-      return this;
-    }
-
-    public FieldConfig changeListener(ChangeEvent.Handler<String> changeListener) {
-      this.changeListener = changeListener;
-      return this;
-    }
-  }
-
   /**
-   * {@link TextModel} is a document model for {@link Field} widgets which manages the
-   * text symbols and manipulations of these symbols based on a cursor.
+   * {@link TextModel} is a document model for {@link Field} widgets which manages the text symbols and manipulations
+   * of these symbols based on a cursor.
    * <p>
-   * Actions in the {@link Field} are submitted to this model which updates the symbols and cursor,
-   * returning the resulting text from the symbols.
+   * Actions in the {@link Field} are submitted to this model which updates the symbols and cursor, returning the
+   * resulting text from the symbols.
    * <p>
-   * NB: <i>The cursor is always to the <b>right</b> of its current symbol and a null symbol
-   * indicates no text in the associated {@link Field} widget</i>
+   * NB: <i>The cursor is always to the <b>right</b> of its current symbol and a null symbol indicates no text in the
+   * {@link Field} widget</i>
    */
   public static class TextModel {
     public static final int CURSOR_WIDTH = 2;
@@ -295,9 +220,9 @@ public class Field extends Text
     public static final int PRINTABLE_ASCII_END = 126;
 
     private final List<Symbol> symbols;
+    private final StringBuilder textBuilder;
     private boolean cursorVisible;
     private int cursorIndex;
-    private final StringBuilder textBuilder;
 
     public TextModel() {
       symbols = new ArrayList<>();
@@ -323,8 +248,8 @@ public class Field extends Text
     }
 
     /**
-     * When the mouse is down in the associated {@link Field}, this method updates the cursor
-     * position by determining which symbol is the closest to the event location
+     * When the mouse is down in the associated {@link Field}, this method updates the cursor position by determining
+     * which symbol is the closest to the event location
      */
     public void updateCursorPosition(int mouseX, int mouseY) {
       boolean mousePointInSymbolBounds = false;
@@ -333,14 +258,10 @@ public class Field extends Text
         Symbol sym = symbols.get(symIdx);
 
         if (sym.contains(mouseX, mouseY)) {
-          boolean mouseDownInLeftHalfOfSymbolBounds =
-            sym.x < mouseX && mouseX < sym.x + 0.5 * sym.width;
-
-          cursorIndex = mouseDownInLeftHalfOfSymbolBounds
-            ? (symIdx > 0) ? symIdx - 1 : CURSOR_ORIGIN_INDEX
-            : symIdx;
-
+          boolean mouseDownInLeftHalfOfSymbolBounds = sym.x < mouseX && mouseX < sym.x + 0.5 * sym.width;
+          cursorIndex = mouseDownInLeftHalfOfSymbolBounds ? (symIdx > 0) ? symIdx - 1 : CURSOR_ORIGIN_INDEX : symIdx;
           mousePointInSymbolBounds = true;
+
           break;
         }
       }
@@ -348,13 +269,8 @@ public class Field extends Text
       if (!mousePointInSymbolBounds) {
         if (!symbols.isEmpty()) {
           Symbol lastSymbol = symbols.get(symbols.size() - 1);
-
-          boolean mousePointToRightOfLastSymbolBounds =
-            mouseX > lastSymbol.x + lastSymbol.width;
-
-          cursorIndex = mousePointToRightOfLastSymbolBounds
-            ? symbols.size() - 1
-            : CURSOR_ORIGIN_INDEX;
+          boolean mousePointToRightOfLastSymbolBounds = mouseX > lastSymbol.x + lastSymbol.width;
+          cursorIndex = mousePointToRightOfLastSymbolBounds ? symbols.size() - 1 : CURSOR_ORIGIN_INDEX;
         } else {
           cursorIndex = CURSOR_ORIGIN_INDEX;
         }
@@ -362,8 +278,8 @@ public class Field extends Text
     }
 
     /**
-     * Inserts a character symbol at the cursor. Returns {@code true} if the character is a
-     * printable ASCII character and was successfully inserted and {@code false} otherwise
+     * Inserts a character symbol at the cursor. Returns {@code true} if the character is a printable ASCII character
+     * and was successfully inserted and {@code false} otherwise
      */
     public boolean insertSymbolAtCursor(char ch) {
       boolean charIsPrintable = PRINTABLE_ASCII_START <= ch && ch <= PRINTABLE_ASCII_END;

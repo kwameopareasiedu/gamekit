@@ -1,41 +1,22 @@
 package dev.gamekit.ui.widgets;
 
+import dev.gamekit.annotations.WidgetBuilder;
+import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.utils.Constraints;
 import dev.gamekit.utils.Spacing;
 
-import java.util.Objects;
-
-import static dev.gamekit.utils.Misc.coalesce;
-
 /** A {@link SingleChildParent} which adds padding around its single child */
+@WidgetBuilder
 public class Padding extends SingleChildParent {
+  @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing()")
   protected Spacing padding;
 
-  public Padding(PaddingConfig config, Widget child) {
-    super(config, child);
+  public Padding(PaddingConfig... config) {
+    super(config);
   }
 
-  public static Padding create(PaddingConfig config, Widget child) {
-    return new Padding(config, child);
-  }
-
-  public static PaddingConfig config() {
-    return new PaddingConfig();
-  }
-
-  @Override
-  public boolean stateEquals(Widget widget) {
-    return widget instanceof Padding paddingWidget &&
-        Objects.equals(padding, paddingWidget.padding);
-  }
-
-  @Override
-  protected void performInit() {
-    PaddingConfig config = (PaddingConfig) super.config;
-
-    padding = coalesce(config.padding, new Spacing());
-
-    super.performInit();
+  public static Padding create(PaddingConfig... config) {
+    return new Padding(config);
   }
 
   @Override
@@ -58,14 +39,5 @@ public class Padding extends SingleChildParent {
     );
 
     child.computedBounds.setPosition(padding.left, padding.top);
-  }
-
-  public static class PaddingConfig extends SingleChildParentConfig {
-    protected Spacing padding;
-
-    public PaddingConfig padding(int top, int right, int bottom, int left) {
-      this.padding = new Spacing(top, right, bottom, left);
-      return this;
-    }
   }
 }
