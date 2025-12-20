@@ -10,7 +10,21 @@
 
 ## UNRELEASED
 
+- Added custom annotation processing for wi
+
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+## 0.6.0
+
+### Added
+
+- Added custom annotation processing to generate config classes for widgets
 
 ### Changed
 
