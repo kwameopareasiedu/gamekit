@@ -10,8 +10,6 @@
 
 ## UNRELEASED
 
-- Added custom annotation processing for wi
-
 ### Added
 
 ### Changed
@@ -25,6 +23,8 @@
 ### Added
 
 - Added custom annotation processing to generate config classes for widgets
+- Added `double getAngle()` method to `Vector` class
+- Added `double getSquaredMagnitude()` method to `Vector` class
 
 ### Changed
 

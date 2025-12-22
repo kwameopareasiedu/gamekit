@@ -17,8 +17,8 @@ public class Vector {
   }
 
   /** Copy constructor for this class */
-  public Vector(Vector position) {
-    this(position.x, position.y);
+  public Vector(Vector vector) {
+    this(vector.x, vector.y);
   }
 
   /** Computes the squared distance between two vectors */
@@ -36,24 +36,22 @@ public class Vector {
   }
 
   /**
-   * Computes the angle (radian, from 0 to 2π) between two vectors starting from {@code v1} to
-   * {@code v2} in a clockwise direction starting from the positive y-axis
+   * Computes the angle (radian, from 0 to 2π) between two vectors starting from {@code v1} to {@code v2} in a
+   * clockwise direction starting from the positive y-axis
    */
   public static double angle(Vector v1, Vector v2) {
     double diffX = v2.x - v1.x;
     double diffY = v2.y - v1.y;
     double angle = java.lang.Math.atan2(diffX, diffY);
 
-    if (angle < 0) {
-      angle = TWO_PI + angle;
-    }
+    if (angle < 0) angle = TWO_PI + angle;
 
     return angle;
   }
 
   /**
-   * Creates a new vector from the magnitude and angle (radian, which must be clockwise from
-   * the positive y-axis and between 0 and 2π)
+   * Creates a new vector from the magnitude and angle (radian, which must be clockwise from the positive y-axis and
+   * between 0 and 2π)
    */
   public static Vector from(double magnitude, double rad) {
     return new Vector(
@@ -81,9 +79,9 @@ public class Vector {
 
   @Override
   public boolean equals(Object obj) {
-    return obj instanceof Vector posObject
-      && x == posObject.x
-      && y == posObject.y;
+    return obj instanceof Vector vectorObject
+      && x == vectorObject.x
+      && y == vectorObject.y;
   }
 
   public void set(double x, double y) {
@@ -91,25 +89,59 @@ public class Vector {
     this.y = y;
   }
 
-  /** Copies values from another position object */
-  public void set(Vector position) { set(position.x, position.y); }
+  /** Copies values from another vector object */
+  public void set(Vector vector) {
+    set(vector.x, vector.y);
+  }
 
-  public void setX(double x) { this.x = x; }
+  /** Sets the {@code x} component of this vector */
+  public void setX(double x) {
+    this.x = x;
+  }
 
-  public void setY(double y) { this.y = y; }
+  /** Sets the {@code y} component of this vector */
+  public void setY(double y) {
+    this.y = y;
+  }
 
+  /**
+   * Returns the magnitude of this vector
+   * <p>
+   * This method uses {@link java.lang.Math#sqrt sqrt} and can be expensive computer per frame
+   * <p>
+   * Consider using {@link #getSquaredMagnitude} where possible
+   */
   public double getMagnitude() {
     return java.lang.Math.sqrt(x * x + y * y);
   }
 
+  /** Returns the squared magnitude of this vector */
+  public double getSquaredMagnitude() {
+    return x * x + y * y;
+  }
+
+  /**
+   * Returns the angle (radian, from 0 to 2π) of this vector in a clockwise direction starting from the positive
+   * y-axis
+   */
+  public double getAngle() {
+    double angle = java.lang.Math.atan2(x, y);
+
+    if (angle < 0) angle = TWO_PI + angle;
+
+    return angle;
+  }
+
+  /** Gets the squared magnitude of this vector */
   public Vector getNormalized() {
     double mag = getMagnitude();
     return new Vector(x / mag, y / mag);
   }
 
   /**
-   * Rotates another {@link Vector} about this one by {@code rad} radian in the clockwise
-   * direction, modifying it with the result
+   * Rotates another {@link Vector} about this one by {@code rad} radian in the clockwise direction.
+   * <p>
+   * NB: <b>This method modifies the provided {@code point} with the result</b>
    */
   public void rotatePoint(Vector point, double rad) {
     double sin = java.lang.Math.sin(rad);
