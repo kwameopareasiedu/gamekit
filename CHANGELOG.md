@@ -23,8 +23,13 @@
 ### Added
 
 - Added custom annotation processing to generate config classes for widgets
+- Added custom annotation processing to generate `Theme` widget, which automatically includes all themable widget 
+  fields
 - Added `double getAngle()` method to `Vector` class
 - Added `double getSquaredMagnitude()` method to `Vector` class
+- Added `double getSquaredMagnitude()` method to `Vector` class
+- Added `void lerpAngle(Vector target, double rate)` method to `Vector` class
+- Added `boolean containsPoint(Vector point)` to `RigidBody` class
 
 ### Changed
 

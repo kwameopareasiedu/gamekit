@@ -132,10 +132,21 @@ public class Vector {
     return angle;
   }
 
-  /** Gets the squared magnitude of this vector */
+  /**
+   * Returns a normalized version of this vector
+   * <p>
+   * A normalized vector has the same direction but with a magnitude of 1 unit
+   */
   public Vector getNormalized() {
     double mag = getMagnitude();
     return new Vector(x / mag, y / mag);
+  }
+
+  /** Interpolates the angle of this vector to match that of the target vector, preserving its magnitude */
+  public void lerpAngle(Vector target, double rate) {
+    double magnitude = getMagnitude();
+    double newRotation = Math.lerpAngle(getAngle(), target.getAngle(), rate);
+    set(magnitude * java.lang.Math.sin(newRotation), magnitude * java.lang.Math.cos(newRotation));
   }
 
   /**
@@ -150,7 +161,6 @@ public class Vector {
     double px = point.x - x;
     double py = point.y - y;
 
-    point.x = cos * px + sin * py + x;
-    point.y = -sin * px + cos * py + y;
+    point.set(cos * px + sin * py + x, -sin * px + cos * py + y);
   }
 }

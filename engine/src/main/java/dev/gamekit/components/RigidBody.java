@@ -25,6 +25,7 @@ import java.util.List;
  */
 public class RigidBody extends Component {
   public static boolean DEBUG_DRAW = false;
+  private static final Vector2 VEC_BUFFER = new Vector2();
 
   private final Body body;
 
@@ -110,6 +111,17 @@ public class RigidBody extends Component {
    */
   public void applyTorque(double torque) {
     body.applyTorque(torque);
+  }
+
+  /**
+   * Determines if a {@link Vector point} is contained in at least one of the {@link Collider colliders} associated
+   * with this {@link RigidBody}
+   *
+   * @see org.dyn4j.dynamics.PhysicsBody#contains(Vector2)
+   */
+  public boolean containsPoint(Vector point) {
+    VEC_BUFFER.set(point.x / Physics.PIXELS_PER_METER, point.y / Physics.PIXELS_PER_METER);
+    return body.contains(VEC_BUFFER);
   }
 
   @Override

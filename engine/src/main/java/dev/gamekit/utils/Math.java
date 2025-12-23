@@ -65,29 +65,8 @@ public final class Math {
    * around {@code 2π} if it's a shorter path to reach the desired angle
    */
   public static double lerpAngle(double start, double end, double rate) {
-    double normalizedStart = start % TWO_PI;
-    double normalizedEnd = end % TWO_PI;
-
-    if (normalizedStart < 0) normalizedStart += TWO_PI;
-    if (normalizedEnd < 0) normalizedEnd += TWO_PI;
-
-    double diffCW = (normalizedEnd - normalizedStart) % TWO_PI;
-    double diffCCW = (normalizedStart - normalizedEnd) % TWO_PI;
-
-    if (diffCW <= 0) diffCW += TWO_PI;
-    if (diffCCW <= 0) diffCCW += TWO_PI;
-
-    int direction = diffCCW < diffCW ? -1 : 1;
-    double diff = java.lang.Math.min(diffCCW, diffCW);
-
-    double finalAngle = normalizedStart + direction * rate * diff;
-
-    if (finalAngle < 0) {
-      return finalAngle + TWO_PI;
-    } else if (finalAngle > TWO_PI) {
-      return finalAngle - TWO_PI;
-    } else {
-      return finalAngle;
-    }
+    double cos = (1.0 - rate) * java.lang.Math.cos(start) + rate * java.lang.Math.cos(end);
+    double sin = (1.0 - rate) * java.lang.Math.sin(start) + rate * java.lang.Math.sin(end);
+    return java.lang.Math.atan2(sin, cos);
   }
 }
