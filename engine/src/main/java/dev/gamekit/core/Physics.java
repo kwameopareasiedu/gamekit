@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
+import org.dyn4j.dynamics.Settings;
 import org.dyn4j.world.ManifoldCollisionData;
 import org.dyn4j.world.World;
 import org.dyn4j.world.listener.CollisionListenerAdapter;
@@ -31,14 +32,13 @@ public final class Physics {
 
         Collider.ColliderFixture fx1 = (Collider.ColliderFixture) collision.getFixture1();
         Collider.ColliderFixture fx2 = (Collider.ColliderFixture) collision.getFixture2();
-        boolean fixturesAreBothSensors = fx1.isSensor() && fx2.isSensor();
 
-        if (!fixturesAreBothSensors && COLLISION_LISTENER_MAP.containsKey(fx1.id)) {
+        if (COLLISION_LISTENER_MAP.containsKey(fx1.id)) {
           CollisionListener listener = COLLISION_LISTENER_MAP.get(fx1.id);
           listener.handleCollision(fx2);
         }
 
-        if (!fixturesAreBothSensors && COLLISION_LISTENER_MAP.containsKey(fx2.id)) {
+        if (COLLISION_LISTENER_MAP.containsKey(fx2.id)) {
           CollisionListener listener = COLLISION_LISTENER_MAP.get(fx2.id);
           listener.handleCollision(fx1);
         }

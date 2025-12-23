@@ -196,8 +196,8 @@ public class RigidBody extends Component {
   }
 
   /**
-   * Synchronizes the {@link Transform} component global position and rotation with position
-   * and rotation of the physics body
+   * Synchronizes the {@link Transform} component global position and rotation with position and rotation of the
+   * physics body
    */
   private void syncPositionAndRotation() {
     Transform tx = entity.findComponent(Transform.class);

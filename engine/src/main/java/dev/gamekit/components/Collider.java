@@ -17,8 +17,8 @@ import java.util.UUID;
 /** {@link Collider} defines the physics shape of an entity for the purposes of physics collision detection */
 public abstract class Collider extends Component {
   public static boolean DEBUG_DRAW = false;
-  private static final Stroke SENSOR_DEBUG_STROKE = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL,
-    0, new float[]{ 10, 2 }, 0);
+  private static final Stroke SENSOR_DEBUG_STROKE =
+    new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{ 10, 2 }, 0);
   protected final ColliderFixture fixture;
   protected Physics.CollisionListener collisionListener;
 

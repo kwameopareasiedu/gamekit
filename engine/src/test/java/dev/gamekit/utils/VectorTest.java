@@ -22,6 +22,15 @@ public class VectorTest {
     assertEquals(degToRad(225), Vector.angle(new Vector(), new Vector(-1, -1)));
     assertEquals(degToRad(270), Vector.angle(new Vector(), new Vector(-1, 0)));
     assertEquals(degToRad(315), Vector.angle(new Vector(), new Vector(-1, 1)));
+
+    assertEquals(degToRad(0), Vector.angle(new Vector(1, 1), new Vector(1, 2)));
+    assertEquals(degToRad(45), Vector.angle(new Vector(1, 1), new Vector(2, 2)));
+    assertEquals(degToRad(90), Vector.angle(new Vector(1, 1), new Vector(2, 1)));
+    assertEquals(degToRad(135), Vector.angle(new Vector(1, 1), new Vector(2, 0)));
+    assertEquals(degToRad(180), Vector.angle(new Vector(1, 1), new Vector(1, 0)));
+    assertEquals(degToRad(225), Vector.angle(new Vector(1, 1), new Vector(0, 0)));
+    assertEquals(degToRad(270), Vector.angle(new Vector(1, 1), new Vector(-1, 1)));
+    assertEquals(degToRad(315), Vector.angle(new Vector(1, 1), new Vector(0, 2)));
   }
 
   @Test
