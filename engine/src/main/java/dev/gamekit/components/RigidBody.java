@@ -25,14 +25,16 @@ import java.util.List;
  */
 public class RigidBody extends Component {
   public static boolean DEBUG_DRAW = false;
-  private static final Vector2 VEC_BUFFER = new Vector2();
 
+  private final Vector2 vector2Buffer;
   private final Body body;
 
   /** Creates a {@link RigidBody} with infinite mass (I.e. static object) */
   public RigidBody() {
     body = new Body();
     body.setMassType(MassType.INFINITE);
+
+    vector2Buffer = new Vector2();
   }
 
   /** Creates a {@link RigidBody} with a defined mass and inertia (I.e. dynamic object) */
@@ -40,6 +42,8 @@ public class RigidBody extends Component {
     body = new Body();
     body.setMassType(massType);
     body.setMass(new Mass(new Vector2(massCenter.x, massCenter.y), mass, inertia));
+
+    vector2Buffer = new Vector2();
   }
 
   /** Sets a custom object with user-defined attributes as the metadata */
@@ -120,8 +124,8 @@ public class RigidBody extends Component {
    * @see org.dyn4j.dynamics.PhysicsBody#contains(Vector2)
    */
   public boolean containsPoint(Vector point) {
-    VEC_BUFFER.set(point.x / Physics.PIXELS_PER_METER, point.y / Physics.PIXELS_PER_METER);
-    return body.contains(VEC_BUFFER);
+    vector2Buffer.set(point.x / Physics.PIXELS_PER_METER, point.y / Physics.PIXELS_PER_METER);
+    return body.contains(vector2Buffer);
   }
 
   @Override
