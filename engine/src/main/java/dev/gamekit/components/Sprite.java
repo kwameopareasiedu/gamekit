@@ -87,6 +87,10 @@ public class Sprite extends Component {
     double signedWidth = !flippedX ? bounds.width : -bounds.width;
     double signedHeight = !flippedY ? bounds.height : -bounds.height;
 
+    Sprite parentEntitySprite = entity.getParent().findComponent(Sprite.class);
+    double parentSpriteOpacity = parentEntitySprite != null ? parentEntitySprite.opacity : 1;
+    double resolvedOpacity = parentSpriteOpacity * opacity;
+
     Renderer.drawImage(
         image,
         (int) (globalPosition.x + bounds.x),
@@ -95,7 +99,7 @@ public class Sprite extends Component {
         (int) signedHeight
       )
       .withInterpolation(interpolation)
-      .withOpacity(opacity)
+      .withOpacity(resolvedOpacity)
       .withRotation(
         (int) (globalPosition.x),
         (int) (globalPosition.y),

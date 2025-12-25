@@ -34,6 +34,7 @@
 ### Changed
 
 - Changed behaviour of `Physics` class to allow collision detection between sensor colliders
+- Modified `Sprite` component to multiply its opacity with the parent entity sprite component (if any)
 
 ### Deprecated
 

@@ -115,6 +115,7 @@ public abstract class Collider extends Component {
 
         Renderer.drawCircle(shapePositionX, shapePositionY, radius)
           .withColor(Color.CYAN).withStroke(stroke).withRotation(positionX, positionY, rotation);
+
         Renderer.drawVerticalLine(shapePositionX, shapePositionY, shapePositionY + radius)
           .withRotation(positionX, positionY, rotation);
       } else if (shape instanceof Rectangle rect) {
@@ -123,6 +124,7 @@ public abstract class Collider extends Component {
 
         Renderer.drawRect(shapePositionX, shapePositionY, width, height)
           .withColor(Color.CYAN).withStroke(stroke).withRotation(positionX, positionY, rotation);
+
         Renderer.drawVerticalLine(shapePositionX, shapePositionY, shapePositionY + height / 2)
           .withRotation(positionX, positionY, rotation);
       }
@@ -134,7 +136,9 @@ public abstract class Collider extends Component {
 
   @Override
   protected void dispose() {
-    if (collisionListener != null) Physics.removeCollisionListener(fixture.id, collisionListener);
+    if (collisionListener != null) {
+      Physics.removeCollisionListener(fixture.id, collisionListener);
+    }
   }
 
   /** {@link ColliderFixture} extends {@link BodyFixture} adding a reference to its parent {@link Collider} */

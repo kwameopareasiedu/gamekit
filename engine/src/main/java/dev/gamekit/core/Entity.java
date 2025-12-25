@@ -219,7 +219,9 @@ public abstract class Entity {
 
   /** Called <b>once</b> by the parent {@link Entity} to dispose the entity */
   void _dispose() {
-    for (Entity child : children)
+    List<Entity> childrenBuffer = List.copyOf(children);
+
+    for (Entity child : childrenBuffer)
       child._dispose();
 
     for (Component component : components) {
