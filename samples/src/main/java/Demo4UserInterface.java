@@ -17,6 +17,8 @@ import utils.SubMenuButton;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+import static dev.gamekit.utils.Math.degToRad;
+
 /**
  * This demo shows how to build user interfaces and performs the following actions:
  * <ul>
@@ -31,6 +33,7 @@ public class Demo4UserInterface extends Scene {
   private static final BufferedImage THUMB = IO.getResourceImage("slider-thumb.png");
   private static final BufferedImage PROGRESS_TRACK = IO.getResourceImage("progress.png", 0, 4, 48, 8);
   private static final BufferedImage PROGRESS_FILL = IO.getResourceImage("progress.png", 50, 4, 4, 8);
+  private static final BufferedImage HEADPHONES_IMG = IO.getResourceImage("headphones.jpg");
 
   private String fieldValue = "Hello";
   private boolean checkboxValue = false;
@@ -96,7 +99,7 @@ public class Demo4UserInterface extends Scene {
                   ThemeConfig.child(
                     Column.create(
                       ColumnConfig.mainAxisAlignment(MainAxisAlignment.START),
-                      ColumnConfig.crossAxisAlignment(CrossAxisAlignment.STRETCH),
+                      ColumnConfig.crossAxisAlignment(CrossAxisAlignment.START),
                       ColumnConfig.gapSize(24),
                       ColumnConfig.children(
 
@@ -258,6 +261,31 @@ public class Demo4UserInterface extends Scene {
                               )
                             )
                           )
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        ),
+        Align.create(
+          AlignConfig.horizontalAlignment(Alignment.END),
+          AlignConfig.verticalAlignment(Alignment.CENTER),
+          AlignConfig.child(
+            Column.create(
+              ColumnConfig.gapSize(12),
+              ColumnConfig.children(
+                Rotated.create(
+                  RotatedConfig.rotation(degToRad(30)),
+                  RotatedConfig.child(
+                    FixedSize.create(
+                      FixedSizeConfig.width(200.0),
+                      FixedSizeConfig.height(200.0),
+                      FixedSizeConfig.child(
+                        Image.create(
+                          ImageConfig.image(HEADPHONES_IMG)
                         )
                       )
                     )

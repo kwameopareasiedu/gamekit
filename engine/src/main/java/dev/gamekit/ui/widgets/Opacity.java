@@ -13,6 +13,7 @@ public class Opacity extends SingleChildParent {
   protected Double opacity;
 
   private AlphaComposite composite;
+  private Composite originalComposite;
 
   public Opacity(OpacityConfig... config) {
     super(config);
@@ -62,10 +63,13 @@ public class Opacity extends SingleChildParent {
   }
 
   @Override
-  protected void performRender(Graphics2D g) {
-    Composite originalComposite = g.getComposite();
+  protected void preRender(Graphics2D g) {
+    originalComposite = g.getComposite();
     g.setComposite(composite);
-    super.performRender(g);
+  }
+
+  @Override
+  protected void postRender(Graphics2D g) {
     g.setComposite(originalComposite);
   }
 }

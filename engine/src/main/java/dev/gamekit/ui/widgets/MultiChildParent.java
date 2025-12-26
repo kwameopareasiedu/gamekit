@@ -41,11 +41,14 @@ public abstract class MultiChildParent extends Parent {
   }
 
   @Override
-  protected void performRender(Graphics2D g) {
+  protected final void performRender(Graphics2D g) {
+    preRender(g);
     renderAppearance(g);
 
     for (Widget child : children)
       child.render(g);
+
+    postRender(g);
   }
 
   @Override

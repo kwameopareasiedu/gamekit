@@ -34,9 +34,11 @@ public abstract class SingleChildParent extends Parent {
   }
 
   @Override
-  protected void performRender(Graphics2D g) {
+  protected final void performRender(Graphics2D g) {
+    preRender(g);
     renderAppearance(g);
     child.render(g);
+    postRender(g);
   }
 
   @Override

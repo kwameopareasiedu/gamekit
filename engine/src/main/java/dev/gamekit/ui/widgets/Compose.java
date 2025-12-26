@@ -28,9 +28,4 @@ public abstract class Compose extends SingleChildParent {
 
     child.computedBounds.setPosition(0, 0);
   }
-
-  @Override
-  public final void performRender(Graphics2D g) {
-    getChild().performRender(g);
-  }
 }

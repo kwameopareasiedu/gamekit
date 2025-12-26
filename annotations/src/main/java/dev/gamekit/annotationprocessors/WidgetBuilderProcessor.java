@@ -48,6 +48,11 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
       }
 
       generateThemeWidgetSource(widgetClasses);
+
+      // TODO: Since annotation processing is done incrementally by Maven (I.e. only processing changed symbols),
+      //  We should record already processed widget classes in a file every time. This way, when incremental runs are
+      //  made, we pull existing class data from said file and combine it with new symbols to fully generate the
+      //  Theme widget
     }
 
     return false;
