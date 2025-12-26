@@ -245,9 +245,9 @@ public final class UI implements Widget.Host {
       );
     }
 
-    // Generate a mouse enter event if widgets exist in currentHitTestCheckList but don't exist
-    // in previousHitTestCheckList. In essence, this means there are new widgets under the mouse
-    // cursor in the current frame that were not in the previous frame
+    // Generate a mouse enter event if widgets exist in currentHitTestCheckList but doesn't exist in
+    // previousHitTestCheckList. In essence, this means there are new widgets under the mouse cursor in the current
+    // frame that were not in the previous frame
     for (Widget widget : currentHitTestList) {
       if (!previousHitTestList.contains(widget)) {
         eventStore.mouseEnterEvent = new MouseEvent(
@@ -268,8 +268,8 @@ public final class UI implements Widget.Host {
         Input.BUTTON_LMB
       );
 
-      // If the hover widget is not the focus widget, a new widget has the focus now,
-      // so generate a blur event for the last focused widget
+      // If the hover widget is not the focus widget, a new widget has the focus now, so generate a blur event for
+      // the last focused widget
       if (focusWidget != hoverWidget) {
         lastFocusWidget = focusWidget;
         eventStore.blurEvent = new FocusEvent(FocusEvent.Type.BLUR);
@@ -281,8 +281,8 @@ public final class UI implements Widget.Host {
       // Also generate a focus event for the newly focused widget
       eventStore.focusEvent = new FocusEvent(FocusEvent.Type.FOCUS);
 
-      // If no widget is currently being activated, the hover widget
-      // also becomes the active widget until the mouse is released
+      // If no widget is currently being activated, the hover widget also becomes the active widget until the mouse
+      // is released
       if (activeWidget == null) activeWidget = hoverWidget;
     }
 
@@ -312,15 +312,15 @@ public final class UI implements Widget.Host {
         );
       }
 
-      // Since the mouse is released, there is no active widget, but we do need a reference to
-      // the last active widget for event dispatch purposes
+      // Since the mouse is released, there is no active widget, but we do need a reference to the last active widget
+      // for event dispatch purposes
       lastActiveWidget = activeWidget;
       activeWidget = null;
     }
 
-    // Generate a mouse exit event if widgets exist in previousHitTestCheckList but don't exist
-    // in currentHitTestCheckList. In essence, this means there are widgets not under the mouse
-    // cursor in the current frame that were in the previous frame
+    // Generate a mouse exit event if widgets exist in previousHitTestCheckList but don't exist in
+    // currentHitTestCheckList. In essence, this means there are widgets not under the mouse cursor in the current
+    // frame that were in the previous frame
     for (Widget widget : previousHitTestList) {
       if (!currentHitTestList.contains(widget)) {
         eventStore.mouseExitEvent = new MouseEvent(

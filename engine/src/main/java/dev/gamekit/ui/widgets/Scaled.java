@@ -4,11 +4,15 @@ import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.utils.Constraints;
 
+import java.awt.*;
+
 /** A {@link SingleChildParent} which scales the computed size of its child */
 @WidgetBuilder
 public class Scaled extends SingleChildParent {
   @WidgetBuilderField(fallback = "1.0")
   protected Double scale;
+
+  private Double invScale;
 
   public Scaled(ScaledConfig... config) {
     super(config);
@@ -16,6 +20,13 @@ public class Scaled extends SingleChildParent {
 
   public static Scaled create(ScaledConfig... config) {
     return new Scaled(config);
+  }
+
+  @Override
+  protected void performInit() {
+    super.performInit();
+
+    invScale = 1.0 / scale;
   }
 
   @Override
@@ -37,11 +48,33 @@ public class Scaled extends SingleChildParent {
       constraints.constrainHeight(intrinsicSize.height)
     );
 
-    child.layout(
-      new Constraints(
-        computedBounds.width, computedBounds.width,
-        computedBounds.height, computedBounds.height
-      )
+    child.computedBounds.setPosition(
+      0.5 * (computedBounds.width - child.computedBounds.width),
+      0.5 * (computedBounds.height - child.computedBounds.height)
     );
+  }
+
+  @Override
+  protected void preRender(Graphics2D g) {
+    if (scale != 1) {
+      double px = absoluteBounds.x + 0.5 * absoluteBounds.width;
+      double py = absoluteBounds.y + 0.5 * absoluteBounds.height;
+
+      g.translate(px, py);
+      g.scale(scale, scale);
+      g.translate(-px, -py);
+    }
+  }
+
+  @Override
+  protected void postRender(Graphics2D g) {
+    if (scale != 1) {
+      double px = absoluteBounds.x + 0.5 * absoluteBounds.width;
+      double py = absoluteBounds.y + 0.5 * absoluteBounds.height;
+
+      g.translate(px, py);
+      g.scale(invScale, invScale);
+      g.translate(-px, -py);
+    }
   }
 }
