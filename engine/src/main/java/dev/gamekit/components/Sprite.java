@@ -17,6 +17,8 @@ public class Sprite extends Component {
   protected ImageInterpolation interpolation;
   protected boolean flippedX = false;
   protected boolean flippedY = false;
+  protected double scaleX = 1;
+  protected double scaleY = 1;
 
   private double aspectRatio;
   private double opacity = 1;
@@ -65,9 +67,15 @@ public class Sprite extends Component {
     bounds.setSize(width, height);
   }
 
-  /** Updates the center offset of the {@link #bounds} */
-  public void setCenter(double centerX, double centerY) {
+  /** Sets the center offset of the {@link #bounds} */
+  public void setOffset(double centerX, double centerY) {
     bounds.setPosition(centerX, centerY);
+  }
+
+  /** Sets the render scale of this {@link Sprite} */
+  public void setScale(double scaleX, double scaleY) {
+    this.scaleX = scaleX;
+    this.scaleY = scaleY;
   }
 
   /** Set whether the sprite is flipped horizontally */
@@ -89,14 +97,18 @@ public class Sprite extends Component {
 
     Sprite parentEntitySprite = entity.getParent().findComponent(Sprite.class);
     double parentSpriteOpacity = parentEntitySprite != null ? parentEntitySprite.opacity : 1;
+    double parentSpriteScaleX = parentEntitySprite != null ? parentEntitySprite.scaleX : 1;
+    double parentSpriteScaleY = parentEntitySprite != null ? parentEntitySprite.scaleY : 1;
     double resolvedOpacity = parentSpriteOpacity * opacity;
+    double resolvedScaleX = parentSpriteScaleX * scaleX;
+    double resolvedScaleY = parentSpriteScaleY * scaleY;
 
     Renderer.drawImage(
         image,
         (int) (globalPosition.x + bounds.x),
         (int) (globalPosition.y + bounds.y),
-        (int) signedWidth,
-        (int) signedHeight
+        (int) (signedWidth * resolvedScaleX),
+        (int) (signedHeight * resolvedScaleY)
       )
       .withInterpolation(interpolation)
       .withOpacity(resolvedOpacity)

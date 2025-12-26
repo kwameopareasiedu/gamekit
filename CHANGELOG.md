@@ -30,11 +30,13 @@
 - Added `double getSquaredMagnitude()` method to `Vector` class
 - Added `void lerpAngle(Vector target, double rate)` method to `Vector` class
 - Added `boolean containsPoint(Vector point)` to `RigidBody` class
+- Added `void setScale(double x, double y)` to `Sprite` component
 
 ### Changed
 
 - Changed behaviour of `Physics` class to allow collision detection between sensor colliders
-- Modified `Sprite` component to multiply its opacity with the parent entity sprite component (if any)
+- Modified `Sprite` component `to multiply its opacity with the parent entity sprite component (if any)`
+- Renamed `void setCenter(double x, double y)` in `Sprite` component to `void setOffset(double x double y)`
 
 ### Deprecated
 
