@@ -65,233 +65,226 @@ public class Demo4UserInterface extends Scene {
   @Override
   public Widget createUI() {
     return Stack.create(
-      StackConfig.children(
-        Image.create(
-          ImageConfig.image(BACKDROP)
-        ),
-        Align.create(
-          AlignConfig.child(
-            Padding.create(
-              PaddingConfig.padding(new Spacing(0, 24, 0, 24)),
-              PaddingConfig.child(
-                FixedSize.create(
-                  FixedSizeConfig.width(480.0),
-                  FixedSizeConfig.height(480.0),
-                  FixedSizeConfig.child(
-                    Image.create(
-                      ImageConfig.image(LOGO)
-                    )
-                  )
-                )
-              )
-            )
+      Image.create(BACKDROP),
+      Align.create(
+        props -> {
+          props.verticalAlignment = Alignment.START;
+          props.horizontalAlignment = Alignment.START;
+        },
+        Padding.create(
+          0, 24, 0, 24,
+          Sized.create(
+            props -> {
+              props.fixedWidth = 480.0;
+              props.fixedHeight = 480.0;
+            },
+            Image.create(LOGO)
           )
-        ),
-        Align.create(
-          AlignConfig.verticalAlignment(Alignment.CENTER),
-          AlignConfig.child(
-            Padding.create(
-              PaddingConfig.padding(new Spacing(256, 8, 16, 96)),
-              PaddingConfig.child(
-                Theme.create(
-//                  ThemeConfig.textFontSize(10),
-//                  ThemeConfig.textFontStyle(Text.ITALIC),
-                  ThemeConfig.child(
-                    Column.create(
-                      ColumnConfig.mainAxisAlignment(MainAxisAlignment.START),
-                      ColumnConfig.crossAxisAlignment(CrossAxisAlignment.START),
-                      ColumnConfig.gapSize(24),
-                      ColumnConfig.children(
-
-                        MainMenuButton.create("Tutorial", e -> System.out.println("0: " + e.type)),
-                        MainMenuButton.create("New Planet", e -> System.out.println("1: " + e.type)),
-                        Field.create(
-                          FieldConfig.fontSize(28),
-                          FieldConfig.fontStyle(Text.PLAIN),
-                          FieldConfig.edgeInsets(new Spacing(12, 12, 12, 12)),
-                          FieldConfig.padding(new Spacing(12, 12, 12, 12)),
-                          FieldConfig.changeListener(ev -> {
-                            fieldValue = ev.value;
-                            logger.debug("Field value: {}", fieldValue);
-                            updateUI();
-                          }),
-                          FieldConfig.text(fieldValue)
-                        ),
-                        Checkbox.create(
-                          CheckboxConfig.toggled(checkboxValue),
-                          CheckboxConfig.iconEdgeInsets(new Spacing(4, 4, 4, 4)),
-                          CheckboxConfig.changeListener(ev -> {
-                            checkboxValue = ev.value;
-                            updateUI();
-                          }),
-                          CheckboxConfig.child(
-                            Text.create(
-                              TextConfig.fontSize(32),
-                              TextConfig.fontStyle(Text.PLAIN),
-                              TextConfig.text("Active")
-                            )
-                          )
-                        ),
-                        IntrinsicSize.create(
-                          //  IntrinsicSizeConfig.width(256),
-                          //  IntrinsicSizeConfig.intrinsicHeight(),
-                          IntrinsicSizeConfig.child(
-                            Slider.create(
-                              SliderConfig.value(sliderValue),
-                              SliderConfig.minValue(0.0),
-                              SliderConfig.maxValue(100.0),
-                              SliderConfig.fillMode(Slider.FillMode.CLIP),
-                              SliderConfig.thumbBackground(THUMB),
-                              SliderConfig.thumbEdgeInsets(new Spacing(10, 10, 10, 10)),
-                              SliderConfig.changeListener(e -> {
-                                sliderValue = e.value;
-                                updateUI();
-                              })
-                            )
-                          )
-                        ),
-                        FixedSize.create(
-                          FixedSizeConfig.width(256.0),
-                          FixedSizeConfig.height(48.0),
-                          FixedSizeConfig.child(
-                            Progress.create(
-                              ProgressConfig.value(sliderValue),
-                              ProgressConfig.minValue(0.0),
-                              ProgressConfig.maxValue(100.0),
-                              ProgressConfig.trackBackground(PROGRESS_TRACK),
-                              ProgressConfig.trackEdgeInsets(new Spacing(0, 0, 0, 0)),
-                              ProgressConfig.fillMargin(new Spacing(0, 12, 0, 12)),
-                              ProgressConfig.fillBackground(PROGRESS_FILL),
-                              ProgressConfig.fillEdgeInsets(new Spacing(0, 1, 0, 1)),
-                              ProgressConfig.fillMode(Progress.FillMode.CLIP)
-                            )
-                          )
-                        ),
-                        Column.create(
-                          ColumnConfig.mainAxisAlignment(MainAxisAlignment.START),
-                          ColumnConfig.crossAxisAlignment(CrossAxisAlignment.START),
-                          ColumnConfig.gapSize(12),
-                          ColumnConfig.children(
-                            SubMenuButton.create("Commander Customization"),
-                            SubMenuButton.create("Options"),
-                            SubMenuButton.create("Credits"),
-                            SubMenuButton.create("Exit Game")
-                          )
-                        )
-                      )
-                    )
-                  )
-                )
-              )
-            )
-          )
-        ),
-        Align.create(
-          AlignConfig.horizontalAlignment(Alignment.CENTER),
-          AlignConfig.child(
-            FractionalSize.create(
-              FractionalSizeConfig.widthRatio(1.0),
-              FractionalSizeConfig.heightRatio(0.15),
-              FractionalSizeConfig.child(
-                Image.create(
-                  ImageConfig.fit(ImageFit.CROP),
-                  ImageConfig.image(SCRIM)
-                )
-              )
-            )
-          )
-        ),
-        Align.create(
-          AlignConfig.horizontalAlignment(Alignment.CENTER),
-          AlignConfig.verticalAlignment(Alignment.END),
-          AlignConfig.child(
-            FractionalSize.create(
-              FractionalSizeConfig.widthRatio(1.0),
-              FractionalSizeConfig.heightRatio(0.15),
-              FractionalSizeConfig.child(
-                Stack.create(
-                  StackConfig.children(
-                    FractionalSize.create(
-                      FractionalSizeConfig.widthRatio(1.0),
-                      FractionalSizeConfig.heightRatio(1.0),
-                      FractionalSizeConfig.child(
-                        Image.create(
-                          ImageConfig.fit(ImageFit.STRETCH),
-                          ImageConfig.image(SCRIM)
-                        )
-                      )
-                    ),
-                    FractionalSize.create(
-                      FractionalSizeConfig.widthRatio(1.0),
-                      FractionalSizeConfig.heightRatio(1.0),
-                      FractionalSizeConfig.child(
-                        Row.create(
-                          RowConfig.mainAxisAlignment(MainAxisAlignment.END),
-                          RowConfig.crossAxisAlignment(CrossAxisAlignment.CENTER),
-                          RowConfig.gapSize(24),
-                          RowConfig.children(
-                            FixedSize.create(
-                              FixedSizeConfig.width(48.0),
-                              FixedSizeConfig.height(48.0),
-                              FixedSizeConfig.child(
-                                Colored.create(
-                                  ColoredConfig.color(Color.RED),
-                                  ColoredConfig.borderRadius(4)
-                                )
-                              )
-                            ),
-                            Button.create(
-                              ButtonConfig.edgeInsets(new Spacing(12, 12, 18, 12)),
-                              ButtonConfig.child(
-                                Text.create(
-                                  TextConfig.fontSize(12),
-                                  TextConfig.fontStyle(Text.BOLD),
-                                  TextConfig.text("Create Account")
-                                )
-                              )
-                            ),
-                            Button.create(
-                              ButtonConfig.edgeInsets(new Spacing(12, 12, 18, 12)),
-                              ButtonConfig.child(
-                                Text.create(
-                                  TextConfig.fontSize(12),
-                                  TextConfig.fontStyle(Text.BOLD),
-                                  TextConfig.text("Login")
-                                )
-                              )
-                            )
-                          )
-                        )
-                      )
-                    )
-                  )
-                )
-              )
-            )
-          )
-        ),
-        Align.create(
-          AlignConfig.horizontalAlignment(Alignment.END),
-          AlignConfig.verticalAlignment(Alignment.CENTER),
-          AlignConfig.child(
+        )
+      ),
+      Align.create(
+        props -> props.verticalAlignment = Alignment.CENTER,
+        Padding.create(
+          256, 8, 16, 96,
+          Theme.create(
+            props -> {
+              props.textFontSize = 10;
+              props.textFontStyle = Text.ITALIC;
+            },
             Column.create(
-              ColumnConfig.gapSize(12),
-              ColumnConfig.children(
-                Rotated.create(
-                  RotatedConfig.rotation(degToRad(30)),
-                  RotatedConfig.child(
-                    FixedSize.create(
-                      FixedSizeConfig.width(200.0),
-                      FixedSizeConfig.height(200.0),
-                      FixedSizeConfig.child(
-                        Image.create(
-                          ImageConfig.image(HEADPHONES_IMG)
-                        )
-                      )
-                    )
+              props -> {
+                props.mainAxisAlignment = MainAxisAlignment.START;
+                props.crossAxisAlignment = CrossAxisAlignment.START;
+                props.gapSize = 24;
+              },
+              MainMenuButton.create("Tutorial", e -> System.out.println("0: " + e.type)),
+              MainMenuButton.create("New Planet", e -> System.out.println("1: " + e.type)),
+              Field.create(
+                (FieldConfig.Updater) props -> {
+                  props.text = fieldValue;
+                  props.fontSize = 28;
+                  props.fontStyle = Text.PLAIN;
+                  props.edgeInsets = new Spacing(12, 12, 12, 12);
+                  props.padding = new Spacing(12, 12, 12, 12);
+                  props.changeListener = ev -> {
+                    fieldValue = ev.value;
+                    logger.debug("Field value: {}", fieldValue);
+                    updateUI();
+                  };
+                }
+              ),
+              Checkbox.create(
+                props -> {
+                  props.toggled(checkboxValue);
+                  props.iconPadding(new Spacing(4, 4, 4, 4));
+                  props.changeListener(ev -> {
+                    checkboxValue = ev.value;
+                    updateUI();
+                  });
+                },
+                Text.create(
+                  props -> {
+                    props.fontSize = 32;
+                    props.fontStyle = Text.PLAIN;
+                    props.text = "Active";
+                  }
+                )
+              ),
+              Sized.create(
+                props -> {
+                  props.fixedWidth = 256.0;
+                  props.useIntrinsicHeight = true;
+                },
+                Slider.create(
+                  (SliderConfig.Updater) props -> {
+                    props.value = sliderValue;
+                    props.minValue = 0.0;
+                    props.maxValue = 100.0;
+                    props.fillMode = Slider.FillMode.CLIP;
+                    props.thumbBackground = THUMB;
+                    props.thumbEdgeInsets = new Spacing(10, 10, 10, 10);
+                    props.changeListener = e -> {
+                      sliderValue = e.value;
+                      updateUI();
+                    };
+                  }
+                )
+              ),
+              Sized.create(
+                props -> {
+                  props.fixedWidth = 256.0;
+                  props.fixedHeight = 48.0;
+                },
+                Progress.create(
+                  props -> {
+                    props.value = sliderValue;
+                    props.minValue = 0.0;
+                    props.maxValue = 100.0;
+                    props.trackBackground = PROGRESS_TRACK;
+                    props.trackEdgeInsets = new Spacing(0, 0, 0, 0);
+                    props.fillMargin = new Spacing(0, 12, 0, 12);
+                    props.fillBackground = PROGRESS_FILL;
+                    props.fillEdgeInsets = new Spacing(0, 1, 0, 1);
+                    props.fillMode = Progress.FillMode.CLIP;
+                  }
+                )
+              ),
+              Column.create(
+                props -> {
+                  props.mainAxisAlignment = MainAxisAlignment.START;
+                  props.crossAxisAlignment = CrossAxisAlignment.START;
+                  props.gapSize = 12;
+                },
+                SubMenuButton.create("Commander Customization"),
+                SubMenuButton.create("Options"),
+                SubMenuButton.create("Credits"),
+                SubMenuButton.create("Exit Game")
+              )
+            )
+          )
+        )
+      ),
+      Align.create(
+        props -> props.horizontalAlignment = Alignment.CENTER,
+        Sized.create(
+          props -> {
+            props.fractionalWidth = 1.0;
+            props.fractionalHeight = 0.15;
+          },
+          Image.create(
+            props -> {
+              props.fit(ImageFit.CROP);
+              props.image(SCRIM);
+            }
+          )
+        )
+      ),
+      Align.create(
+        props -> {
+          props.horizontalAlignment(Alignment.CENTER);
+          props.verticalAlignment(Alignment.END);
+        },
+        Sized.create(
+          props -> {
+            props.fractionalWidth(1.0);
+            props.fractionalHeight(0.15);
+          },
+          Stack.create(
+            Sized.create(
+              props -> {
+                props.fractionalWidth(1.0);
+                props.fractionalHeight(1.0);
+              },
+              Image.create(
+                props -> {
+                  props.fit(ImageFit.STRETCH);
+                  props.image(SCRIM);
+                }
+              )
+            ),
+            Sized.create(
+              props -> {
+                props.fractionalWidth(1.0);
+                props.fractionalHeight(1.0);
+              },
+              Row.create(
+                props -> {
+                  props.mainAxisAlignment(MainAxisAlignment.END);
+                  props.crossAxisAlignment(CrossAxisAlignment.CENTER);
+                  props.gapSize(24);
+                },
+                Sized.create(
+                  props -> {
+                    props.fixedWidth(48.0);
+                    props.fixedHeight(48.0);
+                  },
+                  Colored.create(
+                    props -> {
+                      props.color(Color.RED);
+                      props.borderRadius(4);
+                    }
+                  )
+                ),
+                Button.create(
+                  props -> props.padding = new Spacing(12, 12, 18, 12),
+                  Text.create(
+                    props -> {
+                      props.fontSize(12);
+                      props.fontStyle(Text.BOLD);
+                      props.text("Create Account");
+                    }
+                  )
+                ),
+                Button.create(
+                  props -> props.padding = new Spacing(12, 12, 18, 12),
+                  Text.create(
+                    props -> {
+                      props.fontSize(12);
+                      props.fontStyle(Text.BOLD);
+                      props.text("Login");
+                    }
                   )
                 )
               )
+            )
+          )
+        )
+      ),
+      Align.create(
+        props -> {
+          props.horizontalAlignment(Alignment.END);
+          props.verticalAlignment(Alignment.CENTER);
+        },
+        Column.create(
+          props -> props.gapSize = 12,
+          Rotated.create(
+            degToRad(30),
+            Sized.create(
+              props -> {
+                props.fixedWidth = 200.0;
+                props.fixedHeight = 200.0;
+              },
+              Image.create(HEADPHONES_IMG)
             )
           )
         )

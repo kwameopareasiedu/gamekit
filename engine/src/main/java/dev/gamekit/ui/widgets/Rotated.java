@@ -7,18 +7,24 @@ import dev.gamekit.utils.Vector;
 
 import java.awt.*;
 
+import static dev.gamekit.ui.widgets.Widgets.configureRotated;
+
 /** A {@link SingleChildParent} which rotates its child about an angle <strong>in radian</strong> */
 @WidgetBuilder
 public class Rotated extends SingleChildParent {
   @WidgetBuilderField(fallback = "0.0", themable = false)
   protected Double rotation;
 
-  public Rotated(RotatedConfig... config) {
-    super(config);
+  public Rotated(RotatedConfig config, Widget child) {
+    super(config, child);
   }
 
-  public static Rotated create(RotatedConfig... config) {
-    return new Rotated(config);
+  public static Rotated create(RotatedConfig.Updater updater, Widget child) {
+    return new Rotated(Widgets.configureRotated(updater), child);
+  }
+
+  public static Rotated create(Double rotation, Widget child) {
+    return Rotated.create(props -> props.rotation = rotation, child);
   }
 
   @Override

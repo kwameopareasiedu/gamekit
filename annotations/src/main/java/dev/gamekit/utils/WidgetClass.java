@@ -13,17 +13,17 @@ public class WidgetClass {
   /** E.g: For a widget {@code Field}, this is {@code field} */
   public final String varName;
   /** E.g: For a widget {@code Field}, this is {@code dev.gamekit.ui.widgets.FieldConfig} */
-  public final String builderTypeName;
+  public final String configTypeName;
   /** E.g: For a widget {@code Field}, this is {@code FieldConfig} */
-  public final String builderSimpleTypeName;
+  public final String configSimpleTypeName;
   /** E.g: For a widget {@code Field}, this is {@code fieldConfig} */
-  public final String builderVarName;
+  public final String configVarName;
   /** E.g: For a widget {@code Field}, this is {@code dev.gamekit.ui.widgets} */
-  public final String builderPackageName;
+  public final String configPackageName;
   /** E.g: For a widget {@code Field}, this is {@code dev.gamekit.ui.widgets.Text} */
   public final String superClassTypeName;
   /** E.g: For a widget {@code Field}, this is {@code dev.gamekit.ui.widgets.TextConfig} */
-  public final String superClassBuilderTypeName;
+  public final String superClassConfigTypeName;
   public final List<WidgetField> fields;
 
   public WidgetClass(String typeName, String superClassTypeName, List<WidgetField> fields) {
@@ -33,12 +33,12 @@ public class WidgetClass {
 
     simpleTypeName = typeName.substring(typeName.lastIndexOf(".") + 1);
     varName = simpleTypeName.substring(0, 1).toLowerCase() + simpleTypeName.substring(1);
-    builderTypeName = typeName + "Config";
-    builderSimpleTypeName = builderTypeName.substring(builderTypeName.lastIndexOf(".") + 1);
-    builderVarName = builderSimpleTypeName.substring(0, 1).toLowerCase() + builderSimpleTypeName.substring(1);
-    builderPackageName = builderTypeName.substring(0, builderTypeName.lastIndexOf("."));
+    configTypeName = typeName + "Config";
+    configSimpleTypeName = configTypeName.substring(configTypeName.lastIndexOf(".") + 1);
+    configVarName = configSimpleTypeName.substring(0, 1).toLowerCase() + configSimpleTypeName.substring(1);
+    configPackageName = configTypeName.substring(0, configTypeName.lastIndexOf("."));
 
-    superClassBuilderTypeName = superClassTypeName != null ? superClassTypeName + "Config" : null;
+    superClassConfigTypeName = superClassTypeName != null ? superClassTypeName + "Config" : null;
   }
 
   @Override
@@ -47,12 +47,12 @@ public class WidgetClass {
       "\ntypeName='" + typeName + '\'' +
       "\nsimpleTypeName='" + simpleTypeName + '\'' +
       "\nvarName='" + varName + '\'' +
-      "\nbuilderTypeName='" + builderTypeName + '\'' +
-      "\nbuilderSimpleTypeName='" + builderSimpleTypeName + '\'' +
-      "\nbuilderVarName='" + builderVarName + '\'' +
-      "\nbuilderPackageName='" + builderPackageName + '\'' +
+      "\nconfigTypeName='" + configTypeName + '\'' +
+      "\nconfigSimpleTypeName='" + configSimpleTypeName + '\'' +
+      "\nconfigVarName='" + configVarName + '\'' +
+      "\nconfigPackageName='" + configPackageName + '\'' +
       "\nsuperClassTypeName='" + superClassTypeName + '\'' +
-      "\nsuperClassBuilderTypeName='" + superClassBuilderTypeName + '\'' +
+      "\nsuperClassConfigTypeName='" + superClassConfigTypeName + '\'' +
       "\nfields=" + fields.size() +
       "\n}\n";
   }

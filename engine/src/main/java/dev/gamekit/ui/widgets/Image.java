@@ -9,6 +9,8 @@ import dev.gamekit.utils.Constraints;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+import static dev.gamekit.ui.widgets.Widgets.configureImage;
+
 /** A {@link Leaf} which renders a {@link BufferedImage} to the screen */
 @WidgetBuilder
 public class Image extends Leaf {
@@ -19,16 +21,16 @@ public class Image extends Leaf {
   @WidgetBuilderField(fallback = "dev.gamekit.settings.ImageInterpolation.DEFAULT")
   protected ImageInterpolation interpolation;
 
-  public Image(ImageConfig... config) {
+  public Image(ImageConfig config) {
     super(config);
   }
 
-  public static Image create(ImageConfig... config) {
-    return new Image(config);
+  public static Image create(ImageConfig.Updater updater) {
+    return new Image(configureImage(updater));
   }
 
-  public static ImageConfig config() {
-    return new ImageConfig();
+  public static Image create(BufferedImage image) {
+    return Image.create(props -> props.image = image);
   }
 
   @Override

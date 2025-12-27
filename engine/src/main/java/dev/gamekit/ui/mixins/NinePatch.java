@@ -18,16 +18,16 @@ public interface NinePatch {
   default void renderWith9PatchScaling(
     BufferedImage image,
     Bounds absoluteBounds,
-    Spacing edgeInsets,
+    Spacing spacing,
     Graphics2D graphics
   ) {
     double iw = image.getWidth();
     double ih = image.getHeight();
 
-    double snl = edgeInsets.left;
-    double snt = edgeInsets.top;
-    double snr = iw - edgeInsets.right;
-    double snb = ih - edgeInsets.bottom;
+    double snl = spacing.left;
+    double snt = spacing.top;
+    double snr = iw - spacing.right;
+    double snb = ih - spacing.bottom;
 
     double[][] srcBounds = new double[][]{
       new double[]{ 0, 0, snl, snt },
@@ -48,10 +48,10 @@ public interface NinePatch {
     double dx2 = dx1 + absoluteBounds.width;
     double dy2 = dy1 + absoluteBounds.height;
 
-    double dnl = dx1 + edgeInsets.left;
-    double dnt = dy1 + edgeInsets.top;
-    double dnr = dx2 - edgeInsets.right;
-    double dnb = dy2 - edgeInsets.bottom;
+    double dnl = dx1 + spacing.left;
+    double dnt = dy1 + spacing.top;
+    double dnr = dx2 - spacing.right;
+    double dnb = dy2 - spacing.bottom;
 
     double[][] destBounds = new double[][]{
       new double[]{ dx1, dy1, dnl, dnt },
@@ -84,10 +84,10 @@ public interface NinePatch {
       graphics.setColor(UI.DEBUG_COLOR);
       graphics.setStroke(UI.DEBUG_STROKE);
       graphics.drawRect(
-        (int) (absoluteBounds.x + edgeInsets.left),
-        (int) (absoluteBounds.y + edgeInsets.top),
-        (int) (absoluteBounds.width - edgeInsets.getHorizontal()),
-        (int) (absoluteBounds.height - edgeInsets.getVertical())
+        (int) (absoluteBounds.x + spacing.left),
+        (int) (absoluteBounds.y + spacing.top),
+        (int) (absoluteBounds.width - spacing.getHorizontal()),
+        (int) (absoluteBounds.height - spacing.getVertical())
       );
 
       graphics.setColor(originalColor);

@@ -40,14 +40,14 @@ public class Progress extends Leaf implements NinePatch {
 
   private final Bounds fillAbsoluteBounds;
 
-  public Progress(ProgressConfig... config) {
+  public Progress(ProgressConfig config) {
     super(config);
 
     fillAbsoluteBounds = new Bounds();
   }
 
-  public static Progress create(ProgressConfig... config) {
-    return new Progress(config);
+  public static Progress create(ProgressConfig.Updater updater) {
+    return new Progress(Widgets.configureProgress(updater));
   }
 
   @Override

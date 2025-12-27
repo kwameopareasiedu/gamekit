@@ -10,8 +10,6 @@ public final class WidgetField {
   public final String varName;
   /** E.g: For a field {@code Spacing Field#edgeInsets = new Spacing()}, this is {@code EdgeInsets} */
   public final String varNameAsSuffix;
-  /** E.g: For a field {@code Spacing Field#edgeInsets = new Spacing()}, this is {@code dev.gamekit.utils.Spacing} */
-  public final String setterTypeName;
   /** E.g: For a field {@code Spacing Field#edgeInsets = new Spacing()}, this is {@code new Spacing()} */
   public final String fallbackValue;
   /** E.g: For a field {@code Spacing Field#edgeInsets = new Spacing()}, this is {@code dev.gamekit.ui.widgets.Field} */
@@ -21,24 +19,24 @@ public final class WidgetField {
   /** E.g: For a field {@code Spacing Field#edgeInsets = new Spacing()}, this is {@code field} */
   public final String classVarName;
   public final boolean comparable;
-  public final boolean updatable;
   public final boolean themable;
 
   public WidgetField(
-    String typeName, String varName,
-    String setterTypeName, String fallbackValue,
-    String classTypeName, String classSimpleTypeName, String classVarName,
-    boolean comparable, boolean updatable, boolean themable
+    String typeName,
+    String varName,
+    String fallbackValue,
+    String classTypeName,
+    String classSimpleTypeName,
+    String classVarName,
+    boolean comparable, boolean themable
   ) {
     this.typeName = typeName;
     this.varName = varName;
     this.classTypeName = classTypeName;
     this.classSimpleTypeName = classSimpleTypeName;
     this.classVarName = classVarName;
-    this.setterTypeName = setterTypeName;
     this.fallbackValue = fallbackValue;
     this.comparable = comparable;
-    this.updatable = updatable;
     this.themable = themable;
 
     varNameAsSuffix = varName.substring(0, 1).toUpperCase() + varName.substring(1);
@@ -50,13 +48,11 @@ public final class WidgetField {
       "\ntypeName='" + typeName + '\'' +
       "\nvarName='" + varName + '\'' +
       "\nnameAsSuffix='" + varNameAsSuffix + '\'' +
-      "\nsetterTypeName='" + setterTypeName + '\'' +
       "\nfallbackValue='" + fallbackValue + '\'' +
       "\nclassTypeName='" + classTypeName + '\'' +
       "\nclassSimpleTypeName='" + classSimpleTypeName + '\'' +
       "\nclassVarName='" + classVarName + '\'' +
       "\ncomparable='" + comparable + '\'' +
-      "\nupdatable='" + updatable + '\'' +
       "\nthemable='" + themable + '\'' +
       "\n}\n";
   }

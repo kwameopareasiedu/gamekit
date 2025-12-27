@@ -1,33 +1,27 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.annotations.WidgetBuilder;
-import dev.gamekit.annotations.WidgetBuilderField;
-
 import java.awt.*;
 
 /** A parent which contains multiple child {@link Widget widgets} */
-@WidgetBuilder
 public abstract class MultiChildParent extends Parent {
-  @WidgetBuilderField(
-    customSetterType = "dev.gamekit.ui.widgets.Widget...",
-    comparable = false,
-    updatable = false,
-    themable = false
-  )
   protected Widget[] children;
 
-  public MultiChildParent(MultiChildParentConfig... config) {
+  public MultiChildParent(Config config, Widget... children) {
     super(config);
+
+    if (children == null)
+      throw new IllegalArgumentException("MultiChildParent children cannot be null");
+
+    for (Widget child : children) {
+      if (child == null)
+        throw new IllegalArgumentException("MultiChildParent child cannot be null");
+    }
+
+    this.children = children;
   }
 
   @Override
   protected void performInit() {
-    for (Widget child : ((MultiChildParentConfig) config).children) {
-      if (child == null) throw new IllegalArgumentException("MultiChildParent child cannot be null");
-    }
-
-    this.children = ((MultiChildParentConfig) config).children;
-
     for (Widget child : this.children) {
       child.parent = this;
       child.init(host);

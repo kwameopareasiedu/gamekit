@@ -14,12 +14,16 @@ public class Colored extends Leaf {
   @WidgetBuilderField(fallback = "0")
   protected Integer borderRadius;
 
-  public Colored(ColoredConfig... config) {
+  public Colored(ColoredConfig config) {
     super(config);
   }
 
-  public static Colored create(ColoredConfig... config) {
-    return new Colored(config);
+  public static Colored create(ColoredConfig.Updater updater) {
+    return new Colored(Widgets.configureColored(updater));
+  }
+
+  public static Colored create(Color color) {
+    return Colored.create(props -> props.color = color);
   }
 
   @Override

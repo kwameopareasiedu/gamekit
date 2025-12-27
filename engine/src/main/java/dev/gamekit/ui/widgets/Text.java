@@ -51,12 +51,16 @@ public class Text extends Leaf {
   private Font renderFont;
   private FontMetrics fontMetrics;
 
-  public Text(TextConfig... config) {
+  public Text(TextConfig config) {
     super(config);
   }
 
-  public static Text create(TextConfig... config) {
-    return new Text(config);
+  public static Text create(TextConfig.Updater updater) {
+    return new Text(Widgets.configureText(updater));
+  }
+
+  public static Text create(String text) {
+    return Text.create(props -> props.text = text);
   }
 
   @Override

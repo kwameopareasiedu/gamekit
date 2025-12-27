@@ -3,8 +3,6 @@ package dev.gamekit.ui.widgets;
 import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.utils.Constraints;
 
-import java.awt.*;
-
 /**
  * A {@link Widget} which is an abstract base for creating custom widgets.
  * <p>
@@ -12,8 +10,8 @@ import java.awt.*;
  */
 @WidgetBuilder
 public abstract class Compose extends SingleChildParent {
-  protected Compose(ComposeConfig... config) {
-    super(config);
+  protected Compose(Widget child) {
+    super(new ComposeConfig(), child);
   }
 
   @Override
