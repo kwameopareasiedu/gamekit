@@ -2,10 +2,12 @@ package dev.gamekit.utils;
 
 import dev.gamekit.annotations.WidgetBuilder;
 
+import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 /** {@link WidgetField} holds type information for {@code Widgets} annotated with {@link WidgetBuilder} */
-public class WidgetClass {
+public class WidgetClass implements Serializable {
   /** E.g: For a widget {@code Field}, this is {@code dev.gamekit.ui.widgets.Field} */
   public final String typeName;
   /** E.g: For a widget {@code Field}, this is {@code Field} */
@@ -55,5 +57,19 @@ public class WidgetClass {
       "\nsuperClassConfigTypeName='" + superClassConfigTypeName + '\'' +
       "\nfields=" + fields.size() +
       "\n}\n";
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    return o instanceof WidgetClass other
+      && Objects.equals(typeName, other.typeName)
+      && Objects.equals(simpleTypeName, other.simpleTypeName)
+      && Objects.equals(varName, other.varName)
+      && Objects.equals(configTypeName, other.configTypeName)
+      && Objects.equals(configSimpleTypeName, other.configSimpleTypeName)
+      && Objects.equals(configVarName, other.configVarName)
+      && Objects.equals(configPackageName, other.configPackageName)
+      && Objects.equals(superClassTypeName, other.superClassTypeName)
+      && Objects.equals(superClassConfigTypeName, other.superClassConfigTypeName);
   }
 }

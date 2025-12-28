@@ -7,8 +7,6 @@ import dev.gamekit.utils.Vector;
 
 import java.awt.*;
 
-import static dev.gamekit.ui.widgets.Widgets.configureRotated;
-
 /** A {@link SingleChildParent} which rotates its child about an angle <strong>in radian</strong> */
 @WidgetBuilder
 public class Rotated extends SingleChildParent {

@@ -10,9 +10,9 @@ import dev.gamekit.utils.Constraints;
  */
 @WidgetBuilder
 public class Sized extends SingleChildParent {
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "false")
   protected Boolean useIntrinsicWidth;
-  @WidgetBuilderField
+  @WidgetBuilderField(fallback = "false")
   protected Boolean useIntrinsicHeight;
   @WidgetBuilderField
   protected Double fractionalWidth;
@@ -36,7 +36,7 @@ public class Sized extends SingleChildParent {
 
   @Override
   protected void performInit() {
-    if (useIntrinsicWidth)
+    if (useIntrinsicWidth == true)
       widthType = DimensionType.INTRINSIC;
     else if (fractionalWidth != null)
       widthType = DimensionType.FRACTIONAL;
@@ -45,7 +45,7 @@ public class Sized extends SingleChildParent {
     else
       widthType = DimensionType.INTRINSIC;
 
-    if (useIntrinsicHeight)
+    if (useIntrinsicHeight == true)
       heightType = DimensionType.INTRINSIC;
     else if (fractionalHeight != null)
       heightType = DimensionType.FRACTIONAL;

@@ -26,6 +26,9 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
   private static final String THEME_TYPE_NAME = "dev.gamekit.ui.widgets.Theme";
   private static final String WIDGETS_TYPE_NAME = "dev.gamekit.ui.widgets.Widgets";
 
+  private final List<WidgetClass> widgetClasses = new ArrayList<>();
+  private boolean themeWidgetGenerated = false;
+
   @Override
   public synchronized void init(ProcessingEnvironment processingEnv) {
     super.init(processingEnv);
@@ -33,9 +36,13 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
 
   @Override
   public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+    processingEnv.getMessager().printNote(
+      String.format("Annotations: %d, Widget classes: %d, Processing over: %b\n",
+        annotations.size(), widgetClasses.size(), roundEnv.processingOver())
+    );
+
     for (TypeElement annotation : annotations) {
       Set<? extends Element> annotatedClasses = roundEnv.getElementsAnnotatedWith(annotation);
-      List<WidgetClass> widgetClasses = new ArrayList<>();
 
       for (Element annotatedClassElement : annotatedClasses) {
         if (!elementIsWidget(annotatedClassElement)) {
@@ -43,19 +50,19 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
         }
 
         WidgetClass widgetClass = extractWidgetClassData(annotatedClassElement);
-        widgetClasses.add(widgetClass);
 
-        generateWidgetConfigSource(widgetClass);
+        if (!widgetClasses.contains(widgetClass)) {
+          generateWidgetConfigSource(widgetClass);
+          widgetClasses.add(widgetClass);
+        }
       }
 
-      generateThemeWidgetSource(widgetClasses);
-
-      generateWidgetsUtilitySource(widgetClasses);
-
-      // TODO: Since annotation processing is done incrementally by Maven (I.e. only processing changed symbols),
-      //  We should record already processed widget classes in a file every time. This way, when incremental runs are
-      //  made, we pull existing class data from said file and combine it with new symbols to fully generate the
-      //  Theme widget
+      if (!themeWidgetGenerated) {
+        generateThemeWidgetSource(widgetClasses);
+        themeWidgetGenerated = true;
+      } else {
+        generateWidgetsUtilitySource(widgetClasses);
+      }
     }
 
     return false;
@@ -89,15 +96,6 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
           out.println();
         }
 
-        // Theme configure method declaration
-        out.printf("""
-            static ThemeConfig configureTheme(ThemeConfig.Updater updater) {
-              ThemeConfig config = new ThemeConfig();
-              updater.update(config);
-              return config;
-            }
-          """);
-
         // Theme widget class end brace
         out.printf("}");
       }
@@ -113,17 +111,17 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
       JavaFileObject fileObject = processingEnv.getFiler().createSourceFile(THEME_TYPE_NAME);
 
       try (PrintWriter out = new PrintWriter(fileObject.openOutputStream())) {
-        // Theme widget package declaration
+        // Package declaration
         out.printf("package dev.gamekit.ui.widgets;\n\n");
 
-        // Theme widget class declaration
+        // Class declaration
         out.printf("@dev.gamekit.annotations.WidgetBuilder\n");
         out.printf("public class Theme extends SingleChildParent {\n");
 
-        // Theme widget static field declarations
+        // Static field declarations
         out.println("\tpublic static final Theme DEFAULT = new Theme(new ThemeConfig(), Empty.create());\n");
 
-        // Theme widget instance field declarations
+        // Instance field declarations
         for (WidgetClass widgetClass : widgetClasses) {
           List<WidgetField> widgetClassThemableFields =
             widgetClass.fields.stream().filter(field -> field.themable).toList();
@@ -137,7 +135,7 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
           if (!widgetClassThemableFields.isEmpty()) out.println();
         }
 
-        // Theme widget constructor, static creator method and performLayout method override declarations
+        // Constructor, static creator method and performLayout method override declarations
         out.println("""
             public Theme(ThemeConfig config, Widget child) {
               super(config, child);
@@ -160,7 +158,7 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
             }
           """);
 
-        // Theme widget class end brace
+        // Class end brace
         out.printf("}");
       }
     } catch (FilerException e) {
@@ -172,9 +170,9 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
 
   private void generateWidgetConfigSource(WidgetClass widgetClass) {
     try {
-      JavaFileObject fileObject = processingEnv.getFiler().createSourceFile(widgetClass.configTypeName);
+      JavaFileObject sourceFileObject = processingEnv.getFiler().createSourceFile(widgetClass.configTypeName);
 
-      try (PrintWriter out = new PrintWriter(fileObject.openOutputStream())) {
+      try (PrintWriter out = new PrintWriter(sourceFileObject.openOutputStream())) {
         // Package declaration
         out.printf("package %s;\n\n", widgetClass.configPackageName);
 
@@ -199,12 +197,13 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
         }
 
         // Instance setter methods declaration
-        for (WidgetField field : widgetClass.fields) {
-          out.printf("\tpublic void %s(%s %s) {\n", field.varName, field.typeName, field.varName);
-          out.printf("\t\t%s config = new %s();\n", widgetClass.configTypeName, widgetClass.configTypeName);
-          out.printf("\t\tconfig.%s = %s;\n", field.varName, field.varName);
-          out.printf("\t}\n\n");
-        }
+        //        for (WidgetField field : widgetClass.fields) {
+        //          out.printf("\tpublic %s %s(%s %s) {\n", widgetClass.configTypeName, field.varName, field.typeName,
+        //            field.varName);
+        //          out.printf("\t\tthis.%s = %s;\n", field.varName, field.varName);
+        //          out.printf("\t\treturn this;\n");
+        //          out.printf("\t}\n\n");
+        //        }
 
         // Equals method override
         out.printf("\t@Override\n");
@@ -222,17 +221,17 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
 
         out.printf("\t}\n\n");
 
-
         // UpdateWidget method override
         out.printf("\t@Override\n");
         out.printf("\tpublic void updateWidget(Widget widget) {\n");
-        out.printf("\t\t%s %sWidget = (%s) widget;\n", widgetClass.typeName, widgetClass.varName, widgetClass.typeName);
+        out.printf("\t\t%s %sWidget = (%s) widget;\n", widgetClass.typeName, widgetClass.varName,
+          widgetClass.typeName);
         out.printf("\t\tTheme nearestTheme = coalesce(widget.getAncestorOfType(Theme.class), Theme.DEFAULT);\n");
 
         for (WidgetField field : widgetClass.fields) {
           if (field.themable) {
             String nearestThemeFieldVarName = !widgetClass.typeName.equals(THEME_TYPE_NAME) ?
-              field.classVarName + field.varNameAsSuffix : field.varName;
+              widgetClass.varName + field.varNameAsSuffix : field.varName;
 
             out.printf("\t\t%sWidget.%s = coalesce(%s, nearestTheme.%s);\n",
               widgetClass.varName, field.varName, field.varName, nearestThemeFieldVarName);
@@ -269,11 +268,6 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
 
     while (!iteratorElement.getQualifiedName().toString().equals(WIDGET_TYPE_NAME)
       && iteratorElement.getAnnotation(WidgetBuilder.class) != null) {
-      String iteratorClassTypeName = iteratorElement.getQualifiedName().toString();
-      String iteratorClassSimpleName = iteratorClassTypeName.substring(iteratorClassTypeName.lastIndexOf(".") + 1);
-      String iteratorClassVarName =
-        iteratorClassSimpleName.substring(0, 1).toLowerCase() + iteratorClassSimpleName.substring(1);
-
       List<? extends Element> elementMembers = iteratorElement.getEnclosedElements().stream().filter(
         member -> member.getKind() == ElementKind.FIELD && member.getAnnotation(WidgetBuilderField.class) != null
       ).toList();
@@ -291,9 +285,6 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
             fieldTypeName,
             fieldVarName,
             fieldFallbackValue,
-            iteratorClassTypeName,
-            iteratorClassSimpleName,
-            iteratorClassVarName,
             comparable,
             themable
           )

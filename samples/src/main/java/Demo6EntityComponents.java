@@ -7,7 +7,6 @@ import dev.gamekit.settings.Settings;
 import dev.gamekit.settings.WindowMode;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.widgets.*;
-import dev.gamekit.utils.Spacing;
 import dev.gamekit.utils.Vector;
 import org.dyn4j.geometry.MassType;
 
@@ -62,20 +61,18 @@ public class Demo6EntityComponents extends Scene {
   @Override
   protected Widget createUI() {
     return Stack.create(
-      StackConfig.children(
-        Align.create(
-          AlignConfig.horizontalAlignment(Alignment.CENTER),
-          AlignConfig.verticalAlignment(Alignment.END),
-          AlignConfig.child(
-            Padding.create(
-              PaddingConfig.padding(new Spacing(24, 24, 24, 24)),
-              PaddingConfig.child(
-                Text.create(
-                  TextConfig.alignment(Alignment.CENTER),
-                  TextConfig.text("Press the space bar to launch the ball")
-                )
-              )
-            )
+      Align.create(
+        props -> {
+          props.horizontalAlignment = Alignment.CENTER;
+          props.verticalAlignment = Alignment.END;
+        },
+        Padding.create(
+          24, 24, 24, 24,
+          Text.create(
+            props -> {
+              props.alignment = Alignment.CENTER;
+              props.text = "Press the space bar to launch the ball";
+            }
           )
         )
       )

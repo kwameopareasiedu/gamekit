@@ -115,12 +115,12 @@ public class Demo4UserInterface extends Scene {
               ),
               Checkbox.create(
                 props -> {
-                  props.toggled(checkboxValue);
-                  props.iconPadding(new Spacing(4, 4, 4, 4));
-                  props.changeListener(ev -> {
+                  props.toggled = checkboxValue;
+                  props.iconPadding = new Spacing(4, 4, 4, 4);
+                  props.changeListener = ev -> {
                     checkboxValue = ev.value;
                     updateUI();
-                  });
+                  };
                 },
                 Text.create(
                   props -> {
@@ -193,55 +193,55 @@ public class Demo4UserInterface extends Scene {
           },
           Image.create(
             props -> {
-              props.fit(ImageFit.CROP);
-              props.image(SCRIM);
+              props.fit = ImageFit.CROP;
+              props.image = SCRIM;
             }
           )
         )
       ),
       Align.create(
         props -> {
-          props.horizontalAlignment(Alignment.CENTER);
-          props.verticalAlignment(Alignment.END);
+          props.horizontalAlignment = Alignment.CENTER;
+          props.verticalAlignment = Alignment.END;
         },
         Sized.create(
           props -> {
-            props.fractionalWidth(1.0);
-            props.fractionalHeight(0.15);
+            props.fractionalWidth = 1.0;
+            props.fractionalHeight = 0.15;
           },
           Stack.create(
             Sized.create(
               props -> {
-                props.fractionalWidth(1.0);
-                props.fractionalHeight(1.0);
+                props.fractionalWidth = 1.0;
+                props.fractionalHeight = 1.0;
               },
               Image.create(
                 props -> {
-                  props.fit(ImageFit.STRETCH);
-                  props.image(SCRIM);
+                  props.fit = ImageFit.STRETCH;
+                  props.image = SCRIM;
                 }
               )
             ),
             Sized.create(
               props -> {
-                props.fractionalWidth(1.0);
-                props.fractionalHeight(1.0);
+                props.fractionalWidth = 1.0;
+                props.fractionalHeight = 1.0;
               },
               Row.create(
                 props -> {
-                  props.mainAxisAlignment(MainAxisAlignment.END);
-                  props.crossAxisAlignment(CrossAxisAlignment.CENTER);
-                  props.gapSize(24);
+                  props.mainAxisAlignment = MainAxisAlignment.END;
+                  props.crossAxisAlignment = CrossAxisAlignment.CENTER;
+                  props.gapSize = 24;
                 },
                 Sized.create(
                   props -> {
-                    props.fixedWidth(48.0);
-                    props.fixedHeight(48.0);
+                    props.fixedWidth = 48.0;
+                    props.fixedHeight = 48.0;
                   },
                   Colored.create(
                     props -> {
-                      props.color(Color.RED);
-                      props.borderRadius(4);
+                      props.color = Color.RED;
+                      props.borderRadius = 4;
                     }
                   )
                 ),
@@ -249,9 +249,9 @@ public class Demo4UserInterface extends Scene {
                   props -> props.padding = new Spacing(12, 12, 18, 12),
                   Text.create(
                     props -> {
-                      props.fontSize(12);
-                      props.fontStyle(Text.BOLD);
-                      props.text("Create Account");
+                      props.fontSize = 12;
+                      props.fontStyle = Text.BOLD;
+                      props.text = "Create Account";
                     }
                   )
                 ),
@@ -259,9 +259,9 @@ public class Demo4UserInterface extends Scene {
                   props -> props.padding = new Spacing(12, 12, 18, 12),
                   Text.create(
                     props -> {
-                      props.fontSize(12);
-                      props.fontStyle(Text.BOLD);
-                      props.text("Login");
+                      props.fontSize = 12;
+                      props.fontStyle = Text.BOLD;
+                      props.text = "Login";
                     }
                   )
                 )
@@ -272,8 +272,8 @@ public class Demo4UserInterface extends Scene {
       ),
       Align.create(
         props -> {
-          props.horizontalAlignment(Alignment.END);
-          props.verticalAlignment(Alignment.CENTER);
+          props.horizontalAlignment = Alignment.END;
+          props.verticalAlignment = Alignment.CENTER;
         },
         Column.create(
           props -> props.gapSize = 12,

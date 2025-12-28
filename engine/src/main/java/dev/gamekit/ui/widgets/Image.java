@@ -9,8 +9,6 @@ import dev.gamekit.utils.Constraints;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-import static dev.gamekit.ui.widgets.Widgets.configureImage;
-
 /** A {@link Leaf} which renders a {@link BufferedImage} to the screen */
 @WidgetBuilder
 public class Image extends Leaf {
@@ -26,7 +24,7 @@ public class Image extends Leaf {
   }
 
   public static Image create(ImageConfig.Updater updater) {
-    return new Image(configureImage(updater));
+    return new Image(Widgets.configureImage(updater));
   }
 
   public static Image create(BufferedImage image) {
