@@ -73,10 +73,10 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
       JavaFileObject fileObject = processingEnv.getFiler().createSourceFile(WIDGETS_TYPE_NAME);
 
       try (PrintWriter out = new PrintWriter(fileObject.openOutputStream())) {
-        // Widgets package declaration
+        // Package declaration
         out.printf("package dev.gamekit.ui.widgets;\n\n");
 
-        // Widgets class and private constructor declaration
+        // Class and private constructor declaration
         out.printf("""
           class Widgets {
             private Widgets() { }
@@ -84,7 +84,7 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
 
         out.println();
 
-        // Widget configure method declarations
+        // Static configure method declarations
         for (WidgetClass widgetClass : widgetClasses) {
           out.printf("\tstatic %s configure%s(%s.Updater updater) {\n",
             widgetClass.configTypeName, widgetClass.simpleTypeName, widgetClass.configTypeName);

@@ -78,7 +78,7 @@ public abstract class Widget {
     performInit();
   }
 
-  /** Delegate method for subclasses to perform additional initialization operations */
+  /** Delegate method for subclasses to perform additional (re)initialization operations */
   protected void performInit() { /* No-op */ }
 
   /**
