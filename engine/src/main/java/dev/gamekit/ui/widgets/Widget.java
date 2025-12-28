@@ -63,6 +63,9 @@ public abstract class Widget {
   /**
    * Called to initialize the widget after it has been inserted into the widget tree and {@link #parent} has been set.
    * <p>
+   * If the widget is updated some time after first initialization, this method is called afterward to re-initialize
+   * the widget.
+   * <p>
    * Since the {@link #config} has either been set in the constructor or updated via the {@link #update} method,
    * it is used to update this widget instance.
    * <p>
@@ -90,18 +93,12 @@ public abstract class Widget {
    * {@code ImageConfig}).
    * <p>
    * {@link #init} method is called afterward to re-initialize the widget.
-   * <p>
-   * Since this method is marked as {@code final}, subclasses should override the {@link #performUpdate} method
-   * instead to perform additional configuration updates
    */
   public final void update(Widget widget) {
     this.config = widget.config;
     config.updateWidget(this);
-    performUpdate(widget);
+    init(host);
   }
-
-  /** Delegate method for subclasses to perform additional configuration update operations */
-  protected void performUpdate(Widget widget) { /* No-op */ }
 
   /**
    * Computes the size of the widget and the relative position(s) of its child/children
@@ -206,7 +203,7 @@ public abstract class Widget {
    * This is a good place to clean up any resources and stop animations used by the widget.
    * <p>
    * Since this method is marked as {@code final}, subclasses should override the {@link #performUnmount} method
-   * instead to perform rendering
+   * instead to perform unmounting
    */
   public final void unmount() {
     performUnmount();

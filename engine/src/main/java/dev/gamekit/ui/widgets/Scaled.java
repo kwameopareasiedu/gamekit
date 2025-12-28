@@ -28,9 +28,9 @@ public class Scaled extends SingleChildParent {
 
   @Override
   protected void performInit() {
-    super.performInit();
-
     invScale = 1.0 / scale;
+
+    super.performInit();
   }
 
   @Override

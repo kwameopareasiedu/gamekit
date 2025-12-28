@@ -32,9 +32,7 @@ public class Opacity extends SingleChildParent {
     if (opacity == null) throw new IllegalArgumentException("Opacity opacity cannot be null");
 
     if (this.composite == null || this.composite.getAlpha() != opacity)
-      this.composite = AlphaComposite.getInstance(
-        AlphaComposite.SRC_OVER, opacity.floatValue()
-      );
+      this.composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity.floatValue());
 
     super.performInit();
   }
