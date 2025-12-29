@@ -196,15 +196,6 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
           if (i == widgetClass.fields.size() - 1) out.println();
         }
 
-        // Instance setter methods declaration
-        //        for (WidgetField field : widgetClass.fields) {
-        //          out.printf("\tpublic %s %s(%s %s) {\n", widgetClass.configTypeName, field.varName, field.typeName,
-        //            field.varName);
-        //          out.printf("\t\tthis.%s = %s;\n", field.varName, field.varName);
-        //          out.printf("\t\treturn this;\n");
-        //          out.printf("\t}\n\n");
-        //        }
-
         // Equals method override
         out.printf("\t@Override\n");
         out.printf("\tpublic boolean equals(Object obj) {\n");
@@ -280,15 +271,7 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
         boolean comparable = fieldElement.getAnnotation(WidgetBuilderField.class).comparable();
         boolean themable = fieldElement.getAnnotation(WidgetBuilderField.class).themable();
 
-        widgetFields.add(
-          new WidgetField(
-            fieldTypeName,
-            fieldVarName,
-            fieldFallbackValue,
-            comparable,
-            themable
-          )
-        );
+        widgetFields.add(new WidgetField(fieldTypeName, fieldVarName, fieldFallbackValue, comparable, themable));
       }
 
       iteratorElement = (TypeElement) ((DeclaredType) iteratorElement.getSuperclass()).asElement();

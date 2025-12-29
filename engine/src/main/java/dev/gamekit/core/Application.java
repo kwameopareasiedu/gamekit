@@ -21,6 +21,8 @@ import java.util.List;
  * <p>
  * NB: <i>Use {@link Application#getInstance} to get the current instance from anywhere in your project to access its
  * methods.</i>
+ * TODO: Experiment with Swing timers for game loop instead of while-loop
+ * TODO: Experiment with multithreaded rendering when each render thread draws to a fixed section
  */
 @SuppressWarnings({ "BusyWait", "SynchronizeOnNonFinalField" })
 public abstract class Application {
@@ -190,7 +192,8 @@ public abstract class Application {
     for (Timeout timeout : timeouts)
       timeout.update();
 
-    if (currentScene != null) currentScene._update();
+    if (currentScene != null)
+      currentScene._update();
 
     animations.removeIf(Animation::isEnded);
     timeouts.removeIf(Timeout::isCompleted);
@@ -198,7 +201,8 @@ public abstract class Application {
 
   /** Called in each frame to render the current scene */
   private void render() {
-    if (currentScene != null) currentScene._render();
+    if (currentScene != null)
+      currentScene._render();
   }
 
   /**
