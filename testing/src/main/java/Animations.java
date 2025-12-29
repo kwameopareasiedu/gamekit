@@ -6,8 +6,10 @@ import dev.gamekit.core.Scene;
 import dev.gamekit.settings.Resolution;
 import dev.gamekit.settings.Settings;
 import dev.gamekit.settings.WindowMode;
-import dev.gamekit.ui.widgets.*;
-import dev.gamekit.utils.Spacing;
+import dev.gamekit.ui.widgets.Align;
+import dev.gamekit.ui.widgets.Padding;
+import dev.gamekit.ui.widgets.Text;
+import dev.gamekit.ui.widgets.Widget;
 
 import java.awt.*;
 
@@ -50,17 +52,10 @@ public class Animations extends Scene {
   @Override
   public Widget createUI() {
     return Align.create(
-      AlignConfig.child(
-        Padding.create(
-          PaddingConfig.padding(new Spacing(48, 16, 48, 16)),
-          PaddingConfig.child(
-            Text.create(
-              TextConfig.text(
-                String.format("Value: %f", animationValue)
-              )
-            )
-          )
-        )
+      props -> { },
+      Padding.create(
+        48, 16, 48, 16,
+        Text.create(String.format("Value: %f", animationValue))
       )
     );
   }

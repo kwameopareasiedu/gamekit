@@ -15,12 +15,16 @@ public class Opacity extends SingleChildParent {
   private AlphaComposite composite;
   private Composite originalComposite;
 
-  public Opacity(OpacityConfig... config) {
-    super(config);
+  public Opacity(OpacityConfig config, Widget child) {
+    super(config, child);
   }
 
-  public static Opacity create(OpacityConfig... config) {
-    return new Opacity(config);
+  public static Opacity create(OpacityConfig.Updater updater, Widget child) {
+    return new Opacity(Widgets.configureOpacity(updater), child);
+  }
+
+  public static Opacity create(Double opacity, Widget child) {
+    return Opacity.create(props -> props.opacity = opacity, child);
   }
 
   @Override
@@ -28,9 +32,7 @@ public class Opacity extends SingleChildParent {
     if (opacity == null) throw new IllegalArgumentException("Opacity opacity cannot be null");
 
     if (this.composite == null || this.composite.getAlpha() != opacity)
-      this.composite = AlphaComposite.getInstance(
-        AlphaComposite.SRC_OVER, opacity.floatValue()
-      );
+      this.composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity.floatValue());
 
     super.performInit();
   }

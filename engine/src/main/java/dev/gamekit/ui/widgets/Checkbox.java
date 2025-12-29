@@ -20,7 +20,7 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
   @WidgetBuilderField(fallback = "dev.gamekit.core.IO.getResourceImage(\"default-sprites.png\", 646, 277, 32, 32)")
   protected BufferedImage toggledIcon;
   @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing(8)")
-  protected Spacing iconEdgeInsets;
+  protected Spacing iconPadding;
   @WidgetBuilderField(fallback = "24")
   protected Integer iconWidth;
   @WidgetBuilderField(fallback = "24")
@@ -34,13 +34,13 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
 
   private final Bounds iconAbsoluteBounds;
 
-  public Checkbox(CheckboxConfig... config) {
-    super(config);
+  public Checkbox(CheckboxConfig config, Widget child) {
+    super(config, child);
     iconAbsoluteBounds = new Bounds();
   }
 
-  public static Checkbox create(CheckboxConfig... config) {
-    return new Checkbox(config);
+  public static Checkbox create(CheckboxConfig.Updater updater, Widget child) {
+    return new Checkbox(Widgets.configureCheckbox(updater), child);
   }
 
   @Override
@@ -86,7 +86,7 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
       icon = toggledIcon;
 
     if (icon != null)
-      renderWith9PatchScaling(icon, iconAbsoluteBounds, iconEdgeInsets, g);
+      renderWith9PatchScaling(icon, iconAbsoluteBounds, iconPadding, g);
   }
 
   @Override

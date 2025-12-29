@@ -2,7 +2,6 @@ package dev.gamekit.ui.widgets;
 
 import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
-import dev.gamekit.core.IO;
 import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.mixins.NinePatch;
 import dev.gamekit.utils.Constraints;
@@ -14,19 +13,17 @@ import java.awt.image.BufferedImage;
 /** A {@link SingleChildParent} which uses the 9-patch algorithm to render a background */
 @WidgetBuilder
 public class Panel extends SingleChildParent implements NinePatch, MouseEvent.Handler {
-  public static final BufferedImage DEFAULT_BG = IO.getResourceImage("default-sprites.png", 470, 64, 120, 120);
-
   @WidgetBuilderField(fallback = "dev.gamekit.core.IO.getResourceImage(\"default-sprites.png\", 470, 64, 120, 120)")
   protected BufferedImage background;
   @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing()")
-  protected Spacing edgeInsets;
+  protected Spacing padding;
 
-  public Panel(PanelConfig... config) {
-    super(config);
+  public Panel(PanelConfig config, Widget child) {
+    super(config, child);
   }
 
-  public static Panel create(PanelConfig... config) {
-    return new Panel(config);
+  public static Panel create(PanelConfig.Updater updater, Widget child) {
+    return new Panel(Widgets.configurePanel(updater), child);
   }
 
   @Override
@@ -55,7 +52,7 @@ public class Panel extends SingleChildParent implements NinePatch, MouseEvent.Ha
   public void renderAppearance(Graphics2D g) {
     super.renderAppearance(g);
 
-    renderWith9PatchScaling(background, absoluteBounds, edgeInsets, g);
+    renderWith9PatchScaling(background, absoluteBounds, padding, g);
   }
 
   @Override

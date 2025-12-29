@@ -176,7 +176,7 @@ public final class UI implements Widget.Host {
       Widget newWidget = newWidgetQueue.remove(0);
 
       boolean typeMatch = currentWidget.getClass().equals(newWidget.getClass());
-      boolean stateMatch = currentWidget.stateEquals(newWidget);
+      boolean configMatch = currentWidget.configEquals(newWidget);
 
       if (!typeMatch) {
         Parent currentWidgetParent = (Parent) currentWidget.getParent();
@@ -193,8 +193,8 @@ public final class UI implements Widget.Host {
         }
 
         treeUpdated = true;
-      } else if (!stateMatch) {
-        currentWidget.updateState(newWidget);
+      } else if (!configMatch) {
+        currentWidget.update(newWidget);
         treeUpdated = true;
       }
 

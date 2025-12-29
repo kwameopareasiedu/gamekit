@@ -25,19 +25,19 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
   @WidgetBuilderField(fallback = "dev.gamekit.core.IO.getResourceImage(\"default-sprites.png\", 64, 400, 350, 120)")
   protected BufferedImage pressedBackground;
   @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing(24)")
-  protected Spacing edgeInsets;
+  protected Spacing padding;
   @WidgetBuilderField(comparable = false, themable = false)
   protected MouseEvent.Handler mouseListener;
 
   protected boolean mouseEntered;
   protected boolean mousePressed;
 
-  public Button(ButtonConfig... config) {
-    super(config);
+  public Button(ButtonConfig config, Widget child) {
+    super(config, child);
   }
 
-  public static Button create(ButtonConfig... config) {
-    return new Button(config);
+  public static Button create(ButtonConfig.Updater updater, Widget child) {
+    return new Button(Widgets.configureButton(updater), child);
   }
 
   @Override
@@ -71,8 +71,8 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
     else if (mouseEntered)
       bgImage = hoverBackground;
 
-    if (bgImage != null && edgeInsets != null) {
-      renderWith9PatchScaling(bgImage, absoluteBounds, edgeInsets, g);
+    if (bgImage != null && padding != null) {
+      renderWith9PatchScaling(bgImage, absoluteBounds, padding, g);
     }
   }
 

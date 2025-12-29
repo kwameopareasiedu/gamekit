@@ -12,17 +12,11 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.CLASS)
 public @interface WidgetBuilderField {
-  /** A fully qualified type to use as the argument type of the generated setter method for the annotated field */
-  String customSetterType() default "";
-
   /** A fully qualified declaration of the fallback value to set for the annotated field */
   String fallback() default "";
 
   /** Indicates that the annotated field is used in state comparison in the generated builder class equals method */
   boolean comparable() default true;
-
-  /** Indicates that the annotated field can be used to update a corresponding field in the associated widget */
-  boolean updatable() default true;
 
   /** Indicates that the annotated field should be included in the generated Theme widget class */
   boolean themable() default true;

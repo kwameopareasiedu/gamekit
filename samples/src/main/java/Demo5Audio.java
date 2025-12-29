@@ -106,54 +106,56 @@ public class Demo5Audio extends Scene {
   @Override
   public Widget createUI() {
     return Column.create(
-      ColumnConfig.mainAxisAlignment(MainAxisAlignment.CENTER),
-      ColumnConfig.crossAxisAlignment(CrossAxisAlignment.STRETCH),
-      ColumnConfig.gapSize(8),
-      ColumnConfig.children(
-        Text.create(
-          TextConfig.alignment(Alignment.CENTER),
-          TextConfig.text("Space Bar to play/restart the audio")
+      props -> {
+        props.mainAxisAlignment = MainAxisAlignment.CENTER;
+        props.crossAxisAlignment = CrossAxisAlignment.STRETCH;
+        props.gapSize = 8;
+      },
+      Text.create(
+        props -> {
+          props.alignment = Alignment.CENTER;
+          props.text = "Space Bar to play/restart the audio";
+        }
+      ),
+      Text.create(
+        props -> {
+          props.alignment = Alignment.CENTER;
+          props.text = "Escape to stop the playback";
+        }
+      ),
+      Text.create(
+        props -> {
+          props.alignment = Alignment.CENTER;
+          props.text = "Move the mouse from left to right to pan the audio ";
+        }
+      ),
+      Row.create(
+        props -> {
+          props.mainAxisAlignment = MainAxisAlignment.CENTER;
+          props.crossAxisAlignment = CrossAxisAlignment.CENTER;
+          props.gapSize = 8;
+        },
+        Opacity.create(
+          pan < 0 ? 1 : 1 - pan,
+          Scaled.create(
+            0.5,
+            Image.create(
+              props -> {
+                props.interpolation = ImageInterpolation.BICUBIC;
+                props.image = SPEAKER_IMG;
+              }
+            )
+          )
         ),
-        Text.create(
-          TextConfig.alignment(Alignment.CENTER),
-          TextConfig.text("Escape to stop the playback")
-        ),
-        Text.create(
-          TextConfig.alignment(Alignment.CENTER),
-          TextConfig.text("Move the mouse from left to right to pan the audio ")
-        ),
-        Row.create(
-          RowConfig.mainAxisAlignment(MainAxisAlignment.CENTER),
-          RowConfig.crossAxisAlignment(CrossAxisAlignment.CENTER),
-          RowConfig.gapSize(8),
-          RowConfig.children(
-            Opacity.create(
-              OpacityConfig.opacity(pan < 0 ? 1 : 1 - pan),
-              OpacityConfig.child(
-                Scaled.create(
-                  ScaledConfig.scale(0.5),
-                  ScaledConfig.child(
-                    Image.create(
-                      ImageConfig.interpolation(ImageInterpolation.BICUBIC),
-                      ImageConfig.image(SPEAKER_IMG)
-                    )
-                  )
-                )
-              )
-            ),
-            Opacity.create(
-              OpacityConfig.opacity(pan > 0 ? 1 : 1 + pan),
-              OpacityConfig.child(
-                Scaled.create(
-                  ScaledConfig.scale(0.5),
-                  ScaledConfig.child(
-                    Image.create(
-                      ImageConfig.interpolation(ImageInterpolation.BICUBIC),
-                      ImageConfig.image(SPEAKER_IMG)
-                    )
-                  )
-                )
-              )
+        Opacity.create(
+          pan > 0 ? 1 : 1 + pan,
+          Scaled.create(
+            0.5,
+            Image.create(
+              props -> {
+                props.interpolation = ImageInterpolation.BICUBIC;
+                props.image = SPEAKER_IMG;
+              }
             )
           )
         )

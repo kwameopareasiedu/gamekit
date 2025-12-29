@@ -14,12 +14,12 @@ public class Gap extends Leaf {
   @WidgetBuilderField(fallback = "8")
   protected Integer height;
 
-  public Gap(GapConfig... config) {
+  public Gap(GapConfig config) {
     super(config);
   }
 
-  public static Gap create(GapConfig... config) {
-    return new Gap(config);
+  public static Gap create(GapConfig.Updater updater) {
+    return new Gap(Widgets.configureGap(updater));
   }
 
   @Override

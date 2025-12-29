@@ -33,14 +33,14 @@ public class Slider extends Progress implements NinePatch, MouseEvent.Handler {
   private final Position lastMousePosition;
   private boolean mouseDown = false;
 
-  public Slider(SliderConfig... config) {
+  public Slider(SliderConfig config) {
     super(config);
     thumbAbsoluteBounds = new Bounds();
     lastMousePosition = new Position();
   }
 
-  public static Slider create(SliderConfig... config) {
-    return new Slider(config);
+  public static Slider create(SliderConfig.Updater updater) {
+    return new Slider(Widgets.configureSlider(updater));
   }
 
   @Override

@@ -24,6 +24,10 @@ import java.util.Set;
 public class WidgetBuilderProcessor extends AbstractProcessor {
   private static final String WIDGET_TYPE_NAME = "dev.gamekit.ui.widgets.Widget";
   private static final String THEME_TYPE_NAME = "dev.gamekit.ui.widgets.Theme";
+  private static final String WIDGETS_TYPE_NAME = "dev.gamekit.ui.widgets.Widgets";
+
+  private final List<WidgetClass> widgetClasses = new ArrayList<>();
+  private boolean themeWidgetGenerated = false;
 
   @Override
   public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -32,9 +36,13 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
 
   @Override
   public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+    processingEnv.getMessager().printNote(
+      String.format("Annotations: %d, Widget classes: %d, Processing over: %b\n",
+        annotations.size(), widgetClasses.size(), roundEnv.processingOver())
+    );
+
     for (TypeElement annotation : annotations) {
       Set<? extends Element> annotatedClasses = roundEnv.getElementsAnnotatedWith(annotation);
-      List<WidgetClass> widgetClasses = new ArrayList<>();
 
       for (Element annotatedClassElement : annotatedClasses) {
         if (!elementIsWidget(annotatedClassElement)) {
@@ -42,20 +50,60 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
         }
 
         WidgetClass widgetClass = extractWidgetClassData(annotatedClassElement);
-        widgetClasses.add(widgetClass);
 
-        generateWidgetConfigSource(widgetClass);
+        if (!widgetClasses.contains(widgetClass)) {
+          generateWidgetConfigSource(widgetClass);
+          widgetClasses.add(widgetClass);
+        }
       }
 
-      generateThemeWidgetSource(widgetClasses);
-
-      // TODO: Since annotation processing is done incrementally by Maven (I.e. only processing changed symbols),
-      //  We should record already processed widget classes in a file every time. This way, when incremental runs are
-      //  made, we pull existing class data from said file and combine it with new symbols to fully generate the
-      //  Theme widget
+      if (!themeWidgetGenerated) {
+        generateThemeWidgetSource(widgetClasses);
+        themeWidgetGenerated = true;
+      } else {
+        generateWidgetsUtilitySource(widgetClasses);
+      }
     }
 
     return false;
+  }
+
+  private void generateWidgetsUtilitySource(List<WidgetClass> widgetClasses) {
+    try {
+      JavaFileObject fileObject = processingEnv.getFiler().createSourceFile(WIDGETS_TYPE_NAME);
+
+      try (PrintWriter out = new PrintWriter(fileObject.openOutputStream())) {
+        // Package declaration
+        out.printf("package dev.gamekit.ui.widgets;\n\n");
+
+        // Class and private constructor declaration
+        out.printf("""
+          class Widgets {
+            private Widgets() { }
+          """);
+
+        out.println();
+
+        // Static configure method declarations
+        for (WidgetClass widgetClass : widgetClasses) {
+          out.printf("\tstatic %s configure%s(%s.Updater updater) {\n",
+            widgetClass.configTypeName, widgetClass.simpleTypeName, widgetClass.configTypeName);
+          out.printf("\t\t%s config = new %s();\n", widgetClass.configTypeName, widgetClass.configTypeName);
+          out.printf("\t\tupdater.update(config);\n");
+          out.printf("\t\treturn config;\n");
+          out.printf("\t}\n");
+
+          out.println();
+        }
+
+        // Theme widget class end brace
+        out.printf("}");
+      }
+    } catch (FilerException e) {
+      processingEnv.getMessager().printWarning(e.getMessage());
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private void generateThemeWidgetSource(List<WidgetClass> widgetClasses) {
@@ -63,47 +111,40 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
       JavaFileObject fileObject = processingEnv.getFiler().createSourceFile(THEME_TYPE_NAME);
 
       try (PrintWriter out = new PrintWriter(fileObject.openOutputStream())) {
-        // Theme widget package declaration
+        // Package declaration
         out.printf("package dev.gamekit.ui.widgets;\n\n");
 
-        // Theme widget import declarations
-        out.printf("import dev.gamekit.utils.Misc;\n\n");
-
-        // Theme widget class declaration
+        // Class declaration
         out.printf("@dev.gamekit.annotations.WidgetBuilder\n");
         out.printf("public class Theme extends SingleChildParent {\n");
 
-        // Theme widget static field declarations
-        out.println("\tpublic static final Theme DEFAULT = new Theme(ThemeConfig.child(Empty.create()));\n");
+        // Static field declarations
+        out.println("\tpublic static final Theme DEFAULT = new Theme(new ThemeConfig(), Empty.create());\n");
 
-        // Theme widget instance field declarations
+        // Instance field declarations
         for (WidgetClass widgetClass : widgetClasses) {
-          List<WidgetField> widgetClassOwnThemableFields = widgetClass.fields.stream().filter(
-            field -> field.themable && field.classTypeName.equals(widgetClass.typeName)
-          ).toList();
+          List<WidgetField> widgetClassThemableFields =
+            widgetClass.fields.stream().filter(field -> field.themable).toList();
 
-          for (WidgetField field : widgetClassOwnThemableFields) {
+          for (WidgetField field : widgetClassThemableFields) {
             out.printf("\t@dev.gamekit.annotations.WidgetBuilderField\n");
             out.printf("\tpublic %s %s%s = %s;\n",
               field.typeName, widgetClass.varName, field.varNameAsSuffix, field.fallbackValue);
           }
 
-          if (!widgetClassOwnThemableFields.isEmpty()) out.println();
+          if (!widgetClassThemableFields.isEmpty()) out.println();
         }
 
-        // Theme widget constructor and static creator method declarations
+        // Constructor, static creator method and performLayout method override declarations
         out.println("""
-            public Theme(ThemeConfig... config) {
-              super(config);
+            public Theme(ThemeConfig config, Widget child) {
+              super(config, child);
             }
           
-            public static Theme create(ThemeConfig... config) {
-              return new Theme(config);
+            public static Theme create(ThemeConfig.Updater updater, Widget child) {
+              return new Theme(Widgets.configureTheme(updater), child);
             }
-          """);
-
-        // Theme widget performLayout method override
-        out.println("""
+          
             @Override
             protected void performLayout(dev.gamekit.utils.Constraints constraints) {
               child.layout(constraints);
@@ -117,7 +158,7 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
             }
           """);
 
-        // Theme widget class end brace
+        // Class end brace
         out.printf("}");
       }
     } catch (FilerException e) {
@@ -129,76 +170,70 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
 
   private void generateWidgetConfigSource(WidgetClass widgetClass) {
     try {
-      JavaFileObject fileObject = processingEnv.getFiler().createSourceFile(widgetClass.builderTypeName);
+      JavaFileObject sourceFileObject = processingEnv.getFiler().createSourceFile(widgetClass.configTypeName);
 
-      try (PrintWriter out = new PrintWriter(fileObject.openOutputStream())) {
-        // Config package declaration
-        out.printf("package %s;\n\n", widgetClass.builderPackageName);
+      try (PrintWriter out = new PrintWriter(sourceFileObject.openOutputStream())) {
+        // Package declaration
+        out.printf("package %s;\n\n", widgetClass.configPackageName);
 
-        // Config import declarations
-        out.printf("import dev.gamekit.utils.Misc;\n\n");
+        // Import declarations
+        out.printf("import static dev.gamekit.utils.Misc.coalesce;\n\n");
 
-        // Config class declaration
-        if (widgetClass.superClassBuilderTypeName != null) {
+        // Class declaration
+        if (widgetClass.superClassConfigTypeName != null) {
           out.printf("public class %s extends %s implements Widget.Config {\n",
-            widgetClass.builderSimpleTypeName, widgetClass.superClassBuilderTypeName);
+            widgetClass.configSimpleTypeName, widgetClass.superClassConfigTypeName);
         } else {
           out.printf("public class %s implements Widget.Config {\n",
-            widgetClass.builderSimpleTypeName);
+            widgetClass.configSimpleTypeName);
         }
 
-        // Config instance fields declaration
-        List<WidgetField> widgetClassOwnFields =
-          widgetClass.fields.stream().filter(field -> field.classTypeName.equals(widgetClass.typeName)).toList();
-
-        for (int i = 0; i < widgetClassOwnFields.size(); i++) {
-          WidgetField field = widgetClassOwnFields.get(i);
+        // Instance fields declaration
+        for (int i = 0; i < widgetClass.fields.size(); i++) {
+          WidgetField field = widgetClass.fields.get(i);
           out.printf("\tpublic %s %s;\n", field.typeName, field.varName);
 
-          if (i == widgetClassOwnFields.size() - 1) out.println();
+          if (i == widgetClass.fields.size() - 1) out.println();
         }
 
-        // Config static setters declaration
-        for (WidgetField field : widgetClass.fields) {
-          out.printf("\tpublic static %s %s(%s %s) {\n",
-            widgetClass.builderTypeName, field.varName, field.setterTypeName, field.varName);
-          out.printf("\t\t%s config = new %s();\n", widgetClass.builderTypeName, widgetClass.builderTypeName);
-          out.printf("\t\tconfig.%s = %s;\n", field.varName, field.varName);
-          out.printf("\t\treturn config;\n");
-          out.printf("\t}\n\n");
-        }
+        // Instance setter methods declaration
+        //        for (WidgetField field : widgetClass.fields) {
+        //          out.printf("\tpublic %s %s(%s %s) {\n", widgetClass.configTypeName, field.varName, field.typeName,
+        //            field.varName);
+        //          out.printf("\t\tthis.%s = %s;\n", field.varName, field.varName);
+        //          out.printf("\t\treturn this;\n");
+        //          out.printf("\t}\n\n");
+        //        }
 
-        // Config equals method override
+        // Equals method override
         out.printf("\t@Override\n");
         out.printf("\tpublic boolean equals(Object obj) {\n");
 
         List<WidgetField> comparableFields = widgetClass.fields.stream().filter(field -> field.comparable).toList();
         out.printf("\t\treturn obj instanceof %s %s%s",
-          widgetClass.builderSimpleTypeName, widgetClass.builderVarName, comparableFields.isEmpty() ? ";\n" : "\n");
+          widgetClass.configSimpleTypeName, widgetClass.configVarName, comparableFields.isEmpty() ? ";\n" : "\n");
 
         for (int i = 0; i < comparableFields.size(); i++) {
           WidgetField field = comparableFields.get(i);
           out.printf("\t\t\t&& java.util.Objects.equals(%s, %s.%s)%s",
-            field.varName, widgetClass.builderVarName, field.varName, i < comparableFields.size() - 1 ? "\n" : ";\n");
+            field.varName, widgetClass.configVarName, field.varName, i < comparableFields.size() - 1 ? "\n" : ";\n");
         }
 
         out.printf("\t}\n\n");
 
-
-        // Config updateWidget method override
+        // UpdateWidget method override
         out.printf("\t@Override\n");
         out.printf("\tpublic void updateWidget(Widget widget) {\n");
-        out.printf("\t\t%s %sWidget = (%s) widget;\n", widgetClass.typeName, widgetClass.varName, widgetClass.typeName);
-        out.printf("\t\tTheme nearestTheme = Misc.coalesce(widget.getAncestorOfType(Theme.class), Theme.DEFAULT);\n");
+        out.printf("\t\t%s %sWidget = (%s) widget;\n", widgetClass.typeName, widgetClass.varName,
+          widgetClass.typeName);
+        out.printf("\t\tTheme nearestTheme = coalesce(widget.getAncestorOfType(Theme.class), Theme.DEFAULT);\n");
 
-        List<WidgetField> updatableFields = widgetClass.fields.stream().filter(field -> field.updatable).toList();
-
-        for (WidgetField field : updatableFields) {
+        for (WidgetField field : widgetClass.fields) {
           if (field.themable) {
             String nearestThemeFieldVarName = !widgetClass.typeName.equals(THEME_TYPE_NAME) ?
-              field.classVarName + field.varNameAsSuffix : field.varName;
+              widgetClass.varName + field.varNameAsSuffix : field.varName;
 
-            out.printf("\t\t%sWidget.%s = Misc.coalesce(%s, nearestTheme.%s);\n",
+            out.printf("\t\t%sWidget.%s = coalesce(%s, nearestTheme.%s);\n",
               widgetClass.varName, field.varName, field.varName, nearestThemeFieldVarName);
           } else {
             out.printf("\t\t%sWidget.%s = %s;\n", widgetClass.varName, field.varName, field.varName);
@@ -207,26 +242,12 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
 
         out.printf("\t}\n\n");
 
-        // Config mergeWith method override
-        out.printf("\t@Override\n");
-        out.printf("\tpublic Widget.Config mergeWith(Widget.Config[] configs) {\n");
-        out.printf("\t\t%s resolved = new %s();\n\n",
-          widgetClass.builderSimpleTypeName, widgetClass.builderSimpleTypeName);
+        // Updater interface declaration
+        out.printf("\t@FunctionalInterface\n");
+        out.printf("\tpublic interface Updater extends Widget.ConfigUpdater<%s> { }\n",
+          widgetClass.configSimpleTypeName);
 
-        out.printf("\t\tfor (Widget.Config config : configs) {\n");
-        out.printf("\t\t\t%s incoming = (%s) config;\n",
-          widgetClass.builderSimpleTypeName, widgetClass.builderSimpleTypeName);
-
-        for (WidgetField field : widgetClass.fields) {
-          out.printf("\t\t\tif (incoming.%s != null) resolved.%s = incoming.%s;\n",
-            field.varName, field.varName, field.varName);
-        }
-
-        out.printf("\t\t}\n\n");
-        out.printf("\t\treturn resolved;\n");
-        out.printf("\t}\n\n");
-
-        // Config class end brace
+        // Class end brace
         out.printf("}");
       }
     } catch (IOException e) {
@@ -247,11 +268,6 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
 
     while (!iteratorElement.getQualifiedName().toString().equals(WIDGET_TYPE_NAME)
       && iteratorElement.getAnnotation(WidgetBuilder.class) != null) {
-      String iteratorClassTypeName = iteratorElement.getQualifiedName().toString();
-      String iteratorClassSimpleName = iteratorClassTypeName.substring(iteratorClassTypeName.lastIndexOf(".") + 1);
-      String iteratorClassVarName =
-        iteratorClassSimpleName.substring(0, 1).toLowerCase() + iteratorClassSimpleName.substring(1);
-
       List<? extends Element> elementMembers = iteratorElement.getEnclosedElements().stream().filter(
         member -> member.getKind() == ElementKind.FIELD && member.getAnnotation(WidgetBuilderField.class) != null
       ).toList();
@@ -259,19 +275,18 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
       for (Element fieldElement : elementMembers) {
         String fieldTypeName = fieldElement.asType().toString();
         String fieldVarName = fieldElement.getSimpleName().toString();
-        String fieldCustomSetterType = fieldElement.getAnnotation(WidgetBuilderField.class).customSetterType();
-        String fieldSetterTypeName = !fieldCustomSetterType.isEmpty() ? fieldCustomSetterType : fieldTypeName;
         String fieldFallbackDeclaration = fieldElement.getAnnotation(WidgetBuilderField.class).fallback();
         String fieldFallbackValue = !fieldFallbackDeclaration.isEmpty() ? fieldFallbackDeclaration : "null";
         boolean comparable = fieldElement.getAnnotation(WidgetBuilderField.class).comparable();
-        boolean updatable = fieldElement.getAnnotation(WidgetBuilderField.class).updatable();
         boolean themable = fieldElement.getAnnotation(WidgetBuilderField.class).themable();
 
         widgetFields.add(
           new WidgetField(
-            fieldTypeName, fieldVarName, fieldSetterTypeName, fieldFallbackValue,
-            iteratorClassTypeName, iteratorClassSimpleName, iteratorClassVarName,
-            comparable, updatable, themable
+            fieldTypeName,
+            fieldVarName,
+            fieldFallbackValue,
+            comparable,
+            themable
           )
         );
       }

@@ -3,8 +3,10 @@ import dev.gamekit.core.Input;
 import dev.gamekit.core.Renderer;
 import dev.gamekit.core.Scene;
 import dev.gamekit.ui.enums.Alignment;
-import dev.gamekit.ui.widgets.*;
-import dev.gamekit.utils.Spacing;
+import dev.gamekit.ui.widgets.Align;
+import dev.gamekit.ui.widgets.Padding;
+import dev.gamekit.ui.widgets.Text;
+import dev.gamekit.ui.widgets.Widget;
 
 import java.awt.*;
 
@@ -57,17 +59,17 @@ public class Demo3Input extends Scene {
   @Override
   protected Widget createUI() {
     return Align.create(
-      AlignConfig.horizontalAlignment(Alignment.CENTER),
-      AlignConfig.verticalAlignment(Alignment.END),
-      AlignConfig.child(
-        Padding.create(
-          PaddingConfig.padding(new Spacing(48, 48, 48, 48)),
-          PaddingConfig.child(
-            Text.create(
-              TextConfig.alignment(Alignment.CENTER),
-              TextConfig.text("Click the Left Mouse Button or press the Space Bar to change color")
-            )
-          )
+      props -> {
+        props.horizontalAlignment = Alignment.CENTER;
+        props.verticalAlignment = Alignment.END;
+      },
+      Padding.create(
+        48, 48, 48, 48,
+        Text.create(
+          props -> {
+            props.alignment = Alignment.CENTER;
+            props.text = "Click the Left Mouse Button or press the Space Bar to change color";
+          }
         )
       )
     );
