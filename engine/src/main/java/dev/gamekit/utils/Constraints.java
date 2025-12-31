@@ -24,8 +24,8 @@ public record Constraints(double minWidth, double maxWidth, double minHeight, do
   @Override
   public String toString() {
     return String.format(
-      getClass().getName() + "[%.2f<=size<=%.2f,%.2f<=height<=%.2f]",
-      minWidth, maxWidth, minHeight, maxHeight
+      "%s[%.2f<=width<=%.2f, %.2f<=height<=%.2f]",
+      getClass().getName(), minWidth, maxWidth, minHeight, maxHeight
     );
   }
 }

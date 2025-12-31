@@ -40,7 +40,7 @@ public class Position {
 
   @Override
   public String toString() {
-    return String.format(getClass().getName() + "[x=%d,y=%d]", x, y);
+    return String.format("%s[x=%d, y=%d]", getClass().getName(), x, y);
   }
 
   @Override

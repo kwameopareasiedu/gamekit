@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 
 /** Window which manages the {@link JFrame} and image buffers the application is rendered in */
@@ -17,37 +18,37 @@ public final class Window {
 
   private final int displayWidth;
   private final int displayHeight;
-  private final double displayScaleRatio;
+  private final boolean fullscreen;
   private final JFrame frame;
-  private final BufferedImage renderBuffer;
-  private final Graphics2D renderGraphics;
+  private final BufferStrategy bufferStrategy;
   private final BufferedImage displayBuffer;
   private final Graphics2D displayGraphics;
   private final BufferedImage uiBuffer;
   private final Graphics2D uiGraphics;
   private final Info info;
+  private final int fsDx1;
+  private final int fsDy1;
+  private final int fsDx2;
+  private final int fsDy2;
 
   Window() {
-    LOGGER.debug("Created window");
-
-    Window.instance = this;
-
+    double displayScaleRatio;
     Settings settings = Application.getInstance().getSettings();
 
     displayWidth = settings.resolution.width();
     displayHeight = settings.resolution.height();
+    fullscreen = settings.fullscreen;
     frame = new JFrame(settings.title);
 
-    if (settings.fullScreen) {
-      frame.setUndecorated(true);
-
-      GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(frame);
-
+    if (settings.fullscreen) {
       Dimension d = new Dimension(Resolution.NATIVE.width(), Resolution.NATIVE.height());
 
       frame.setMinimumSize(d);
       frame.setPreferredSize(d);
       frame.setResizable(false);
+      frame.setUndecorated(true);
+
+      GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(frame);
 
       displayScaleRatio = Math.min(
         (double) Resolution.NATIVE.width() / displayWidth,
@@ -62,7 +63,10 @@ public final class Window {
       displayScaleRatio = 1;
     }
 
-    displayBuffer = new BufferedImage(displayWidth, displayHeight, BufferedImage.TYPE_INT_ARGB);
+    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+    GraphicsConfiguration gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
+
+    displayBuffer = gc.createCompatibleImage(displayWidth, displayHeight, Transparency.TRANSLUCENT);
     displayGraphics = displayBuffer.createGraphics();
     settings.antialiasing.apply(displayGraphics);
     settings.alphaInterpolation.apply(displayGraphics);
@@ -70,7 +74,7 @@ public final class Window {
     settings.renderingStrategy.apply(displayGraphics);
     settings.dithering.apply(displayGraphics);
 
-    uiBuffer = new BufferedImage(displayWidth, displayHeight, BufferedImage.TYPE_INT_ARGB);
+    uiBuffer = gc.createCompatibleImage(displayWidth, displayHeight, Transparency.TRANSLUCENT);
     uiGraphics = uiBuffer.createGraphics();
     settings.antialiasing.apply(uiGraphics);
     settings.alphaInterpolation.apply(uiGraphics);
@@ -78,14 +82,13 @@ public final class Window {
     settings.renderingStrategy.apply(uiGraphics);
     settings.dithering.apply(uiGraphics);
 
-    int renderWidth = settings.fullScreen ? Resolution.NATIVE.width() : displayWidth;
-    int renderHeight = settings.fullScreen ? Resolution.NATIVE.height() : displayHeight;
-    renderBuffer = new BufferedImage(renderWidth, renderHeight, BufferedImage.TYPE_INT_ARGB);
-    renderGraphics = renderBuffer.createGraphics();
-
+    frame.setIgnoreRepaint(true);
     frame.getContentPane().setBackground(Color.BLACK);
     frame.setLocationRelativeTo(null);
     frame.pack();
+
+    frame.createBufferStrategy(2);
+    bufferStrategy = frame.getBufferStrategy();
 
     info = new Info(
       frame.getWidth(), frame.getHeight(),
@@ -94,7 +97,17 @@ public final class Window {
       displayScaleRatio, 1.0 / displayScaleRatio
     );
 
+    int scaledWidth = (int) (displayWidth * displayScaleRatio);
+    int scaledHeight = (int) (displayHeight * displayScaleRatio);
+    fsDx1 = (int) (0.5 * (frame.getWidth() - scaledWidth));
+    fsDy1 = (int) (0.5 * (frame.getHeight() - scaledHeight));
+    fsDx2 = fsDx1 + scaledWidth;
+    fsDy2 = fsDy1 + scaledHeight;
+
+    LOGGER.debug("Created window");
     LOGGER.debug(info);
+
+    Window.instance = this;
   }
 
   /** Returns the current instance of {@link Window} */
@@ -132,25 +145,22 @@ public final class Window {
    * associated {@link JFrame}
    */
   void refresh() {
-    Settings settings = Application.getInstance().getSettings();
+    Graphics2D bufferGraphics;
 
-    if (settings.fullScreen) {
-      int scaledWidth = (int) (displayWidth * displayScaleRatio);
-      int scaledHeight = (int) (displayHeight * displayScaleRatio);
-      int dx1 = (int) (0.5 * (frame.getWidth() - scaledWidth));
-      int dy1 = (int) (0.5 * (frame.getHeight() - scaledHeight));
-      int dx2 = dx1 + scaledWidth;
-      int dy2 = dy1 + scaledHeight;
+    do {
+      bufferGraphics = (Graphics2D) bufferStrategy.getDrawGraphics();
 
-      renderGraphics.drawImage(displayBuffer, dx1, dy1, dx2, dy2, 0, 0, displayWidth, displayHeight, null);
-      renderGraphics.drawImage(uiBuffer, dx1, dy1, dx2, dy2, 0, 0, displayWidth, displayHeight, null);
-    } else {
-      renderGraphics.drawImage(displayBuffer, null, 0, 0);
-      renderGraphics.drawImage(uiBuffer, null, 0, 0);
-    }
+      if (fullscreen) {
+        bufferGraphics.drawImage(displayBuffer, fsDx1, fsDy1, fsDx2, fsDy2, 0, 0, displayWidth, displayHeight, null);
+        bufferGraphics.drawImage(uiBuffer, fsDx1, fsDy1, fsDx2, fsDy2, 0, 0, displayWidth, displayHeight, null);
+      } else {
+        bufferGraphics.drawImage(displayBuffer, null, 0, 0);
+        bufferGraphics.drawImage(uiBuffer, null, 0, 0);
+      }
 
-    Graphics2D frameGraphics = (Graphics2D) frame.getGraphics();
-    frameGraphics.drawImage(renderBuffer, null, 0, 0);
+      bufferStrategy.show();
+      bufferGraphics.dispose();
+    } while (bufferStrategy.contentsLost());
   }
 
   /** {@link Window.Info} holds the read-only parameters of the current {@link Window instance} */
@@ -167,8 +177,7 @@ public final class Window {
     @Override
     public String toString() {
       return String.format(
-        "%s[frameWidth=%d,frameHeight=%d,displayWidth=%d,displayHeight=%d" +
-          "centerX=%d,centerY=%d,scaleRatio=%.2f,inverseScaleRatio=%.2f]",
+        "%s[frame=(%dx%d), display=(%dx%d), center=[%d,%d], scaleRatio=%.2f, inverseScaleRatio=%.2f]",
         getClass().getName(),
         frameWidth, frameHeight,
         displayWidth, displayHeight,

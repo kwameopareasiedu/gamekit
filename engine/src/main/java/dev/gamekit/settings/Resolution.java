@@ -36,6 +36,6 @@ public record Resolution(int width, int height) implements Setting {
 
   @Override
   public String toString() {
-    return String.format(getClass().getName() + "[size=%d,height=%d]", width, height);
+    return String.format("%s[size=%d,height=%d]", getClass().getName(), width, height);
   }
 }

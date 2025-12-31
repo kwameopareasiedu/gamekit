@@ -41,10 +41,7 @@ public class Size {
 
   @Override
   public String toString() {
-    return String.format(
-      getClass().getName() + "[width=%.2f,height=%.2f]",
-      width, height
-    );
+    return String.format("%s[width=%.2f,height=%.2f]", getClass().getName(), width, height);
   }
 
   @Override

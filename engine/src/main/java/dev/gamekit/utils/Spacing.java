@@ -70,10 +70,7 @@ public class Spacing {
 
   @Override
   public String toString() {
-    return String.format(
-      getClass().getName() + "[top=%d,right=%d,bottom=%d,left=%d]",
-      top, right, bottom, left
-    );
+    return String.format("%s[top=%d, right=%d, bottom=%d, left=%d]", getClass().getName(), top, right, bottom, left);
   }
 
   @Override

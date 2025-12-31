@@ -74,7 +74,7 @@ public class Vector {
 
   @Override
   public String toString() {
-    return String.format(getClass().getName() + "[x=%.2f,y=%.2f]", x, y);
+    return String.format("%s[x=%.2f,y=%.2f]", getClass().getName(), x, y);
   }
 
   @Override

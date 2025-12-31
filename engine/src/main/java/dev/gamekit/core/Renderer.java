@@ -100,10 +100,7 @@ public final class Renderer {
     return call;
   }
 
-  /**
-   * Draws a scaled <b>center-origin</b> {@link BufferedImage} at {@code (x, y)} with width and
-   * height
-   */
+  /** Draws a scaled <b>center-origin</b> {@link BufferedImage} at {@code (x, y)} with width and height */
   public static DrawImage drawImage(BufferedImage img, int x, int y, int width, int height) {
     DrawImage call = new DrawImage(img, x, y, width, height);
     BUFFER.add(call);
