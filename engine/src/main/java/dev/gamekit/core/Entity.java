@@ -230,8 +230,11 @@ public abstract class Entity {
 
     dispose();
 
-    parent.children.remove(this);
-    parent = null;
+    if (parent != null) {
+      parent.children.remove(this);
+      parent = null;
+    }
+
     state = State.DEAD;
   }
 
