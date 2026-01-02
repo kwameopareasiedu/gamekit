@@ -21,7 +21,6 @@ import java.util.List;
  * <p>
  * NB: <i>Use {@link Application#getInstance} to get the current instance from anywhere in your project to access its
  * methods.</i>
- * TODO: Experiment with multithreaded rendering when each render thread draws to a fixed section
  */
 @SuppressWarnings({ "BusyWait", "SynchronizeOnNonFinalField" })
 public abstract class Application {
@@ -49,6 +48,9 @@ public abstract class Application {
   }
 
   public Application(Settings settings) {
+    System.setProperty("sun.java2d.opengl=true", "true");
+    System.setProperty("sun.java2d.accthreshold", "0");
+
     logger.debug("Created application");
     logger.debug(settings);
 
@@ -216,7 +218,7 @@ public abstract class Application {
         currentScene._draw();
       }
 
-      window.refresh();
+      window.update();
     }
   }
 
