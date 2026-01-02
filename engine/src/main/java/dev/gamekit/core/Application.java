@@ -218,7 +218,7 @@ public abstract class Application {
         currentScene._draw();
       }
 
-      window.refresh();
+      window.update();
     }
   }
 

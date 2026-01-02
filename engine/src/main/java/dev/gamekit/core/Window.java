@@ -140,7 +140,7 @@ public final class Window {
   }
 
   /** Updates the {@link JFrame} buffer strategy with the display and UI buffers */
-  void refresh() {
+  void update() {
     Position tl = renderPositions[0];
     Position br = renderPositions[1];
 
