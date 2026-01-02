@@ -2,6 +2,7 @@ package dev.gamekit.core;
 
 import dev.gamekit.settings.Resolution;
 import dev.gamekit.settings.Settings;
+import dev.gamekit.utils.Position;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,7 +19,6 @@ public final class Window {
 
   private final int displayWidth;
   private final int displayHeight;
-  private final boolean fullscreen;
   private final JFrame frame;
   private final BufferStrategy bufferStrategy;
   private final BufferedImage displayBuffer;
@@ -26,10 +26,7 @@ public final class Window {
   private final BufferedImage uiBuffer;
   private final Graphics2D uiGraphics;
   private final Info info;
-  private final int fsDx1;
-  private final int fsDy1;
-  private final int fsDx2;
-  private final int fsDy2;
+  private final Position[] renderPositions;
 
   Window() {
     double displayScaleRatio;
@@ -37,7 +34,6 @@ public final class Window {
 
     displayWidth = settings.resolution.width();
     displayHeight = settings.resolution.height();
-    fullscreen = settings.fullscreen;
     frame = new JFrame(settings.title);
 
     if (settings.fullscreen) {
@@ -99,10 +95,13 @@ public final class Window {
 
     int scaledWidth = (int) (displayWidth * displayScaleRatio);
     int scaledHeight = (int) (displayHeight * displayScaleRatio);
-    fsDx1 = (int) (0.5 * (frame.getWidth() - scaledWidth));
-    fsDy1 = (int) (0.5 * (frame.getHeight() - scaledHeight));
-    fsDx2 = fsDx1 + scaledWidth;
-    fsDy2 = fsDy1 + scaledHeight;
+    Position topLeft = new Position(
+      (int) (0.5 * (frame.getWidth() - scaledWidth)),
+      (int) (0.5 * (frame.getHeight() - scaledHeight))
+    );
+    Position bottomRight = new Position(topLeft.x + scaledWidth, topLeft.y + scaledHeight);
+
+    renderPositions = new Position[]{ topLeft, bottomRight };
 
     LOGGER.debug("Created window");
     LOGGER.debug(info);
@@ -140,24 +139,15 @@ public final class Window {
     frame.setVisible(true);
   }
 
-  /**
-   * Composites the display and UI buffer to the render buffer which is then drawn onto the
-   * associated {@link JFrame}
-   */
+  /** Updates the {@link JFrame} buffer strategy with the display and UI buffers */
   void refresh() {
-    Graphics2D bufferGraphics;
+    Position tl = renderPositions[0];
+    Position br = renderPositions[1];
 
     do {
-      bufferGraphics = (Graphics2D) bufferStrategy.getDrawGraphics();
-
-      if (fullscreen) {
-        bufferGraphics.drawImage(displayBuffer, fsDx1, fsDy1, fsDx2, fsDy2, 0, 0, displayWidth, displayHeight, null);
-        bufferGraphics.drawImage(uiBuffer, fsDx1, fsDy1, fsDx2, fsDy2, 0, 0, displayWidth, displayHeight, null);
-      } else {
-        bufferGraphics.drawImage(displayBuffer, null, 0, 0);
-        bufferGraphics.drawImage(uiBuffer, null, 0, 0);
-      }
-
+      Graphics2D bufferGraphics = (Graphics2D) bufferStrategy.getDrawGraphics();
+      bufferGraphics.drawImage(displayBuffer, tl.x, tl.y, br.x, br.y, 0, 0, displayWidth, displayHeight, null);
+      bufferGraphics.drawImage(uiBuffer, tl.x, tl.y, br.x, br.y, 0, 0, displayWidth, displayHeight, null);
       bufferStrategy.show();
       bufferGraphics.dispose();
     } while (bufferStrategy.contentsLost());
