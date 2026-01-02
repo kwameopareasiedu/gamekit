@@ -49,6 +49,7 @@ public abstract class Application {
 
   public Application(Settings settings) {
     System.setProperty("sun.java2d.opengl=true", "true");
+    System.setProperty("sun.java2d.accthreshold", "0");
 
     logger.debug("Created application");
     logger.debug(settings);
