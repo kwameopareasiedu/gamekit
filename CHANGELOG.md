@@ -30,6 +30,7 @@
 - Added `double getSquaredMagnitude()` method to `Vector` class
 - Added `void lerpAngle(Vector target, double rate)` method to `Vector` class
 - Added `boolean containsPoint(Vector point)` to `RigidBody` class
+- Added `boolean containsPoint(Vector point, int categories)` to `RigidBody` class
 - Added `void setScale(double x, double y)` to `Sprite` component
 - Added `Rotated` widget which is a `SingleChildParent` which rotates its child about an angle in radian
 - Added `static double distance(Vector v1, Vector v2)` method to `Vector` class

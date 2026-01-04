@@ -5,7 +5,9 @@ import dev.gamekit.core.Entity;
 import dev.gamekit.core.Physics;
 import dev.gamekit.core.Renderer;
 import dev.gamekit.utils.Vector;
+import org.dyn4j.collision.CategoryFilter;
 import org.dyn4j.dynamics.Body;
+import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.geometry.Mass;
 import org.dyn4j.geometry.MassType;
 import org.dyn4j.geometry.Vector2;
@@ -25,16 +27,14 @@ import java.util.List;
  */
 public class RigidBody extends Component {
   public static boolean DEBUG_DRAW = false;
+  private static final Vector2 VEC2_BUFFER = new Vector2();
 
-  private final Vector2 vector2Buffer;
   private final RefBody body;
 
   /** Creates a {@link RigidBody} with infinite mass (I.e. static object) */
   public RigidBody() {
     body = new RefBody(this);
     body.setMassType(MassType.INFINITE);
-
-    vector2Buffer = new Vector2();
   }
 
   /** Creates a {@link RigidBody} with a defined mass and inertia (I.e. dynamic object) */
@@ -42,8 +42,6 @@ public class RigidBody extends Component {
     body = new RefBody(this);
     body.setMassType(massType);
     body.setMass(new Mass(new Vector2(massCenter.x, massCenter.y), mass, inertia));
-
-    vector2Buffer = new Vector2();
   }
 
   /** Sets a custom object with user-defined attributes as the metadata */
@@ -124,8 +122,30 @@ public class RigidBody extends Component {
    * @see org.dyn4j.dynamics.PhysicsBody#contains(Vector2)
    */
   public boolean containsPoint(Vector point) {
-    vector2Buffer.set(point.x / Physics.PIXELS_PER_METER, point.y / Physics.PIXELS_PER_METER);
-    return body.contains(vector2Buffer);
+    VEC2_BUFFER.set(point.x / Physics.PIXELS_PER_METER, point.y / Physics.PIXELS_PER_METER);
+    return body.contains(VEC2_BUFFER);
+  }
+
+  /**
+   * Determines if a {@link Vector point} is contained in at least one of the {@link Collider colliders} associated
+   * with this {@link RigidBody}, which matches the specified category mask
+   *
+   * @see org.dyn4j.dynamics.PhysicsBody#contains(Vector2)
+   */
+  public boolean containsPoint(Vector point, int categories) {
+    VEC2_BUFFER.set(point.x / Physics.PIXELS_PER_METER, point.y / Physics.PIXELS_PER_METER);
+    List<BodyFixture> fixtures = body.getFixtures();
+
+    for (BodyFixture fx : fixtures) {
+      if (
+        fx.getShape().contains(VEC2_BUFFER, body.getTransform()) &&
+          fx.getFilter() instanceof CategoryFilter fixtureFilter &&
+          (categories & fixtureFilter.getCategory()) == fixtureFilter.getCategory()) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   @Override
