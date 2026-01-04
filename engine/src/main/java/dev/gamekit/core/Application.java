@@ -115,7 +115,7 @@ public abstract class Application {
    */
   public void playAnimation(Animation animation) {
     if (animation != null && !animations.contains(animation)) {
-      animations.add(animation);
+      scheduleTask(() -> animations.add(animation));
     }
   }
 
