@@ -32,6 +32,10 @@
 - Added `boolean containsPoint(Vector point)` to `RigidBody` class
 - Added `void setScale(double x, double y)` to `Sprite` component
 - Added `Rotated` widget which is a `SingleChildParent` which rotates its child about an angle in radian
+- Added `static double distance(Vector v1, Vector v2)` method to `Vector` class
+- Added `static List<RaycastHit> raycast(Vector start, Vector end, int categories)` method to `Physics` class
+- Added `static List<RaycastHit> raycast(Vector start, double angle, double distance int categories)` method to
+  `Physics` class
 
 ### Changed
 

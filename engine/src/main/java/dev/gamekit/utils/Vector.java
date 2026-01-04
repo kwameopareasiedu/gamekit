@@ -1,5 +1,7 @@
 package dev.gamekit.utils;
 
+import org.dyn4j.geometry.Vector2;
+
 /** Represents an (x,y) position */
 public class Vector {
   public static final double TWO_PI = 2 * java.lang.Math.PI;
@@ -21,11 +23,21 @@ public class Vector {
     this(vector.x, vector.y);
   }
 
+  /** Copy constructor for this class */
+  public Vector(Vector2 vector) {
+    this(vector.x, vector.y);
+  }
+
   /** Computes the squared distance between two vectors */
   public static double squaredDistance(Vector v1, Vector v2) {
     double x2mx1 = v1.x - v2.x;
     double y2my1 = v1.y - v2.y;
     return x2mx1 * x2mx1 + y2my1 * y2my1;
+  }
+
+  /** Computes the distance between two vectors */
+  public static double distance(Vector v1, Vector v2) {
+    return java.lang.Math.sqrt(squaredDistance(v1, v2));
   }
 
   /** Computes the dot product between two vectors */
@@ -150,9 +162,9 @@ public class Vector {
   }
 
   /**
-   * Rotates another {@link Vector} about this one by {@code rad} radian in the clockwise direction.
+   * Rotates a {@link Vector point} about this one by {@code rad} radian in the clockwise direction.
    * <p>
-   * NB: <b>This method modifies the provided {@code point} with the result</b>
+   * NB: <i>This method modifies the provided {@code point} with the result</i>
    */
   public void rotatePoint(Vector point, double rad) {
     double sin = java.lang.Math.sin(rad);

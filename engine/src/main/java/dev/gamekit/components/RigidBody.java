@@ -27,11 +27,11 @@ public class RigidBody extends Component {
   public static boolean DEBUG_DRAW = false;
 
   private final Vector2 vector2Buffer;
-  private final Body body;
+  private final RefBody body;
 
   /** Creates a {@link RigidBody} with infinite mass (I.e. static object) */
   public RigidBody() {
-    body = new Body();
+    body = new RefBody(this);
     body.setMassType(MassType.INFINITE);
 
     vector2Buffer = new Vector2();
@@ -39,7 +39,7 @@ public class RigidBody extends Component {
 
   /** Creates a {@link RigidBody} with a defined mass and inertia (I.e. dynamic object) */
   public RigidBody(MassType massType, Vector massCenter, double mass, double inertia) {
-    body = new Body();
+    body = new RefBody(this);
     body.setMassType(massType);
     body.setMass(new Mass(new Vector2(massCenter.x, massCenter.y), mass, inertia));
 
@@ -209,5 +209,18 @@ public class RigidBody extends Component {
     double bodyY = body.getTransform().getTranslationY();
     tx.setGlobalPosition(bodyX * Physics.PIXELS_PER_METER, bodyY * Physics.PIXELS_PER_METER);
     tx.setGlobalRotation(-body.getTransform().getRotationAngle());
+  }
+
+  /** {@link RefBody} extends {@link Body} adding a reference to its parent {@link RigidBody} */
+  public static class RefBody extends Body {
+    private final RigidBody rigidBody;
+
+    public RefBody(RigidBody rigidBody) {
+      this.rigidBody = rigidBody;
+    }
+
+    public RigidBody getRigidBody() {
+      return rigidBody;
+    }
   }
 }

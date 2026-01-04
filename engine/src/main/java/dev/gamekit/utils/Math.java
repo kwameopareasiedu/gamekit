@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 public final class Math {
   public static final double EPSILON = 1e-6;
   public static final double TWO_PI = 6.283185307179586;
+  public static final double HALF_PI = 1.5707963267948966;
   public static final double DEGREES_TO_RADIANS = 0.017453292519943295;
   public static final double RADIANS_TO_DEGREES = 57.29577951308232;
   public static final String DEGREE_SYM = "°";
