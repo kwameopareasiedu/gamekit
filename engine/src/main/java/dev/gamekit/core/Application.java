@@ -87,13 +87,13 @@ public abstract class Application {
     logger.debug("Primed next scene: {}", scene.name);
   }
 
-  /** Schedule and returns a {@link Timeout timeout} to be executed immediately after the end of the current frame */
+  /** Schedules and returns a {@link Timeout timeout} to be executed immediately after the end of the current frame */
   public Timeout scheduleTask(VoidCallback callback) {
     return scheduleTask(callback, 0);
   }
 
   /**
-   * Schedule and returns a {@link Timeout task} to be executed after a specified time.
+   * Schedules and returns a {@link Timeout task} to be executed after a specified time.
    * <p>
    * If {@code timeoutMs} is zero, {@code task} is executed immediately after the current frame
    *
@@ -108,7 +108,7 @@ public abstract class Application {
   }
 
   /**
-   * Schedule an {@link Animation} to play. Animations are updated before {@link Scene#update} to ensure current
+   * Schedules an {@link Animation} to play. Animations are updated before {@link Scene#update} to ensure current
    * values are available to the scene's next update cycle.
    * <p>
    * NB: <i>{@link Animation#start} calls this method internally, so there is no need to explicitly invoke this</i>
@@ -120,7 +120,7 @@ public abstract class Application {
   }
 
   /**
-   * Quit the current {@link Application} by dispatching a {@link WindowEvent#WINDOW_CLOSING} event to the
+   * Quits the current {@link Application} by dispatching a {@link WindowEvent#WINDOW_CLOSING} event to the
    * {@link Window} {@link javax.swing.JFrame frame}
    */
   public void quit() {
