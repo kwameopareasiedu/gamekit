@@ -6,24 +6,24 @@ import org.apache.logging.log4j.Logger;
 import java.util.HashMap;
 import java.util.Map;
 
-/** {@link StateMachine} manages a finite set of {@link FiniteState states} and the transitions  between them */
+/** {@link StateMachine} manages a finite set of {@link State states} and the transitions  between them */
 public class StateMachine<K extends Enum<K>> {
   public static boolean DEBUG = false;
 
   protected final Logger logger = LogManager.getLogger(getClass());
-  protected final Map<K, FiniteState<K>> stateMap = new HashMap<>();
-  protected FiniteState<K> currentState;
+  protected final Map<K, State<K>> stateMap = new HashMap<>();
+  protected State<K> currentState;
 
   @SafeVarargs
-  public StateMachine(FiniteState<K>... states) {
+  public StateMachine(State<K>... states) {
     if (states.length == 0)
       throw new IllegalArgumentException("At least one state is required");
 
-    for (FiniteState<K> state : states)
+    for (State<K> state : states)
       if (state == null)
         throw new IllegalArgumentException("State cannot be null");
 
-    for (FiniteState<K> state : states)
+    for (State<K> state : states)
       stateMap.put(state.key, state);
 
     currentState = states[0];

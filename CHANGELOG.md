@@ -37,6 +37,7 @@
 - Added `static List<RaycastHit> raycast(Vector start, Vector end, int categories)` method to `Physics` class
 - Added `static List<RaycastHit> raycast(Vector start, double angle, double distance int categories)` method to
   `Physics` class
+- Added signals systems package to engine module
 
 ### Changed
 

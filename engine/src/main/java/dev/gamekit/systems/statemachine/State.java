@@ -1,10 +1,10 @@
 package dev.gamekit.systems.statemachine;
 
 /** A state represents a behaviour in a state machine. Subclasses should extend to represent concrete behaviours */
-public abstract class FiniteState<K extends Enum<K>> {
+public abstract class State<K extends Enum<K>> {
   public final K key;
 
-  protected FiniteState(K key) {
+  protected State(K key) {
     this.key = key;
   }
 
