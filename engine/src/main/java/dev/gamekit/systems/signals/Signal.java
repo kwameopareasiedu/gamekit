@@ -46,6 +46,11 @@ public class Signal<T> {
     subscribe(key, subscriber, true, notifyImmediately);
   }
 
+  /** Removes a {@link Subscriber} with the specified {@code key} from this signal */
+  public void unsubscribe(String key) {
+    subscribers.remove(key);
+  }
+
   /** Dispatches the provided value to all subscribers */
   public void emit(T value) {
     if (!open) throw new IllegalStateException("Attempting to emit from a closed signal");
