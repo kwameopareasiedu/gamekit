@@ -167,7 +167,6 @@ public final class UI implements Widget.Host {
 
     // Initialize the new tree to set up internal state before comparison
     newTree.init(this);
-
     currentWidgetQueue.add(tree);
     newWidgetQueue.add(newTree);
 

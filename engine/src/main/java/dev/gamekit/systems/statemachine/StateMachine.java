@@ -1,4 +1,4 @@
-package dev.gamekit.tools.statemachine;
+package dev.gamekit.systems.statemachine;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

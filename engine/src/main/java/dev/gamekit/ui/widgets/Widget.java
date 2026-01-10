@@ -85,19 +85,19 @@ public abstract class Widget {
    * During UI updates, the engine checks which widgets need to be replaced or just updated by comparing the types
    * and configurations.
    * <p>
-   * For widgets that only need configurations updates, this method is called with the updated widget containing the
-   * new configuration.
+   * For widgets that only need configurations updates, this method is called with the corresponding widget in the
+   * new UI tree, containing the new configuration.
    * <p>
    * It is guaranteed that the type of the incoming widget will be the same as this widget so it is safe to cast the
    * incoming widget to this widget's config class (E.g. the config class for the {@code Image} widget will be the
    * {@code ImageConfig}).
    * <p>
-   * {@link #init} method is called afterward to re-initialize the widget.
+   * {@link #performInit} method is called afterward to re-initialize the widget.
    */
   public final void update(Widget widget) {
     this.config = widget.config;
     config.updateWidget(this);
-    init(host);
+    performInit();
   }
 
   /**
