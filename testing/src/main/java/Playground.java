@@ -16,7 +16,7 @@ public class Playground extends Scene {
         Application.getInstance().quit();
     });
 
-    slice = new AnimationSlice(animation, 0.5, 1);
+    slice = new AnimationSlice(animation, 500, 1000);
   }
 
   public static void main(String[] args) {

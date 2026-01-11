@@ -54,6 +54,16 @@ public class Animation {
     return curve != null ? curve.get(value) : value;
   }
 
+  /** Returns the duration in milliseconds */
+  public double getDuration() {
+    return 1000.0 / rate;
+  }
+
+  /** Returns {@code true} if the animation is ended and false otherwise */
+  public boolean isEnded() {
+    return state == State.ENDED;
+  }
+
   /** Sets the state listener and returns this animation */
   public Animation setStateListener(ValueCallback<State> listener) {
     this.stateListener = listener;
@@ -96,11 +106,6 @@ public class Animation {
     state = State.ENDED;
 
     if (stateListener != null) stateListener.update(state);
-  }
-
-  /** Returns {@code true} if the animation is ended and false otherwise */
-  public boolean isEnded() {
-    return state == State.ENDED;
   }
 
   /** Called internally by the {@link Application} to update this animation */

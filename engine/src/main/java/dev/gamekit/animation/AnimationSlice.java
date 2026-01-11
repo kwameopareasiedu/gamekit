@@ -19,10 +19,10 @@ public class AnimationSlice {
     this(animation, null, min, max);
   }
 
-  public AnimationSlice(Animation animation, AnimationCurve curve, double min, double max) {
+  public AnimationSlice(Animation animation, AnimationCurve curve, double minMs, double maxMs) {
     this.animation = animation;
-    this.min = min;
-    this.max = max;
+    this.min = minMs / animation.getDuration();
+    this.max = maxMs / animation.getDuration();
     this.curve = curve;
 
     if (min < 0 || min > 1) throw new IllegalArgumentException("AnimationRange min value must be between 0 and 1");
