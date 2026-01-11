@@ -275,10 +275,10 @@ public class Demo4UserInterface extends Scene {
           props.horizontalAlignment = Alignment.END;
           props.verticalAlignment = Alignment.CENTER;
         },
-        Column.create(
-          props -> props.gapSize = 12,
-          Rotated.create(
-            degToRad(30),
+        Rotated.create(
+          degToRad(30),
+          Scaled.create(
+            1.0,
             Sized.create(
               props -> {
                 props.fixedWidth = 200.0;
