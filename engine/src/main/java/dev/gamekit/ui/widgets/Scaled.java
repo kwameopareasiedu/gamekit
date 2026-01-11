@@ -37,8 +37,8 @@ public class Scaled extends SingleChildParent {
   protected void performLayout(Constraints constraints) {
     child.layout(
       new Constraints(
-        0, scale * constraints.maxWidth(),
-        0, scale * constraints.maxHeight()
+        0, constraints.maxWidth(),
+        0, constraints.maxHeight()
       )
     );
 
@@ -50,8 +50,8 @@ public class Scaled extends SingleChildParent {
     );
 
     child.computedBounds.setPosition(
-      0.5 * (scale * computedBounds.width - child.computedBounds.width),
-      0.5 * (scale * computedBounds.height - child.computedBounds.height)
+      0.5 * (computedBounds.width - child.computedBounds.width),
+      0.5 * (computedBounds.height - child.computedBounds.height)
     );
   }
 
