@@ -2,8 +2,8 @@ package dev.gamekit.core;
 
 import dev.gamekit.settings.Settings;
 import dev.gamekit.ui.events.*;
+import dev.gamekit.ui.mixins.WidgetUpdater;
 import dev.gamekit.ui.widgets.MultiChildParent;
-import dev.gamekit.ui.widgets.Parent;
 import dev.gamekit.ui.widgets.SingleChildParent;
 import dev.gamekit.ui.widgets.Widget;
 import dev.gamekit.utils.Constraints;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Objects;
 
 /** {@link UI} manages the user interface within a {@link Scene} */
-public final class UI implements Widget.Host {
+public final class UI implements Widget.Host, WidgetUpdater {
   public static final Color TRANSPARENT_COLOR = new Color(0x0000000, true);
   public static final Color DEBUG_COLOR = Color.GREEN;
   public static final BasicStroke DEBUG_STROKE = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
@@ -109,7 +109,7 @@ public final class UI implements Widget.Host {
   void update() {
     if (tree != null && needsUpdate) {
       LOGGER.debug("Updating UI");
-      updateTree();
+      updateTree(this, windowConstraints, tree, scene.createUI(), this::triggerRender);
       needsUpdate = false;
     }
 
@@ -153,70 +153,6 @@ public final class UI implements Widget.Host {
     if (tree != null) tree.unmount();
   }
 
-  /**
-   * Updates the widget tree using a "diffing" algorithm.
-   * <p>
-   * This "diffing" algorithm involves generating a new widget tree with the new state, comparing it to the current
-   * widget tree and updating or replacing widgets whose states have changed.
-   */
-  private void updateTree() {
-    List<Widget> currentWidgetQueue = new ArrayList<>();
-    List<Widget> newWidgetQueue = new ArrayList<>();
-    Widget newTree = scene.createUI();
-    boolean treeUpdated = false;
-
-    // Initialize the new tree to set up internal state before comparison
-    newTree.init(this);
-    currentWidgetQueue.add(tree);
-    newWidgetQueue.add(newTree);
-
-    while (!currentWidgetQueue.isEmpty() && !newWidgetQueue.isEmpty()) {
-      Widget currentWidget = currentWidgetQueue.remove(0);
-      Widget newWidget = newWidgetQueue.remove(0);
-
-      boolean typeMatch = currentWidget.getClass().equals(newWidget.getClass());
-      boolean configMatch = currentWidget.configEquals(newWidget);
-
-      if (!typeMatch) {
-        Parent currentWidgetParent = (Parent) currentWidget.getParent();
-
-        currentWidget.unmount();
-
-        if (currentWidgetParent == null) {
-          tree = newWidget;
-        } else if (currentWidgetParent instanceof SingleChildParent currentWidgetSingleChildParent) {
-          currentWidgetSingleChildParent.updateChild(newWidget);
-        } else if (currentWidgetParent instanceof MultiChildParent currentWidgetMultiChildParent) {
-          int index = List.of(currentWidgetMultiChildParent.getChildren()).indexOf(currentWidget);
-          currentWidgetMultiChildParent.updateChild(index, newWidget);
-        }
-
-        treeUpdated = true;
-      } else if (!configMatch) {
-        currentWidget.update(newWidget);
-        treeUpdated = true;
-      }
-
-      if (currentWidget instanceof SingleChildParent currentParent && newWidget instanceof SingleChildParent newParent) {
-        // Add child of SingleChildParent to queue for processing
-        currentWidgetQueue.add(currentParent.getChild());
-        newWidgetQueue.add(newParent.getChild());
-      } else if (currentWidget instanceof MultiChildParent currentParent && newWidget instanceof MultiChildParent newParent) {
-        // Add children of MultiChildParent to queue for processing
-        List<Widget> currentParentChildrenWidgets = List.of(currentParent.getChildren());
-        List<Widget> newParentChildrenWidgets = List.of(newParent.getChildren());
-        currentWidgetQueue.addAll(currentParentChildrenWidgets);
-        newWidgetQueue.addAll(newParentChildrenWidgets);
-      }
-    }
-
-    if (treeUpdated) {
-      tree.layout(windowConstraints);
-      tree.postLayout();
-      triggerRender();
-    }
-  }
-
   /** Monitors {@link Input} and generates events for input actions */
   private void generateInputEvents() {
     if (tree == null) return;
@@ -226,7 +162,7 @@ public final class UI implements Widget.Host {
 
     Position mousePosition = Input.getMousePosition();
 
-    traverseTree(tree, TraverseDirection.IN, widget -> {
+    traverseTree(tree, Direction.IN, widget -> {
       if (widget instanceof InputEvent.Handler && widget.hitTest(mousePosition.x, mousePosition.y)) {
         currentHitTestList.add(widget);
       }
@@ -368,7 +304,7 @@ public final class UI implements Widget.Host {
 
     // Dispatch mouse down and press events to the active widget
     if (activeWidget != null) {
-      traverseTree(activeWidget, TraverseDirection.OUT, widget -> {
+      traverseTree(activeWidget, Direction.OUT, widget -> {
         if (widget instanceof MouseEvent.Handler eventHandler) {
           if (eventStore.mouseDownEvent != null && !eventStore.mouseDownEvent.isHandled())
             eventHandler.handleEvent(eventStore.mouseDownEvent);
@@ -381,7 +317,7 @@ public final class UI implements Widget.Host {
 
     // Dispatch mouse release and click events to the active widget
     if (lastActiveWidget != null) {
-      traverseTree(lastActiveWidget, TraverseDirection.OUT, widget -> {
+      traverseTree(lastActiveWidget, Direction.OUT, widget -> {
         if (widget instanceof MouseEvent.Handler eventHandler) {
           if (eventStore.mouseReleaseEvent != null && !eventStore.mouseReleaseEvent.isHandled())
             eventHandler.handleEvent(eventStore.mouseReleaseEvent);
@@ -437,7 +373,7 @@ public final class UI implements Widget.Host {
     lastFocusWidget = null;
   }
 
-  private void traverseTree(Widget tree, TraverseDirection direction, TreeWidgetVisitor visitor) {
+  private void traverseTree(Widget tree, Direction direction, TreeWidgetVisitor visitor) {
     visitor.visit(tree);
 
     switch (direction) {
@@ -460,7 +396,7 @@ public final class UI implements Widget.Host {
     }
   }
 
-  private enum TraverseDirection {
+  private enum Direction {
     OUT, IN
   }
 

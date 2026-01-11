@@ -44,6 +44,7 @@
 - Changed behaviour of `Physics` class to allow collision detection between sensor colliders
 - Modified `Sprite` component to multiply its opacity with the parent entity sprite component (if any)
 - Renamed `void setCenter(double x, double y)` in `Sprite` component to `void setOffset(double x double y)`
+- Updated `Compose` widget to support custom internal state via its `void updateUI()` method
 
 ### Deprecated
 

@@ -1,17 +1,26 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.annotations.WidgetBuilder;
+import dev.gamekit.ui.mixins.WidgetUpdater;
 import dev.gamekit.utils.Constraints;
 
 /**
- * A {@link Widget} which is an abstract base for creating custom widgets.
+ * A {@link SingleChildParent} which is an abstract base for creating custom widgets by overriding the
+ * {@link #build()} method and returning a custom widget tree.
  * <p>
- * {@link Compose} delegates its layout and rendering to the supplied widget tree
+ * Subclasses can maintain some custom internal state update the widget as this state changes
  */
 @WidgetBuilder
-public abstract class Compose extends SingleChildParent {
-  protected Compose(Widget child) {
-    super(new ComposeConfig(), child);
+public abstract class Compose extends SingleChildParent implements WidgetUpdater {
+  protected Compose() {
+    super(new ComposeConfig(), Empty.create());
+
+  }
+
+  @Override
+  protected void performInit() {
+    updateChild(build());
+    super.performInit();
   }
 
   @Override
@@ -25,5 +34,30 @@ public abstract class Compose extends SingleChildParent {
     );
 
     child.computedBounds.setPosition(0, 0);
+  }
+
+  /**
+   * Returns the custom {@link Widget} tree of this {@link Compose}
+   * <p>
+   * This is called when the {@link Compose} is initialized, and again when the {@link #updateUI} method is
+   * called in response to some custom state change.
+   */
+  protected abstract Widget build();
+
+  /**
+   * Triggers a re-layout of this widget's subtree and subsequently a re-render
+   * <p>
+   * It should be called anytime the widget's custom internal state changes
+   */
+  protected void updateUI() {
+    updateTree(host, constraints, getChild(), build(), host::triggerRender);
+//    Widget updatedChildTree = build();
+//
+//    updateChild(updatedChildTree);
+//    updatedChildTree.init(host);
+//    updatedChildTree.layout(constraints);
+//    updatedChildTree.postLayout();
+//
+//    host.triggerRender();
   }
 }
