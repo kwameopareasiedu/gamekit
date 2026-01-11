@@ -24,7 +24,6 @@ public final class UI implements Widget.Host, WidgetUpdater {
   public static final BasicStroke DEBUG_STROKE = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
   private static final Logger LOGGER = LogManager.getLogger(UI.class);
-  private static UI instance;
 
   private final Scene scene;
   private final Constraints windowConstraints;
@@ -64,12 +63,6 @@ public final class UI implements Widget.Host, WidgetUpdater {
     settings.imageInterpolation.apply(canvasGraphics);
     settings.renderingStrategy.apply(canvasGraphics);
     settings.dithering.apply(canvasGraphics);
-
-    UI.instance = this;
-  }
-
-  static UI getInstance() {
-    return instance;
   }
 
   @Override
@@ -97,12 +90,6 @@ public final class UI implements Widget.Host, WidgetUpdater {
   /** Triggers a layout update during the next frame */
   void triggerUpdate() {
     needsUpdate = true;
-  }
-
-  /** Clears the render canvas */
-  void clear() {
-    canvasGraphics.setBackground(TRANSPARENT_COLOR);
-    canvasGraphics.clearRect(0, 0, canvasImage.getWidth(), canvasImage.getHeight());
   }
 
   /** Update updates the UI tree, recomputes layout, generates and dispatches input events */
@@ -150,7 +137,11 @@ public final class UI implements Widget.Host, WidgetUpdater {
 
   /** Called to unmount the {@link Widget} tree before being disposed */
   void unmount() {
-    if (tree != null) tree.unmount();
+    if (tree != null)
+      tree.unmount();
+
+    canvasGraphics.setBackground(TRANSPARENT_COLOR);
+    canvasGraphics.clearRect(0, 0, canvasImage.getWidth(), canvasImage.getHeight());
   }
 
   /** Monitors {@link Input} and generates events for input actions */

@@ -237,7 +237,6 @@ public abstract class Application {
       if (currentScene != null) {
         synchronized (currentScene) {
           currentScene._dispose();
-          UI.getInstance().clear();
         }
       }
 

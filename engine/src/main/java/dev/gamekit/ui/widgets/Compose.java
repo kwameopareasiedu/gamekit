@@ -14,7 +14,6 @@ import dev.gamekit.utils.Constraints;
 public abstract class Compose extends SingleChildParent implements WidgetUpdater {
   protected Compose() {
     super(new ComposeConfig(), Empty.create());
-
   }
 
   @Override
