@@ -3,6 +3,7 @@ package dev.gamekit.ui.widgets;
 import dev.gamekit.animation.Animation;
 import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
+import dev.gamekit.core.IO;
 import dev.gamekit.core.Input;
 import dev.gamekit.ui.events.*;
 import dev.gamekit.ui.mixins.NinePatch;
@@ -24,9 +25,12 @@ import static dev.gamekit.utils.Math.clamp;
 @WidgetBuilder
 public class Field extends Text
   implements NinePatch, FocusEvent.Handler, MouseEvent.Handler, KeyCharEvent.Handler, KeyCodeEvent.Handler {
-  @WidgetBuilderField(fallback = "dev.gamekit.core.IO.getResourceImage(\"default-sprites.png\", 646, 64, 96, 32)")
+  public static final BufferedImage DEFAULT_BG = IO.getResourceImage("default-sprites.png", 646, 64, 96, 32);
+  public static final BufferedImage DEFAULT_FOCUS_BG = IO.getResourceImage("default-sprites.png", 646, 135, 96, 32);
+
+  @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Field.DEFAULT_BG")
   protected BufferedImage defaultBackground;
-  @WidgetBuilderField(fallback = "dev.gamekit.core.IO.getResourceImage(\"default-sprites.png\", 646, 135, 96, 32)")
+  @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Field.DEFAULT_FOCUS_BG")
   protected BufferedImage focusBackground;
   @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing(2)")
   protected Spacing edgeInsets;

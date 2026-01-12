@@ -15,14 +15,14 @@ import java.awt.image.BufferedImage;
 @WidgetBuilder
 public class Button extends SingleChildParent implements NinePatch, MouseEvent.Handler {
   public static final BufferedImage DEFAULT_BG = IO.getResourceImage("default-sprites.png", 64, 64, 350, 120);
-  public static final BufferedImage HOVER_BG = IO.getResourceImage("default-sprites.png", 64, 232, 350, 120);
-  public static final BufferedImage PRESSED_BG = IO.getResourceImage("default-sprites.png", 64, 400, 350, 120);
+  public static final BufferedImage DEFAULT_HOVER_BG = IO.getResourceImage("default-sprites.png", 64, 232, 350, 120);
+  public static final BufferedImage DEFAULT_PRESSED_BG = IO.getResourceImage("default-sprites.png", 64, 400, 350, 120);
 
-  @WidgetBuilderField(fallback = "dev.gamekit.core.IO.getResourceImage(\"default-sprites.png\", 64, 64, 350, 120)")
+  @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Button.DEFAULT_BG")
   protected BufferedImage defaultBackground;
-  @WidgetBuilderField(fallback = "dev.gamekit.core.IO.getResourceImage(\"default-sprites.png\", 64, 232, 350, 120)")
+  @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Button.DEFAULT_HOVER_BG")
   protected BufferedImage hoverBackground;
-  @WidgetBuilderField(fallback = "dev.gamekit.core.IO.getResourceImage(\"default-sprites.png\", 64, 400, 350, 120)")
+  @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Button.DEFAULT_PRESSED_BG")
   protected BufferedImage pressedBackground;
   @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing(24)")
   protected Spacing padding;

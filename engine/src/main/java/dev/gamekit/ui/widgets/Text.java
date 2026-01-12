@@ -25,10 +25,12 @@ public class Text extends Leaf {
 
   @WidgetBuilderField(fallback = "\"Hello GameKit\"")
   protected String text;
-  @WidgetBuilderField(fallback = "dev.gamekit.core.IO.getResourceFont(\"font-default.ttf\")")
+  @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Text.DEFAULT_FONT")
   protected Font font;
   @WidgetBuilderField(fallback = "20")
   protected Integer fontSize;
+  @WidgetBuilderField(fallback = "1.0")
+  protected Double fontHeightRatio;
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Text.PLAIN")
   protected Integer fontStyle;
   @WidgetBuilderField(fallback = "java.awt.Color.WHITE")
@@ -80,7 +82,7 @@ public class Text extends Leaf {
     List<Double> lineOffsets = new ArrayList<>();
     List<Symbol> symbols = new ArrayList<>();
     int textWidth = fontMetrics.stringWidth(text);
-    int textHeight = fontSize;
+    int textHeight = (int) (fontSize * fontHeightRatio);
 
     intrinsicSize.set(textWidth, textHeight);
 
@@ -151,12 +153,12 @@ public class Text extends Leaf {
 
       double lineOffset = lineOffsets.get(i);
       String[] lineCharacters = line.split("");
-      double lineYPosition = i * fontSize;
+      double lineYPosition = i * fontSize * fontHeightRatio;
 
       for (String ch : lineCharacters) {
         int chWidth = fontMetrics.stringWidth(ch);
 
-        symbols.add(new Symbol(ch.charAt(0), lineOffset, lineYPosition, chWidth, fontSize));
+        symbols.add(new Symbol(ch.charAt(0), lineOffset, lineYPosition, chWidth, fontSize * fontHeightRatio));
 
         lineOffset += chWidth;
       }

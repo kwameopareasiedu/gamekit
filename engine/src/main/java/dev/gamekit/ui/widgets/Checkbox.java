@@ -2,6 +2,7 @@ package dev.gamekit.ui.widgets;
 
 import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
+import dev.gamekit.core.IO;
 import dev.gamekit.ui.events.ChangeEvent;
 import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.mixins.NinePatch;
@@ -15,9 +16,12 @@ import java.awt.image.BufferedImage;
 /** A {@link SingleChildParent} input widget which toggles between two states */
 @WidgetBuilder
 public class Checkbox extends SingleChildParent implements MouseEvent.Handler, NinePatch {
-  @WidgetBuilderField(fallback = "dev.gamekit.core.IO.getResourceImage(\"default-sprites.png\", 646, 206, 32, 32)")
+  public static final BufferedImage DEFAULT_ICON = IO.getResourceImage("default-sprites.png", 646, 206, 32, 32);
+  public static final BufferedImage DEFAULT_TOGGLED_ICON = IO.getResourceImage("default-sprites.png", 646, 277, 32, 32);
+
+  @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Checkbox.DEFAULT_ICON")
   protected BufferedImage defaultIcon;
-  @WidgetBuilderField(fallback = "dev.gamekit.core.IO.getResourceImage(\"default-sprites.png\", 646, 277, 32, 32)")
+  @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Checkbox.DEFAULT_TOGGLED_ICON")
   protected BufferedImage toggledIcon;
   @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing(8)")
   protected Spacing iconPadding;

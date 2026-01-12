@@ -14,12 +14,12 @@ import java.awt.image.BufferedImage;
 /** A {@link Leaf} widget which displays a progress bar */
 @WidgetBuilder
 public class Progress extends Leaf implements NinePatch {
-  public static final BufferedImage TRACK_BG = IO.getResourceImage("default-sprites.png", 470, 232, 96, 32);
-  public static final BufferedImage FILL_BG = IO.getResourceImage("default-sprites.png", 470, 289, 96, 32);
+  public static final BufferedImage DEFAULT_TRACK_BG = IO.getResourceImage("default-sprites.png", 470, 232, 96, 32);
+  public static final BufferedImage DEFAULT_FILL_BG = IO.getResourceImage("default-sprites.png", 470, 289, 96, 32);
 
-  @WidgetBuilderField(fallback = "dev.gamekit.core.IO.getResourceImage(\"default-sprites.png\", 470, 232, 96, 32)")
+  @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Progress.DEFAULT_TRACK_BG")
   protected BufferedImage trackBackground;
-  @WidgetBuilderField(fallback = "dev.gamekit.core.IO.getResourceImage(\"default-sprites.png\", 470, 289, 96, 32)")
+  @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Progress.DEFAULT_FILL_BG")
   protected BufferedImage fillBackground;
   @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing(8)")
   protected Spacing trackEdgeInsets;

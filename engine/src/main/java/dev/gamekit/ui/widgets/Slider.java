@@ -2,6 +2,7 @@ package dev.gamekit.ui.widgets;
 
 import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
+import dev.gamekit.core.IO;
 import dev.gamekit.ui.events.ChangeEvent;
 import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.mixins.NinePatch;
@@ -18,9 +19,12 @@ import static dev.gamekit.utils.Math.clamp;
 /** A {@link Progress} widget extension which adjusts a value by moving a slider */
 @WidgetBuilder
 public class Slider extends Progress implements NinePatch, MouseEvent.Handler {
-  @WidgetBuilderField(fallback = "dev.gamekit.core.IO.getResourceImage(\"default-sprites.png\", 470, 346, 32, 32)")
+  public static final BufferedImage DEFAULT_THUMB_BG = IO.getResourceImage("default-sprites.png", 470, 346, 32, 32);
+  public static final Spacing DEFAULT_THUMB_SPACING = new Spacing(8);
+
+  @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Slider.DEFAULT_THUMB_BG")
   protected BufferedImage thumbBackground;
-  @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing(8)")
+  @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Slider.DEFAULT_THUMB_SPACING")
   protected Spacing thumbEdgeInsets;
   @WidgetBuilderField(fallback = "32")
   protected Integer thumbWidth;

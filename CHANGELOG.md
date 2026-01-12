@@ -44,6 +44,7 @@
   a list of hit results
 - Added `signals` systems package to engine module
 - Added `AnimationSlice` class which observes a slice of an animation's value, mapping it to a new 0 - 1 range
+- Added `fontHeightRatio` property to `Text` widget to control excess font height as reported by `FontMetrics`
 
 ### Changed
 

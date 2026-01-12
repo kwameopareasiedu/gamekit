@@ -2,6 +2,7 @@ package dev.gamekit.ui.widgets;
 
 import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
+import dev.gamekit.core.IO;
 import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.mixins.NinePatch;
 import dev.gamekit.utils.Constraints;
@@ -13,9 +14,12 @@ import java.awt.image.BufferedImage;
 /** A {@link SingleChildParent} which uses the 9-patch algorithm to render a background */
 @WidgetBuilder
 public class Panel extends SingleChildParent implements NinePatch, MouseEvent.Handler {
-  @WidgetBuilderField(fallback = "dev.gamekit.core.IO.getResourceImage(\"default-sprites.png\", 470, 64, 120, 120)")
+  public static final BufferedImage DEFAULT_BG = IO.getResourceImage("default-sprites.png", 470, 64, 120, 120);
+  public static final Spacing DEFAULT_PADDING = new Spacing();
+
+  @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Panel.DEFAULT_BG")
   protected BufferedImage background;
-  @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing()")
+  @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Panel.DEFAULT_PADDING")
   protected Spacing padding;
 
   public Panel(PanelConfig config, Widget child) {

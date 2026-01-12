@@ -90,6 +90,9 @@ public class Demo4UserInterface extends Scene {
             props -> {
               props.textFontSize = 10;
               props.textFontStyle = Text.ITALIC;
+              props.textFontHeightRatio = 0.85;
+              props.fieldFontHeightRatio = 0.85;
+              props.fieldColor = Color.BLACK;
             },
             Column.create(
               props -> {
