@@ -36,11 +36,6 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
 
   @Override
   public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-    processingEnv.getMessager().printNote(
-      String.format("Annotations: %d, Widget classes: %d, Processing over: %b\n",
-        annotations.size(), widgetClasses.size(), roundEnv.processingOver())
-    );
-
     for (TypeElement annotation : annotations) {
       Set<? extends Element> annotatedClasses = roundEnv.getElementsAnnotatedWith(annotation);
 

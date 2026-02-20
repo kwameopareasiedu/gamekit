@@ -83,7 +83,7 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
   }
 
   @Override
-  protected void renderAppearance(Graphics2D g) {
+  protected void renderSelf(Graphics2D g) {
     BufferedImage icon = defaultIcon;
 
     if (toggled)

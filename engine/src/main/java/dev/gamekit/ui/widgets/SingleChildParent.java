@@ -29,7 +29,7 @@ public abstract class SingleChildParent extends Parent {
   @Override
   protected final void performRender(Graphics2D g) {
     preRender(g);
-    renderAppearance(g);
+    renderSelf(g);
     child.render(g);
     postRender(g);
   }

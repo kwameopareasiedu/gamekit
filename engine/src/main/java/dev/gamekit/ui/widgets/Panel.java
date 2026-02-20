@@ -53,8 +53,8 @@ public class Panel extends SingleChildParent implements NinePatch, MouseEvent.Ha
   }
 
   @Override
-  public void renderAppearance(Graphics2D g) {
-    super.renderAppearance(g);
+  public void renderSelf(Graphics2D g) {
+    super.renderSelf(g);
 
     renderWith9PatchScaling(background, absoluteBounds, padding, g);
   }

@@ -37,7 +37,7 @@ public abstract class MultiChildParent extends Parent {
   @Override
   protected final void performRender(Graphics2D g) {
     preRender(g);
-    renderAppearance(g);
+    renderSelf(g);
 
     for (Widget child : children)
       child.render(g);

@@ -63,7 +63,7 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
   }
 
   @Override
-  protected void renderAppearance(Graphics2D g) {
+  protected void renderSelf(Graphics2D g) {
     BufferedImage bgImage = defaultBackground;
 
     if (mousePressed)

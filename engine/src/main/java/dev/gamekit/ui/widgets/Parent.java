@@ -14,7 +14,7 @@ public abstract class Parent extends Widget {
   }
 
   /**
-   * Called at the start of {@link #render} before {@link #renderAppearance}.
+   * Called at the start of {@link #render} before {@link #renderSelf}.
    * Subclasses can override this to perform any pre-render actions
    */
   protected void preRender(Graphics2D g) { /* No-op */ }
@@ -23,11 +23,12 @@ public abstract class Parent extends Widget {
    * Called after {@link #preRender} method to draw the parent's appearance before its child/children are
    * also rendered on top of it.
    */
-  protected void renderAppearance(Graphics2D g) { /* No-op */ }
+  protected void renderSelf(Graphics2D g) { /* No-op */ }
 
   /**
    * Called at the end of {@link #render} to perform any post-render actions.
-   * Subclasses can override this to perform any pre-render actions
+   * <p>
+   * This is an ideal place to release any resources setup during {@link #preRender}
    */
   protected void postRender(Graphics2D g) { /* No-op */ }
 }
