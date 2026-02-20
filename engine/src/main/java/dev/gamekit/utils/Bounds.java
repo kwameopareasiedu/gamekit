@@ -53,13 +53,21 @@ public class Bounds {
     this.height = height;
   }
 
-  public void setX(double x) { this.x = x; }
+  public void setX(double x) {
+    this.x = x;
+  }
 
-  public void setY(double y) { this.y = y; }
+  public void setY(double y) {
+    this.y = y;
+  }
 
-  public void setWidth(double width) { this.width = width; }
+  public void setWidth(double width) {
+    this.width = width;
+  }
 
-  public void setHeight(double height) { this.height = height; }
+  public void setHeight(double height) {
+    this.height = height;
+  }
 
   /** Copies values from another bounds object */
   public void set(Bounds bounds) {

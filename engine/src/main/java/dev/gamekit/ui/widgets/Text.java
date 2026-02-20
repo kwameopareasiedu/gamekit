@@ -86,8 +86,10 @@ public class Text extends Leaf {
 
     intrinsicSize.set(textWidth, textHeight);
 
-    computedBounds.setSize(constraints.constrainWidth(intrinsicSize.width),
-      constraints.constrainHeight(intrinsicSize.height));
+    computedBounds.setSize(
+      constraints.constrainWidth(intrinsicSize.width),
+      constraints.constrainHeight(intrinsicSize.height)
+    );
 
     if (textWidth > computedBounds.width) {
       String[] tokens = text.split(" ");
@@ -124,8 +126,10 @@ public class Text extends Leaf {
 
       intrinsicSize.set(maxLineWidth, textHeight * lines.size());
 
-      computedBounds.setSize(constraints.constrainWidth(intrinsicSize.width),
-        constraints.constrainHeight(intrinsicSize.height));
+      computedBounds.setSize(
+        constraints.constrainWidth(intrinsicSize.width),
+        constraints.constrainHeight(intrinsicSize.height)
+      );
 
       for (String line : lines) {
         int lineWidth = fontMetrics.stringWidth(line);

@@ -211,8 +211,7 @@ public class Field extends Text
    * {@link TextModel} is a document model for {@link Field} widgets which manages the text symbols and manipulations
    * of these symbols based on a cursor.
    * <p>
-   * Actions in the {@link Field} are submitted to this model which updates the symbols and cursor, returning the
-   * resulting text from the symbols.
+   * Actions in the {@link Field} are submitted to this model which updates the symbols and cursor position.
    * <p>
    * NB: <i>The cursor is always to the <b>right</b> of its current symbol and a null symbol indicates no text in the
    * {@link Field} widget</i>
@@ -303,6 +302,7 @@ public class Field extends Text
 
     /**
      * Deletes the symbol at the cursor position and moves the cursor one unit to the left.
+     * <p>
      * Returns {@code true} if the internal symbols were changed otherwise {@code false}
      */
     public boolean leftDeleteAtCursor() {
@@ -315,8 +315,9 @@ public class Field extends Text
     }
 
     /**
-     * Deletes the symbol one unit after the cursor position. Returns {@code true} if the
-     * internal symbols were changed otherwise {@code false}
+     * Deletes the symbol one unit after the cursor position.
+     * <p>
+     * Returns {@code true} if the internal symbols were changed otherwise {@code false}
      */
     public boolean rightDeleteAtCursor() {
       if (cursorIndex == symbols.size() - 1)

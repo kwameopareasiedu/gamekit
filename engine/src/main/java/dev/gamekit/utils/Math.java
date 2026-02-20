@@ -63,7 +63,7 @@ public final class Math {
 
   /**
    * Linearly interpolates between two angles in radian using a specified rate, wrapping the angle
-   * around {@code 2π} if it's a shorter path to reach the desired angle
+   * around {@code 2π} in the negative direction if it's a shorter path to reach the desired angle
    */
   public static double lerpAngle(double start, double end, double rate) {
     double cos = (1.0 - rate) * java.lang.Math.cos(start) + rate * java.lang.Math.cos(end);

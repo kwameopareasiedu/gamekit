@@ -32,11 +32,17 @@ public class Position {
   }
 
   /** Copies values from another position object */
-  public void set(Position position) { set(position.x, position.y); }
+  public void set(Position position) {
+    set(position.x, position.y);
+  }
 
-  public void setX(int x) { this.x = x; }
+  public void setX(int x) {
+    this.x = x;
+  }
 
-  public void setY(int y) { this.y = y; }
+  public void setY(int y) {
+    this.y = y;
+  }
 
   @Override
   public String toString() {
