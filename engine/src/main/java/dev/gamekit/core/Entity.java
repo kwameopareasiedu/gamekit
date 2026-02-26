@@ -26,7 +26,6 @@ public abstract class Entity {
 
   private final ArrayList<Entity> children;
   private final ArrayList<Component> components;
-  private final ArrayList<Component> componentSearchList;
   private State state;
 
   public Entity(String name) {
@@ -35,7 +34,6 @@ public abstract class Entity {
     children = new ArrayList<>();
     components = new ArrayList<>();
     components.add(new Transform());
-    componentSearchList = new ArrayList<>();
   }
 
   /** Returns the parent entity */
@@ -55,7 +53,9 @@ public abstract class Entity {
   public void addChild(Entity child) {
     if (children.contains(child)) return;
 
-    if (child.parent != null) throw new IllegalStateException("Cannot add child with parent. Remove from parent first");
+    if (child.parent != null) {
+      throw new IllegalStateException("Cannot add child with parent. Remove from parent first");
+    }
 
     switch (child.state) {
       case DOOMED, DEAD -> throw new IllegalStateException("Cannot add a doomed or dead child");
@@ -106,19 +106,19 @@ public abstract class Entity {
   }
 
   /**
-   * Returns a list of {@link Component components} of the specified class
+   * Finds {@link Component components} of the specified class
    * <p>
-   * <i>NB: For added performance, the returned {@link ArrayList<T>} is reused across multiple invocations so you
-   * should not keep a reference to it</i>
+   * Rather than returning a component list, this methods first clears the given {@code out} list and populates it with
+   * the matching {@link Component components}
    */
-  public <T extends Component> List<T> findComponents(Class<T> clazz) {
-    componentSearchList.clear();
+  public <T extends Component> void findComponents(Class<T> clazz, List<T> out) {
+    out.clear();
 
     for (Component component : components) {
-      if (clazz.isInstance(component)) componentSearchList.add(component);
+      if (clazz.isInstance(component)) {
+        out.add((T) component);
+      }
     }
-
-    return (List<T>) componentSearchList;
   }
 
   /**
@@ -240,7 +240,7 @@ public abstract class Entity {
 
   /** Constants for an {@link Entity} state */
   public enum State {
-    /** Represents a newly created instance of an {@link Entity} */
+    /** Represents a newly created {@link Entity} which hasn't yet been added to a parent */
     NEW,
     /**
      * Represents an {@link Entity} which has been added to another entity or the scene.

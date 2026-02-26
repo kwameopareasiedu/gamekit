@@ -13,6 +13,7 @@ import org.dyn4j.geometry.MassType;
 import org.dyn4j.geometry.Vector2;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -182,7 +183,9 @@ public class RigidBody extends Component {
   @Override
   protected void start() {
     // Find all colliders and add their fixtures to the body
-    List<Collider> colliders = entity.findComponents(Collider.class);
+    List<Collider> colliders = new ArrayList<>();
+
+    entity.findComponents(Collider.class, colliders);
 
     for (Collider collider : colliders)
       body.addFixture(collider.fixture);

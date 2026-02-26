@@ -212,7 +212,7 @@ public abstract class Application {
    */
   private void draw() {
     if (currentScene != null) {
-      Camera.updateWindow();
+      Camera.updateWindowTransform();
 
       synchronized (currentScene) {
         currentScene._draw();
