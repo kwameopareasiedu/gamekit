@@ -23,7 +23,7 @@ An application instance splits its workload into four (4) threads to handle the 
 physics updates. This multithreaded setup improves performance on multicore processors dramatically, since each thread
 is independent of each other.
 
-![](/assets/game-loop.png)
+![](../assets/game-loop.png)
 
 ## Configuration
 

@@ -9,9 +9,12 @@ nav:
       - Overview: features/overview.md
       - Application: features/application.md
       - Entities & Scenes: features/ecs.md
+      - Entities Components: features/components.md
 theme: mkdocs
 markdown_extensions:
   - attr_list
+  - toc:
+      permalink: "#"
 extra_css:
   - assets/css/custom.css
 extra_javascript:

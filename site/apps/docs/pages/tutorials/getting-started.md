@@ -39,7 +39,7 @@ To include it in your project, add its dependency to your `pom.xml`, then reload
 
 > Find all versions on the [releases](https://github.com/kwameopareasiedu/gamekit/releases) page.
 
-## Hello  Game
+## Hello Game
 
 Let's get started with a very simple application. Think of this as a "Hello World" GameKit sample.
 
@@ -81,7 +81,7 @@ public class HelloGame extends Scene {
 
 Running this application should give you a window like this:
 
-![](/assets/getting-started.png){:style="max-width:480px;width:100%"}
+![](../assets/getting-started.png){:style="max-width:480px;width:100%"}
 
 ### What we have done
 
