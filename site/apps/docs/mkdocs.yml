@@ -2,8 +2,9 @@ site_name: GameKit
 site_dir: dist
 docs_dir: pages
 nav:
+  - Tutorials:
+    - Getting Started: tutorials/getting-started.md
   - Tutorials: tutorials.md
-#  - Components: entity-components.md
   - UI: user-interface.md
   - Audio: audio.md
 theme: mkdocs
@@ -11,3 +12,5 @@ markdown_extensions:
   - attr_list
 extra_css:
   - css/custom.css
+extra_javascript:
+  - js/page-config.js

@@ -26,12 +26,14 @@ export function App() {
     <>
       <div className="fixed top-0 left-0 w-screen h-screen -z-10 bg-gradient-to-br from-[#0C213A] to-[#004B4F]" />
 
+      <div className="fixed top-0 left-0 -z-10 w-screen h-screen pattern-bg" />
+
       <div className="min-h-screen py-16 md:py-24 px-6 [&_*]:text-white">
         <a
           target="_blank"
           href="https://github.com/kwameopareasiedu/gamekit"
-          className="fixed text-center w-full bg-gradient-to-b from-red-500 to-red-900 p-2 top-10 md:top-7 right-14 md:right-11 rotate-[45deg] translate-x-1/2 z-10">
-          <div className="border-t-[1px] border-b-[1px] border-dashed md:text-sm">Star On Github</div>
+          className="fixed text-center w-full bg-gradient-to-b from-red-500 to-red-900 p-0 top-10 md:top-7 right-14 md:right-11 rotate-[45deg] translate-x-1/2 z-10">
+          <div className="border-t-[1px] border-b-[1px] border-dashed md:text-sm p-1">Star On Github</div>
         </a>
 
         <div className="container mx-auto">
@@ -82,8 +84,8 @@ export function App() {
           license games created with the engine anyway you want.
         </section>
 
-        <footer className="fixed bottom-0 left-0 w-full bg-black z-10 py-2.5">
-          <p className="text-center">GameKit, {new Date().getFullYear()}</p>
+        <footer className="fixed bottom-0 left-0 w-full bg-black z-10 py-1.5">
+          <p className="text-center text-sm font-medium">GameKit, {new Date().getFullYear()}</p>
         </footer>
       </div>
     </>
