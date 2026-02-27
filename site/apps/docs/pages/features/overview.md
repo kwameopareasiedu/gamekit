@@ -3,7 +3,7 @@
 The following are high-level features GameKit offers. Click on a link to learn more.
 
 - [Application](./application.md)
-- [Entity Component System]()
+- [Entities & Scenes](./ecs.md)
 - [Rendering]()
 - [Input]()
 - [File IO]()

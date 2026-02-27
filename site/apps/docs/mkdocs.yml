@@ -8,6 +8,7 @@ nav:
   - Features:
       - Overview: features/overview.md
       - Application: features/application.md
+      - Entities & Scenes: features/ecs.md
 theme: mkdocs
 markdown_extensions:
   - attr_list

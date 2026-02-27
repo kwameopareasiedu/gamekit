@@ -23,6 +23,8 @@ An application instance splits its workload into four (4) threads to handle the 
 physics updates. This multithreaded setup improves performance on multicore processors dramatically, since each thread
 is independent of each other.
 
+![](/assets/game-loop.png)
+
 ## Configuration
 
 The simplest way to configure an application instance is providing a title, which is used as the window title.
@@ -52,13 +54,22 @@ Application game = new Application(
 ) { };
 ```
 
-## Useful Methods
+## Public Methods
 
-| Method                                     | Description                                             |
-|--------------------------------------------|---------------------------------------------------------|
-| `static Application getInstance()`         | Returns the running application instance                |
-| `void loadScene(Scene)`                    | Loads a new scene at the end of the current frame       |
-| `Timeout scheduleTask(VoidCallback)`       | Schedules a task to run at the end of the current frame |
-| `Timeout scheduleTask(VoidCallback, long)` | Schedules a task to run after some time has elapsed     |
-| `void run()`                               | Starts the game loop of an application instance         |
-| `void quit()`                              | Quits the running application instance                  |
+| Method         | Description                                                                                                                   |
+|----------------|-------------------------------------------------------------------------------------------------------------------------------|
+| `loadScene`    | Loads a new scene at the end of the current frame                                                                             |
+| `scheduleTask` | `+1` Schedules a task to run immediately after the current frame<br/>`+2` Schedules a task to run after some time has elapsed |
+| `run`          | Starts the game loop of an application instance                                                                               |
+| `quit`         | Quits the running application instance                                                                                        |
+
+## Static Methods
+
+| Method        | Description                              |
+|---------------|------------------------------------------|
+| `getInstance` | Returns the running application instance |
+
+## Next Steps
+
+You're now familiar with the `Application` class. Next, we'll look at [entities & scenes](./ecs.md) which are building
+blocks for more complex games.
