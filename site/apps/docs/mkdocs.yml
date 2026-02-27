@@ -4,13 +4,13 @@ docs_dir: pages
 nav:
   - Tutorials:
     - Getting Started: tutorials/getting-started.md
-  - Tutorials: tutorials.md
-  - UI: user-interface.md
-  - Audio: audio.md
+    - Examples: tutorials/examples.md
+  - Features:
+      - Overview: features/overview.md
 theme: mkdocs
 markdown_extensions:
   - attr_list
 extra_css:
-  - css/custom.css
+  - assets/css/custom.css
 extra_javascript:
-  - js/page-config.js
+  - assets/js/page-config.js
