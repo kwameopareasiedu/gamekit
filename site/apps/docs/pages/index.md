@@ -6,6 +6,6 @@ Java [Swing](https://docs.oracle.com/javase/tutorial/uiswing/index.html) hence r
 GameKit is not way a AAA engine and has limitations due to it not using OpenGL, but performance is decent enough for
 small to medium-sized games.
 
-Checkout the [Getting Started](./tutorials/getting-started.md) guide on how to install and use GameKit.
+Check out the [Getting Started](./tutorials/getting-started.md) guide on how to install and use GameKit.
 
 <configure hideToc contentWidth="center"><configure>

@@ -194,4 +194,4 @@ you can see how easy it is to create games with the engine.
 
 As you delve more into the documentation, we'll explore more GameKit features such as audio, physics, input, UI and IO.
 
-From here, you can check out more [examples](./examples.md) or explore the engine [features](../features.md);
+From here, you can check out more [examples](./examples.md) or explore the engine [features](../features/overview.md).

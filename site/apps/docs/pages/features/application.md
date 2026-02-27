@@ -1,0 +1,64 @@
+# Application
+
+_[Back To Features](./overview.md)_
+
+The application class is the heart of a GameKit program. You must extend this class to do anything useful with the
+engine. An example is shown below:
+
+```java
+import dev.gamekit.core.Application;
+
+public class MyGame extends Application {
+  public MyGame() {
+    super("My Game");
+  }
+}
+```
+
+It runs a [fixed-step](https://gameprogrammingpatterns.com/game-loop.html#play-catch-up) game update loop which protects
+against lag spikes. It also manages scenes, schedules animations and timeouts provides methods to manage the running
+instance.
+
+An application instance splits its workload into four (4) threads to handle the game update loop, rendering, audio and
+physics updates. This multithreaded setup improves performance on multicore processors dramatically, since each thread
+is independent of each other.
+
+## Configuration
+
+The simplest way to configure an application instance is providing a title, which is used as the window title.
+
+```java
+Application app = new Application("Title Goes Here") { }
+```
+
+> _Since `Application` is an abstract class, we need to extend it for a concrete implementation or use anonymous
+subclass instantiation as shown above_
+
+An application instance can also accept a `Settings` object which allows you to specify more settings.
+
+```java
+Application game = new Application(
+  new Settings(
+    "Demo 4 - Declarative UI",  // Title string
+    Resolution.HD,              // Resolution (VGA, SVGA, XGA, HD, WXGA, FULL_HD, NATIVE)
+    WindowMode.WINDOWED,        // Window mode (WINDOWED, BORDERLESS, FULLSCREEN)
+    Antialiasing.ON,            // Antialiasing (ON, OFF, DEFAULT)
+    TextAntialiasing.ON,        // UI text antialiasing (ON, OFF, DEFAULT)
+    AlphaInterpolation.SPEED,   // Image alpha interpolation (SPEED, QUALITY, DEFAULT)
+    ImageInterpolation.NEAREST, // Image pixel interpolation (NEAREST, BILINEAR, BICUBIC, DEFAULT)
+    RenderingStrategy.SPEED,    // Overall rendering priority (SPEED, QUALITY, DEFAULT)
+    Dithering.OFF               // Dithering (ON, OFF, DEFAULT)
+  )
+) { };
+```
+
+## Useful Methods
+
+| Method                                     | Description                                             |
+|--------------------------------------------|---------------------------------------------------------|
+| `static Application getInstance()`         | Returns the running application instance                |
+| `void loadScene(Scene)`                    | Loads a new scene at the end of the current frame       |
+| `Timeout scheduleTask(VoidCallback)`       | Schedules a task to run at the end of the current frame |
+| `Timeout scheduleTask(VoidCallback, long)` | Schedules a task to run after some time has elapsed     |
+| `void run()`                               | Starts the game loop of an application instance         |
+| `void quit()`                              | Quits the running application instance                  |
