@@ -35,9 +35,10 @@ Twilight".
 
 In this game, you build a base, mine resources and defend against enemies. During combat, it would make sense for player
 units to be able to shoot through other player units to hit enemies. As such, the physics colliders of player artillery
-should not interact with each other and should not also interact with player, only with enemy unit colliders.
+should not interact with each other and should not also interact with player unit colliders, only with enemy unit
+colliders.
 
-This gives us four (4) collision layers whose collision interaction is defined in the table below:
+This gives us four (4) collision layers whose collision interaction are defined in the table below:
 
 1. Player units (PU)
 2. Player artillery (PA)
@@ -53,12 +54,12 @@ This gives us four (4) collision layers whose collision interaction is defined i
 
 From the deductions above, the collision layers and masks for each of the colliders are specified in the table below:
 
-| Collider              | Collision Category<br/><small>Category collider resides in</small> | Collision Mask<br/><small>Layers collider can interact with</small> |
-|-----------------------|:------------------------------------------------------------------:|:-------------------------------------------------------------------:|
-| Player units (PU)     |                   (2<sup>0</sup>) = 1 = 00000001                   |                               4 \| 8                                |
-| Player artillery (PA) |                   (2<sup>1</sup>) = 2 = 00000010                   |                                  4                                  |
-| Enemy units (EU)      |                   (2<sup>2</sup>) = 4 = 00000100                   |                               1 \| 2                                |
-| Enemy artillery (EA)  |                   (2<sup>3</sup>) = 8 = 00001000                   |                                  1                                  |
+| Collider              | Collision Category<br/><small>Category collider resides in</small> | Collision Mask<br/><small>Categories collider can interact with</small> |
+|-----------------------|:------------------------------------------------------------------:|:-----------------------------------------------------------------------:|
+| Player units (PU)     |                   (2<sup>0</sup>) = 1 = 00000001                   |                                 4 \| 8                                  |
+| Player artillery (PA) |                   (2<sup>1</sup>) = 2 = 00000010                   |                                    4                                    |
+| Enemy units (EU)      |                   (2<sup>2</sup>) = 4 = 00000100                   |                                 1 \| 2                                  |
+| Enemy artillery (EA)  |                   (2<sup>3</sup>) = 8 = 00001000                   |                                    1                                    |
 
 > We use powers of 2 for each collision category since it's optimal for bitwise operations when defining collision
 > masks. This gives us up to 32 collision layers since the max integer in Java is 2<sup>32</sup> - 1.
@@ -77,5 +78,4 @@ enemyUnitCollider.setCollisionFilter(4, 1 | 2);
 ...
 Collider enemyArtilleryCollider = /* Code to retrieve enemy artillery collider componnent from entity */;
 enemyArtilleryCollider.setCollisionFilter(8, 1);
-
 ```
