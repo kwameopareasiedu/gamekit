@@ -17,6 +17,8 @@ nav:
           - RigidBody: features/components/rigidbody.md
           - Collider: features/components/collider.md
       - Rendering: features/rendering.md
+      - Camera: features/camera.md
+      - Input: features/input.md
 theme: mkdocs
 markdown_extensions:
   - attr_list
