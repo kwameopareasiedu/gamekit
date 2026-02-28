@@ -12,8 +12,8 @@ instance and whether the animation should loop.
 
 `AnimatedSprite` inherits all the public methods from [Sprite](sprite.md#public-methods).
 
-| Method             | Description                                                                                                                                                                                                                                                     |
-|--------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `setSpriteSheet`   | `+1` Updates the sprite sheet and computes the sprites based on the given `spriteWidth`, `spriteHeight` and `coordinates`. Each coordinates pair represents the top-left corner of a sprite in the sprite sheet<br/>`+2` Updates the generated sprites directly |
-| `setStateListener` | Sets a listener which is notified when the internal animation state changes                                                                                                                                                                                     |
+| Method             | Description                                                                                                                                                                                                                                                          |
+|--------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `setSpriteSheet`   | `+1` Updates the sprite sheet and computes the sprites based on the given `spriteWidth`, `spriteHeight` and `coordinates`. Each coordinates pair represents the top-left corner of a sprite in the sprite sheet<br/><br/>`+2` Updates the generated sprites directly |
+| `setStateListener` | Sets a listener which is notified when the internal animation state changes                                                                                                                                                                                          |
 

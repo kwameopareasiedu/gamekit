@@ -53,16 +53,16 @@ public class MyObject extends Entity {
 
 These are other publicly available entity members:
 
-| Method           | Description                                                                                                                                               |
-|------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `logger`         | The [Log4j](https://logging.apache.org/log4j/2.x/index.html) logger object of the entity instance                                                         |
-| `getParent`      | Returns the entity's parent entity                                                                                                                        |
-| `getState`       | Returns the current state of the entity                                                                                                                   |
-| `addChild`       | Adds a child entity at the end of the current frame                                                                                                       |
-| `removeChild`    | Removes a child entity at the end of the current frame                                                                                                    |
-| `findComponent`  | `+1` Returns the first component matching the given class <br/> `+2` Returns the first component matching the given class and passing the provided filter |
-| `findComponents` | Finds all component matching the given class and inserts them into the provided `out` list                                                                |
-| `destroy`        | Marks the entity as `DOOMED` and schedules it for destruction at the end of the current frame                                                             |
+| Method           | Description                                                                                                                                                  |
+|------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `logger`         | The [Log4j](https://logging.apache.org/log4j/2.x/index.html){:target="_blank"} logger object of the entity instance                                          |
+| `getParent`      | Returns the entity's parent entity                                                                                                                           |
+| `getState`       | Returns the current state of the entity                                                                                                                      |
+| `addChild`       | Adds a child entity at the end of the current frame                                                                                                          |
+| `removeChild`    | Removes a child entity at the end of the current frame                                                                                                       |
+| `findComponent`  | `+1` Returns the first component matching the given class<br/><br/>`+2` Returns the first component matching the given class and passing the provided filter |
+| `findComponents` | Finds all component matching the given class and inserts them into the provided `out` list                                                                   |
+| `destroy`        | Marks the entity as `DOOMED` and schedules it for destruction at the end of the current frame                                                                |
 
 ## Scenes
 

@@ -14,26 +14,26 @@ game.
 
 ## Static Methods
 
-| Method              | Description                                                                                                                                                                     |
-|---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `getResourceStream` | Opens and returns a stream to a resource file                                                                                                                                   |
-| `getFileStream`     | Opens and returns a stream to a file which may or may not be a resource file                                                                                                    |
-| `getResourceImage`  | Loads and caches an image resource file                                                                                                                                         |
-| `getResourceFont`   | Loads and caches a font resource file                                                                                                                                           |
-| `writeFile`         | Writes data to the file at the specified path                                                                                                                                   |
-| `saveString`        | Saves a string value in the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html) node                                              |
-| `saveInteger`       | Saves an integer value in the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html) node                                            |
-| `saveBoolean`       | Saves a boolean value in the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html) node                                             |
-| `saveDouble`        | Saves a double value in the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html) node                                              |
-| `saveFloat`         | Saves a float value in the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html) node                                               |
-| `saveLong`          | Saves a long value in the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html) node                                                |
-| `saveBytes`         | Saves a byte array value in the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html) node                                          |
-| `getSavedString`    | Returns a byte array value from the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html) node else the default value provided      |
-| `getSavedInteger`   | Returns a byte array value from the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html) node else the default value provided      |
-| `getSavedBoolean`   | Returns a byte array value from the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html) node else the default value provided      |
-| `getSavedDouble`    | Returns a byte array value from the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html) node else the default value provided      |
-| `getSavedFloat`     | Returns a byte array value from the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html) node else the default value provided      |
-| `getSavedLong`      | Returns a byte array value from the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html) node else the default value provided      |
-| `getSavedBytes`     | Returns a byte array value from the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html) node else the default value provided      |
-| `clearPreference`   | Clears the saved value of a key from the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html) node else the default value provided |
-| `clearPreferences`  | Clears all saved values in the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html) node else the default value provided           |
+| Method              | Description                                                                                                                                                                                       |
+|---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `getResourceStream` | Opens and returns a stream to a resource file                                                                                                                                                     |
+| `getFileStream`     | Opens and returns a stream to a file which may or may not be a resource file                                                                                                                      |
+| `getResourceImage`  | Loads and caches an image resource file                                                                                                                                                           |
+| `getResourceFont`   | Loads and caches a font resource file                                                                                                                                                             |
+| `writeFile`         | Writes data to the file at the specified path                                                                                                                                                     |
+| `saveString`        | Saves a string value in the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html){:target="_blank"} node                                              |
+| `saveInteger`       | Saves an integer value in the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html){:target="_blank"} node                                            |
+| `saveBoolean`       | Saves a boolean value in the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html){:target="_blank"} node                                             |
+| `saveDouble`        | Saves a double value in the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html){:target="_blank"} node                                              |
+| `saveFloat`         | Saves a float value in the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html){:target="_blank"} node                                               |
+| `saveLong`          | Saves a long value in the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html){:target="_blank"} node                                                |
+| `saveBytes`         | Saves a byte array value in the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html){:target="_blank"} node                                          |
+| `getSavedString`    | Returns a byte array value from the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html){:target="_blank"} node else the default value provided      |
+| `getSavedInteger`   | Returns a byte array value from the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html){:target="_blank"} node else the default value provided      |
+| `getSavedBoolean`   | Returns a byte array value from the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html){:target="_blank"} node else the default value provided      |
+| `getSavedDouble`    | Returns a byte array value from the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html){:target="_blank"} node else the default value provided      |
+| `getSavedFloat`     | Returns a byte array value from the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html){:target="_blank"} node else the default value provided      |
+| `getSavedLong`      | Returns a byte array value from the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html){:target="_blank"} node else the default value provided      |
+| `getSavedBytes`     | Returns a byte array value from the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html){:target="_blank"} node else the default value provided      |
+| `clearPreference`   | Clears the saved value of a key from the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html){:target="_blank"} node else the default value provided |
+| `clearPreferences`  | Clears all saved values in the application's [preferences](https://docs.oracle.com/en/java/javase/17/core/preferences-api1.html){:target="_blank"} node else the default value provided           |

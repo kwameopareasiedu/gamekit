@@ -39,7 +39,7 @@ To include it in your project, add its dependency to your `pom.xml`, then reload
 
 > Find all versions on the [releases](https://github.com/kwameopareasiedu/gamekit/releases) page.
 
-## Hello Game
+## Hello GameKit
 
 Let's get started with a very simple application. Think of this as a "Hello World" GameKit sample.
 
@@ -92,7 +92,9 @@ Running this application should give you a window like this:
 - In the static `main` method, we created an `Application` instance with title, _"A Simple Application"_, loaded an
   instance of our scene subclass and called the `run` method to start the application.
 
-## A Shallow Dive In
+## A Little Deeper
+
+_<small>That definitely doesn't sound right</small>_ 😄
 
 In the previous section, we extended the `Scene` class, rendered stuff unto the window and created an `Application` to
 run it all.
@@ -100,11 +102,7 @@ run it all.
 We'll take it a step further in this section by creating a simple color switcher game which will render a colored box
 and when the space bar is pressed, it will cycle through <span style="background-color:red;padding:2px 4px;">red</span>,
 <span style="background-color:yellow;padding:2px 4px;">yellow</span> and
-<span style="background-color:green;padding:2px 4px;color:white;">green</span>, as shown in the video below.
-
-<video controls style="max-width:480px;width:100%">
-  <source src="/assets/gamekit-color-switcher.mp4">
-</video>
+<span style="background-color:green;padding:2px 4px;color:white;">green</span>.
 
 `ColorSwitcher.java`
 
@@ -173,6 +171,12 @@ public class ColorSwitcher extends Scene {
   }
 }
 ```
+
+Running this application should result in the following:
+
+<video controls style="max-width:480px;width:100%">
+  <source src="/assets/gamekit-color-switcher.mp4">
+</video>
 
 ### What we have done
 
