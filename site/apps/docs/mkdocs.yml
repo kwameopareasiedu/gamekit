@@ -19,6 +19,7 @@ nav:
       - Rendering: features/rendering.md
       - Camera: features/camera.md
       - Input: features/input.md
+      - File IO: features/file-io.md
 theme: mkdocs
 markdown_extensions:
   - attr_list

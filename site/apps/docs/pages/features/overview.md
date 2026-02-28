@@ -8,7 +8,7 @@ The following are high-level features GameKit offers. Click on a link to learn m
 - [Rendering](rendering.md)
 - [Camera](camera.md)
 - [Input](input.md)
-- [File IO]()
+- [File IO](file-io.md)
 - [Physics]()
 - [Audio]()
 
