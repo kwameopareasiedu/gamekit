@@ -78,12 +78,12 @@ public class Sprite extends Component {
     this.scaleY = scaleY;
   }
 
-  /** Set whether the sprite is flipped horizontally */
+  /** Sets whether the sprite is flipped horizontally */
   public void flipX(boolean flipped) {
     flippedX = flipped;
   }
 
-  /** Set whether the sprite is flipped vertically */
+  /** Sets whether the sprite is flipped vertically */
   public void flipY(boolean flipped) {
     flippedY = flipped;
   }

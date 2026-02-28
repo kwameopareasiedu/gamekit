@@ -100,7 +100,7 @@ run it all.
 We'll take it a step further in this section by creating a simple color switcher game which will render a colored box
 and when the space bar is pressed, it will cycle through <span style="background-color:red;padding:2px 4px;">red</span>,
 <span style="background-color:yellow;padding:2px 4px;">yellow</span> and
-<span style="background-color:green;padding:2px 4px;color:white;">green</span>, as shown below.
+<span style="background-color:green;padding:2px 4px;color:white;">green</span>, as shown in the video below.
 
 <video controls style="max-width:480px;width:100%">
   <source src="/assets/gamekit-color-switcher.mp4">

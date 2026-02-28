@@ -51,7 +51,7 @@ public class MyObject extends Entity {
 
 ## Entity Members
 
-These are other publicly available entity methods
+These are other publicly available entity members:
 
 | Method           | Description                                                                                                                                               |
 |------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -90,12 +90,14 @@ public class CustomScene extends Scene {
 ### User Interface
 
 As mentioned previously, a scene can create and manage its own user interface. This is done by overriding the `createUI`
-and returning the interface definition.
+lifecycle method and returning the interface description.
 
 The sample below shows the UI for a bottom-center aligned text with 48px padding with text "Hello World":
 
 ```java
+import dev.gamekit.core.Application;
 import dev.gamekit.core.Scene;
+import dev.gamekit.core.Renderer;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.widgets.Align;
 import dev.gamekit.ui.widgets.Padding;
@@ -107,6 +109,17 @@ import java.awt.Color;
 public class UIShowcase extends Scene {
   public UIShowcase() {
     super("UI Showcase");
+  }
+  
+  public static void main(String[] args) {
+    Application game = new Application("UI Showcase") { };
+    game.loadScene(new UIShowcase());
+    game.run();
+  }
+  
+  @Override
+  protected void render() {
+    Renderer.clear(Color.BLACK);
   }
   
   @Override
@@ -131,13 +144,15 @@ public class UIShowcase extends Scene {
 }
 ```
 
-This is just a simple use case showcasing how easy it is to create declarative user-interfaces with GameKit. However,
-the topic of user creation is discussed in much more detail in a later section.
+![](../assets/simple-ui.png){:style="width:480px;"}
+
+This is just a simple use case showcasing how easy it is to
+create [declarative UI](https://medium.com/@kemal_codes/declarative-ui-2ebf11e72059) with GameKit. The topic of UI
+creation is explored in much more detail in a later section.
 
 ## Next Steps
 
-This is an introductory guide to entities and scenes. Check out our [examples](../tutorials/examples.md) sections for
-more samples involving entities.
+Now that you are familiar with entities and scenes, we recommend you check out our [examples](../tutorials/examples.md)
+sections for related samples to strengthen your understanding on the topic.
 
-While entities themselves are independent objects in your game world, they can be enhanced with predefined behaviours
-known as [components](./components.md), which you can take a look at.
+Next, we explore [components](components/overview.md) which are mechanisms for attaching behaviours to entities.  

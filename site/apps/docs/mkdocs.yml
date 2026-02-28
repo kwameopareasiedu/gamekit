@@ -3,13 +3,19 @@ site_dir: dist
 docs_dir: pages
 nav:
   - Tutorials:
-    - Getting Started: tutorials/getting-started.md
-    - Examples: tutorials/examples.md
+      - Getting Started: tutorials/getting-started.md
+      - Examples: tutorials/examples.md
   - Features:
       - Overview: features/overview.md
       - Application: features/application.md
       - Entities & Scenes: features/ecs.md
-      - Entities Components: features/components.md
+      - Entity Components:
+          - Overview: features/components/overview.md
+          - Transform: features/components/transform.md
+          - Sprite: features/components/sprite.md
+          - Animated Sprite: features/components/animated-sprite.md
+          - RigidBody: features/components/rigidbody.md
+          - Collider: features/components/collider.md
 theme: mkdocs
 markdown_extensions:
   - attr_list

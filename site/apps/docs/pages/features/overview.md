@@ -4,8 +4,9 @@ The following are high-level features GameKit offers. Click on a link to learn m
 
 - [Application](./application.md)
 - [Entities & Scenes](./ecs.md)
-- [Entities Components](./components.md)
+- [Entity Components](components/overview.md)
 - [Rendering]()
+- [Camera]()
 - [Input]()
 - [File IO]()
 - [Physics]()
