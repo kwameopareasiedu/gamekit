@@ -49,7 +49,7 @@ public final class IO {
     return is;
   }
 
-  /** Read and cache an image <b>resource file</b> */
+  /** Reads and cache an image <b>resource file</b> */
   public static BufferedImage getResourceImage(String resPath) {
     try {
       if (CACHE.containsKey(resPath)) return (BufferedImage) CACHE.get(resPath);
@@ -65,7 +65,7 @@ public final class IO {
     }
   }
 
-  /** Read and cache an image <b>resource file</b>, returning a slice of it */
+  /** Reads and cache an image <b>resource file</b>, returning a slice of it */
   public static BufferedImage getResourceImage(String resPath, int x, int y, int w, int h) {
     try {
       return getResourceImage(resPath).getSubimage(x, y, w, h);
@@ -80,7 +80,7 @@ public final class IO {
     }
   }
 
-  /** Read and cache a font <b>resource file</b> */
+  /** Reads and cache a font <b>resource file</b> */
   public static Font getResourceFont(String resPath) {
     try {
       if (CACHE.containsKey(resPath)) return (Font) CACHE.get(resPath);

@@ -21,6 +21,9 @@ nav:
       - Input: features/input.md
       - File IO: features/file-io.md
       - Physics: features/physics.md
+      - Audio:
+          - Overview: features/audio/overview.md
+          - Audio Clip: features/audio/audio-clip.md
 theme: mkdocs
 markdown_extensions:
   - attr_list

@@ -2,12 +2,18 @@
 
 In this document, we'll cover how to install GameKit and build a simple application with it.
 
+## Requirements
+
+To create a project depending on GameKit, you must have the following installed and configured:
+
+1. Java Development Kit (18+)
+2. A Java IDE (IntelliJ IDEA, _Eclipse_, _Netbeans_, _VSCode_, etc)
+3. Maven build tool and dependency manager (3.9.9+)
+
 ## Installation
 
-GameKit is distributed as a **Maven** dependency.
-
-To include it in your project, add its dependency to your `pom.xml`, then reload the Maven project in your IDE or run
-`mvn clean compile` to download the dependencies.
+GameKit is distributed as a **Maven** dependency. Include it in your project by adding its dependency to your `pom.xml`,
+then reload your Maven project in your IDE or run `mvn clean compile` to download the dependencies.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
