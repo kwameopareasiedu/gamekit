@@ -23,7 +23,11 @@ nav:
       - Physics: features/physics.md
       - Audio:
           - Overview: features/audio/overview.md
-          - Audio Clip: features/audio/audio-clip.md
+          - Audio Clips: features/audio/audio-clip.md
+          - Audio Groups: features/audio/audio-group.md
+          - Attenuation: features/audio/attenuation.md
+          - Audio Shapes: features/audio/audio-shape.md
+          - Audio Listener: features/audio/audio-listener.md
 theme: mkdocs
 markdown_extensions:
   - attr_list

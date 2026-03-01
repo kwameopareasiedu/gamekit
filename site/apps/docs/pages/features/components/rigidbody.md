@@ -1,6 +1,6 @@
 # RigidBody
 
-_[Back To Components](overview.md)_
+_[Back To Entity Components](overview.md)_
 
 This component provides a physics-based way to control the movement and position of an entity. An entity with a
 `RigidBody` component is controlled by GameKit's physics engine and responds to applied forces, gravity and collisions.
@@ -11,7 +11,7 @@ computed physics position and rotation.
 > An entity with `RigidBody` attached cannot be a descendant of another entity which also has `RigidBody` attached.
 > Attempting to do this will result in a runtime exception.
 
-## Public methods
+## Public Methods
 
 | Method              | Description                                                                                                                                                  |
 |---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|

@@ -1,6 +1,6 @@
 # Animated Sprite
 
-_[Back To Components](overview.md)_
+_[Back To Entity Components](overview.md)_
 
 This component is an extension of the [Sprite](sprite.md) component which animates a sprite sheet at an entity's
 position.
@@ -8,7 +8,7 @@ position.
 Since `AnimatedSprite` controls an animation, it requires you to specify an animation duration when creating a new
 instance and whether the animation should loop.
 
-## Public methods
+## Public Methods
 
 `AnimatedSprite` inherits all the public methods from [Sprite](sprite.md#public-methods).
 

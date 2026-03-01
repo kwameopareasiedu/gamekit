@@ -75,10 +75,10 @@ public class AudioSample extends Scene {
 
 GameKit audio is a bit of a broad topic and has been categorized in the sections below:
 
-- [Audio Clip](audio-clip.md)
-- [Audio Groups]()
-- [Audio Shapes]()
-- [Attenuation]()
-- [Audio Listener]()
+- [Audio Clips](audio-clip.md)
+- [Audio Groups](audio-group.md)
+- [Attenuation](attenuation.md)
+- [Audio Shapes](audio-shape.md)
+- [Audio Listener](audio-listener.md)
 
 <configure hideToc contentWidth="center"></configure>

@@ -1,10 +1,10 @@
 # Sprite
 
-_[Back To Components](overview.md)_
+_[Back To Entity Components](overview.md)_
 
 This component renders a sprite image at an entity's position and controls how it appears visually.
 
-## Public methods
+## Public Methods
 
 | Method             | Description                                                      |
 |--------------------|------------------------------------------------------------------|

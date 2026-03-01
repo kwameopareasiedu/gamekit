@@ -1,6 +1,6 @@
 # Collider
 
-_[Back To Components](overview.md)_
+_[Back To Entity Components](overview.md)_
 
 This component defines the shape of an entity with a [RigidBody](rigidbody.md) for the purposes of physics collision
 detection.
@@ -10,7 +10,7 @@ detection.
 - `BoxCollider` (a rect-shaped collider with a center, width and height)
 - `CircleCollider` (a circular-shaped collider with a center and radius)
 
-## Public methods
+## Public Methods
 
 | Method                 | Description                                                                                                                                                 |
 |------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|

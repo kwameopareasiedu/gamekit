@@ -8,7 +8,7 @@ control playback.
 ## Preloading Audio Clips
 
 Audio must be preloaded into memory before it can be used in your scene. This is handled by the static `Audio` utility.
-You preload an audio file as non-spatial (2D) or spatial (3D) (_More on this later_).
+You preload an audio file as [non-spatial (2D)](#non-spatial-audio) or [spatial (3D)](#spatial-audio).
 
 ```java
 Audio.preload(<Unique string key>, new AudioClip2D("path-to-audio-resource", <Audio Group>, <Max Volume>));
@@ -34,7 +34,14 @@ group and max volume, start/stop as needed in-game.
 
 ```java
 // Preload 2D audio clip
-Audio.preload("main-bg-music", new AudioClip2D("path-to-audio-resource", AudioGroup.MUSIC, 1));
+Audio.preload(
+  "main-bg-music", 
+  new AudioClip2D(
+    "path-to-audio-resource", 
+    AudioGroup.MUSIC, 
+    1
+  )
+);
 
 // Control playback
 Audio.get("main-bg-music").play();      // One-shot playback
@@ -43,3 +50,53 @@ Audio.get("main-bg-music").pause();     // Pause playback
 Audio.get("main-bg-music").resume();    // Resume playback
 Audio.get("main-bg-music").stop();      // Stop and reset playback
 ```
+
+### Spatial Audio
+
+Spatial (3D) audio refers to positional sound whose output through stereo speakers is panned with respect to the
+[AudioListener](audio-listener.md) instance . This means, if the audio is placed to the right of the listener, it will
+be heard more from the right speaker than the left and vice versa.
+
+Spatial audio is great for sound-emitting objects in your game world, which are panned relative to the player (E.g.
+explosions, gunshots, waterfall).
+
+Using this audio in-game is a bit more involved. Preload the audio file into an `AudioClip3D`, specifying the
+group, max volume, [attenuation function](attenuation.md) and [audio shape](audio-shape.md), then start/stop as needed
+in-game.
+
+```java
+// Preload 3D audio clip
+Audio.preload(
+  "bomb-explosion",
+  new AudioClip3D(
+    "path-to-audio-resource", 
+    AudioGroup.EFFECTS, 
+    1, 
+    new LinearAudioAttenuation(), 
+    new CircleAudioShape(10, 75)
+  )
+);
+
+// Control playback
+Audio.get("main-bg-music").play();      // One-shot playback
+Audio.get("main-bg-music").play(true);  // Loop playback
+Audio.get("main-bg-music").pause();     // Pause playback
+Audio.get("main-bg-music").resume();    // Resume playback
+Audio.get("main-bg-music").stop();      // Stop and reset playback
+```
+
+## Public Methods
+
+| Method   | Description                                                                                                               |
+|----------|---------------------------------------------------------------------------------------------------------------------------|
+| `play`   | `+1` Begins playback from the beginning without looping<br/>`+2` Begins playback from the beginning with optional looping |
+| `pause`  | Stops playback without resetting the clip                                                                                 |
+| `resume` | Resumes playback from paused position                                                                                     |
+| `stop`   | Stops playback, resetting the clip to the beginning                                                                       |
+
+_`AudioClip3D` has these methods in addition to the common public methods_.
+
+| Method        | Description                                  |
+|---------------|----------------------------------------------|
+| `getPosition` | Returns the position vector                  |
+| `setPosition` | Sets the position of the clip in world-space |
