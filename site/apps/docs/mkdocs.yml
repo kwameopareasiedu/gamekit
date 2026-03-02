@@ -30,7 +30,7 @@ nav:
           - Audio Listener: features/audio/audio-listener.md
           - Attenuation: features/audio/attenuation.md
           - Audio Shape: features/audio/audio-shape.md
-      - UI: features/ui.md
+      - User Interface (UI): features/ui.md
 theme: mkdocs
 markdown_extensions:
   - attr_list
