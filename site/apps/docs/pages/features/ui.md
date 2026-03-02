@@ -236,5 +236,6 @@ UI toolkit.
 
 ### Further Reading
 
-- [Declarative UI](https://medium.com/@kemal_codes/declarative-ui-2ebf11e72059)
-- 
+- [Declarative UI](https://medium.com/@kemal_codes/declarative-ui-2ebf11e72059){:target="_blank"}
+- [Declarative UI (Flutter)](https://docs.flutter.dev/flutter-for/declarative){:target="_blank"}
+- [Box Constraint Model](https://docs.flutter.dev/ui/layout/constraints){:target="_blank"}
