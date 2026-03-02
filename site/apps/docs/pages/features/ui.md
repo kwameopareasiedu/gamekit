@@ -104,3 +104,137 @@ Padding.create(
   /** Child widget here */
 )
 ```
+
+## Updating UI
+
+UI is rarely static. It should react to events occurring within your game world.
+
+In most other game engines, you have to control how the UI is updated. This usually means getting a reference to UI
+elements and changing properties on them. As an example, when the player takes damage, you need to reference the health
+text and/or progress bar and write code to set their manually.
+
+Here's a pseudocode of how that looks like:
+
+```text
+health = 100;
+healthText = /* Code to get a reference to the health text UI */;
+healthProgress = /* Code to get a reference to the health progress bar */;
+...
+func onPlayerDamage (amount) {
+    health -= amount;
+    healthText.text = health;
+    healthProgress.val = health;
+}
+```
+
+While this is ok and most likely seems familiar to you, it gets quite cumbersome as the number of elements to keep track
+of grows. You'd have so many UI element references and have to keep track of which elements should be changed.
+
+To tackle this, GameKit uses what we call
+a [declarative UI](https://medium.com/@kemal_codes/declarative-ui-2ebf11e72059){:target="_blank"}. Here, you only change
+variables your UI depends on and let the engine compute the updated UI which reflect the new values.
+
+This eliminates the need for any UI element reference, and you don't need to specify step-by-step how the UI should
+change.
+
+Let's look at a simple counter game. When a button is clicked, the counter goes up and the UI is updated to show the new
+value.
+
+```java
+import dev.gamekit.core.Application;
+import dev.gamekit.core.Renderer;
+import dev.gamekit.core.Scene;
+import dev.gamekit.settings.Resolution;
+import dev.gamekit.settings.Settings;
+import dev.gamekit.settings.TextAntialiasing;
+import dev.gamekit.settings.WindowMode;
+import dev.gamekit.ui.enums.Alignment;
+import dev.gamekit.ui.enums.CrossAxisAlignment;
+import dev.gamekit.ui.events.MouseEvent;
+import dev.gamekit.ui.widgets.*;
+import dev.gamekit.ui.widgets.Button;
+
+import java.awt.*;
+
+public class Counter extends Scene {
+  private int counter = 0;
+
+  public Counter() {
+    super("Counter");
+  }
+
+  public static void main(String[] args) {
+    Application game = new Application(
+      new Settings("Counter", WindowMode.WINDOWED, Resolution.HD, TextAntialiasing.ON)
+    ) { };
+    game.loadScene(new Counter());
+    game.run();
+  }
+
+  @Override
+  protected void render() {
+    Renderer.clear(Color.BLACK);
+  }
+
+  @Override
+  protected Widget createUI() {
+    return Center.create(
+      Column.create(
+        props -> {
+          props.crossAxisAlignment = CrossAxisAlignment.CENTER;
+          props.gapSize = 24;
+        },
+        Text.create(
+          props -> {
+            props.fontSize = 72;
+            props.alignment = Alignment.CENTER;
+            props.text = String.format("Counter: %d", counter);
+          }
+        ),
+        Sized.create(
+          props -> {
+            props.fixedWidth = 128.0;
+            props.fixedHeight = 64.0;
+          },
+          Button.create(
+            props -> {
+              props.mouseListener = this::incrementCounter;
+            },
+            Text.create("Click Me")
+          )
+        )
+      )
+    );
+  }
+
+  private void incrementCounter(MouseEvent event) {
+    if (event.type == MouseEvent.Type.CLICK) {
+      counter++;
+      updateUI();
+    }
+  }
+}
+```
+
+### What we have done
+
+- We created a centered column widget containing a text which displays the `counter` variable and a button to
+  increment the value of `counter` when pressed.
+- In the `incrementCounter` method, we check call `updateUI()` after incrementing the count to instruct the engine to
+  rebuild the UI with the updated `counter` value.
+- In the static `main` method, we created an `Application` instance with title, _"Counter"_, loaded an instance of
+  our scene subclass and called the `run` method to start the application.
+
+## Summary
+
+Creating and managing UI doesn't have to be rocket science and GameKit gives you the tools to do this. The declarative
+nature of UI removes the need for manual updates, allowing the engine to help you focus on game logic. Whenever we
+update a variable the UI depends on, call the `updateUI` method in the `Scene` class and GameKit will handle the rest.
+
+From here, you can check out more UI [examples](../tutorials/examples.md) to get even more familiar with the GameKit's
+UI toolkit.
+
+### Further Reading
+
+- [Declarative UI](https://medium.com/@kemal_codes/declarative-ui-2ebf11e72059)
+- 
