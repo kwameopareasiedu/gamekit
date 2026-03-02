@@ -53,10 +53,6 @@
 - Renamed `void setCenter(double x, double y)` in `Sprite` component to `void setOffset(double x double y)`
 - Updated `Compose` widget to support custom internal state via its `void updateUI()` method
 
-### Deprecated
-
-### Removed
-
 ## 0.5.0
 
 ### Added
@@ -134,8 +130,6 @@
 Vector screenToWorldPosition(double, double)`
 - Modified `Component` to keep a reference to its `Entity` during disposal
 
-### Deprecated
-
 ### Removed
 
 - Removed `void addCircleFixture(double radius, FixtureTuner tuner)` from `RigidBody` class
@@ -171,10 +165,6 @@ Vector screenToWorldPosition(double, double)`
 
 - Updated `public static <WIDGET_NAME>Options options()` method in all widget classes to `public static Config config()`
 - Changed `static Window getInstance()` in `Window` class from public to package-private
-
-### Deprecated
-
-### Removed
 
 ## 0.4.0-SNAPSHOT-5
 
