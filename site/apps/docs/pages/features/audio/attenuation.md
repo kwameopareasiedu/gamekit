@@ -37,7 +37,7 @@ The `attenuate` method is called with the following arguments and should return 
 2. Minimum possible distance defined by the [audio shape](audio-shape.md)
 3. Maximum possible distance defined by the [audio shape](audio-shape.md)
 
-GameKit ships with one attenuation implementation which is `LinearAudioAttenuation`.
+GameKit ships with one (1) attenuation implementation which is `LinearAudioAttenuation` class.
 
 ## Public Methods
 

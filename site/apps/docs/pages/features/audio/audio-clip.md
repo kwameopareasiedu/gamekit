@@ -42,13 +42,6 @@ Audio.preload(
     1
   )
 );
-
-// Control playback
-Audio.get("main-bg-music").play();      // One-shot playback
-Audio.get("main-bg-music").play(true);  // Loop playback
-Audio.get("main-bg-music").pause();     // Pause playback
-Audio.get("main-bg-music").resume();    // Resume playback
-Audio.get("main-bg-music").stop();      // Stop and reset playback
 ```
 
 ### Spatial Audio
@@ -76,13 +69,6 @@ Audio.preload(
     new CircleAudioShape(10, 75)
   )
 );
-
-// Control playback
-Audio.get("main-bg-music").play();      // One-shot playback
-Audio.get("main-bg-music").play(true);  // Loop playback
-Audio.get("main-bg-music").pause();     // Pause playback
-Audio.get("main-bg-music").resume();    // Resume playback
-Audio.get("main-bg-music").stop();      // Stop and reset playback
 ```
 
 ## Public Methods
