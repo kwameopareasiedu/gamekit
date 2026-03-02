@@ -1,6 +1,8 @@
 site_name: GameKit
 site_dir: dist
 docs_dir: pages
+site_url: https://docs.gamekit.opare.dev
+use_directory_urls: true
 nav:
   - Tutorials:
       - Getting Started: tutorials/getting-started.md
