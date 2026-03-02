@@ -31,7 +31,7 @@ window.
 > In screen-space, drawing originates from the top-left of the shape by default. In GameKit, all drawing is offset to
 > the center of the shape, hence the term **center-origin**.
 
-## Render attributes
+## Render Attributes
 
 Each of the static methods in `Renderer` can further be enhanced with attribute methods which customize their
 operation. These attributes are defined in the table below:
