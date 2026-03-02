@@ -18,7 +18,7 @@ computed physics position and rotation.
 | `setMetaData`       | Sets a custom object with user-defined attributes as the metadata. In collisions, you can retrieve this metadata to identify specific `RigidBody` components |
 | `setGravityScale`   | Sets the world gravity multiplier                                                                                                                            |
 | `setPosition`       | Sets the global position                                                                                                                                     |
-| `setRotation`       | `+1` Sets the global rotation (in radian) about its center<br/><br/>`+2` Sets the global rotation (in radian) about a specified point                        |
+| `setRotation`       | `+1` Sets the global rotation (in radian) about its center<br/>`+2` Sets the global rotation (in radian) about a specified point                             |
 | `setLinearVelocity` | Sets the linear velocity                                                                                                                                     |
 | `applyForce`        | Applies a linear force vector                                                                                                                                |
 | `applyImpulse`      | Applies a linear impulse vector                                                                                                                              |

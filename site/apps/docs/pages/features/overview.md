@@ -11,5 +11,6 @@ The following are high-level features GameKit offers. Click on a link to learn m
 - [File IO](file-io.md)
 - [Physics](physics.md)
 - [Audio](audio/overview.md)
+- [UI](ui.md)
 
 <configure hideToc contentWidth="center"></configure>

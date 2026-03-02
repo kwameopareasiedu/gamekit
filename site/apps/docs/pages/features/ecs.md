@@ -53,16 +53,16 @@ public class MyObject extends Entity {
 
 These are other publicly available entity members:
 
-| Method           | Description                                                                                                                                                  |
-|------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `logger`         | The [Log4j](https://logging.apache.org/log4j/2.x/index.html){:target="_blank"} logger object of the entity instance                                          |
-| `getParent`      | Returns the entity's parent entity                                                                                                                           |
-| `getState`       | Returns the current state of the entity                                                                                                                      |
-| `addChild`       | Adds a child entity at the end of the current frame                                                                                                          |
-| `removeChild`    | Removes a child entity at the end of the current frame                                                                                                       |
-| `findComponent`  | `+1` Returns the first component matching the given class<br/><br/>`+2` Returns the first component matching the given class and passing the provided filter |
-| `findComponents` | Finds all component matching the given class and inserts them into the provided `out` list                                                                   |
-| `destroy`        | Marks the entity as `DOOMED` and schedules it for destruction at the end of the current frame                                                                |
+| Method           | Description                                                                                                                                             |
+|------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `logger`         | The [Log4j](https://logging.apache.org/log4j/2.x/index.html){:target="_blank"} logger object of the entity instance                                     |
+| `getParent`      | Returns the entity's parent entity                                                                                                                      |
+| `getState`       | Returns the current state of the entity                                                                                                                 |
+| `addChild`       | Adds a child entity at the end of the current frame                                                                                                     |
+| `removeChild`    | Removes a child entity at the end of the current frame                                                                                                  |
+| `findComponent`  | `+1` Returns the first component matching the given class<br/>`+2` Returns the first component matching the given class and passing the provided filter |
+| `findComponents` | Finds all component matching the given class and inserts them into the provided `out` list                                                              |
+| `destroy`        | Marks the entity as `DOOMED` and schedules it for destruction at the end of the current frame                                                           |
 
 ## Scenes
 
@@ -92,7 +92,7 @@ public class CustomScene extends Scene {
 As mentioned previously, a scene can create and manage its own user interface. This is done by overriding the `createUI`
 lifecycle method and returning the interface description.
 
-The sample below shows the UI for a bottom-center aligned text with 48px padding with text "Hello World":
+The sample below shows the UI for a bottom-center aligned text with 48px padding and content "Hello World":
 
 ```java
 import dev.gamekit.core.Application;
@@ -147,8 +147,8 @@ public class UIShowcase extends Scene {
 ![](../assets/simple-ui.png){:style="width:480px;"}
 
 This is just a simple use case showcasing how easy it is to
-create [declarative UI](https://medium.com/@kemal_codes/declarative-ui-2ebf11e72059) with GameKit. The topic of UI
-creation is explored in much more detail in a later section.
+create [declarative UI](https://medium.com/@kemal_codes/declarative-ui-2ebf11e72059){:target="_blank"} with GameKit. The
+topic of [UI](ui.md) is explored in much more detail in a later section.
 
 ## Next Steps
 

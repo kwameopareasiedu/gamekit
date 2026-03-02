@@ -16,7 +16,7 @@ nav:
           - Animated Sprite: features/components/animated-sprite.md
           - RigidBody: features/components/rigidbody.md
           - Collider: features/components/collider.md
-      - Rendering: features/rendering.md
+      - Renderer: features/rendering.md
       - Camera: features/camera.md
       - Input: features/input.md
       - File IO: features/file-io.md
@@ -25,9 +25,10 @@ nav:
           - Overview: features/audio/overview.md
           - Audio Clip: features/audio/audio-clip.md
           - Audio Group: features/audio/audio-group.md
+          - Audio Listener: features/audio/audio-listener.md
           - Attenuation: features/audio/attenuation.md
           - Audio Shape: features/audio/audio-shape.md
-          - Audio Listener: features/audio/audio-listener.md
+      - UI: features/ui.md
 theme: mkdocs
 markdown_extensions:
   - attr_list

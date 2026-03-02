@@ -15,9 +15,9 @@ public class MyGame extends Application {
 }
 ```
 
-It runs a [fixed-step](https://gameprogrammingpatterns.com/game-loop.html#play-catch-up) game update loop which protects
-against lag spikes. It also manages scenes, schedules animations and timeouts and provides methods to manage the running
-instance.
+It runs a [fixed-step](https://gameprogrammingpatterns.com/game-loop.html#play-catch-up){:target="_blank"} game update
+loop which protects against lag spikes. It also manages scenes, schedules animations and timeouts and provides methods
+to manage the running instance.
 
 `Application` splits its workload into four (4) threads to handle the game update loop, rendering, audio and physics
 updates. This multithreaded setup improves performance on multicore processors dramatically, since each thread is
@@ -56,12 +56,12 @@ Application game = new Application(
 
 ## Public Methods
 
-| Method         | Description                                                                                                                        |
-|----------------|------------------------------------------------------------------------------------------------------------------------------------|
-| `loadScene`    | Loads a new scene at the end of the current frame                                                                                  |
-| `scheduleTask` | `+1` Schedules a task to run immediately after the current frame<br/><br/>`+2` Schedules a task to run after some time has elapsed |
-| `run`          | Starts the game loop of an application instance                                                                                    |
-| `quit`         | Quits the running application instance                                                                                             |
+| Method         | Description                                                                                                                   |
+|----------------|-------------------------------------------------------------------------------------------------------------------------------|
+| `loadScene`    | Loads a new scene at the end of the current frame                                                                             |
+| `scheduleTask` | `+1` Schedules a task to run immediately after the current frame<br/>`+2` Schedules a task to run after some time has elapsed |
+| `run`          | Starts the game loop of an application instance                                                                               |
+| `quit`         | Quits the running application instance                                                                                        |
 
 ## Static Methods
 

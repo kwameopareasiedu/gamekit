@@ -77,8 +77,8 @@ GameKit audio is a bit of a broad topic and has been categorized in the sections
 
 - [Audio Clip](audio-clip.md)
 - [Audio Group](audio-group.md)
+- [Audio Listener](audio-listener.md)
 - [Attenuation](attenuation.md)
 - [Audio Shape](audio-shape.md)
-- [Audio Listener](audio-listener.md)
 
 <configure hideToc contentWidth="center"></configure>
