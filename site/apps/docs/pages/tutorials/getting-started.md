@@ -43,7 +43,7 @@ then reload your Maven project in your IDE or run `mvn clean compile` to downloa
 </project>
 ```
 
-> Find all versions on the [releases](https://github.com/kwameopareasiedu/gamekit/releases) page.
+> Find all versions on the [releases](https://github.com/kwameopareasiedu/gamekit/releases){:target="_blank"} page.
 
 ## Hello GameKit
 
