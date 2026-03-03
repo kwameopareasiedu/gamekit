@@ -41,7 +41,7 @@ Checkbox.create(
       }
       
       toggled = event.value
-    }
+    };
   },
   Text.create("Panel child"),
 );

@@ -26,15 +26,15 @@ Button.create(
     props.padding = new Spacing(10, 20, 10, 24);
     props.mouseListener = (event) -> {
       switch (event.type) {
-        case ENTER -> System.out.println("Mouse entered");
-        case MOTION -> System.out.println("Mouse moved");
-        case DOWN -> System.out.println("Mouse just pressed");
-        case PRESS -> System.out.println("Mouse being held down");
-        case RELEASE -> System.out.println("Mouse released");
-        case CLICK -> System.out.println("Mouse clicked");
-        case EXIT -> System.out.println("Mouse exited");
+        case MouseEvent.Type.ENTER -> System.out.println("Mouse entered");
+        case MouseEvent.Type.MOTION -> System.out.println("Mouse moved");
+        case MouseEvent.Type.DOWN -> System.out.println("Mouse just pressed");
+        case MouseEvent.Type.PRESS -> System.out.println("Mouse being held down");
+        case MouseEvent.Type.RELEASE -> System.out.println("Mouse released");
+        case MouseEvent.Type.CLICK -> System.out.println("Mouse clicked");
+        case MouseEvent.Type.EXIT -> System.out.println("Mouse exited");
       }
-    }
+    };
   },
   Text.create("Panel child"),
 );
