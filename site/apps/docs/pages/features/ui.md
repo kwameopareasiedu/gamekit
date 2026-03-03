@@ -216,6 +216,12 @@ public class Counter extends Scene {
 }
 ```
 
+Running this application should result in the following:
+
+<video controls style="width:100%">
+  <source src="/assets/gamekit-counter.mp4">
+</video>
+
 ### What we have done
 
 - We created a centered column widget containing a text which displays the `counter` variable and a button to
