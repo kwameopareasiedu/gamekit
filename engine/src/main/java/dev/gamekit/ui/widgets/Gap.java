@@ -22,6 +22,15 @@ public class Gap extends Leaf {
     return new Gap(Widgets.configureGap(updater));
   }
 
+  public static Gap create(int width, int height) {
+    return new Gap(
+      Widgets.configureGap(props -> {
+        props.width = width;
+        props.height = height;
+      })
+    );
+  }
+
   @Override
   protected void performLayout(Constraints constraints) {
     intrinsicSize.set(width, height);

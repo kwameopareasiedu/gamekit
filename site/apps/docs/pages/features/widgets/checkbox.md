@@ -29,9 +29,9 @@ Checkbox.create(
     props.defaultIcon = IO.getResourceImage("default-bg.png");
     props.toggledIcon = IO.getResourceImage("hover-bg.png");
     props.iconPadding = new Spacing(10, 20, 10, 24);
-    props.iconWidth = 64.0;
-    props.iconHeight = 64.0;
-    props.gapSize = 24.0;
+    props.iconWidth = 64;
+    props.iconHeight = 64;
+    props.gapSize = 24;
     props.toggled = toggled;
     props.changeListener = (event) -> {
       if (event.value) {
