@@ -51,18 +51,22 @@ public abstract class MultiChildParent extends Parent {
       child.unmount();
   }
 
+  /** Returns the {@link #children} array */
   public Widget[] getChildren() {
     return children;
   }
 
+  /** Replaces an existing child at the specified {@code index} with the {@code newChild} widget */
   public final void updateChild(int index, Widget newChild) {
-    if (index >= children.length)
+    if (index >= children.length) {
       throw new ArrayIndexOutOfBoundsException(
         String.format(
           "Children length: %d, Index: %d",
           children.length, index
         )
       );
+    }
+
     children[index].parent = null;
     children[index] = newChild;
     children[index].parent = this;

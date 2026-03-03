@@ -96,7 +96,6 @@ public abstract class Widget {
    */
   public final void update(Widget widget) {
     this.config = widget.config;
-    config.updateWidget(this);
     performInit();
   }
 

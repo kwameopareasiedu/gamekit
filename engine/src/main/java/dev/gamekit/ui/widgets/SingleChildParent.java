@@ -39,10 +39,12 @@ public abstract class SingleChildParent extends Parent {
     child.unmount();
   }
 
+  /** Returns the {@code child} widget */
   public Widget getChild() {
     return child;
   }
 
+  /** Replaces the existing child with the {@code newChild} widget */
   public final void updateChild(Widget newChild) {
     child.parent = null;
     child = newChild;
