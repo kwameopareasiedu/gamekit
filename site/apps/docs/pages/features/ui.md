@@ -234,7 +234,7 @@ update a variable the UI depends on, call the `updateUI` method in the `Scene` c
 From here, you can check out more UI [examples](../tutorials/examples.md) to get even more familiar with the GameKit's
 UI toolkit.
 
-### Further Reading
+## Further Reading
 
 - [Declarative UI](https://medium.com/@kemal_codes/declarative-ui-2ebf11e72059){:target="_blank"}
 - [Declarative UI (Flutter)](https://docs.flutter.dev/flutter-for/declarative){:target="_blank"}

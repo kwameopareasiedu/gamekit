@@ -23,7 +23,7 @@ jobs:
           java-version: 18
           distribution: temurin
       - run: mvn --batch-mode deploy
-      - run: cp -r engine/target/reports/apidocs/ engine/target/mvn/docs/
+#      - run: cp -r engine/target/reports/apidocs/ engine/target/mvn/docs/
       - run: |
           git config user.name publisher
           git config user.email publisher@gamekit.dev
