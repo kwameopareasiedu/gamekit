@@ -5,15 +5,15 @@ import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.settings.ImageInterpolation;
 import dev.gamekit.ui.enums.ImageFit;
 import dev.gamekit.utils.Constraints;
+import dev.gamekit.utils.EngineImage;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
-/** A {@link Leaf} which renders a {@link BufferedImage} to the screen */
+/** A {@link Leaf} which renders an {@link EngineImage} to the screen */
 @WidgetBuilder
 public class Image extends Leaf {
   @WidgetBuilderField(themable = false)
-  protected BufferedImage image;
+  protected EngineImage image;
   @WidgetBuilderField(fallback = "dev.gamekit.ui.enums.ImageFit.FIT")
   protected ImageFit fit;
   @WidgetBuilderField(fallback = "dev.gamekit.settings.ImageInterpolation.DEFAULT")
@@ -27,7 +27,7 @@ public class Image extends Leaf {
     return new Image(Widgets.configureImage(updater));
   }
 
-  public static Image create(BufferedImage image) {
+  public static Image create(EngineImage image) {
     return Image.create(props -> props.image = image);
   }
 
@@ -44,16 +44,16 @@ public class Image extends Leaf {
   @Override
   protected void performRender(Graphics2D g) {
     double dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
-    boolean clipChanged = false;
+//    boolean clipChanged = false;
     Shape originalClip = null;
 
     switch (fit) {
       case FIT -> {
         double widthRatio = absoluteBounds.width / computedBounds.width;
         double heightRatio = absoluteBounds.height / computedBounds.height;
-        double scale = computedBounds.width > computedBounds.height ? heightRatio : widthRatio;
-        int scaledWidth = (int) (computedBounds.width * scale);
-        int scaledHeight = (int) (computedBounds.height * scale);
+        double scaleRatio = computedBounds.width > computedBounds.height ? heightRatio : widthRatio;
+        int scaledWidth = (int) (computedBounds.width * scaleRatio);
+        int scaledHeight = (int) (computedBounds.height * scaleRatio);
 
         dx1 = absoluteBounds.x + (absoluteBounds.width - scaledWidth) / 2;
         dy1 = absoluteBounds.y + (absoluteBounds.height - scaledHeight) / 2;
@@ -63,8 +63,7 @@ public class Image extends Leaf {
       case CROP -> {
         double widthRatio = absoluteBounds.width / intrinsicSize.width;
         double heightRatio = absoluteBounds.height / intrinsicSize.height;
-        double scaleRatio = intrinsicSize.width > intrinsicSize.height
-          ? widthRatio : heightRatio;
+        double scaleRatio = intrinsicSize.width > intrinsicSize.height ? widthRatio : heightRatio;
         int scaledWidth = (int) (intrinsicSize.width * scaleRatio);
         int scaledHeight = (int) (intrinsicSize.height * scaleRatio);
 
@@ -81,8 +80,6 @@ public class Image extends Leaf {
           (int) absoluteBounds.width,
           (int) absoluteBounds.height
         );
-
-        clipChanged = true;
       }
       case STRETCH -> {
         dx1 = absoluteBounds.x;
@@ -97,13 +94,15 @@ public class Image extends Leaf {
     interpolation.apply(g);
 
     g.drawImage(
-      image, (int) dx1, (int) dy1, (int) dx2, (int) dy2,
-      0, 0, (int) intrinsicSize.width, (int) intrinsicSize.height, null
+      image,
+      (int) dx1, (int) dy1, (int) dx2, (int) dy2,
+      0, 0, (int) intrinsicSize.width, (int) intrinsicSize.height,
+      null
     );
 
     originalInterpolation.apply(g);
 
-    if (clipChanged)
+    if (fit == ImageFit.CROP)
       g.setClip(originalClip);
   }
 }

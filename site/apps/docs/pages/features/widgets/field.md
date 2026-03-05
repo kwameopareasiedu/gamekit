@@ -2,8 +2,7 @@
 
 _[Back To User Interface](../ui.md#widget-categories)_
 
-`Field` widget is an extension of [Text](text.md) which allows for user input. `Field` widget uses
-the [9-patch algorithm](https://en.wikipedia.org/wiki/9-slice_scaling){:target="_blank"} to render its background
+`Field` widget is an extension of [Text](text.md) which allows for user input.
 
 ## Properties
 
@@ -13,7 +12,6 @@ In addition to all [Text properties](text.md#properties), field also has these p
 |---------------------|-----------------------------------------------------------------------|
 | `defaultBackground` | The default input background                                          |
 | `focusBackground`   | The input background when focused                                     |
-| `edgeInsets`        | The 9-patch padding to be applied to the rendered background          |
 | `padding`           | The padding for the input box                                         |
 | `focusListener`     | The handler which gets invoked when focus changes                     |
 | `keyCharListener`   | The handler which gets invoked when keys are pressed inside the field |
@@ -24,9 +22,8 @@ In addition to all [Text properties](text.md#properties), field also has these p
 ```java
 Field.create(
   props -> {
-    props.defaultBackground = IO.getResourceImage("default-bg.png");
-    props.focusBackground = IO.getResourceImage("focus-bg.png");
-    props.edgeInsets = new Spacing(10, 20, 10, 24);
+    props.defaultBackground = IO.getImage("default-bg.png");
+    props.focusBackground = IO.getImage("focus-bg.png");
     props.padding = new Spacing(10, 20, 10, 24);
     props.focusListener = (event) -> {
       switch (event.type) {

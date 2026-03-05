@@ -18,6 +18,42 @@
 
 ### Removed
 
+## 0.7.0
+
+### Added
+
+- Added `color` field to `Panel` widget
+- Added `cornerRadius` field to `Panel` widget
+- Added `clip` field to `Panel` widget
+- Added
+  `static EngineImage getImageWithInsets(String resPath, int topInset, int rightInset, int bottomInset, int leftInset)
+  ` to `IO` class
+- Added
+  `static EngineImage getImageSliceWithInsets(String resPath, int sliceX, int sliceY, int sliceWidth,
+  int sliceHeight, int topInset, int rightInset, int bottomInset)
+  ` to `IO` class
+
+### Changed
+
+- Replaced `BufferedImage` return type of get image methods in `IO` class to new `EngineImage`
+- Changed signature of `static BufferedImage getResourceImage(String resPath)` in `IO` class to
+  `static Engine getImage(String resPath)`
+- Changed signature of `static BufferedImage getResourceImage(String resPath, int x, int y, int w, int h)` in `IO`
+  class to `static EngineImage getImageSlice(String resPath, int sliceX, int sliceY, int sliceWidth)`
+
+### Deprecated
+
+### Removed
+
+- Removed `Colored` widget whose functionality is now handled by the `Panel` widget
+- Removed `static InputStream getFileStream(String path)` method from `IO` class
+- Removed `edgeInsets` field from `Field` widget
+- Removed `padding` field from `Panel` widget
+- Removed `padding` field from `Button` widget
+- Removed `thumbEdgeInsets` field from `Slider` widget
+- Removed `trackEdgeInsets` field from `Progress` widget
+- Removed `fillEdgeInsets` field from `Progress` widget
+
 ## 0.6.0
 
 ### Added
@@ -27,20 +63,20 @@
   fields
 - Added `double getAngle()` method to `Vector` class which returns the angle of a vector in radian
 - Added `double getSquaredMagnitude()` method to `Vector` class which returns the squared magnitude of a vector
-- Added `void lerpAngle(Vector target, double rate)` method to `Vector` class which interpolates the angle of this 
+- Added `void lerpAngle(Vector target, double rate)` method to `Vector` class which interpolates the angle of this
   vector to the target vector angle, maintaining its magnitude
-- Added `boolean containsPoint(Vector point)` to `RigidBody` class which checks if a rigid body contains a specified 
+- Added `boolean containsPoint(Vector point)` to `RigidBody` class which checks if a rigid body contains a specified
   point
-- Added `boolean containsPoint(Vector point, int categories)` to `RigidBody` class which checks if any collider 
+- Added `boolean containsPoint(Vector point, int categories)` to `RigidBody` class which checks if any collider
   matching the specified category mask value contains the specified point
 - Added `void setScale(double x, double y)` to `Sprite` component which sets both x and y scales of the sprite
 - Added `Rotated` widget which is a `SingleChildParent` which rotates its child about an angle in radian
-- Added `static double distance(Vector v1, Vector v2)` method to `Vector` class which computes the distance between 
+- Added `static double distance(Vector v1, Vector v2)` method to `Vector` class which computes the distance between
   two vectors
-- Added `static List<RaycastHit> raycast(Vector start, Vector end, int categories)` method to `Physics` class which 
+- Added `static List<RaycastHit> raycast(Vector start, Vector end, int categories)` method to `Physics` class which
   casts a ray into the physics world from the start to the end positions and returns a list of hit results
 - Added `static List<RaycastHit> raycast(Vector start, double angle, double distance int categories)` method to
-  `Physics` class which casts a ray into the physics world from the start position at a specified angle and returns 
+  `Physics` class which casts a ray into the physics world from the start position at a specified angle and returns
   a list of hit results
 - Added `signals` systems package to engine module
 - Added `AnimationSlice` class which observes a slice of an animation's value, mapping it to a new 0 - 1 range
@@ -385,17 +421,17 @@ Vector screenToWorldPosition(double, double)`
 
 ### Added
 
-- Added `static BufferedReader loadBufferedResource(String resPath)` to `IO` class which returns a `BufferedReader` 
+- Added `static BufferedReader loadBufferedResource(String resPath)` to `IO` class which returns a `BufferedReader`
   to a resource at the specified path
-- Added `void setSize(int width, int size)` to `Window` class which resizes the current instance frame to the new 
+- Added `void setSize(int width, int size)` to `Window` class which resizes the current instance frame to the new
   width and height.
 - Added `void maximize()` to `Window` class which maximizes the current instance frame.
-- Added `void scheduleTimerTask(long timeout, Task task)` to `Application` which schedules a task to be run after 
+- Added `void scheduleTimerTask(long timeout, Task task)` to `Application` which schedules a task to be run after
   the timeout has elapsed
 
 ### Changed
 
-- Renamed `static BufferedImage loadImage(String path)` to `static BufferedImage loadImageResource(String resPath)` 
+- Renamed `static BufferedImage loadImage(String path)` to `static BufferedImage loadImageResource(String resPath)`
   in `IO` class.
 - Renamed `static Font loadFont(String path)` to `static BufferedImage loadFontResource(String resPath)` in `IO` class.
 - Renamed `void runAnimation(Animation)` to `void scheduleAnimation(Animation animation)`in `Application` class.

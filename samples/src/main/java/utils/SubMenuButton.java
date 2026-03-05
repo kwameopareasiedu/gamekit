@@ -1,7 +1,6 @@
 package utils;
 
 import dev.gamekit.ui.widgets.*;
-import dev.gamekit.utils.Spacing;
 
 public class SubMenuButton extends Compose {
   private final String text;
@@ -17,7 +16,7 @@ public class SubMenuButton extends Compose {
   @Override
   protected Widget build() {
     return Button.create(
-      props -> props.padding = new Spacing(6, 6, 8, 6),
+      props -> { },
       Padding.create(
         12, 12, 16, 12,
         Text.create(text)

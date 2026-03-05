@@ -6,13 +6,13 @@ import java.io.Serializable;
 
 /** {@link WidgetField} holds type information for {@code Widget} fields annotated with {@link WidgetBuilderField} */
 public final class WidgetField implements Serializable {
-  /** E.g: For a field {@code Spacing Field#edgeInsets = new Spacing()}, this is {@code dev.gamekit.utils.Spacing} */
+  /** E.g: For a field {@code Spacing Field#padding = new Spacing()}, this is {@code dev.gamekit.utils.Spacing} */
   public final String typeName;
-  /** E.g: For a field {@code Spacing Field#edgeInsets = new Spacing()}, this is {@code edgeInsets} */
+  /** E.g: For a field {@code Spacing Field#padding = new Spacing()}, this is {@code padding} */
   public final String varName;
-  /** E.g: For a field {@code Spacing Field#edgeInsets = new Spacing()}, this is {@code EdgeInsets} */
+  /** E.g: For a field {@code Spacing Field#padding = new Spacing()}, this is {@code Padding} */
   public final String varNameAsSuffix;
-  /** E.g: For a field {@code Spacing Field#edgeInsets = new Spacing()}, this is {@code new Spacing()} */
+  /** E.g: For a field {@code Spacing Field#padding = new Spacing()}, this is {@code new Spacing()} */
   public final String fallbackValue;
   public final boolean comparable;
   public final boolean themable;

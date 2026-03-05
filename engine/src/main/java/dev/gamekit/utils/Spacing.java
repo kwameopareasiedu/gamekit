@@ -43,10 +43,14 @@ public class Spacing {
   }
 
   /** Returns the sum of the top and bottom spacing */
-  public int getVertical() { return top + bottom; }
+  public int getVertical() {
+    return top + bottom;
+  }
 
   /** Returns the sum of the left and right spacing */
-  public int getHorizontal() { return left + right; }
+  public int getHorizontal() {
+    return left + right;
+  }
 
   public void set(int size) {
     set(size, size, size, size);

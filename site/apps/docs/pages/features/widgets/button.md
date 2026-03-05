@@ -2,8 +2,7 @@
 
 _[Back To User Interface](../ui.md#widget-categories)_
 
-`Button` is a widget which is clicked to trigger an action, and also renders
-a [9-patch](https://en.wikipedia.org/wiki/9-slice_scaling){:target="_blank"} background around its child.
+`Button` is a widget which is clicked to trigger an action, and also renders a background behind its child.
 
 ## Properties
 
@@ -12,7 +11,6 @@ a [9-patch](https://en.wikipedia.org/wiki/9-slice_scaling){:target="_blank"} bac
 | `defaultBackground` | The default background image                                                 |
 | `hoverBackground`   | The background when the mouse pointer is over it                             |
 | `pressedBackground` | The background when the mouse pointer is pressed on it, but not yet released |
-| `padding`           | The 9-patch padding to be applied to the rendered background                 |
 | `mouseListener`     | The mouse event handler to invoke when an action occurs                      |
 
 ## Usage
@@ -20,10 +18,9 @@ a [9-patch](https://en.wikipedia.org/wiki/9-slice_scaling){:target="_blank"} bac
 ```java
 Button.create(
   props -> {
-    props.defaultBackground = IO.getResourceImage("default-bg.png");
-    props.hoverBackground = IO.getResourceImage("hover-bg.png");
-    props.pressedBackground = IO.getResourceImage("pressed-bg.png");
-    props.padding = new Spacing(10, 20, 10, 24);
+    props.defaultBackground = IO.getImage("default-bg.png");
+    props.hoverBackground = IO.getImage("hover-bg.png");
+    props.pressedBackground = IO.getImage("pressed-bg.png");
     props.mouseListener = (event) -> {
       switch (event.type) {
         case MouseEvent.Type.ENTER -> System.out.println("Mouse entered");

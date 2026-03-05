@@ -3,28 +3,25 @@ package dev.gamekit.ui.widgets;
 import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.core.IO;
-import dev.gamekit.ui.mixins.NinePatch;
 import dev.gamekit.utils.Bounds;
 import dev.gamekit.utils.Constraints;
+import dev.gamekit.utils.EngineImage;
 import dev.gamekit.utils.Spacing;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 /** A {@link Leaf} widget which displays a progress bar */
 @WidgetBuilder
-public class Progress extends Leaf implements NinePatch {
-  public static final BufferedImage DEFAULT_TRACK_BG = IO.getResourceImage("default-sprites.png", 470, 232, 96, 32);
-  public static final BufferedImage DEFAULT_FILL_BG = IO.getResourceImage("default-sprites.png", 470, 289, 96, 32);
+public class Progress extends Leaf {
+  public static final EngineImage DEFAULT_TRACK_BG =
+    IO.getImageSliceWithInsets("default-sprites.png", 470, 232, 96, 32, 8, 8, 8, 8);
+  public static final EngineImage DEFAULT_FILL_BG =
+    IO.getImageSliceWithInsets("default-sprites.png", 470, 289, 96, 32, 8, 8, 8, 8);
 
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Progress.DEFAULT_TRACK_BG")
-  protected BufferedImage trackBackground;
+  protected EngineImage trackBackground;
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Progress.DEFAULT_FILL_BG")
-  protected BufferedImage fillBackground;
-  @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing(8)")
-  protected Spacing trackEdgeInsets;
-  @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing(8)")
-  protected Spacing fillEdgeInsets;
+  protected EngineImage fillBackground;
   @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing(0)")
   protected Spacing fillMargin;
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Progress.FillMode.SCALE")
@@ -94,26 +91,26 @@ public class Progress extends Leaf implements NinePatch {
   @Override
   protected void performRender(Graphics2D g) {
     if (trackBackground != null)
-      renderWith9PatchScaling(trackBackground, absoluteBounds, trackEdgeInsets, g);
+      trackBackground.render(g, absoluteBounds);
 
     if (fillBackground != null) {
       Shape originalClip = g.getClip();
 
-      if (fillMode == FillMode.CLIP)
+      if (fillMode == FillMode.CLIP) {
         g.setClip(
           (int) fillAbsoluteBounds.x,
           (int) fillAbsoluteBounds.y,
           (int) fillAbsoluteBounds.width,
           (int) fillAbsoluteBounds.height
         );
+      }
 
-      renderWith9PatchScaling(
-        fillBackground,
+      fillBackground.render(
+        g,
         switch (fillMode) {
           case SCALE -> fillAbsoluteBounds;
           case CLIP -> absoluteBounds;
-        },
-        fillEdgeInsets, g
+        }
       );
 
       if (fillMode == FillMode.CLIP)

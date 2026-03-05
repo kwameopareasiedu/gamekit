@@ -18,7 +18,7 @@ import java.util.List;
 @SuppressWarnings("MagicConstant")
 @WidgetBuilder
 public class Text extends Leaf {
-  public static final Font DEFAULT_FONT = IO.getResourceFont("font-default.ttf");
+  public static final Font DEFAULT_FONT = IO.getFont("font-default.ttf");
   public static final int PLAIN = Font.PLAIN;
   public static final int BOLD = Font.BOLD;
   public static final int ITALIC = Font.ITALIC;

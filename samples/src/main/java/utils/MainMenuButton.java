@@ -20,10 +20,7 @@ public class MainMenuButton extends Compose {
   @Override
   protected Widget build() {
     return Button.create(
-      props -> {
-        props.padding = new Spacing(12, 12, 16, 12);
-        props.mouseListener = mouseListener;
-      },
+      props -> props.mouseListener = mouseListener,
       Padding.create(
         12, 12, 16, 12,
         Text.create(

@@ -15,11 +15,11 @@ _[Back To User Interface](../ui.md#widget-categories)_
 ## Usage
 
 ```java
-Image.create(IO.getResourceImage("img.png"));
+Image.create(IO.getImage("img.png"));
 
 Image.create(
   props -> {
-    props.image = IO.getResourceImage("img.png");
+    props.image = IO.getImage("img.png");
     props.fit = ImageFit.CROP;
     props.interpolation = ImageInterpolation.BICUBIC;
   }

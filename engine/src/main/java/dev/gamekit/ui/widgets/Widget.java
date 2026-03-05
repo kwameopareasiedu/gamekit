@@ -66,8 +66,8 @@ public abstract class Widget {
    * If the widget is updated some time after first initialization, this method is called afterward to re-initialize
    * the widget.
    * <p>
-   * Since the {@link #config} has either been set in the constructor or updated via the {@link #update} method,
-   * it is used to update this widget instance.
+   * The {@link #config} will have either been set in the constructor or updated via the {@link #update} method and is
+   * used to update this widget instance.
    * <p>
    * Since this method is marked as {@code final}, subclasses should override the {@link #performInit} method instead
    * to perform any post-mount operations
@@ -92,11 +92,11 @@ public abstract class Widget {
    * incoming widget to this widget's config class (E.g. the config class for the {@code Image} widget will be the
    * {@code ImageConfig}).
    * <p>
-   * {@link #performInit} method is called afterward to re-initialize the widget.
+   * {@link #init} method is called afterward to re-initialize the widget.
    */
   public final void update(Widget widget) {
     this.config = widget.config;
-    performInit();
+    init(host);
   }
 
   /**

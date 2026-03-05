@@ -1,5 +1,6 @@
 package dev.gamekit.core;
 
+import dev.gamekit.utils.EngineImage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -7,57 +8,38 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.RasterFormatException;
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 /**
  * {@link IO} handles resource access
  * <p>
- * {@link IO} caches resources loaded, prevent multiple disk reads for the same and improving performance.
- * <p>
  * It also keeps track of opened {@link InputStream} objects and closes them when the current application exits
  */
 public final class IO {
   private static final Logger LOGGER = LogManager.getLogger(IO.class);
-  private static final Map<String, Object> CACHE = new HashMap<>();
   private static final List<InputStream> INPUT_STREAMS = new ArrayList<>();
 
   private IO() { }
 
-  /** Open and return a stream to a <b>resource file</b> */
-  public static InputStream getResourceStream(String resPath) {
+  /** Returns a stream to a <b>resource file</b> */
+  public static InputStream getStream(String resPath) {
     InputStream is = IO.class.getClassLoader().getResourceAsStream(resPath);
     INPUT_STREAMS.add(is);
     return is;
   }
 
-  /**
-   * Opens and returns a stream to a file which may or may not be a resource file.
-   * <p>
-   * The path can either be an absolute path or relative to the working directory the java command is invoked in
-   * <p>
-   * Throws a {@link FileNotFoundException} if the path is not a valid file.
-   */
-  public static InputStream getFileStream(String path) throws FileNotFoundException {
-    FileInputStream is = new FileInputStream(path);
-    INPUT_STREAMS.add(is);
-    return is;
-  }
-
-  /** Reads and cache an image <b>resource file</b> */
-  public static BufferedImage getResourceImage(String resPath) {
+  /** Returns an image <b>resource file</b> */
+  public static EngineImage getImage(String resPath) {
     try {
-      if (CACHE.containsKey(resPath)) return (BufferedImage) CACHE.get(resPath);
-
       LOGGER.debug("Loading resource image at {}", resPath);
-      BufferedImage image = ImageIO.read(getResourceStream(resPath));
-      CACHE.put(resPath, image);
-      return image;
+      return new EngineImage(ImageIO.read(getStream(resPath)));
     } catch (IOException e) {
       LOGGER.error("Unable to load resource image at {}", resPath);
       LOGGER.catching(e);
@@ -65,11 +47,14 @@ public final class IO {
     }
   }
 
-  /** Reads and cache an image <b>resource file</b>, returning a slice of it */
-  public static BufferedImage getResourceImage(String resPath, int x, int y, int w, int h) {
+  /** Returns a slice of an image <b>resource file</b> */
+  public static EngineImage getImageSlice(String resPath, int sliceX, int sliceY, int sliceWidth, int sliceHeight) {
     try {
-      return getResourceImage(resPath).getSubimage(x, y, w, h);
-    } catch (NullPointerException e) {
+      LOGGER.debug("Loading resource image at {}", resPath);
+      BufferedImage img = ImageIO.read(getStream(resPath));
+
+      return new EngineImage(img, sliceX, sliceY, sliceWidth, sliceHeight, 0, 0, 0, 0);
+    } catch (IOException e) {
       LOGGER.error("Unable to load resource image at {}", resPath);
       LOGGER.catching(e);
       return null;
@@ -80,15 +65,57 @@ public final class IO {
     }
   }
 
-  /** Reads and cache a font <b>resource file</b> */
-  public static Font getResourceFont(String resPath) {
+  /**
+   * Returns an image <b>resource file</b> with
+   * <a href="https://en.wikipedia.org/wiki/9-slice_scaling">9-patch</a> insets
+   */
+  public static EngineImage getImageWithInsets(
+    String resPath, int topInset, int rightInset, int bottomInset, int leftInset
+  ) {
     try {
-      if (CACHE.containsKey(resPath)) return (Font) CACHE.get(resPath);
+      LOGGER.debug("Loading resource image at {}", resPath);
+      BufferedImage img = ImageIO.read(getStream(resPath));
 
+      return new EngineImage(img, topInset, rightInset, bottomInset, leftInset);
+    } catch (IOException e) {
+      LOGGER.error("Unable to load resource image at {}", resPath);
+      LOGGER.catching(e);
+      return null;
+    }
+  }
+
+  /**
+   * Returns a slice of an image <b>resource file</b>, with
+   * <a href="https://en.wikipedia.org/wiki/9-slice_scaling">9-patch</a> insets
+   */
+  public static EngineImage getImageSliceWithInsets(
+    String resPath,
+    int sliceX, int sliceY, int sliceWidth, int sliceHeight,
+    int topInset, int rightInset, int bottomInset, int leftInset
+  ) {
+    try {
+      LOGGER.debug("Loading resource image at {}", resPath);
+      BufferedImage img = ImageIO.read(getStream(resPath));
+
+      return new EngineImage(
+        img, sliceX, sliceY, sliceWidth, sliceHeight, topInset, rightInset, bottomInset, leftInset
+      );
+    } catch (IOException e) {
+      LOGGER.error("Unable to load resource image at {}", resPath);
+      LOGGER.catching(e);
+      return null;
+    } catch (RasterFormatException e) {
+      LOGGER.error("Invalid slice bounds for {}", resPath);
+      LOGGER.catching(e);
+      return null;
+    }
+  }
+
+  /** Returns a font <b>resource file</b> */
+  public static Font getFont(String resPath) {
+    try {
       LOGGER.debug("Loading resource font at {}", resPath);
-      Font font = Font.createFont(Font.TRUETYPE_FONT, getResourceStream(resPath));
-      CACHE.put(resPath, font);
-      return font;
+      return Font.createFont(Font.TRUETYPE_FONT, getStream(resPath));
     } catch (FontFormatException | IOException e) {
       LOGGER.error("Unable to load resource font at {}", resPath);
       LOGGER.catching(e);

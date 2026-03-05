@@ -97,7 +97,7 @@ public abstract class AudioClip {
       logger.debug("Loading audio clip at {}", resPath);
 
       Clip clip = AudioSystem.getClip();
-      clip.open(AudioSystem.getAudioInputStream(new BufferedInputStream(IO.getResourceStream(resPath))));
+      clip.open(AudioSystem.getAudioInputStream(new BufferedInputStream(IO.getStream(resPath))));
       return clip;
     } catch (LineUnavailableException e) {
       logger.error("Could not get audio clip resource from system mixer", e);
