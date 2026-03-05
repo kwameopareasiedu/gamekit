@@ -10,7 +10,7 @@ import dev.gamekit.utils.EngineImage;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 
-/** A {@link SingleChildParent} which uses the 9-patch algorithm to render a background */
+/** A {@link SingleChildParent} which renders a 9-patch background or a solid color behind its children */
 @WidgetBuilder
 public class Panel extends SingleChildParent implements MouseEvent.Handler {
   public static final EngineImage DEFAULT_BG = IO.getImageSlice("default-sprites.png", 470, 64, 120, 120);
