@@ -17,7 +17,7 @@ public class Panel extends SingleChildParent implements MouseEvent.Handler {
 
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Panel.DEFAULT_BG")
   protected EngineImage background;
-  @WidgetBuilderField()
+  @WidgetBuilderField
   protected Color color;
   @WidgetBuilderField(fallback = "0")
   protected Integer cornerRadius;

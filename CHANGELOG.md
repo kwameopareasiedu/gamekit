@@ -3,6 +3,7 @@
 ## Road Map
 
 - Text widget spanning to allow different text attributes for different segments of text
+- New widgets: Flow, Divider, Scroll
 - Dynamic lighting
 - Networked multiplayer
 - Maven plugin for CLI tasks like packaging
@@ -22,6 +23,7 @@
 
 ### Added
 
+- Added `Grid` which is A `MultiChildParent` which arranges its children in a grid
 - Added `color` field to `Panel` widget
 - Added `cornerRadius` field to `Panel` widget
 - Added `clip` field to `Panel` widget
