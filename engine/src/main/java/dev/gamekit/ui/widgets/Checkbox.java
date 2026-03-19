@@ -20,19 +20,19 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler {
     IO.getImageSliceWithInsets("default-sprites.png", 646, 277, 32, 32, 8, 8, 8, 8);
 
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Checkbox.DEFAULT_ICON")
-  protected EngineImage defaultIcon;
+  public EngineImage defaultIcon;
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Checkbox.DEFAULT_TOGGLED_ICON")
-  protected EngineImage toggledIcon;
+  public EngineImage toggledIcon;
   @WidgetBuilderField(fallback = "24")
-  protected Integer iconWidth;
+  public Integer iconWidth;
   @WidgetBuilderField(fallback = "24")
-  protected Integer iconHeight;
+  public Integer iconHeight;
   @WidgetBuilderField(fallback = "12")
-  protected Integer gapSize;
+  public Integer gapSize;
   @WidgetBuilderField(fallback = "false")
-  protected Boolean toggled;
+  public Boolean toggled;
   @WidgetBuilderField(comparable = false, themable = false)
-  protected ChangeEvent.Handler<Boolean> changeListener;
+  public ChangeEvent.Handler<Boolean> changeListener;
 
   private final Bounds iconAbsoluteBounds;
 

@@ -13,11 +13,11 @@ import java.awt.*;
 @WidgetBuilder
 public class Image extends Leaf {
   @WidgetBuilderField(themable = false)
-  protected EngineImage image;
+  public EngineImage image;
   @WidgetBuilderField(fallback = "dev.gamekit.ui.enums.ImageFit.FIT")
-  protected ImageFit fit;
+  public ImageFit fit;
   @WidgetBuilderField(fallback = "dev.gamekit.settings.ImageInterpolation.DEFAULT")
-  protected ImageInterpolation interpolation;
+  public ImageInterpolation interpolation;
 
   public Image(ImageConfig config) {
     super(config);

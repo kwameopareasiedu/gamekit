@@ -9,11 +9,11 @@ import dev.gamekit.ui.enums.MainAxisAlignment;
 @WidgetBuilder
 public abstract class Flex extends MultiChildParent {
   @WidgetBuilderField(fallback = "10")
-  protected Integer gapSize;
+  public Integer gapSize;
   @WidgetBuilderField(fallback = "dev.gamekit.ui.enums.MainAxisAlignment.START")
-  protected MainAxisAlignment mainAxisAlignment;
+  public MainAxisAlignment mainAxisAlignment;
   @WidgetBuilderField(fallback = "dev.gamekit.ui.enums.CrossAxisAlignment.START")
-  protected CrossAxisAlignment crossAxisAlignment;
+  public CrossAxisAlignment crossAxisAlignment;
 
   public Flex(FlexConfig config, Widget... children) {
     super(config, children);

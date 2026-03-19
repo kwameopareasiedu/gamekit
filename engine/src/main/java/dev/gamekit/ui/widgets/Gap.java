@@ -10,9 +10,9 @@ import java.awt.*;
 @WidgetBuilder
 public class Gap extends Leaf {
   @WidgetBuilderField(fallback = "8")
-  protected Integer width;
+  public Integer width;
   @WidgetBuilderField(fallback = "8")
-  protected Integer height;
+  public Integer height;
 
   public Gap(GapConfig config) {
     super(config);

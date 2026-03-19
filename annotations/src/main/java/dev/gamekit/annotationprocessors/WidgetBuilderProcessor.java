@@ -171,15 +171,12 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
         // Package declaration
         out.printf("package %s;\n\n", widgetClass.configPackageName);
 
-        // Import declarations
-        out.printf("import static dev.gamekit.utils.Misc.coalesce;\n\n");
-
         // Class declaration
         if (widgetClass.superClassConfigTypeName != null) {
-          out.printf("public class %s extends %s implements Widget.Config {\n",
+          out.printf("public class %s extends %s implements dev.gamekit.ui.widgets.Widget.Config {\n",
             widgetClass.configSimpleTypeName, widgetClass.superClassConfigTypeName);
         } else {
-          out.printf("public class %s implements Widget.Config {\n",
+          out.printf("public class %s implements dev.gamekit.ui.widgets.Widget.Config {\n",
             widgetClass.configSimpleTypeName);
         }
 
@@ -207,19 +204,19 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
 
         out.printf("\t}\n\n");
 
-        // UpdateWidget method override
+        // UpdateWidget method override @formatter:off
         out.printf("\t@Override\n");
-        out.printf("\tpublic void updateWidget(Widget widget) {\n");
-        out.printf("\t\t%s %sWidget = (%s) widget;\n", widgetClass.typeName, widgetClass.varName,
-          widgetClass.typeName);
-        out.printf("\t\tTheme nearestTheme = coalesce(widget.getAncestorOfType(Theme.class), Theme.DEFAULT);\n");
+        out.printf("\tpublic void updateWidget(dev.gamekit.ui.widgets.Widget widget) {\n");
+        out.printf("\t\t%s %sWidget = (%s) widget;\n", widgetClass.typeName, widgetClass.varName, widgetClass.typeName);
+        out.printf("\t\tdev.gamekit.ui.widgets.Theme nearestTheme = dev.gamekit.utils.Misc.coalesce(widget.getAncestorOfType(dev.gamekit.ui.widgets.Theme.class), dev.gamekit.ui.widgets.Theme.DEFAULT);\n");
+        // @formatter:on
 
         for (WidgetField field : widgetClass.fields) {
           if (field.themable) {
             String nearestThemeFieldVarName = !widgetClass.typeName.equals(THEME_TYPE_NAME) ?
               widgetClass.varName + field.varNameAsSuffix : field.varName;
 
-            out.printf("\t\t%sWidget.%s = coalesce(%s, nearestTheme.%s);\n",
+            out.printf("\t\t%sWidget.%s = dev.gamekit.utils.Misc.coalesce(%s, nearestTheme.%s);\n",
               widgetClass.varName, field.varName, field.varName, nearestThemeFieldVarName);
           } else {
             out.printf("\t\t%sWidget.%s = %s;\n", widgetClass.varName, field.varName, field.varName);
@@ -230,7 +227,7 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
 
         // Updater interface declaration
         out.printf("\t@FunctionalInterface\n");
-        out.printf("\tpublic interface Updater extends Widget.ConfigUpdater<%s> { }\n",
+        out.printf("\tpublic interface Updater extends dev.gamekit.ui.widgets.Widget.ConfigUpdater<%s> { }\n",
           widgetClass.configSimpleTypeName);
 
         // Class end brace

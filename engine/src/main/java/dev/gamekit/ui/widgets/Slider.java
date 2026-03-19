@@ -21,13 +21,13 @@ public class Slider extends Progress implements MouseEvent.Handler {
     IO.getImageSliceWithInsets("default-sprites.png", 470, 346, 32, 32, 8, 8, 8, 8);
 
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Slider.DEFAULT_THUMB_BG")
-  protected EngineImage thumbBackground;
+  public EngineImage thumbBackground;
   @WidgetBuilderField(fallback = "32")
-  protected Integer thumbWidth;
+  public Integer thumbWidth;
   @WidgetBuilderField(fallback = "32")
-  protected Integer thumbHeight;
+  public Integer thumbHeight;
   @WidgetBuilderField(comparable = false, themable = false)
-  protected ChangeEvent.Handler<Double> changeListener;
+  public ChangeEvent.Handler<Double> changeListener;
 
   private final Bounds thumbAbsoluteBounds;
   private final Position lastMousePosition;

@@ -20,13 +20,13 @@ public class Button extends SingleChildParent implements MouseEvent.Handler {
     IO.getImageSliceWithInsets("default-sprites.png", 64, 400, 350, 120, 24, 24, 24, 24);
 
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Button.DEFAULT_BG")
-  protected EngineImage defaultBackground;
+  public EngineImage defaultBackground;
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Button.DEFAULT_HOVER_BG")
-  protected EngineImage hoverBackground;
+  public EngineImage hoverBackground;
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Button.DEFAULT_PRESSED_BG")
-  protected EngineImage pressedBackground;
+  public EngineImage pressedBackground;
   @WidgetBuilderField(comparable = false, themable = false)
-  protected MouseEvent.Handler mouseListener;
+  public MouseEvent.Handler mouseListener;
 
   protected boolean mouseEntered;
   protected boolean mousePressed;

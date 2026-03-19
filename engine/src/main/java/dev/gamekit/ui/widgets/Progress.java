@@ -19,19 +19,19 @@ public class Progress extends Leaf {
     IO.getImageSliceWithInsets("default-sprites.png", 470, 289, 96, 32, 8, 8, 8, 8);
 
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Progress.DEFAULT_TRACK_BG")
-  protected EngineImage trackBackground;
+  public EngineImage trackBackground;
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Progress.DEFAULT_FILL_BG")
-  protected EngineImage fillBackground;
+  public EngineImage fillBackground;
   @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing(0)")
-  protected Spacing fillMargin;
+  public Spacing fillMargin;
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Progress.FillMode.SCALE")
-  protected FillMode fillMode;
+  public FillMode fillMode;
   @WidgetBuilderField(fallback = "0.0")
-  protected Double minValue;
+  public Double minValue;
   @WidgetBuilderField(fallback = "100.0")
-  protected Double maxValue;
+  public Double maxValue;
   @WidgetBuilderField(fallback = "50.0")
-  protected Double value;
+  public Double value;
 
   protected double valueRatio = 0;
 

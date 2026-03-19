@@ -11,7 +11,7 @@ import java.awt.*;
 @WidgetBuilder
 public class Rotated extends SingleChildParent {
   @WidgetBuilderField(fallback = "0.0", themable = false)
-  protected Double rotation;
+  public Double rotation;
 
   public Rotated(RotatedConfig config, Widget child) {
     super(config, child);

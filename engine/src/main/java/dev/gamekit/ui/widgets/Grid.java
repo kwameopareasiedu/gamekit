@@ -8,11 +8,11 @@ import dev.gamekit.utils.Constraints;
 @WidgetBuilder
 public class Grid extends MultiChildParent {
   @WidgetBuilderField(fallback = "2")
-  protected Integer columnCount;
+  public Integer columnCount;
   @WidgetBuilderField(fallback = "0")
-  protected Integer columnGapSize;
+  public Integer columnGapSize;
   @WidgetBuilderField(fallback = "0")
-  protected Integer rowGapSize;
+  public Integer rowGapSize;
 
   private int rowCount;
 

@@ -11,17 +11,17 @@ import dev.gamekit.utils.Constraints;
 @WidgetBuilder
 public class Sized extends SingleChildParent {
   @WidgetBuilderField(fallback = "false")
-  protected Boolean useIntrinsicWidth;
+  public Boolean useIntrinsicWidth;
   @WidgetBuilderField(fallback = "false")
-  protected Boolean useIntrinsicHeight;
+  public Boolean useIntrinsicHeight;
   @WidgetBuilderField
-  protected Double fractionalWidth;
+  public Double fractionalWidth;
   @WidgetBuilderField
-  protected Double fractionalHeight;
+  public Double fractionalHeight;
   @WidgetBuilderField
-  protected Double fixedWidth;
+  public Double fixedWidth;
   @WidgetBuilderField
-  protected Double fixedHeight;
+  public Double fixedHeight;
 
   private DimensionType widthType;
   private DimensionType heightType;

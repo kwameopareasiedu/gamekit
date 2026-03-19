@@ -30,17 +30,17 @@ public class Field extends Text
     IO.getImageSliceWithInsets("default-sprites.png", 646, 135, 96, 32, 2, 2, 2, 2);
 
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Field.DEFAULT_BG")
-  protected EngineImage defaultBackground;
+  public EngineImage defaultBackground;
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Field.DEFAULT_FOCUS_BG")
-  protected EngineImage focusBackground;
+  public EngineImage focusBackground;
   @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing(4)")
-  protected Spacing padding;
+  public Spacing padding;
   @WidgetBuilderField(comparable = false, themable = false)
-  protected FocusEvent.Handler focusListener;
+  public FocusEvent.Handler focusListener;
   @WidgetBuilderField(comparable = false, themable = false)
-  protected KeyCharEvent.Handler keyCharListener;
+  public KeyCharEvent.Handler keyCharListener;
   @WidgetBuilderField(comparable = false, themable = false)
-  protected ChangeEvent.Handler<String> changeListener;
+  public ChangeEvent.Handler<String> changeListener;
 
   protected boolean focused;
 

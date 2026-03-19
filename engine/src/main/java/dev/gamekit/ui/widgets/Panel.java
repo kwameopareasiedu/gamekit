@@ -16,13 +16,13 @@ public class Panel extends SingleChildParent implements MouseEvent.Handler {
   public static final EngineImage DEFAULT_BG = IO.getImageSlice("default-sprites.png", 470, 64, 120, 120);
 
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Panel.DEFAULT_BG")
-  protected EngineImage background;
+  public EngineImage background;
   @WidgetBuilderField
-  protected Color color;
+  public Color color;
   @WidgetBuilderField(fallback = "0")
-  protected Integer cornerRadius;
+  public Integer cornerRadius;
   @WidgetBuilderField(fallback = "true")
-  protected Boolean clip;
+  public Boolean clip;
 
   private Shape originalClip;
   private Color originalColor;
