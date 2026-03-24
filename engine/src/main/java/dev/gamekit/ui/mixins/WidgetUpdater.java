@@ -5,6 +5,7 @@ import dev.gamekit.ui.widgets.Parent;
 import dev.gamekit.ui.widgets.SingleChildParent;
 import dev.gamekit.ui.widgets.Widget;
 import dev.gamekit.utils.Constraints;
+import dev.gamekit.utils.ValueCallback;
 import dev.gamekit.utils.VoidCallback;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public interface WidgetUpdater {
     Constraints constraints,
     Widget currentTree,
     Widget newTree,
+    ValueCallback<Widget> setTree,
     VoidCallback triggerRender
   ) {
     CURRENT_QUEUE.clear();
@@ -81,6 +83,7 @@ public interface WidgetUpdater {
       currentTree.layout(constraints);
       currentTree.postLayout();
       triggerRender.run();
+      setTree.update(currentTree);
     }
   }
 }

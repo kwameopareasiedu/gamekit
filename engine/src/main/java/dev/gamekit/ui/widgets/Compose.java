@@ -49,6 +49,6 @@ public abstract class Compose extends SingleChildParent implements WidgetUpdater
    * This method should be called after the widget's custom internal state changes
    */
   protected void updateUI() {
-    updateTree(host, constraints, getChild(), build(), host::triggerRender);
+    updateTree(host, constraints, getChild(), build(), this::updateChild, host::triggerRender);
   }
 }

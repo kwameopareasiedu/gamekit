@@ -96,7 +96,7 @@ public final class UI implements Widget.Host, WidgetUpdater {
   void update() {
     if (tree != null && needsUpdate) {
       LOGGER.debug("Updating UI");
-      updateTree(this, windowConstraints, tree, scene.createUI(), this::triggerRender);
+      updateTree(this, windowConstraints, tree, scene.createUI(), (t) -> tree = t, this::triggerRender);
       needsUpdate = false;
     }
 
