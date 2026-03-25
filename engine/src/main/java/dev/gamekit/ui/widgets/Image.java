@@ -44,7 +44,6 @@ public class Image extends Leaf {
   @Override
   protected void performRender(Graphics2D g) {
     double dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
-//    boolean clipChanged = false;
     Shape originalClip = null;
 
     switch (fit) {

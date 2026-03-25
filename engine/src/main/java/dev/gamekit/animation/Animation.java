@@ -84,8 +84,11 @@ public class Animation {
     state = State.RUNNING;
     value = 0;
 
-    if (stateListener != null) stateListener.update(state);
-    if (valueListener != null) valueListener.update(value);
+    if (stateListener != null)
+      stateListener.update(state);
+
+    if (valueListener != null)
+      valueListener.update(value);
   }
 
   /**
@@ -95,7 +98,8 @@ public class Animation {
   public void stop() {
     state = State.STOPPED;
 
-    if (stateListener != null) stateListener.update(state);
+    if (stateListener != null)
+      stateListener.update(state);
   }
 
   /**
@@ -105,7 +109,8 @@ public class Animation {
   public void end() {
     state = State.ENDED;
 
-    if (stateListener != null) stateListener.update(state);
+    if (stateListener != null)
+      stateListener.update(state);
   }
 
   /** Called internally by the {@link Application} to update this animation */
@@ -113,7 +118,8 @@ public class Animation {
     if (state == State.RUNNING) {
       value = clamp(value + 0.001 * rate * Application.FRAME_INTERVAL_MS, 0, 1);
 
-      if (valueListener != null) valueListener.update(getValue());
+      if (valueListener != null)
+        valueListener.update(getValue());
 
       if ((value >= 1 && rate > 0) || (value <= 0 && rate < 0)) {
         switch (repeatMode) {
@@ -121,12 +127,14 @@ public class Animation {
           case RESTART -> {
             value = 0;
 
-            if (stateListener != null) stateListener.update(State.RESTARTED);
+            if (stateListener != null)
+              stateListener.update(State.RESTARTED);
           }
           case ALTERNATE -> {
             rate *= -1;
 
-            if (stateListener != null) stateListener.update(State.REVERSED);
+            if (stateListener != null)
+              stateListener.update(State.REVERSED);
           }
         }
       }

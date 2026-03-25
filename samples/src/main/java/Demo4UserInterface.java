@@ -295,6 +295,12 @@ public class Demo4UserInterface extends Scene {
             )
           )
         )
+      ),
+      Center.create(
+        Sized.create(
+          props -> props.fixedWidth = props.fixedHeight = 32.0,
+          Spinner.create()
+        )
       )
     );
   }

@@ -34,6 +34,7 @@
   `static EngineImage getImageSliceWithInsets(String resPath, int sliceX, int sliceY, int sliceWidth,
   int sliceHeight, int topInset, int rightInset, int bottomInset)
   ` to `IO` class
+- Added `Spinner` widget which is a `Leaf` widget which displays a loading indicator
 
 ### Changed
 
