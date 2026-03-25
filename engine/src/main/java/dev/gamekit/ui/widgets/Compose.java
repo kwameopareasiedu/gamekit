@@ -16,6 +16,10 @@ public abstract class Compose extends SingleChildParent implements WidgetUpdater
     super(new ComposeConfig(), Empty.create());
   }
 
+  protected Compose(ComposeConfig config) {
+    super(config, Empty.create());
+  }
+
   @Override
   protected void performInit() {
     updateChild(build());

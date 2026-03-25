@@ -17,7 +17,13 @@ public final class WidgetField implements Serializable {
   public final boolean comparable;
   public final boolean themable;
 
-  public WidgetField(String typeName, String varName, String fallbackValue, boolean comparable, boolean themable) {
+  public WidgetField(
+    String typeName,
+    String varName,
+    String fallbackValue,
+    boolean comparable,
+    boolean themable
+  ) {
     this.typeName = typeName;
     this.varName = varName;
     this.fallbackValue = fallbackValue;
@@ -29,13 +35,9 @@ public final class WidgetField implements Serializable {
 
   @Override
   public String toString() {
-    return "WidgetField{" +
-      "\ntypeName='" + typeName + '\'' +
-      "\nvarName='" + varName + '\'' +
-      "\nnameAsSuffix='" + varNameAsSuffix + '\'' +
-      "\nfallbackValue='" + fallbackValue + '\'' +
-      "\ncomparable='" + comparable + '\'' +
-      "\nthemable='" + themable + '\'' +
-      "\n}\n";
+    return String.format(
+      "WidgetField[typeName=%s, varName=%s, nameAsSuffix=%s, fallbackValue=%s, comparable=%b, themable=%s]",
+      typeName, varName, varNameAsSuffix, fallbackValue, comparable, themable
+    );
   }
 }

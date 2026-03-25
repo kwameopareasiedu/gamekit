@@ -1,5 +1,7 @@
 package dev.gamekit.annotationprocessors;
 
+import dev.gamekit.annotations.CustomWidgetBuilder;
+import dev.gamekit.annotations.CustomWidgetBuilderField;
 import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.utils.WidgetClass;
@@ -15,19 +17,14 @@ import javax.lang.model.type.NoType;
 import javax.tools.JavaFileObject;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-@SupportedAnnotationTypes("dev.gamekit.annotations.WidgetBuilder")
+@SupportedAnnotationTypes("dev.gamekit.annotations.CustomWidgetBuilder")
 @SupportedSourceVersion(SourceVersion.RELEASE_18)
-public class WidgetBuilderProcessor extends AbstractProcessor {
+public class CustomWidgetBuilderProcessor extends AbstractProcessor {
   private static final String WIDGET_TYPE_NAME = "dev.gamekit.ui.widgets.Widget";
   private static final String THEME_TYPE_NAME = "dev.gamekit.ui.widgets.Theme";
-  private static final String WIDGETS_TYPE_NAME = "dev.gamekit.ui.widgets.Widgets";
-
-  private final List<WidgetClass> widgetClasses = new ArrayList<>();
-  private boolean themeWidgetGenerated = false;
 
   @Override
   public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -41,126 +38,13 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
 
       for (Element annotatedClassElement : annotatedClasses) {
         ensureElementIsWidget(annotatedClassElement);
-
         WidgetClass widgetClass = extractWidgetClassData(annotatedClassElement);
-
-        if (!widgetClasses.contains(widgetClass) && widgetClass != null) {
-          generateWidgetConfigSource(widgetClass);
-          widgetClasses.add(widgetClass);
-        }
-      }
-
-      if (!themeWidgetGenerated) {
-        generateThemeWidgetSource(widgetClasses);
-        themeWidgetGenerated = true;
-      } else {
-        generateWidgetsUtilitySource(widgetClasses);
+        processingEnv.getMessager().printNote(widgetClass.toString());
+        generateWidgetConfigSource(widgetClass);
       }
     }
 
     return false;
-  }
-
-  private void generateWidgetsUtilitySource(List<WidgetClass> widgetClasses) {
-    try {
-      JavaFileObject fileObject = processingEnv.getFiler().createSourceFile(WIDGETS_TYPE_NAME);
-
-      try (PrintWriter out = new PrintWriter(fileObject.openOutputStream())) {
-        // Package declaration
-        out.printf("package dev.gamekit.ui.widgets;\n\n");
-
-        // Class and private constructor declaration
-        out.printf("""
-          class Widgets {
-            private Widgets() { }
-          """);
-
-        out.println();
-
-        // Static configure method declarations
-        for (WidgetClass widgetClass : widgetClasses) {
-          out.printf("\tstatic %s configure%s(%s.Updater updater) {\n",
-            widgetClass.configTypeName, widgetClass.simpleTypeName, widgetClass.configTypeName);
-          out.printf("\t\t%s config = new %s();\n", widgetClass.configTypeName, widgetClass.configTypeName);
-          out.printf("\t\tupdater.update(config);\n");
-          out.printf("\t\treturn config;\n");
-          out.printf("\t}\n");
-
-          out.println();
-        }
-
-        // Theme widget class end brace
-        out.printf("}");
-      }
-    } catch (FilerException e) {
-      processingEnv.getMessager().printWarning(e.getMessage());
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  private void generateThemeWidgetSource(List<WidgetClass> widgetClasses) {
-    try {
-      JavaFileObject fileObject = processingEnv.getFiler().createSourceFile(THEME_TYPE_NAME);
-
-      try (PrintWriter out = new PrintWriter(fileObject.openOutputStream())) {
-        // Package declaration
-        out.printf("package dev.gamekit.ui.widgets;\n\n");
-
-        // Class declaration
-        out.printf("@dev.gamekit.annotations.WidgetBuilder\n");
-        out.printf("public class Theme extends SingleChildParent {\n");
-
-        // Static field declarations
-        out.println("\tpublic static final Theme DEFAULT = new Theme(new ThemeConfig(), Empty.create());\n");
-
-        // Instance field declarations
-        for (WidgetClass widgetClass : widgetClasses) {
-          WidgetClass.traverse(widgetClass, clazz -> {
-            List<WidgetField> widgetClassThemableFields =
-              clazz.fields.stream().filter(field -> field.themable).toList();
-
-            for (WidgetField field : widgetClassThemableFields) {
-              out.printf("\t@dev.gamekit.annotations.WidgetBuilderField\n");
-              out.printf("\tpublic %s %s%s = %s;\n",
-                field.typeName, widgetClass.varName, field.varNameAsSuffix, field.fallbackValue);
-            }
-
-            if (!widgetClassThemableFields.isEmpty()) out.println();
-          });
-        }
-
-        // Constructor, static creator method and performLayout method override declarations
-        out.println("""
-            public Theme(ThemeConfig config, Widget child) {
-              super(config, child);
-            }
-          
-            public static Theme create(ThemeConfig.Updater updater, Widget child) {
-              return new Theme(Widgets.configureTheme(updater), child);
-            }
-          
-            @Override
-            protected void performLayout(dev.gamekit.utils.Constraints constraints) {
-              child.layout(constraints);
-          
-              intrinsicSize.set(child.computedBounds.width, child.computedBounds.height);
-          
-              computedBounds.setSize(
-                constraints.constrainWidth(intrinsicSize.width),
-                constraints.constrainHeight(intrinsicSize.height)
-              );
-            }
-          """);
-
-        // Class end brace
-        out.printf("}");
-      }
-    } catch (FilerException e) {
-      processingEnv.getMessager().printWarning(e.getMessage());
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
   }
 
   private void generateWidgetConfigSource(WidgetClass widgetClass) {
@@ -225,14 +109,17 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
           for (WidgetField field : clazz.fields) {
             if (field.themable) {
               String nearestThemeFieldVarName =
-                !clazz.typeName.equals(THEME_TYPE_NAME) ? widgetClass.varName + field.varNameAsSuffix : field.varName;
+                !clazz.typeName.equals(THEME_TYPE_NAME) ? clazz.varName + field.varNameAsSuffix : field.varName;
 
               out.printf(
                 "\t\t%sWidget.%s = dev.gamekit.utils.Misc.coalesce(%s, nearestTheme.%s);\n",
                 widgetClass.varName, field.varName, field.varName, nearestThemeFieldVarName
               );
             } else {
-              out.printf("\t\t%sWidget.%s = %s;\n", clazz.varName, field.varName, field.varName);
+              String assignedValue = (widgetClass.internal || clazz == widgetClass)
+                ? field.varName : clazz.varName + field.varNameAsSuffix;
+
+              out.printf("\t\t%sWidget.%s = %s;\n", clazz.varName, field.varName, assignedValue);
             }
           }
         });
@@ -256,24 +143,27 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
     TypeElement typeElement = (TypeElement) element;
 
     if (typeElement.getQualifiedName().toString().equals(WIDGET_TYPE_NAME)
-      || typeElement.getAnnotation(WidgetBuilder.class) == null)
+      || (typeElement.getAnnotation(CustomWidgetBuilder.class) == null && typeElement.getAnnotation(WidgetBuilder.class) == null))
       return null;
 
     String classTypeName = typeElement.getQualifiedName().toString();
+    boolean elementIsInternalWidget = typeElement.getAnnotation(WidgetBuilder.class) != null;
 
     List<? extends Element> elementMembers = typeElement.getEnclosedElements().stream().filter(
-      member -> member.getKind() == ElementKind.FIELD && member.getAnnotation(WidgetBuilderField.class) != null
+      member -> member.getKind() == ElementKind.FIELD &&
+        (member.getAnnotation(CustomWidgetBuilderField.class) != null || member.getAnnotation(WidgetBuilderField.class) != null)
     ).toList();
 
     List<WidgetField> widgetFields = elementMembers.stream().map(
       fieldElement -> {
-        WidgetBuilderField annotation = fieldElement.getAnnotation(WidgetBuilderField.class);
+        CustomWidgetBuilderField customAnnotation = fieldElement.getAnnotation(CustomWidgetBuilderField.class);
+        WidgetBuilderField internalAnnotation = fieldElement.getAnnotation(WidgetBuilderField.class);
         String fieldTypeName = fieldElement.asType().toString();
         String fieldVarName = fieldElement.getSimpleName().toString();
-        String fieldFallback = annotation.fallback();
+        String fieldFallback = customAnnotation != null ? customAnnotation.fallback() : internalAnnotation.fallback();
         String fieldFallbackValue = !fieldFallback.isEmpty() ? fieldFallback : "null";
-        boolean comparable = annotation.comparable();
-        boolean themable = annotation.themable();
+        boolean comparable = customAnnotation != null ? customAnnotation.comparable() : internalAnnotation.comparable();
+        boolean themable = customAnnotation == null && internalAnnotation.themable();
 
         return new WidgetField(fieldTypeName, fieldVarName, fieldFallbackValue, comparable, themable);
       }
@@ -283,12 +173,12 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
 
     WidgetClass base = extractWidgetClassData(superTypeElement);
 
-    return new WidgetClass(true, classTypeName, widgetFields, base);
+    return new WidgetClass(elementIsInternalWidget, classTypeName, widgetFields, base);
   }
 
-  private void ensureElementIsWidget(Element element) {
-    if (element.getKind() != ElementKind.CLASS || element instanceof NoType || !(element instanceof TypeElement typeElement))
-      throw new IllegalStateException("WidgetBuilder annotation can only be used on Widget classes");
+  private void ensureElementIsWidget(Element el) {
+    if (el.getKind() != ElementKind.CLASS || el instanceof NoType || !(el instanceof TypeElement typeElement))
+      throw new IllegalStateException("CustomWidgetBuilder annotation can only be used on Widget classes");
 
     if (typeElement.getQualifiedName().toString().equals(WIDGET_TYPE_NAME)) return;
 

@@ -1,20 +1,34 @@
 package utils;
 
+import dev.gamekit.annotations.CustomWidgetBuilder;
+import dev.gamekit.annotations.CustomWidgetBuilderField;
 import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.widgets.*;
-import dev.gamekit.utils.Spacing;
 
+@CustomWidgetBuilder
 public class MainMenuButton extends Compose {
-  private final String text;
-  private final MouseEvent.Handler mouseListener;
+  @CustomWidgetBuilderField
+  public String text;
+  @CustomWidgetBuilderField(comparable = false)
+  public MouseEvent.Handler mouseListener;
 
-  public MainMenuButton(String text, MouseEvent.Handler mouseListener) {
-    this.text = text;
-    this.mouseListener = mouseListener;
+  public MainMenuButton(MainMenuButtonConfig config) {
+    super(config);
+  }
+
+  public static MainMenuButton create(MainMenuButtonConfig.Updater updater) {
+    MainMenuButtonConfig config = new MainMenuButtonConfig();
+    updater.update(config);
+    return new MainMenuButton(config);
   }
 
   public static MainMenuButton create(String text, MouseEvent.Handler mouseListener) {
-    return new MainMenuButton(text, mouseListener);
+    return create(
+      props -> {
+        props.text = text;
+        props.mouseListener = mouseListener;
+      }
+    );
   }
 
   @Override

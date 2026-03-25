@@ -6,20 +6,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * {@link WidgetBuilderField} marks fields of an internal {@code Widget} as needing to be part of the enclosing
- * widget's generated builder class.
- * <p>
- * PS: For custom widgets, use the {@link CustomWidgetBuilderField} annotation instead
+ * {@link CustomWidgetBuilderField} is a {@link WidgetBuilderField} for fields of a custom widget annotated with
+ * {@link CustomWidgetBuilder}
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.CLASS)
-public @interface WidgetBuilderField {
+public @interface CustomWidgetBuilderField {
   /** A fully qualified declaration of the fallback value to set for the annotated field */
   String fallback() default "";
 
   /** Indicates that the annotated field is used in state comparison in the generated builder class equals method */
   boolean comparable() default true;
-
-  /** Indicates that the annotated field should be included in the generated Theme widget class */
-  boolean themable() default true;
 }
