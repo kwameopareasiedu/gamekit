@@ -27,8 +27,8 @@ public interface WidgetUpdater {
     Constraints constraints,
     Widget currentTree,
     Widget newTree,
-    ValueCallback<Widget> setTree,
-    VoidCallback triggerRender
+    ValueCallback<Widget> treeSetter,
+    VoidCallback renderTrigger
   ) {
     CURRENT_QUEUE.clear();
     NEW_QUEUE.clear();
@@ -80,10 +80,10 @@ public interface WidgetUpdater {
     }
 
     if (treeUpdated) {
+      treeSetter.update(currentTree);
       currentTree.layout(constraints);
       currentTree.postLayout();
-      triggerRender.run();
-      setTree.update(currentTree);
+      renderTrigger.run();
     }
   }
 }
