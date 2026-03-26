@@ -52,9 +52,15 @@ public class Playground extends Scene {
                 Color.WHITE
               })
             .map(
-              (color) -> Panel.create(
-                props -> props.color = color,
-                Empty.create()
+              (color) -> Sized.create(
+                props -> {
+                  props.fractionalWidth = 1.0;
+                  props.fractionalHeight = 1.0;
+                },
+                Panel.create(
+                  props -> props.color = color,
+                  Empty.create()
+                )
               )
             )
             .toArray(Widget[]::new)

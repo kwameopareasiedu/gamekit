@@ -35,6 +35,8 @@
   int sliceHeight, int topInset, int rightInset, int bottomInset)
   ` to `IO` class
 - Added `Spinner` widget which is a `Leaf` widget which displays a loading indicator
+- Added `Measure` widget which is a `SingleChildParent` widget which overlays a ruler on its child (for layout 
+  debugging)
 
 ### Changed
 

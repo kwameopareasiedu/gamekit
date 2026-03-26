@@ -16,7 +16,7 @@ public class Row extends Flex {
   }
 
   public static Row create(Widget... children) {
-    return Row.create(props -> {}, children);
+    return Row.create(props -> { }, children);
   }
 
   @Override
@@ -36,8 +36,8 @@ public class Row extends Flex {
       currentWidth += child.computedBounds.width + gapSize;
       maxHeight = Math.max(maxHeight, child.computedBounds.height);
       childConstraints = new Constraints(
-        0, childConstraints.maxWidth() - child.computedBounds.width,
-        0, childConstraints.maxHeight()
+        0, constraints.maxWidth() - currentWidth,
+        0, constraints.maxHeight()
       );
     }
 
@@ -60,8 +60,11 @@ public class Row extends Flex {
 
     for (var child : children) {
       child.computedBounds.setX(newX);
-      newX += child.computedBounds.width;
-      newX += mainAxisAlignment == MainAxisAlignment.SPACE_BETWEEN ? spaceBetween : gapSize;
+
+      newX += child.computedBounds.width + gapSize;
+
+      if (mainAxisAlignment == MainAxisAlignment.SPACE_BETWEEN)
+        newX += spaceBetween;
     }
 
     for (var child : children) {
