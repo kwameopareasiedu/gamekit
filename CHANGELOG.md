@@ -37,6 +37,8 @@
 - Added `Spinner` widget which is a `Leaf` widget which displays a loading indicator
 - Added `Measure` widget which is a `SingleChildParent` widget which overlays a ruler on its child (for layout 
   debugging)
+- Added `Builder` widget which is a `Compose` widget which delegates is widget tree construction to the provided 
+  delegate object
 
 ### Changed
 
