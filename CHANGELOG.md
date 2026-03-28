@@ -39,6 +39,8 @@
   debugging)
 - Added `Builder` widget which is a `Compose` widget which delegates is widget tree construction to the provided 
   delegate object
+- Added `void addListener(AudioClip.Event.Handler handler)` to `AudioClip` class
+- Added `void removeListener(AudioClip.Event.Handler handler)` to `AudioClip` class
 
 ### Changed
 

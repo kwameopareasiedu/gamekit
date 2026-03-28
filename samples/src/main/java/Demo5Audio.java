@@ -1,3 +1,4 @@
+import dev.gamekit.audio.AudioClip;
 import dev.gamekit.audio.AudioClip3D;
 import dev.gamekit.audio.AudioGroup;
 import dev.gamekit.audio.AudioListener;
@@ -47,11 +48,15 @@ public class Demo5Audio extends Scene {
     listenerPos = new Vector(0, 0);
     prevMousePos = new Position(0, 0);
 
-    Audio.preload(MUSIC_KEY,
-      new AudioClip3D("cybertruck.wav", AudioGroup.MUSIC, 1,
-        new LinearAudioAttenuation(), new CircleAudioShape(5, 30)
-      )
+    AudioClip clip = new AudioClip3D("cybertruck.wav", AudioGroup.MUSIC, 1,
+      new LinearAudioAttenuation(), new CircleAudioShape(5, 30)
     );
+
+    clip.addListener(ev -> {
+      logger.debug(ev.type());
+    });
+
+    Audio.preload(MUSIC_KEY, clip);
   }
 
   public static void main(String[] args) {
