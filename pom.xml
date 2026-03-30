@@ -17,6 +17,7 @@
     <module>testing</module>
     <module>samples</module>
     <module>annotations</module>
+    <module>maven</module>
   </modules>
 
   <properties>
