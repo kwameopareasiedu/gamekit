@@ -6,7 +6,6 @@
 - New widgets: Flow, Divider, Scroll
 - Dynamic lighting
 - Networked multiplayer
-- Maven plugin for CLI tasks like packaging
 - Control debugging level via Application
 
 ## UNRELEASED
@@ -23,6 +22,7 @@
 
 ### Added
 
+- Added `gamekit-maven-plugin` for building and packaging platform executables
 - Added `Grid` which is A `MultiChildParent` which arranges its children in a grid
 - Added `color` field to `Panel` widget
 - Added `cornerRadius` field to `Panel` widget
