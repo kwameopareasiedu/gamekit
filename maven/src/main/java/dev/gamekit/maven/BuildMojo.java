@@ -109,22 +109,19 @@ public class BuildMojo extends AbstractMojo {
     Path newArtifactPath = Paths.get(mavenProject.getBuild().getDirectory(), "outputs", "jar", artifactName);
     Path platformExecutableDirectoryPath = Paths.get(mavenProject.getBuild().getDirectory(), "outputs", osName);
 
-    // @formatter:off
-    try { Files.createDirectories(newArtifactPath.getParent()); }
-    catch (IOException e) { getLog().error("Unable to create jar output directory", e); }
-    // @formatter:on
+    try {
+      Files.createDirectories(newArtifactPath.getParent());
+      Files.createDirectories(platformExecutableDirectoryPath.getParent());
+      Files.copy(currentArtifactPath, newArtifactPath);
+    } catch (IOException e) {
+      getLog().error("Unable to create output directories", e);
+      throw new MojoExecutionException(e);
+    }
 
-    // @formatter:off
-    try { Files.createDirectories(platformExecutableDirectoryPath.getParent()); }
-    catch (IOException e) { getLog().error("Unable to create " + osName + " output directory", e); }
-    // @formatter:on
-
-    // @formatter:off
-    try { Files.copy(currentArtifactPath, newArtifactPath); }
-    catch (IOException e) { getLog().error("Unable to copy shaded artifact {target}/executable directory", e); }
-    // @formatter:on
-
-    if (jarOnly) return;
+    if (jarOnly) {
+      getLog().info("JAR output generated at " + Paths.get(mavenProject.getBuild().getDirectory(), "outputs", "jar"));
+      return;
+    }
 
     getLog().info("Building platform executable: " + osName);
 
@@ -167,10 +164,12 @@ public class BuildMojo extends AbstractMojo {
       instructionsBuilder.append("\n").append("Close the terminal and open the file to launch the game");
     }
 
-    // @formatter:off
-    try { Files.writeString(readmeFilePath, instructionsBuilder.toString()); }
-    catch (IOException e) { getLog().error("Unable to generate README.txt", e); }
-    // @formatter:on
+    try {
+      Files.writeString(readmeFilePath, instructionsBuilder.toString());
+    } catch (IOException e) {
+      getLog().error("Unable to generate README.txt file", e);
+      throw new MojoExecutionException(e);
+    }
 
     getLog().info("Zipping files");
     Path zippedOutputPath = Paths.get(platformExecutableDirectoryPath.toString(), name + ".zip");
