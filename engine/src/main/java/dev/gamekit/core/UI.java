@@ -2,8 +2,6 @@ package dev.gamekit.core;
 
 import dev.gamekit.settings.Settings;
 import dev.gamekit.ui.events.*;
-import dev.gamekit.ui.widgets.MultiChildParent;
-import dev.gamekit.ui.widgets.SingleChildParent;
 import dev.gamekit.ui.widgets.Widget;
 import dev.gamekit.utils.Constraints;
 import dev.gamekit.utils.Position;
@@ -17,7 +15,7 @@ import java.util.List;
 import java.util.Objects;
 
 /** {@link UI} manages the user interface within a {@link Scene} */
-public final class UI implements Widget.Host, Widget.Updater {
+public final class UI implements Widget.Host, Widget.Updater, Widget.Traveller {
   public static final Color TRANSPARENT_COLOR = new Color(0x0000000, true);
 
   private static final Logger LOGGER = LogManager.getLogger(UI.class);
@@ -151,7 +149,7 @@ public final class UI implements Widget.Host, Widget.Updater {
 
     Position mousePosition = Input.getMousePosition();
 
-    traverseTree(tree, Direction.IN, widget -> {
+    travelTree(tree, Direction.INWARD, widget -> {
       if (widget instanceof InputEvent.Handler && widget.hitTest(mousePosition.x, mousePosition.y)) {
         currentHitTestList.add(widget);
       }
@@ -293,7 +291,7 @@ public final class UI implements Widget.Host, Widget.Updater {
 
     // Dispatch mouse down and press events to the active widget
     if (activeWidget != null) {
-      traverseTree(activeWidget, Direction.OUT, widget -> {
+      travelTree(activeWidget, Direction.OUTWARD, widget -> {
         if (widget instanceof MouseEvent.Handler eventHandler) {
           if (eventStore.mouseDownEvent != null && !eventStore.mouseDownEvent.isHandled())
             eventHandler.handleEvent(eventStore.mouseDownEvent);
@@ -306,7 +304,7 @@ public final class UI implements Widget.Host, Widget.Updater {
 
     // Dispatch mouse release and click events to the active widget
     if (lastActiveWidget != null) {
-      traverseTree(lastActiveWidget, Direction.OUT, widget -> {
+      travelTree(lastActiveWidget, Direction.OUTWARD, widget -> {
         if (widget instanceof MouseEvent.Handler eventHandler) {
           if (eventStore.mouseReleaseEvent != null && !eventStore.mouseReleaseEvent.isHandled())
             eventHandler.handleEvent(eventStore.mouseReleaseEvent);
@@ -362,39 +360,12 @@ public final class UI implements Widget.Host, Widget.Updater {
     lastFocusWidget = null;
   }
 
-  private void traverseTree(Widget tree, Direction direction, TreeWidgetVisitor visitor) {
-    visitor.visit(tree);
-
-    switch (direction) {
-      case OUT -> {
-        Widget parent = tree.getParent();
-        if (parent == null) return;
-
-        traverseTree(parent, direction, visitor);
-      }
-      case IN -> {
-        if (tree instanceof SingleChildParent parent) {
-          traverseTree(parent.getChild(), direction, visitor);
-        } else if (tree instanceof MultiChildParent parent) {
-          Widget[] children = parent.getChildren();
-
-          for (Widget child : children)
-            traverseTree(child, direction, visitor);
-        }
-      }
-    }
-  }
-
   private Widget getTree() {
     return tree;
   }
 
   private void setTree(Widget tree) {
     this.tree = tree;
-  }
-
-  private enum Direction {
-    OUT, IN
   }
 
   private interface TreeWidgetVisitor {

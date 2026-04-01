@@ -275,7 +275,7 @@ public abstract class Widget {
     void triggerRender();
   }
 
-  /** Mixin which provides functionality for comparing and updating two {@link Widget} trees */
+  /** Mixin interface which provides functionality for comparing and updating two {@link Widget} trees */
   public interface Updater {
     java.util.List<Widget> CURRENT_QUEUE = new ArrayList<>();
     java.util.List<Widget> NEW_QUEUE = new ArrayList<>();
@@ -290,7 +290,7 @@ public abstract class Widget {
       Host widgetHost,
       Constraints constraints,
       ValueGetter<Widget> treeGetter,
-      ValueGetter<Widget> newTreeBuilder,
+      ValueGetter<Widget> treeCreator,
       ValueCallback<Widget> treeSetter,
       VoidCallback renderTrigger
     ) {
@@ -299,7 +299,7 @@ public abstract class Widget {
       boolean treeUpdated = false;
 
       // Initialize the new tree to set up internal state before comparison
-      Widget newTree = newTreeBuilder.get();
+      Widget newTree = treeCreator.get();
       newTree.init(widgetHost);
       CURRENT_QUEUE.add(treeGetter.get());
       NEW_QUEUE.add(newTree);
@@ -326,7 +326,7 @@ public abstract class Widget {
           }
 
           treeUpdated = true;
-        } else if (!configMatch || currentWidget instanceof Stateful) {
+        } else if (!configMatch || currentWidget instanceof StatefulCompose) {
           currentWidget.update(newWidget);
           treeUpdated = true;
         }
@@ -350,6 +350,41 @@ public abstract class Widget {
         updatedTree.postLayout();
         renderTrigger.invoke();
       }
+    }
+  }
+
+  /** Mixin interface which provides functionality to travel up or down a widget tree */
+  public interface Traveller {
+    /** Walks up or down a widget tree, passing each visited widget to the {@code visitor} object */
+    default void travelTree(Widget tree, Direction direction, ValueCallback<Widget> visitor) {
+      visitor.invoke(tree);
+
+      switch (direction) {
+        case OUTWARD -> {
+          Widget parent = tree.getParent();
+          if (parent == null) return;
+
+          travelTree(parent, direction, visitor);
+        }
+        case INWARD -> {
+          if (tree instanceof SingleChildParent parent) {
+            travelTree(parent.getChild(), direction, visitor);
+          } else if (tree instanceof MultiChildParent parent) {
+            Widget[] children = parent.getChildren();
+
+            for (Widget child : children)
+              travelTree(child, direction, visitor);
+          }
+        }
+      }
+    }
+
+    /** Direction for widget tree traversal */
+    enum Direction {
+      /** Indicates a walk down the descendants of a tree */
+      INWARD,
+      /** Indicates a walk up the ancestry of a tree */
+      OUTWARD
     }
   }
 }
