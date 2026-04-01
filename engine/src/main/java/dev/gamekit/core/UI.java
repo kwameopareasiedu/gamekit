@@ -2,7 +2,6 @@ package dev.gamekit.core;
 
 import dev.gamekit.settings.Settings;
 import dev.gamekit.ui.events.*;
-import dev.gamekit.ui.mixins.WidgetUpdater;
 import dev.gamekit.ui.widgets.MultiChildParent;
 import dev.gamekit.ui.widgets.SingleChildParent;
 import dev.gamekit.ui.widgets.Widget;
@@ -18,7 +17,7 @@ import java.util.List;
 import java.util.Objects;
 
 /** {@link UI} manages the user interface within a {@link Scene} */
-public final class UI implements Widget.Host, WidgetUpdater {
+public final class UI implements Widget.Host, Widget.Updater {
   public static final Color TRANSPARENT_COLOR = new Color(0x0000000, true);
 
   private static final Logger LOGGER = LogManager.getLogger(UI.class);

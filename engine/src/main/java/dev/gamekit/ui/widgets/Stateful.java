@@ -2,7 +2,6 @@ package dev.gamekit.ui.widgets;
 
 import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.ui.events.*;
-import dev.gamekit.ui.mixins.WidgetUpdater;
 import dev.gamekit.utils.Bounds;
 import dev.gamekit.utils.Constraints;
 
@@ -116,7 +115,7 @@ public abstract class Stateful extends SingleChildParent
   }
 
   /** {@link State} represents the mutable part of a {@link Stateful} widget */
-  protected abstract static class State<T extends Stateful> implements WidgetUpdater {
+  protected abstract static class State<T extends Stateful> implements Updater {
     protected T widget;
     private Widget tree;
 

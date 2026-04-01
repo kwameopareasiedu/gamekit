@@ -35,13 +35,13 @@
   int sliceHeight, int topInset, int rightInset, int bottomInset)
   ` to `IO` class
 - Added `Spinner` widget which is a `Leaf` widget which displays a loading indicator
-- Added `Measure` widget which is a `SingleChildParent` widget which overlays a ruler on its child (for layout 
+- Added `Measure` widget which is a `SingleChildParent` widget which overlays a ruler on its child (for layout
   debugging)
-- Added `Builder` widget which is a `Compose` widget which delegates is widget tree construction to the provided 
-  delegate object
+- Added `Builder` widget which is a `StatelessCompose` widget which delegates is widget tree construction to the
+  provided delegate object
 - Added `void addListener(AudioClip.Event.Handler handler)` to `AudioClip` class
 - Added `void removeListener(AudioClip.Event.Handler handler)` to `AudioClip` class
-- Added `Stateful` widget which is `SingleChildParent` which is an abstract base for creating custom widgets which 
+- Added `Stateful` widget which is `SingleChildParent` which is an abstract base for creating custom widgets which
   maintain an internal state
 - Added `ValueGetter<T>` utility interface which exposes a single abstract no-argument method `get` which returns a
   value of type `T`
@@ -57,6 +57,7 @@
 - Renamed `void run()` in `VoidCallback` interface to `void invoke()`
 - Renamed `void update(T value)` in `ValueCallback` interface to `void invoke(T value)`
 - Updated `WidgetUpdater` class to always update `Stateful` widgets during reconciliation
+- Renamed `Compose` widget to `StatelessCompose`
 
 ### Deprecated
 
@@ -70,6 +71,7 @@
 - Removed `thumbEdgeInsets` field from `Slider` widget
 - Removed `trackEdgeInsets` field from `Progress` widget
 - Removed `fillEdgeInsets` field from `Progress` widget
+- Removed `void updateUI()` method from `Compose` widget
 
 ## 0.6.0
 

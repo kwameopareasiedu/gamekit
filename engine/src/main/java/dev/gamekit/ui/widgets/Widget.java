@@ -2,13 +2,13 @@ package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.Scene;
 import dev.gamekit.core.Window;
-import dev.gamekit.utils.Bounds;
-import dev.gamekit.utils.Constraints;
-import dev.gamekit.utils.Size;
+import dev.gamekit.utils.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A widget is an abstract representation of a portion of a {@link Scene scene's} user interface.
@@ -26,10 +26,9 @@ import java.awt.*;
  * model which is used in Flutter, where constraints go down the tree, size go up and parents set positions
  */
 public abstract class Widget {
-  public static boolean DEBUG = false;
   public static final Color DEBUG_COLOR = Color.GREEN;
   public static final BasicStroke DEBUG_STROKE = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-
+  public static boolean DEBUG = false;
   protected final Logger logger = LogManager.getLogger(getClass());
   protected final Bounds absoluteBounds;
   protected final Bounds computedBounds;
@@ -250,7 +249,7 @@ public abstract class Widget {
     return null;
   }
 
-  /** Interface for all widget constructor configurations */
+  /** Functional interface for all widget constructor configurators */
   @FunctionalInterface
   public interface Config {
     /** Updates matching widget configuration variables with its own variables */
@@ -264,7 +263,7 @@ public abstract class Widget {
     void update(T config);
   }
 
-  /** Interface for the host containing a {@link Widget} tree, providing methods to to it */
+  /** Interface for the host containing a {@link Widget} tree, providing methods to it */
   public interface Host {
     /** Returns the font metrics for the given font from the {@link Window} object */
     FontMetrics getFontMetrics(Font font);
@@ -274,5 +273,83 @@ public abstract class Widget {
 
     /** Triggers a re-render of the {@link Widget widget} tree */
     void triggerRender();
+  }
+
+  /** Mixin which provides functionality for comparing and updating two {@link Widget} trees */
+  public interface Updater {
+    java.util.List<Widget> CURRENT_QUEUE = new ArrayList<>();
+    java.util.List<Widget> NEW_QUEUE = new ArrayList<>();
+
+    /**
+     * Updates the widget tree using a "diffing" algorithm.
+     * <p>
+     * This "diffing" algorithm involves generating a new widget tree with the new state, comparing it to the current
+     * widget tree and updating or replacing widgets whose states have changed.
+     */
+    default void updateTree(
+      Host widgetHost,
+      Constraints constraints,
+      ValueGetter<Widget> treeGetter,
+      ValueGetter<Widget> newTreeBuilder,
+      ValueCallback<Widget> treeSetter,
+      VoidCallback renderTrigger
+    ) {
+      CURRENT_QUEUE.clear();
+      NEW_QUEUE.clear();
+      boolean treeUpdated = false;
+
+      // Initialize the new tree to set up internal state before comparison
+      Widget newTree = newTreeBuilder.get();
+      newTree.init(widgetHost);
+      CURRENT_QUEUE.add(treeGetter.get());
+      NEW_QUEUE.add(newTree);
+
+      while (!CURRENT_QUEUE.isEmpty() && !NEW_QUEUE.isEmpty()) {
+        Widget currentWidget = CURRENT_QUEUE.remove(0);
+        Widget newWidget = NEW_QUEUE.remove(0);
+
+        boolean typeMatch = currentWidget.getClass().equals(newWidget.getClass());
+        boolean configMatch = currentWidget.configEquals(newWidget);
+
+        if (!typeMatch) {
+          Parent currentWidgetParent = (Parent) currentWidget.getParent();
+
+          currentWidget.unmount();
+
+          if (currentWidgetParent == null) {
+            treeSetter.invoke(newWidget);
+          } else if (currentWidgetParent instanceof SingleChildParent currentWidgetSingleChildParent) {
+            currentWidgetSingleChildParent.updateChild(newWidget);
+          } else if (currentWidgetParent instanceof MultiChildParent currentWidgetMultiChildParent) {
+            int index = java.util.List.of(currentWidgetMultiChildParent.getChildren()).indexOf(currentWidget);
+            currentWidgetMultiChildParent.updateChild(index, newWidget);
+          }
+
+          treeUpdated = true;
+        } else if (!configMatch || currentWidget instanceof Stateful) {
+          currentWidget.update(newWidget);
+          treeUpdated = true;
+        }
+
+        if (currentWidget instanceof SingleChildParent currentParent && newWidget instanceof SingleChildParent newParent) {
+          // Add child of SingleChildParent to queue for processing
+          CURRENT_QUEUE.add(currentParent.getChild());
+          NEW_QUEUE.add(newParent.getChild());
+        } else if (currentWidget instanceof MultiChildParent currentParent && newWidget instanceof MultiChildParent newParent) {
+          // Add children of MultiChildParent to queue for processing
+          java.util.List<Widget> currentParentChildrenWidgets = java.util.List.of(currentParent.getChildren());
+          java.util.List<Widget> newParentChildrenWidgets = List.of(newParent.getChildren());
+          CURRENT_QUEUE.addAll(currentParentChildrenWidgets);
+          NEW_QUEUE.addAll(newParentChildrenWidgets);
+        }
+      }
+
+      if (treeUpdated) {
+        Widget updatedTree = treeGetter.get();
+        updatedTree.layout(constraints);
+        updatedTree.postLayout();
+        renderTrigger.invoke();
+      }
+    }
   }
 }
