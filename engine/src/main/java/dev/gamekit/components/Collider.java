@@ -16,9 +16,10 @@ import java.util.UUID;
 
 /** {@link Collider} defines the physics shape of an entity for the purposes of physics collision detection */
 public abstract class Collider extends Component {
-  public static boolean DEBUG_DRAW = false;
+  public static boolean DEBUG = false;
   private static final Stroke SENSOR_DEBUG_STROKE =
     new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{ 10, 2 }, 0);
+
   protected final RefFixture fixture;
   protected Physics.CollisionListener collisionListener;
 
@@ -97,7 +98,7 @@ public abstract class Collider extends Component {
 
   @Override
   protected void render() {
-    if (DEBUG_DRAW) {
+    if (DEBUG) {
       Transform tx = entity.findComponent(Transform.class);
       Vector globalPosition = tx.getGlobalPosition();
       int positionX = (int) globalPosition.x;

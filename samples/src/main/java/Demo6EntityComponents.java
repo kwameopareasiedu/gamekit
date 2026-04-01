@@ -47,7 +47,7 @@ public class Demo6EntityComponents extends Scene {
   @Override
   protected void start() {
     RigidBody.DEBUG_DRAW = true;
-    Collider.DEBUG_DRAW = true;
+    Collider.DEBUG = true;
 
     addChild(new BoxFrame());
     addChild(new Ball());

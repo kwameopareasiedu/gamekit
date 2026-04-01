@@ -42,7 +42,7 @@ public class Demo4UserInterface extends Scene {
 
   public Demo4UserInterface() {
     super("Main Scene");
-    Widget.DEBUG_DRAW = true;
+    Widget.DEBUG = true;
   }
 
   public static void main(String[] args) {
@@ -65,246 +65,234 @@ public class Demo4UserInterface extends Scene {
 
   @Override
   public Widget createUI() {
-    return Measure.create(
-      props -> {
-        props.showRuler = true;
-        props.rulerTicks = 50;
-      },
-      Stack.create(
-        Image.create(BACKDROP),
-        Align.create(
-          props -> {
-            props.verticalAlignment = Alignment.START;
-            props.horizontalAlignment = Alignment.START;
-          },
-          Padding.create(
-            0, 24, 0, 24,
-            Sized.create(
-              props -> {
-                props.fixedWidth = 480.0;
-                props.fixedHeight = 480.0;
-              },
-              Image.create(LOGO)
-            )
+    return Stack.create(
+      Image.create(BACKDROP),
+      Align.create(
+        props -> {
+          props.verticalAlignment = Alignment.START;
+          props.horizontalAlignment = Alignment.START;
+        },
+        Padding.create(
+          0, 24, 0, 24,
+          Sized.create(
+            props -> {
+              props.fixedWidth = 480.0;
+              props.fixedHeight = 480.0;
+            },
+            Image.create(LOGO)
           )
-        ),
-        Align.create(
-          props -> props.verticalAlignment = Alignment.CENTER,
-          Padding.create(
-            256, 8, 16, 96,
-            Theme.create(
+        )
+      ),
+      Align.create(
+        props -> props.verticalAlignment = Alignment.CENTER,
+        Padding.create(
+          256, 8, 16, 96,
+          Theme.create(
+            props -> {
+              props.textFontSize = 10;
+              props.textFontStyle = Text.ITALIC;
+              props.textFontHeightRatio = 0.85;
+              props.fieldFontHeightRatio = 0.85;
+              props.fieldColor = Color.BLACK;
+            },
+            Column.create(
               props -> {
-                props.textFontSize = 10;
-                props.textFontStyle = Text.ITALIC;
-                props.textFontHeightRatio = 0.85;
-                props.fieldFontHeightRatio = 0.85;
-                props.fieldColor = Color.BLACK;
+                props.mainAxisAlignment = MainAxisAlignment.START;
+                props.crossAxisAlignment = CrossAxisAlignment.START;
+                props.gapSize = 24;
               },
-              Column.create(
+              MainMenuButton.create("Tutorial", ev -> {}),
+              MainMenuButton.create("New Planet", ev -> {}),
+              Field.create(
+                (FieldConfig.Updater) props -> {
+                  props.text = fieldValue;
+                  props.fontSize = 28;
+                  props.fontStyle = Text.PLAIN;
+                  props.padding = new Spacing(12, 12, 12, 12);
+                  props.changeListener = ev -> {
+                    fieldValue = ev.value;
+                    logger.debug("Field value: {}", fieldValue);
+                    updateUI();
+                  };
+                }
+              ),
+              Checkbox.create(
                 props -> {
-                  props.mainAxisAlignment = MainAxisAlignment.START;
-                  props.crossAxisAlignment = CrossAxisAlignment.START;
-                  props.gapSize = 24;
+                  props.toggled = checkboxValue;
+                  props.changeListener = ev -> {
+                    checkboxValue = ev.value;
+                    updateUI();
+                  };
                 },
-                MainMenuButton.create("Tutorial", e -> System.out.println("0: " + e.type)),
-                MainMenuButton.create("New Planet", e -> System.out.println("1: " + e.type)),
-                Field.create(
-                  (FieldConfig.Updater) props -> {
-                    props.text = fieldValue;
-                    props.fontSize = 28;
+                Text.create(
+                  props -> {
+                    props.fontSize = 32;
                     props.fontStyle = Text.PLAIN;
-                    props.padding = new Spacing(12, 12, 12, 12);
-                    props.changeListener = ev -> {
-                      fieldValue = ev.value;
-                      logger.debug("Field value: {}", fieldValue);
-                      updateUI();
-                    };
-                  }
-                ),
-                Checkbox.create(
-                  props -> {
-                    props.toggled = checkboxValue;
-                    props.changeListener = ev -> {
-                      checkboxValue = ev.value;
-                      updateUI();
-                    };
-                  },
-                  Text.create(
-                    props -> {
-                      props.fontSize = 32;
-                      props.fontStyle = Text.PLAIN;
-                      props.text = "Active";
-                    }
-                  )
-                ),
-                Sized.create(
-                  props -> {
-                    props.fixedWidth = 256.0;
-                    props.useIntrinsicHeight = true;
-                  },
-                  Slider.create(
-                    (SliderConfig.Updater) props -> {
-                      props.value = sliderValue;
-                      props.minValue = 0.0;
-                      props.maxValue = 100.0;
-                      props.fillMode = Slider.FillMode.CLIP;
-                      props.thumbBackground = THUMB;
-                      props.changeListener = e -> {
-                        sliderValue = e.value;
-                        updateUI();
-                      };
-                    }
-                  )
-                ),
-                Sized.create(
-                  props -> {
-                    props.fixedWidth = 256.0;
-                    props.fixedHeight = 48.0;
-                  },
-                  Progress.create(
-                    props -> {
-                      props.value = sliderValue;
-                      props.minValue = 0.0;
-                      props.maxValue = 100.0;
-                      props.trackBackground = PROGRESS_TRACK;
-                      props.fillMargin = new Spacing(0, 12, 0, 12);
-                      props.fillBackground = PROGRESS_FILL;
-                      props.fillMode = Progress.FillMode.CLIP;
-                    }
-                  )
-                ),
-                Column.create(
-                  props -> {
-                    props.mainAxisAlignment = MainAxisAlignment.START;
-                    props.crossAxisAlignment = CrossAxisAlignment.START;
-                    props.gapSize = 12;
-                  },
-                  SubMenuButton.create("Commander Customization"),
-                  SubMenuButton.create("Options"),
-                  SubMenuButton.create("Credits"),
-                  SubMenuButton.create("Exit Game")
-                )
-              )
-            )
-          )
-        ),
-        Align.create(
-          props -> props.horizontalAlignment = Alignment.CENTER,
-          Sized.create(
-            props -> {
-              props.fractionalWidth = 1.0;
-              props.fractionalHeight = 0.15;
-            },
-            Image.create(
-              props -> {
-                props.fit = ImageFit.CROP;
-                props.image = SCRIM;
-              }
-            )
-          )
-        ),
-        Align.create(
-          props -> {
-            props.horizontalAlignment = Alignment.CENTER;
-            props.verticalAlignment = Alignment.END;
-          },
-          Sized.create(
-            props -> {
-              props.fractionalWidth = 1.0;
-              props.fractionalHeight = 0.15;
-            },
-            Stack.create(
-              Sized.create(
-                props -> {
-                  props.fractionalWidth = 1.0;
-                  props.fractionalHeight = 1.0;
-                },
-                Image.create(
-                  props -> {
-                    props.fit = ImageFit.STRETCH;
-                    props.image = SCRIM;
+                    props.text = "Active";
                   }
                 )
               ),
               Sized.create(
                 props -> {
-                  props.fractionalWidth = 1.0;
-                  props.fractionalHeight = 1.0;
+                  props.fixedWidth = 256.0;
+                  props.useIntrinsicHeight = true;
                 },
-                Row.create(
+                Slider.create(
+                  (SliderConfig.Updater) props -> {
+                    props.value = sliderValue;
+                    props.minValue = 0.0;
+                    props.maxValue = 100.0;
+                    props.fillMode = Slider.FillMode.CLIP;
+                    props.thumbBackground = THUMB;
+                    props.changeListener = e -> {
+                      sliderValue = e.value;
+                      updateUI();
+                    };
+                  }
+                )
+              ),
+              Sized.create(
+                props -> {
+                  props.fixedWidth = 256.0;
+                  props.fixedHeight = 48.0;
+                },
+                Progress.create(
                   props -> {
-                    props.mainAxisAlignment = MainAxisAlignment.END;
-                    props.crossAxisAlignment = CrossAxisAlignment.CENTER;
-                    props.gapSize = 24;
+                    props.value = sliderValue;
+                    props.minValue = 0.0;
+                    props.maxValue = 100.0;
+                    props.trackBackground = PROGRESS_TRACK;
+                    props.fillMargin = new Spacing(0, 12, 0, 12);
+                    props.fillBackground = PROGRESS_FILL;
+                    props.fillMode = Progress.FillMode.CLIP;
+                  }
+                )
+              ),
+              Column.create(
+                props -> {
+                  props.mainAxisAlignment = MainAxisAlignment.START;
+                  props.crossAxisAlignment = CrossAxisAlignment.START;
+                  props.gapSize = 12;
+                },
+                SubMenuButton.create("Commander Customization"),
+                SubMenuButton.create("Options"),
+                SubMenuButton.create("Credits"),
+                SubMenuButton.create("Exit Game")
+              )
+            )
+          )
+        )
+      ),
+      Align.create(
+        props -> props.horizontalAlignment = Alignment.CENTER,
+        Sized.create(
+          props -> {
+            props.fractionalWidth = 1.0;
+            props.fractionalHeight = 0.15;
+          },
+          Image.create(
+            props -> {
+              props.fit = ImageFit.CROP;
+              props.image = SCRIM;
+            }
+          )
+        )
+      ),
+      Align.create(
+        props -> {
+          props.horizontalAlignment = Alignment.CENTER;
+          props.verticalAlignment = Alignment.END;
+        },
+        Sized.create(
+          props -> {
+            props.fractionalWidth = 1.0;
+            props.fractionalHeight = 0.15;
+          },
+          Stack.create(
+            Sized.create(
+              props -> {
+                props.fractionalWidth = 1.0;
+                props.fractionalHeight = 1.0;
+              },
+              Image.create(
+                props -> {
+                  props.fit = ImageFit.STRETCH;
+                  props.image = SCRIM;
+                }
+              )
+            ),
+            Sized.create(
+              props -> {
+                props.fractionalWidth = 1.0;
+                props.fractionalHeight = 1.0;
+              },
+              Row.create(
+                props -> {
+                  props.mainAxisAlignment = MainAxisAlignment.END;
+                  props.crossAxisAlignment = CrossAxisAlignment.CENTER;
+                  props.gapSize = 24;
+                },
+                Sized.create(
+                  props -> {
+                    props.fixedWidth = 48.0;
+                    props.fixedHeight = 48.0;
                   },
-                  Sized.create(
+                  Panel.create(
                     props -> {
-                      props.fixedWidth = 48.0;
-                      props.fixedHeight = 48.0;
+                      props.color = Color.RED;
+                      props.background = null;
+                      props.cornerRadius = 4;
                     },
-                    Panel.create(
+                    Empty.create()
+                  )
+                ),
+                Button.create(
+                  props -> { },
+                  Padding.create(
+                    12, 12, 18, 12,
+                    Text.create(
                       props -> {
-                        props.color = Color.RED;
-                        props.background = null;
-                        props.cornerRadius = 4;
-                      },
-                      Empty.create()
+                        props.fontSize = 12;
+                        props.fontStyle = Text.BOLD;
+                        props.text = "Create Account";
+                      }
                     )
-                  ),
-                  Button.create(
-                    props -> { },
-                    Padding.create(
-                      12, 12, 18, 12,
-                      Text.create(
-                        props -> {
-                          props.fontSize = 12;
-                          props.fontStyle = Text.BOLD;
-                          props.text = "Create Account";
-                        }
-                      )
-                    )
-                  ),
-                  Button.create(
-                    props -> { },
-                    Padding.create(
-                      12, 12, 18, 12,
-                      Text.create(
-                        props -> {
-                          props.fontSize = 12;
-                          props.fontStyle = Text.BOLD;
-                          props.text = "Login";
-                        }
-                      )
+                  )
+                ),
+                Button.create(
+                  props -> { },
+                  Padding.create(
+                    12, 12, 18, 12,
+                    Text.create(
+                      props -> {
+                        props.fontSize = 12;
+                        props.fontStyle = Text.BOLD;
+                        props.text = "Login";
+                      }
                     )
                   )
                 )
               )
             )
           )
-        ),
-        Align.create(
-          props -> {
-            props.horizontalAlignment = Alignment.END;
-            props.verticalAlignment = Alignment.CENTER;
-          },
-          Rotated.create(
-            degToRad(30),
-            Scaled.create(
-              1.0,
-              Sized.create(
-                props -> {
-                  props.fixedWidth = 200.0;
-                  props.fixedHeight = 200.0;
-                },
-                Image.create(HEADPHONES_IMG)
-              )
+        )
+      ),
+      Align.create(
+        props -> {
+          props.horizontalAlignment = Alignment.END;
+          props.verticalAlignment = Alignment.CENTER;
+        },
+        Rotated.create(
+          degToRad(30),
+          Scaled.create(
+            1.0,
+            Sized.create(
+              props -> {
+                props.fixedWidth = 200.0;
+                props.fixedHeight = 200.0;
+              },
+              Image.create(HEADPHONES_IMG)
             )
-          )
-        ),
-        Center.create(
-          Sized.create(
-            props -> props.fixedWidth = props.fixedHeight = 32.0,
-            Spinner.create()
           )
         )
       )

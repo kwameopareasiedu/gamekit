@@ -1,8 +1,8 @@
 package dev.gamekit.utils;
 
-/** Interface for an arbitrary task which accepts one argument arguments */
+/** Functional interface for a single-argument void returning method */
 @FunctionalInterface
 public interface ValueCallback<T> {
-  /** Abstract method implementing the callback's logic */
-  void update(T value);
+  /** Called to notify a receiver of a new value */
+  void invoke(T value);
 }

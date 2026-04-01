@@ -34,9 +34,11 @@ public class Spinner extends Leaf {
   protected void performInit() {
     bgSlices = new BufferedImage[LOADING_BG.getWidth() / BG_SLICE_WIDTH];
 
-    for (int i = 0; i < bgSlices.length; i++) {
+    for (int i = 0; i < bgSlices.length; i++)
       bgSlices[i] = LOADING_BG.getSubimage(i * BG_SLICE_WIDTH, 0, BG_SLICE_WIDTH, BG_SLICE_HEIGHT);
-    }
+
+    if (timerAnimation != null)
+      timerAnimation.end();
 
     timerAnimation = new Animation(25, Animation.RepeatMode.RESTART);
     timerAnimation.setStateListener(state -> {

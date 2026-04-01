@@ -3,7 +3,6 @@ package dev.gamekit.ui.widgets;
 import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.core.IO;
-import dev.gamekit.core.UI;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.utils.Bounds;
 import dev.gamekit.utils.Constraints;
@@ -217,9 +216,9 @@ public class Text extends Leaf {
       g.drawString(String.valueOf(symbol.value), (int) symbol.x, (int) (symbol.y + symbol.height));
     }
 
-    if (Widget.DEBUG_DRAW) {
-      g.setColor(UI.DEBUG_COLOR);
-      g.setStroke(UI.DEBUG_STROKE);
+    if (Widget.DEBUG) {
+      g.setColor(Widget.DEBUG_COLOR);
+      g.setStroke(Widget.DEBUG_STROKE);
 
       for (Symbol symbol : symbols) {
         g.drawRect((int) symbol.x, (int) symbol.y, (int) symbol.width, (int) symbol.height);

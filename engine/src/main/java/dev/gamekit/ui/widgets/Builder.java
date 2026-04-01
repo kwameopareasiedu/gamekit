@@ -2,21 +2,19 @@ package dev.gamekit.ui.widgets;
 
 import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
+import dev.gamekit.utils.ValueGetter;
 
-/**
- * {@link Builder} is a {@link Compose} which delegates its {@link #build()} method to the provided
- * {@link BuilderDelegate} object
- */
+/** {@link Builder} is a {@link Compose} which delegates its {@link #build()} method to the provided delegate object */
 @WidgetBuilder
 public class Builder extends Compose {
   @WidgetBuilderField(themable = false, comparable = false)
-  public BuilderDelegate delegate;
+  public ValueGetter<Widget> delegate;
 
   public Builder(BuilderConfig config) {
     super(config);
   }
 
-  public static Builder create(BuilderDelegate delegate) {
+  public static Builder create(ValueGetter<Widget> delegate) {
     return new Builder(
       Widgets.configureBuilder(
         config -> config.delegate = delegate
@@ -26,12 +24,6 @@ public class Builder extends Compose {
 
   @Override
   protected Widget build() {
-    return delegate.build();
-  }
-
-  /** Contract for an object which builds a {@link Widget} tree */
-  public interface BuilderDelegate {
-    /** Called to return the custom {@link Widget} tree */
-    Widget build();
+    return delegate.get();
   }
 }

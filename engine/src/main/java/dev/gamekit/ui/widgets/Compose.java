@@ -4,6 +4,8 @@ import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.ui.mixins.WidgetUpdater;
 import dev.gamekit.utils.Constraints;
 
+import java.awt.*;
+
 /**
  * A {@link SingleChildParent} which is an abstract base for creating custom widgets by overriding the
  * {@link #build()} method and returning a custom widget tree.
@@ -28,7 +30,6 @@ public abstract class Compose extends SingleChildParent implements WidgetUpdater
 
   @Override
   protected final void performLayout(Constraints constraints) {
-    Widget child = getChild();
     child.layout(constraints);
 
     computedBounds.setSize(
@@ -53,6 +54,6 @@ public abstract class Compose extends SingleChildParent implements WidgetUpdater
    * This method should be called after the widget's custom internal state changes
    */
   protected void updateUI() {
-    updateTree(host, constraints, getChild(), build(), this::updateChild, host::triggerRender);
+    updateTree(host, constraints, this::getChild, this::build, this::updateChild, host::triggerRender);
   }
 }

@@ -41,6 +41,11 @@
   delegate object
 - Added `void addListener(AudioClip.Event.Handler handler)` to `AudioClip` class
 - Added `void removeListener(AudioClip.Event.Handler handler)` to `AudioClip` class
+- Added `Stateful` widget which is `SingleChildParent` which is an abstract base for creating custom widgets which 
+  maintain an internal state
+- Added `ValueGetter<T>` utility interface which exposes a single abstract no-argument method `get` which returns a
+  value of type `T`
+- Added `void triggerUpdate()` method to `Widget.Host` interface
 
 ### Changed
 
@@ -49,6 +54,9 @@
   `static Engine getImage(String resPath)`
 - Changed signature of `static BufferedImage getResourceImage(String resPath, int x, int y, int w, int h)` in `IO`
   class to `static EngineImage getImageSlice(String resPath, int sliceX, int sliceY, int sliceWidth)`
+- Renamed `void run()` in `VoidCallback` interface to `void invoke()`
+- Renamed `void update(T value)` in `ValueCallback` interface to `void invoke(T value)`
+- Updated `WidgetUpdater` class to always update `Stateful` widgets during reconciliation
 
 ### Deprecated
 
@@ -126,7 +134,7 @@
 - Added `static Vector from(double manitude, double rotation)` method to `Vector` class
 - Added `Animation.State.RESTARTED` and `Animation.State.REVERSED` pseudo states which are
   passed to a registered state listener when an animation restarts or reverses respectively
-- Added `ValueCallback<T>` class which is a single abstract method interfaces whose `run` method accepts a single
+- Added `ValueCallback<T>` class which is a single abstract method interface whose `run` method accepts a single
   variable of type `T`
 - Added `state machine` systems package to engine module
 - Added `void setLinearVelocity(double x, double y)` method to `RigidBody` class

@@ -1,8 +1,8 @@
 package dev.gamekit.utils;
 
-/** Interface for an arbitrary task which accepts no arguments */
+/** Functional interface for a no-argument void returning method */
 @FunctionalInterface
 public interface VoidCallback {
-  /** Abstract method implementing the callback's logic */
-  void run();
+  /** Called to notify a receiver */
+  void invoke();
 }

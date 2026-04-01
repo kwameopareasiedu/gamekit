@@ -20,8 +20,6 @@ import java.util.Objects;
 /** {@link UI} manages the user interface within a {@link Scene} */
 public final class UI implements Widget.Host, WidgetUpdater {
   public static final Color TRANSPARENT_COLOR = new Color(0x0000000, true);
-  public static final Color DEBUG_COLOR = Color.GREEN;
-  public static final BasicStroke DEBUG_STROKE = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
   private static final Logger LOGGER = LogManager.getLogger(UI.class);
 
@@ -70,6 +68,12 @@ public final class UI implements Widget.Host, WidgetUpdater {
     return Window.getInstance().getUiGraphics().getFontMetrics(font);
   }
 
+  /** Triggers a layout update during the next frame */
+  @Override
+  public void triggerUpdate() {
+    needsUpdate = true;
+  }
+
   @Override
   public void triggerRender() {
     needsRender = true;
@@ -87,16 +91,11 @@ public final class UI implements Widget.Host, WidgetUpdater {
     }
   }
 
-  /** Triggers a layout update during the next frame */
-  void triggerUpdate() {
-    needsUpdate = true;
-  }
-
   /** Update updates the UI tree, recomputes layout, generates and dispatches input events */
   void update() {
     if (tree != null && needsUpdate) {
       LOGGER.debug("Updating UI");
-      updateTree(this, windowConstraints, tree, scene.createUI(), (t) -> tree = t, this::triggerRender);
+      updateTree(this, windowConstraints, this::getTree, scene::createUI, this::setTree, this::triggerRender);
       needsUpdate = false;
     }
 
@@ -385,6 +384,14 @@ public final class UI implements Widget.Host, WidgetUpdater {
         }
       }
     }
+  }
+
+  private Widget getTree() {
+    return tree;
+  }
+
+  private void setTree(Widget tree) {
+    this.tree = tree;
   }
 
   private enum Direction {

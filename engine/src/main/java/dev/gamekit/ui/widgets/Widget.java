@@ -1,7 +1,6 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.Scene;
-import dev.gamekit.core.UI;
 import dev.gamekit.core.Window;
 import dev.gamekit.utils.Bounds;
 import dev.gamekit.utils.Constraints;
@@ -27,7 +26,9 @@ import java.awt.*;
  * model which is used in Flutter, where constraints go down the tree, size go up and parents set positions
  */
 public abstract class Widget {
-  public static boolean DEBUG_DRAW = false;
+  public static boolean DEBUG = false;
+  public static final Color DEBUG_COLOR = Color.GREEN;
+  public static final BasicStroke DEBUG_STROKE = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
   protected final Logger logger = LogManager.getLogger(getClass());
   protected final Bounds absoluteBounds;
@@ -93,11 +94,18 @@ public abstract class Widget {
    * {@code ImageConfig}).
    * <p>
    * {@link #init} method is called afterward to re-initialize the widget.
+   * <p>
+   * Since this method is marked as {@code final}, subclasses should override the  {@link #performUpdate()} method
+   * instead to perform their layout
    */
   public final void update(Widget widget) {
     this.config = widget.config;
     init(host);
+    performUpdate();
   }
+
+  /** Delegate method for subclasses to perform additional update operations */
+  protected void performUpdate() { /* No-op */ }
 
   /**
    * Computes the size of the widget and the relative position(s) of its child/children
@@ -171,12 +179,12 @@ public abstract class Widget {
   public final void render(Graphics2D canvasGraphics) {
     performRender(canvasGraphics);
 
-    if (DEBUG_DRAW) {
+    if (DEBUG) {
       Color originalColor = canvasGraphics.getColor();
       Stroke originalStroke = canvasGraphics.getStroke();
 
-      canvasGraphics.setColor(UI.DEBUG_COLOR);
-      canvasGraphics.setStroke(UI.DEBUG_STROKE);
+      canvasGraphics.setColor(DEBUG_COLOR);
+      canvasGraphics.setStroke(DEBUG_STROKE);
       canvasGraphics.drawRect(
         (int) absoluteBounds.x,
         (int) absoluteBounds.y,
@@ -243,21 +251,26 @@ public abstract class Widget {
   }
 
   /** Interface for all widget constructor configurations */
+  @FunctionalInterface
   public interface Config {
     /** Updates matching widget configuration variables with its own variables */
     void updateWidget(Widget widget);
   }
 
-  /** Contract for an object which customizes a {@link Config} object */
+  /** Functional interface a {@link Config} customization method */
+  @FunctionalInterface
   public interface ConfigUpdater<T extends Config> {
     /** Called with a newly created {@link Config} for further customization */
     void update(T config);
   }
 
-  /** Interface for the host containing a {@link Widget}, allowing widgets to invoke necessary methods on it */
+  /** Interface for the host containing a {@link Widget} tree, providing methods to to it */
   public interface Host {
     /** Returns the font metrics for the given font from the {@link Window} object */
     FontMetrics getFontMetrics(Font font);
+
+    /** Triggers an update of the {@link Widget widget} tree */
+    void triggerUpdate();
 
     /** Triggers a re-render of the {@link Widget widget} tree */
     void triggerRender();

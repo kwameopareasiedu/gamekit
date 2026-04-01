@@ -1,11 +1,9 @@
 package dev.gamekit.ui.mixins;
 
-import dev.gamekit.ui.widgets.MultiChildParent;
-import dev.gamekit.ui.widgets.Parent;
-import dev.gamekit.ui.widgets.SingleChildParent;
-import dev.gamekit.ui.widgets.Widget;
+import dev.gamekit.ui.widgets.*;
 import dev.gamekit.utils.Constraints;
 import dev.gamekit.utils.ValueCallback;
+import dev.gamekit.utils.ValueGetter;
 import dev.gamekit.utils.VoidCallback;
 
 import java.util.ArrayList;
@@ -25,8 +23,8 @@ public interface WidgetUpdater {
   default void updateTree(
     Widget.Host widgetHost,
     Constraints constraints,
-    Widget currentTree,
-    Widget newTree,
+    ValueGetter<Widget> treeGetter,
+    ValueGetter<Widget> newTreeBuilder,
     ValueCallback<Widget> treeSetter,
     VoidCallback renderTrigger
   ) {
@@ -35,8 +33,9 @@ public interface WidgetUpdater {
     boolean treeUpdated = false;
 
     // Initialize the new tree to set up internal state before comparison
+    Widget newTree = newTreeBuilder.get();
     newTree.init(widgetHost);
-    CURRENT_QUEUE.add(currentTree);
+    CURRENT_QUEUE.add(treeGetter.get());
     NEW_QUEUE.add(newTree);
 
     while (!CURRENT_QUEUE.isEmpty() && !NEW_QUEUE.isEmpty()) {
@@ -52,7 +51,7 @@ public interface WidgetUpdater {
         currentWidget.unmount();
 
         if (currentWidgetParent == null) {
-          currentTree = newWidget;
+          treeSetter.invoke(newWidget);
         } else if (currentWidgetParent instanceof SingleChildParent currentWidgetSingleChildParent) {
           currentWidgetSingleChildParent.updateChild(newWidget);
         } else if (currentWidgetParent instanceof MultiChildParent currentWidgetMultiChildParent) {
@@ -61,7 +60,7 @@ public interface WidgetUpdater {
         }
 
         treeUpdated = true;
-      } else if (!configMatch) {
+      } else if (!configMatch || currentWidget instanceof Stateful) {
         currentWidget.update(newWidget);
         treeUpdated = true;
       }
@@ -80,10 +79,10 @@ public interface WidgetUpdater {
     }
 
     if (treeUpdated) {
-      treeSetter.update(currentTree);
-      currentTree.layout(constraints);
-      currentTree.postLayout();
-      renderTrigger.run();
+      Widget updatedTree = treeGetter.get();
+      updatedTree.layout(constraints);
+      updatedTree.postLayout();
+      renderTrigger.invoke();
     }
   }
 }

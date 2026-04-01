@@ -1,6 +1,5 @@
 package dev.gamekit.utils;
 
-import dev.gamekit.core.UI;
 import dev.gamekit.ui.widgets.Widget;
 
 import java.awt.*;
@@ -105,12 +104,12 @@ public class EngineImage extends BufferedImage {
       );
     }
 
-    if (Widget.DEBUG_DRAW) {
+    if (Widget.DEBUG) {
       Color originalColor = graphics.getColor();
       Stroke originalStroke = graphics.getStroke();
 
-      graphics.setColor(UI.DEBUG_COLOR);
-      graphics.setStroke(UI.DEBUG_STROKE);
+      graphics.setColor(Widget.DEBUG_COLOR);
+      graphics.setStroke(Widget.DEBUG_STROKE);
       graphics.drawRect(
         (int) (absoluteBounds.x + leftInset),
         (int) (absoluteBounds.y + topInset),

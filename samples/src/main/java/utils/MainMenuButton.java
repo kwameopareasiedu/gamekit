@@ -12,6 +12,8 @@ public class MainMenuButton extends Compose {
   @CustomWidgetBuilderField(comparable = false)
   public MouseEvent.Handler mouseListener;
 
+  private int clickCount = 0;
+
   public MainMenuButton(MainMenuButtonConfig config) {
     super(config);
   }
@@ -34,12 +36,19 @@ public class MainMenuButton extends Compose {
   @Override
   protected Widget build() {
     return Button.create(
-      props -> props.mouseListener = mouseListener,
+      props -> props.mouseListener = (ev) -> {
+        if (ev.type == MouseEvent.Type.CLICK) {
+          clickCount++;
+          updateUI();
+        }
+
+        mouseListener.handleEvent(ev);
+      },
       Padding.create(
         12, 12, 16, 12,
         Text.create(
           props -> {
-            props.text = text;
+            props.text = text + " " + clickCount;
             props.fontSize = 20;
             props.fontStyle = Text.BOLD;
           }
