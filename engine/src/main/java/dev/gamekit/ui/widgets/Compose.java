@@ -9,12 +9,12 @@ import dev.gamekit.utils.Constraints;
  * Subclasses must override the {@link #build()} method and return a custom widget tree
  */
 @WidgetBuilder
-public abstract class StatelessCompose extends SingleChildParent {
-  protected StatelessCompose() {
-    super(new StatelessComposeConfig(), Empty.create());
+public abstract class Compose extends SingleChildParent {
+  protected Compose() {
+    super(new ComposeConfig(), Empty.create());
   }
 
-  protected StatelessCompose(StatelessComposeConfig config) {
+  protected Compose(ComposeConfig config) {
     super(config, Empty.create());
   }
 
@@ -36,6 +36,6 @@ public abstract class StatelessCompose extends SingleChildParent {
     child.computedBounds.setPosition(0, 0);
   }
 
-  /** Returns the custom {@link Widget} tree to use as a child of this {@link StatelessCompose} */
+  /** Returns the custom {@link Widget} tree to use as a child of this {@link Compose} */
   protected abstract Widget build();
 }

@@ -2,7 +2,7 @@ package utils;
 
 import dev.gamekit.ui.widgets.*;
 
-public class SubMenuButton extends StatelessCompose {
+public class SubMenuButton extends Compose {
   private final String text;
 
   public SubMenuButton(String text) {

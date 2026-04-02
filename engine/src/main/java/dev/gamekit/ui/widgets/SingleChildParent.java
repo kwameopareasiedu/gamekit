@@ -48,6 +48,6 @@ public abstract class SingleChildParent extends Parent {
   public final void updateChild(Widget newChild) {
     child.parent = null;
     child = newChild;
-    newChild.parent = this;
+    child.parent = this;
   }
 }

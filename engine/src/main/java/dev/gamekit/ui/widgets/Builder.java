@@ -4,9 +4,12 @@ import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.utils.ValueGetter;
 
-/** {@link Builder} is a {@link StatelessCompose} which delegates its {@link #build()} method to the provided delegate object */
+/**
+ * {@link Builder} is a {@link Compose} which delegates its {@link #build()} method to the provided
+ * delegate object
+ */
 @WidgetBuilder
-public class Builder extends StatelessCompose {
+public class Builder extends Compose {
   @WidgetBuilderField(themable = false, comparable = false)
   public ValueGetter<Widget> delegate;
 

@@ -6,7 +6,7 @@ import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.widgets.*;
 
 @CustomWidgetBuilder
-public class MainMenuButton extends StatelessCompose {
+public class MainMenuButton extends Compose {
   @CustomWidgetBuilderField
   public String text;
   @CustomWidgetBuilderField(comparable = false)

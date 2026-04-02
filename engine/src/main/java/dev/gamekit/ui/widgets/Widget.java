@@ -326,7 +326,7 @@ public abstract class Widget {
           }
 
           treeUpdated = true;
-        } else if (!configMatch || currentWidget instanceof StatefulCompose) {
+        } else if (!configMatch || currentWidget instanceof Stateful) {
           currentWidget.update(newWidget);
           treeUpdated = true;
         }
