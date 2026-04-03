@@ -6,28 +6,51 @@ on:
       - created
 
 jobs:
-  publish:
+  publish-maven-artifacts:
     runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/checkout@v4
-        with:
-          repository: kwameopareasiedu/gamekit-maven
-          ref: master
-          path: ./engine/target/mvn
-          token: ${{ secrets.GAMEKIT_MAVEN_PAT }}
       - uses: actions/setup-java@v4
         with:
           java-version: 18
           distribution: temurin
-      - run: mvn --batch-mode deploy
-#      - run: cp -r engine/target/reports/apidocs/ engine/target/mvn/docs/
-      - run: |
-          git config user.name publisher
-          git config user.email publisher@gamekit.dev
-          git add -A
-          git commit -m "Published new version"
+      - name: Build Maven artifacts
+        run: mvn --batch-mode deploy
+      - name: Commit built artifacts
+        run: |
+          git config user.name "Kwame Opare Asiedu"
+          git config user.email kwameopareasiedu@gamekit.dev
+          git add artifacts
+          git commit -m "Built new artifacts"
           git push origin master
-        working-directory: ./engine/target/mvn
+  publish-site:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+      - name: Setup Node 20.11.1
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.11.1"
+          registry-url: "https://registry.npmjs.org"
+      - name: Get dependencies
+        run: yarn install
+        working-directory: site
+      - name: Install firebase-tools
+        run: |
+          yarn global add firebase-tools@13.30.0
+          firebase experiments:enable functionsv2deployoptimizations
+        working-directory: site
+      - name: Add firebase token to env
+        run: echo "FIREBASE_TOKEN=${{secrets.FIREBASE_TOKEN}}" >> "$GITHUB_ENV"
+        working-directory: site
+      - name: Build project
+        run: yarn build
+        working-directory: site
+      - name: Deploy to firebase
+        run: yarn deploy:dev
+        working-directory: site

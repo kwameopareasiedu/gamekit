@@ -38,9 +38,22 @@
 
   <distributionManagement>
     <repository>
-      <id>github-maven</id>
-      <name>Github Maven</name>
-      <url>file://${project.build.directory}/mvn</url>
+      <id>maven-artifacts</id>
+      <name>Maven Artifacts</name>
+      <url>file://${project.basedir}/../artifacts</url>
     </repository>
   </distributionManagement>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>3.1.4</version>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
