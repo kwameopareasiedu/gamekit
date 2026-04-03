@@ -40,5 +40,5 @@ jobs:
         run: yarn build
         working-directory: site
       - name: Deploy to firebase
-        run: yarn deploy:dev
+        run: yarn deploy
         working-directory: site
