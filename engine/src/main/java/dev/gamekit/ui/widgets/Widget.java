@@ -39,6 +39,8 @@ public abstract class Widget {
   protected Widget parent;
   protected Host host;
 
+  private boolean mounted;
+
   /** Creates a new widget with a list of configurations */
   public Widget(Config config) {
     if (config == null)
@@ -99,6 +101,24 @@ public abstract class Widget {
     this.config = widget.config;
     init(host);
   }
+
+  /**
+   * Called after the widget is initialized and mounted to the active widget tree.
+   * <p>
+   * Since {@link #init} can be called multiple times, this is a good place to run one-off initialization tasks
+   * <p>
+   * Since this method is marked as {@code final}, subclasses should override the {@link #performMount} method instead
+   * to perform any post-mount operations
+   */
+  public final void mount() {
+    if (!mounted) {
+      performMount();
+      mounted = true;
+    }
+  }
+
+  /** Delegate method for subclasses to perform additional mount-related operations */
+  protected void performMount() { /* No-op */ }
 
   /**
    * Computes the size of the widget and the relative position(s) of its child/children
@@ -342,6 +362,7 @@ public abstract class Widget {
 
       if (treeUpdated) {
         Widget updatedTree = treeGetter.get();
+        updatedTree.mount();
         updatedTree.layout(constraints);
         updatedTree.postLayout();
         renderTrigger.invoke();

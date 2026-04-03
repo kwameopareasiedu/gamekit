@@ -82,6 +82,7 @@ public final class UI implements Widget.Host, Widget.Updater, Widget.Traveller {
 
     if (this.tree != null) {
       this.tree.init(this);
+      this.tree.mount();
       this.tree.layout(windowConstraints);
       this.tree.postLayout();
       triggerRender();

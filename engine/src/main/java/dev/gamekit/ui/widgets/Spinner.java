@@ -48,9 +48,14 @@ public class Spinner extends Leaf {
       }
     });
 
-    timerAnimation.start();
-
     super.performInit();
+  }
+
+  @Override
+  protected void performMount() {
+    super.performMount();
+
+    timerAnimation.start();
   }
 
   @Override

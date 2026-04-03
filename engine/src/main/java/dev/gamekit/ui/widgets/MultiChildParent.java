@@ -29,6 +29,12 @@ public abstract class MultiChildParent extends Parent {
   }
 
   @Override
+  protected void performMount() {
+    for (Widget child : children)
+      child.mount();
+  }
+
+  @Override
   protected void performPostLayout() {
     for (Widget child : children)
       child.postLayout();
