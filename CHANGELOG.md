@@ -46,6 +46,7 @@
 - Added `ValueGetter<T>` utility interface which exposes a single abstract no-argument method `get` which returns a
   value of type `T`
 - Added `void triggerUpdate()` method to `Widget.Host` interface
+- Added `void performMount()` lifecycle method to `Widget` class
 
 ### Changed
 
