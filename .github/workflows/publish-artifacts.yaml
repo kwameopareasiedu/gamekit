@@ -3,7 +3,7 @@ name: Publish Maven Artifacts
 on:
   release:
     types:
-      - created
+      - published
   workflow_dispatch:
 
 jobs:
