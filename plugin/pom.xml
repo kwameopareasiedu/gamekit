@@ -6,7 +6,7 @@
   <parent>
     <groupId>dev.gamekit</groupId>
     <artifactId>gamekit</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
   </parent>
 
   <artifactId>gamekit-maven-plugin</artifactId>
