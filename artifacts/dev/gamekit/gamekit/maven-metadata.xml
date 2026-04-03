@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata>
   <groupId>dev.gamekit</groupId>
-  <artifactId>annotations</artifactId>
+  <artifactId>gamekit</artifactId>
   <versioning>
-    <release>0.1.0</release>
     <versions>
-      <version>0.1.0</version>
+      <version>1.0.0-SNAPSHOT</version>
     </versions>
     <lastUpdated>20260403202006</lastUpdated>
   </versioning>
