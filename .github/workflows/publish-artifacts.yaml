@@ -25,4 +25,4 @@ jobs:
           git config user.email kwameopareasiedu@gamekit.dev
           git add artifacts
           git commit -m "Built new artifacts"
-          git push origin master
+          git push origin HEAD:master
