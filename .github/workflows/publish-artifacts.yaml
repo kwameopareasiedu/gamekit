@@ -19,10 +19,10 @@ jobs:
           distribution: temurin
       - name: Build Maven artifacts
         run: mvn --batch-mode deploy
-#      - name: Commit built artifacts
-#        run: |
-#          git config user.name "Kwame Opare Asiedu"
-#          git config user.email kwameopareasiedu@gamekit.dev
-#          git add artifacts
-#          git commit -m "Built new artifacts"
-#          git push origin master
+      - name: Commit built artifacts
+        run: |
+          git config user.name "Kwame Opare Asiedu"
+          git config user.email kwameopareasiedu@gamekit.dev
+          git add artifacts
+          git commit -m "Built new artifacts"
+          git push origin master
