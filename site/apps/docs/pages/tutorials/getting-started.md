@@ -26,7 +26,7 @@ then reload your Maven project in your IDE or run `mvn clean compile` to downloa
         <repository>
             <id>github-maven</id>
             <name>GameKit GitHub Maven</name>
-            <url>https://raw.github.com/kwameopareasiedu/gamekit-maven/master/artifacts</url>
+            <url>https://raw.github.com/kwameopareasiedu/gamekit/master/artifacts</url>
         </repository>
     </repositories>
 
