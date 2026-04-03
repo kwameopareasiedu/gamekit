@@ -6,9 +6,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * {@link WidgetBuilder} marks a {@code Widget} class as needing a generated config builder class
+ * {@link WidgetBuilder} marks an internal {@code Widget} class as needing a generated config builder class
  * <p>
- * PS: Compilation will fail if this annotation is used on non-Widget classes
+ * PS: For custom widgets, use the {@link CustomWidgetBuilder} annotation instead
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.CLASS)

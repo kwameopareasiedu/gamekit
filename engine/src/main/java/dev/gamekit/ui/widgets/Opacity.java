@@ -10,7 +10,7 @@ import java.awt.*;
 @WidgetBuilder
 public class Opacity extends SingleChildParent {
   @WidgetBuilderField(fallback = "1.0")
-  protected Double opacity;
+  public Double opacity;
 
   private AlphaComposite composite;
   private Composite originalComposite;

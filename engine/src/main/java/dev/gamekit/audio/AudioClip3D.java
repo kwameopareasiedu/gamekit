@@ -27,14 +27,21 @@ public class AudioClip3D extends AudioClip {
   private double effectiveVolume = -1;
   private double effectivePan = 0;
 
-  public AudioClip3D(String resPath, AudioGroup group, double maxVolume, AudioAttenuation attenuation,
-                     AudioShape shape) {
+  public AudioClip3D(
+    String resPath,
+    AudioGroup group,
+    double maxVolume,
+    AudioAttenuation attenuation,
+    AudioShape shape
+  ) {
     super(resPath, group, maxVolume);
     this.attenuation = attenuation;
     this.shape = shape;
     this.position = new Vector();
     this.panControl = getControl(FloatControl.Type.PAN);
     this.listenerVector = new Vector();
+
+    performUpdate();
   }
 
   /** Returns the position of this {@link AudioClip3D} */

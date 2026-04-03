@@ -6,8 +6,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * {@link WidgetBuilderField} marks fields of a {@code Widget} as needing to be part of the enclosing widget's
- * generated builder class.
+ * {@link WidgetBuilderField} marks fields of an internal {@code Widget} as needing to be part of the enclosing
+ * widget's generated builder class.
+ * <p>
+ * PS: For custom widgets, use the {@link CustomWidgetBuilderField} annotation instead
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.CLASS)

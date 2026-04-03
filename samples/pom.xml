@@ -22,7 +22,7 @@
     <dependency>
       <groupId>dev.gamekit</groupId>
       <artifactId>engine</artifactId>
-      <version>0.6.0</version>
+      <version>0.7.0</version>
     </dependency>
   </dependencies>
 
@@ -35,7 +35,7 @@
         <configuration>
           <annotationProcessors>
             <annotationProcessor>
-              dev.gamekit.annotationprocessors.WidgetBuilderProcessor
+              dev.gamekit.annotationprocessors.CustomWidgetBuilderProcessor
             </annotationProcessor>
           </annotationProcessors>
         </configuration>

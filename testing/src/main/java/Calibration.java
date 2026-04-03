@@ -13,7 +13,7 @@ import static dev.gamekit.utils.Math.clamp;
 public class Calibration extends Scene {
   private static final int WORLD_WIDTH = 2400;
   private static final int WORLD_HEIGHT = 1400;
-  private static final BufferedImage SPRITE = IO.getResourceImage("zainar.png");
+  private static final BufferedImage SPRITE = IO.getImage("zainar.png");
   private static final double INTERVAL = Application.FRAME_INTERVAL_MS / 1000.0;
   private static final double FREQ = 0.5;
 

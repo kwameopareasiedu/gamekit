@@ -60,7 +60,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class RendererScene extends Scene {
-  private static final BufferedImage IMAGE = IO.getResourceImage("test.jpg");
+  private static final BufferedImage IMAGE = IO.getImage("test.jpg");
   private static final int[] POLYGON_POINTS = new int[]{ 90, -190, 110, -110, 50, -99 };
   private static final Stroke DEFAULT_STROKE = new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 

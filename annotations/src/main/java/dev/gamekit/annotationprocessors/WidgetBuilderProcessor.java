@@ -40,13 +40,11 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
       Set<? extends Element> annotatedClasses = roundEnv.getElementsAnnotatedWith(annotation);
 
       for (Element annotatedClassElement : annotatedClasses) {
-        if (!elementIsWidget(annotatedClassElement)) {
-          throw new IllegalStateException("WidgetBuilder annotation can only be used on Widget classes");
-        }
+        ensureElementIsWidget(annotatedClassElement);
 
         WidgetClass widgetClass = extractWidgetClassData(annotatedClassElement);
 
-        if (!widgetClasses.contains(widgetClass)) {
+        if (!widgetClasses.contains(widgetClass) && widgetClass != null) {
           generateWidgetConfigSource(widgetClass);
           widgetClasses.add(widgetClass);
         }
@@ -118,16 +116,18 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
 
         // Instance field declarations
         for (WidgetClass widgetClass : widgetClasses) {
-          List<WidgetField> widgetClassThemableFields =
-            widgetClass.fields.stream().filter(field -> field.themable).toList();
+          WidgetClass.traverse(widgetClass, clazz -> {
+            List<WidgetField> widgetClassThemableFields =
+              clazz.fields.stream().filter(field -> field.themable).toList();
 
-          for (WidgetField field : widgetClassThemableFields) {
-            out.printf("\t@dev.gamekit.annotations.WidgetBuilderField\n");
-            out.printf("\tpublic %s %s%s = %s;\n",
-              field.typeName, widgetClass.varName, field.varNameAsSuffix, field.fallbackValue);
-          }
+            for (WidgetField field : widgetClassThemableFields) {
+              out.printf("\t@dev.gamekit.annotations.WidgetBuilderField\n");
+              out.printf("\tpublic %s %s%s = %s;\n",
+                field.typeName, widgetClass.varName, field.varNameAsSuffix, field.fallbackValue);
+            }
 
-          if (!widgetClassThemableFields.isEmpty()) out.println();
+            if (!widgetClassThemableFields.isEmpty()) out.println();
+          });
         }
 
         // Constructor, static creator method and performLayout method override declarations
@@ -171,66 +171,77 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
         // Package declaration
         out.printf("package %s;\n\n", widgetClass.configPackageName);
 
-        // Import declarations
-        out.printf("import static dev.gamekit.utils.Misc.coalesce;\n\n");
-
         // Class declaration
-        if (widgetClass.superClassConfigTypeName != null) {
-          out.printf("public class %s extends %s implements Widget.Config {\n",
-            widgetClass.configSimpleTypeName, widgetClass.superClassConfigTypeName);
+        if (widgetClass.base != null) {
+          out.printf(
+            "public class %s extends %s implements dev.gamekit.ui.widgets.Widget.Config {\n",
+            widgetClass.configSimpleTypeName, widgetClass.base.configTypeName
+          );
         } else {
-          out.printf("public class %s implements Widget.Config {\n",
-            widgetClass.configSimpleTypeName);
+          out.printf(
+            "public class %s implements dev.gamekit.ui.widgets.Widget.Config {\n",
+            widgetClass.configSimpleTypeName
+          );
         }
 
         // Instance fields declaration
-        for (int i = 0; i < widgetClass.fields.size(); i++) {
-          WidgetField field = widgetClass.fields.get(i);
-          out.printf("\tpublic %s %s;\n", field.typeName, field.varName);
+        WidgetClass.traverse(widgetClass, (clazz) -> {
+          for (WidgetField field : clazz.fields) {
+            out.printf("\tpublic %s %s;\n", field.typeName, field.varName);
+          }
+        });
 
-          if (i == widgetClass.fields.size() - 1) out.println();
-        }
+        out.println();
 
         // Equals method override
         out.printf("\t@Override\n");
         out.printf("\tpublic boolean equals(Object obj) {\n");
+        out.printf("\t\treturn obj instanceof %s %s\n", widgetClass.configSimpleTypeName, widgetClass.configVarName);
 
-        List<WidgetField> comparableFields = widgetClass.fields.stream().filter(field -> field.comparable).toList();
-        out.printf("\t\treturn obj instanceof %s %s%s",
-          widgetClass.configSimpleTypeName, widgetClass.configVarName, comparableFields.isEmpty() ? ";\n" : "\n");
+        WidgetClass.traverse(widgetClass, clazz -> {
+          List<WidgetField> comparableFields = clazz.fields.stream().filter(field -> field.comparable).toList();
 
-        for (int i = 0; i < comparableFields.size(); i++) {
-          WidgetField field = comparableFields.get(i);
-          out.printf("\t\t\t&& java.util.Objects.equals(%s, %s.%s)%s",
-            field.varName, widgetClass.configVarName, field.varName, i < comparableFields.size() - 1 ? "\n" : ";\n");
-        }
+          for (WidgetField field : comparableFields) {
+            out.printf(
+              "\t\t\t&& java.util.Objects.equals(%s, %s.%s)\n",
+              field.varName, widgetClass.configVarName, field.varName
+            );
+          }
+        });
 
+        out.printf("\t\t;\n");
         out.printf("\t}\n\n");
 
-        // UpdateWidget method override
+        // UpdateWidget method override @formatter:off
         out.printf("\t@Override\n");
-        out.printf("\tpublic void updateWidget(Widget widget) {\n");
-        out.printf("\t\t%s %sWidget = (%s) widget;\n", widgetClass.typeName, widgetClass.varName,
-          widgetClass.typeName);
-        out.printf("\t\tTheme nearestTheme = coalesce(widget.getAncestorOfType(Theme.class), Theme.DEFAULT);\n");
+        out.printf("\tpublic void updateWidget(dev.gamekit.ui.widgets.Widget widget) {\n");
+        out.printf("\t\t%s %sWidget = (%s) widget;\n", widgetClass.typeName, widgetClass.varName, widgetClass.typeName);
+        out.printf("\t\tdev.gamekit.ui.widgets.Theme nearestTheme = dev.gamekit.utils.Misc.coalesce(widget.getAncestorOfType(dev.gamekit.ui.widgets.Theme.class), dev.gamekit.ui.widgets.Theme.DEFAULT);\n");
+        // @formatter:on
 
-        for (WidgetField field : widgetClass.fields) {
-          if (field.themable) {
-            String nearestThemeFieldVarName = !widgetClass.typeName.equals(THEME_TYPE_NAME) ?
-              widgetClass.varName + field.varNameAsSuffix : field.varName;
+        out.println();
 
-            out.printf("\t\t%sWidget.%s = coalesce(%s, nearestTheme.%s);\n",
-              widgetClass.varName, field.varName, field.varName, nearestThemeFieldVarName);
-          } else {
-            out.printf("\t\t%sWidget.%s = %s;\n", widgetClass.varName, field.varName, field.varName);
+        WidgetClass.traverse(widgetClass, clazz -> {
+          for (WidgetField field : clazz.fields) {
+            if (field.themable) {
+              String nearestThemeFieldVarName =
+                !clazz.typeName.equals(THEME_TYPE_NAME) ? widgetClass.varName + field.varNameAsSuffix : field.varName;
+
+              out.printf(
+                "\t\t%sWidget.%s = dev.gamekit.utils.Misc.coalesce(%s, nearestTheme.%s);\n",
+                widgetClass.varName, field.varName, field.varName, nearestThemeFieldVarName
+              );
+            } else {
+              out.printf("\t\t%sWidget.%s = %s;\n", clazz.varName, field.varName, field.varName);
+            }
           }
-        }
+        });
 
         out.printf("\t}\n\n");
 
         // Updater interface declaration
         out.printf("\t@FunctionalInterface\n");
-        out.printf("\tpublic interface Updater extends Widget.ConfigUpdater<%s> { }\n",
+        out.printf("\tpublic interface Updater extends dev.gamekit.ui.widgets.Widget.ConfigUpdater<%s> { }\n",
           widgetClass.configSimpleTypeName);
 
         // Class end brace
@@ -243,45 +254,44 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
 
   private WidgetClass extractWidgetClassData(Element element) {
     TypeElement typeElement = (TypeElement) element;
+
+    if (typeElement.getQualifiedName().toString().equals(WIDGET_TYPE_NAME)
+      || typeElement.getAnnotation(WidgetBuilder.class) == null)
+      return null;
+
     String classTypeName = typeElement.getQualifiedName().toString();
 
-    TypeElement typeSuperClassElement = (TypeElement) ((DeclaredType) typeElement.getSuperclass()).asElement();
-    String superClassTypeName = typeSuperClassElement.getAnnotation(WidgetBuilder.class) != null
-      ? typeSuperClassElement.getQualifiedName().toString() : null;
+    List<? extends Element> elementMembers = typeElement.getEnclosedElements().stream().filter(
+      member -> member.getKind() == ElementKind.FIELD && member.getAnnotation(WidgetBuilderField.class) != null
+    ).toList();
 
-    TypeElement iteratorElement = (TypeElement) element;
-    List<WidgetField> widgetFields = new ArrayList<>();
-
-    while (!iteratorElement.getQualifiedName().toString().equals(WIDGET_TYPE_NAME)
-      && iteratorElement.getAnnotation(WidgetBuilder.class) != null) {
-      List<? extends Element> elementMembers = iteratorElement.getEnclosedElements().stream().filter(
-        member -> member.getKind() == ElementKind.FIELD && member.getAnnotation(WidgetBuilderField.class) != null
-      ).toList();
-
-      for (Element fieldElement : elementMembers) {
+    List<WidgetField> widgetFields = elementMembers.stream().map(
+      fieldElement -> {
+        WidgetBuilderField annotation = fieldElement.getAnnotation(WidgetBuilderField.class);
         String fieldTypeName = fieldElement.asType().toString();
         String fieldVarName = fieldElement.getSimpleName().toString();
-        String fieldFallbackDeclaration = fieldElement.getAnnotation(WidgetBuilderField.class).fallback();
-        String fieldFallbackValue = !fieldFallbackDeclaration.isEmpty() ? fieldFallbackDeclaration : "null";
-        boolean comparable = fieldElement.getAnnotation(WidgetBuilderField.class).comparable();
-        boolean themable = fieldElement.getAnnotation(WidgetBuilderField.class).themable();
+        String fieldFallback = annotation.fallback();
+        String fieldFallbackValue = !fieldFallback.isEmpty() ? fieldFallback : "null";
+        boolean comparable = annotation.comparable();
+        boolean themable = annotation.themable();
 
-        widgetFields.add(new WidgetField(fieldTypeName, fieldVarName, fieldFallbackValue, comparable, themable));
+        return new WidgetField(fieldTypeName, fieldVarName, fieldFallbackValue, comparable, themable);
       }
+    ).toList();
 
-      iteratorElement = (TypeElement) ((DeclaredType) iteratorElement.getSuperclass()).asElement();
-    }
+    TypeElement superTypeElement = (TypeElement) ((DeclaredType) typeElement.getSuperclass()).asElement();
 
-    return new WidgetClass(classTypeName, superClassTypeName, widgetFields);
+    WidgetClass base = extractWidgetClassData(superTypeElement);
+
+    return new WidgetClass(true, classTypeName, widgetFields, base);
   }
 
-  private boolean elementIsWidget(Element element) {
-    if (element.getKind() != ElementKind.CLASS || element instanceof NoType
-      || !(element instanceof TypeElement typeElement))
-      return false;
+  private void ensureElementIsWidget(Element element) {
+    if (element.getKind() != ElementKind.CLASS || element instanceof NoType || !(element instanceof TypeElement typeElement))
+      throw new IllegalStateException("WidgetBuilder annotation can only be used on Widget classes");
 
-    if (typeElement.getQualifiedName().toString().equals(WIDGET_TYPE_NAME)) return true;
+    if (typeElement.getQualifiedName().toString().equals(WIDGET_TYPE_NAME)) return;
 
-    return elementIsWidget(((DeclaredType) typeElement.getSuperclass()).asElement());
+    ensureElementIsWidget(((DeclaredType) typeElement.getSuperclass()).asElement());
   }
 }

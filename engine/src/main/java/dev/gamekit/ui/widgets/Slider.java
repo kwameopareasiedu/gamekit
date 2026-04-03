@@ -7,30 +7,27 @@ import dev.gamekit.ui.events.ChangeEvent;
 import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.utils.Bounds;
 import dev.gamekit.utils.Constraints;
+import dev.gamekit.utils.EngineImage;
 import dev.gamekit.utils.Position;
-import dev.gamekit.utils.Spacing;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 import static dev.gamekit.utils.Math.clamp;
 
 /** A {@link Progress} widget extension which adjusts a value by moving a slider */
 @WidgetBuilder
 public class Slider extends Progress implements MouseEvent.Handler {
-  public static final BufferedImage DEFAULT_THUMB_BG = IO.getResourceImage("default-sprites.png", 470, 346, 32, 32);
-  public static final Spacing DEFAULT_THUMB_SPACING = new Spacing(8);
+  public static final EngineImage DEFAULT_THUMB_BG =
+    IO.getImageSliceWithInsets("default-sprites.png", 470, 346, 32, 32, 8, 8, 8, 8);
 
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Slider.DEFAULT_THUMB_BG")
-  protected BufferedImage thumbBackground;
-  @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Slider.DEFAULT_THUMB_SPACING")
-  protected Spacing thumbEdgeInsets;
+  public EngineImage thumbBackground;
   @WidgetBuilderField(fallback = "32")
-  protected Integer thumbWidth;
+  public Integer thumbWidth;
   @WidgetBuilderField(fallback = "32")
-  protected Integer thumbHeight;
+  public Integer thumbHeight;
   @WidgetBuilderField(comparable = false, themable = false)
-  protected ChangeEvent.Handler<Double> changeListener;
+  public ChangeEvent.Handler<Double> changeListener;
 
   private final Bounds thumbAbsoluteBounds;
   private final Position lastMousePosition;
@@ -82,7 +79,7 @@ public class Slider extends Progress implements MouseEvent.Handler {
     super.performRender(g);
 
     if (thumbBackground != null)
-      renderWith9PatchScaling(thumbBackground, thumbAbsoluteBounds, thumbEdgeInsets, g);
+      thumbBackground.render(g, thumbAbsoluteBounds);
   }
 
   @Override

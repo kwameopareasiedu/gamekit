@@ -2,9 +2,6 @@ package dev.gamekit.core;
 
 import dev.gamekit.settings.Settings;
 import dev.gamekit.ui.events.*;
-import dev.gamekit.ui.mixins.WidgetUpdater;
-import dev.gamekit.ui.widgets.MultiChildParent;
-import dev.gamekit.ui.widgets.SingleChildParent;
 import dev.gamekit.ui.widgets.Widget;
 import dev.gamekit.utils.Constraints;
 import dev.gamekit.utils.Position;
@@ -18,10 +15,8 @@ import java.util.List;
 import java.util.Objects;
 
 /** {@link UI} manages the user interface within a {@link Scene} */
-public final class UI implements Widget.Host, WidgetUpdater {
+public final class UI implements Widget.Host, Widget.Updater, Widget.Traveller {
   public static final Color TRANSPARENT_COLOR = new Color(0x0000000, true);
-  public static final Color DEBUG_COLOR = Color.GREEN;
-  public static final BasicStroke DEBUG_STROKE = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
   private static final Logger LOGGER = LogManager.getLogger(UI.class);
 
@@ -70,6 +65,12 @@ public final class UI implements Widget.Host, WidgetUpdater {
     return Window.getInstance().getUiGraphics().getFontMetrics(font);
   }
 
+  /** Triggers a layout update during the next frame */
+  @Override
+  public void triggerUpdate() {
+    needsUpdate = true;
+  }
+
   @Override
   public void triggerRender() {
     needsRender = true;
@@ -81,22 +82,18 @@ public final class UI implements Widget.Host, WidgetUpdater {
 
     if (this.tree != null) {
       this.tree.init(this);
+      this.tree.mount();
       this.tree.layout(windowConstraints);
       this.tree.postLayout();
       triggerRender();
     }
   }
 
-  /** Triggers a layout update during the next frame */
-  void triggerUpdate() {
-    needsUpdate = true;
-  }
-
   /** Update updates the UI tree, recomputes layout, generates and dispatches input events */
   void update() {
     if (tree != null && needsUpdate) {
       LOGGER.debug("Updating UI");
-      updateTree(this, windowConstraints, tree, scene.createUI(), this::triggerRender);
+      updateTree(this, windowConstraints, this::getTree, scene::createUI, this::setTree, this::triggerRender);
       needsUpdate = false;
     }
 
@@ -153,7 +150,7 @@ public final class UI implements Widget.Host, WidgetUpdater {
 
     Position mousePosition = Input.getMousePosition();
 
-    traverseTree(tree, Direction.IN, widget -> {
+    travelTree(tree, Direction.INWARD, widget -> {
       if (widget instanceof InputEvent.Handler && widget.hitTest(mousePosition.x, mousePosition.y)) {
         currentHitTestList.add(widget);
       }
@@ -295,7 +292,7 @@ public final class UI implements Widget.Host, WidgetUpdater {
 
     // Dispatch mouse down and press events to the active widget
     if (activeWidget != null) {
-      traverseTree(activeWidget, Direction.OUT, widget -> {
+      travelTree(activeWidget, Direction.OUTWARD, widget -> {
         if (widget instanceof MouseEvent.Handler eventHandler) {
           if (eventStore.mouseDownEvent != null && !eventStore.mouseDownEvent.isHandled())
             eventHandler.handleEvent(eventStore.mouseDownEvent);
@@ -308,7 +305,7 @@ public final class UI implements Widget.Host, WidgetUpdater {
 
     // Dispatch mouse release and click events to the active widget
     if (lastActiveWidget != null) {
-      traverseTree(lastActiveWidget, Direction.OUT, widget -> {
+      travelTree(lastActiveWidget, Direction.OUTWARD, widget -> {
         if (widget instanceof MouseEvent.Handler eventHandler) {
           if (eventStore.mouseReleaseEvent != null && !eventStore.mouseReleaseEvent.isHandled())
             eventHandler.handleEvent(eventStore.mouseReleaseEvent);
@@ -364,35 +361,12 @@ public final class UI implements Widget.Host, WidgetUpdater {
     lastFocusWidget = null;
   }
 
-  private void traverseTree(Widget tree, Direction direction, TreeWidgetVisitor visitor) {
-    visitor.visit(tree);
-
-    switch (direction) {
-      case OUT -> {
-        Widget parent = tree.getParent();
-        if (parent == null) return;
-
-        traverseTree(parent, direction, visitor);
-      }
-      case IN -> {
-        if (tree instanceof SingleChildParent parent) {
-          traverseTree(parent.getChild(), direction, visitor);
-        } else if (tree instanceof MultiChildParent parent) {
-          Widget[] children = parent.getChildren();
-
-          for (Widget child : children)
-            traverseTree(child, direction, visitor);
-        }
-      }
-    }
+  private Widget getTree() {
+    return tree;
   }
 
-  private enum Direction {
-    OUT, IN
-  }
-
-  private interface TreeWidgetVisitor {
-    void visit(Widget widget);
+  private void setTree(Widget tree) {
+    this.tree = tree;
   }
 
   /** Convenience class which stores structures of {@link InputEvent} */

@@ -5,36 +5,34 @@ import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.core.IO;
 import dev.gamekit.ui.events.ChangeEvent;
 import dev.gamekit.ui.events.MouseEvent;
-import dev.gamekit.ui.mixins.NinePatch;
 import dev.gamekit.utils.Bounds;
 import dev.gamekit.utils.Constraints;
-import dev.gamekit.utils.Spacing;
+import dev.gamekit.utils.EngineImage;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 /** A {@link SingleChildParent} input widget which toggles between two states */
 @WidgetBuilder
-public class Checkbox extends SingleChildParent implements MouseEvent.Handler, NinePatch {
-  public static final BufferedImage DEFAULT_ICON = IO.getResourceImage("default-sprites.png", 646, 206, 32, 32);
-  public static final BufferedImage DEFAULT_TOGGLED_ICON = IO.getResourceImage("default-sprites.png", 646, 277, 32, 32);
+public class Checkbox extends SingleChildParent implements MouseEvent.Handler {
+  public static final EngineImage DEFAULT_ICON =
+    IO.getImageSliceWithInsets("default-sprites.png", 646, 206, 32, 32, 8, 8, 8, 8);
+  public static final EngineImage DEFAULT_TOGGLED_ICON =
+    IO.getImageSliceWithInsets("default-sprites.png", 646, 277, 32, 32, 8, 8, 8, 8);
 
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Checkbox.DEFAULT_ICON")
-  protected BufferedImage defaultIcon;
+  public EngineImage defaultIcon;
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Checkbox.DEFAULT_TOGGLED_ICON")
-  protected BufferedImage toggledIcon;
-  @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing(8)")
-  protected Spacing iconPadding;
+  public EngineImage toggledIcon;
   @WidgetBuilderField(fallback = "24")
-  protected Integer iconWidth;
+  public Integer iconWidth;
   @WidgetBuilderField(fallback = "24")
-  protected Integer iconHeight;
+  public Integer iconHeight;
   @WidgetBuilderField(fallback = "12")
-  protected Integer gapSize;
+  public Integer gapSize;
   @WidgetBuilderField(fallback = "false")
-  protected Boolean toggled;
+  public Boolean toggled;
   @WidgetBuilderField(comparable = false, themable = false)
-  protected ChangeEvent.Handler<Boolean> changeListener;
+  public ChangeEvent.Handler<Boolean> changeListener;
 
   private final Bounds iconAbsoluteBounds;
 
@@ -84,13 +82,13 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler, N
 
   @Override
   protected void renderSelf(Graphics2D g) {
-    BufferedImage icon = defaultIcon;
+    EngineImage icon = defaultIcon;
 
     if (toggled)
       icon = toggledIcon;
 
     if (icon != null)
-      renderWith9PatchScaling(icon, iconAbsoluteBounds, iconPadding, g);
+      icon.render(g, iconAbsoluteBounds);
   }
 
   @Override

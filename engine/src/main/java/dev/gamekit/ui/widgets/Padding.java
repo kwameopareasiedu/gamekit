@@ -9,7 +9,7 @@ import dev.gamekit.utils.Spacing;
 @WidgetBuilder
 public class Padding extends SingleChildParent {
   @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing()")
-  protected Spacing padding;
+  public Spacing padding;
 
   public Padding(PaddingConfig config, Widget child) {
     super(config, child);

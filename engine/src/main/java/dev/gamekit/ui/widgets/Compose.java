@@ -1,30 +1,31 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.annotations.WidgetBuilder;
-import dev.gamekit.ui.mixins.WidgetUpdater;
 import dev.gamekit.utils.Constraints;
 
 /**
- * A {@link SingleChildParent} which is an abstract base for creating custom widgets by overriding the
- * {@link #build()} method and returning a custom widget tree.
+ * A {@link SingleChildParent} which is an abstract base for creating custom widgets by composing other widgets
  * <p>
- * Subclasses can maintain some custom internal state update the widget as this state changes
+ * Subclasses must override the {@link #build()} method and return a custom widget tree
  */
-@WidgetBuilder
-public abstract class Compose extends SingleChildParent implements WidgetUpdater {
+public abstract class Compose extends SingleChildParent {
+  private boolean updatedChild = false;
+
   protected Compose() {
-    super(new ComposeConfig(), Empty.create());
+    super(ignored -> {}, Empty.create());
   }
 
   @Override
   protected void performInit() {
-    updateChild(build());
+    if (!updatedChild) {
+      updateChild(build());
+      updatedChild = true;
+    }
+
     super.performInit();
   }
 
   @Override
   protected final void performLayout(Constraints constraints) {
-    Widget child = getChild();
     child.layout(constraints);
 
     computedBounds.setSize(
@@ -35,20 +36,6 @@ public abstract class Compose extends SingleChildParent implements WidgetUpdater
     child.computedBounds.setPosition(0, 0);
   }
 
-  /**
-   * Returns the custom {@link Widget} tree of this {@link Compose}
-   * <p>
-   * This is called when the {@link Compose} is initialized, and again when the {@link #updateUI} method is
-   * called in response to some custom state change.
-   */
+  /** Returns the custom {@link Widget} tree to use as a child of this {@link Compose} */
   protected abstract Widget build();
-
-  /**
-   * Triggers a re-layout of this widget's subtree and subsequently a re-render
-   * <p>
-   * This method should be called after the widget's custom internal state changes
-   */
-  protected void updateUI() {
-    updateTree(host, constraints, getChild(), build(), host::triggerRender);
-  }
 }

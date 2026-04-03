@@ -3,7 +3,6 @@ package dev.gamekit.ui.widgets;
 import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.core.IO;
-import dev.gamekit.core.UI;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.utils.Bounds;
 import dev.gamekit.utils.Constraints;
@@ -18,35 +17,35 @@ import java.util.List;
 @SuppressWarnings("MagicConstant")
 @WidgetBuilder
 public class Text extends Leaf {
-  public static final Font DEFAULT_FONT = IO.getResourceFont("font-default.ttf");
+  public static final Font DEFAULT_FONT = IO.getFont("font-default.ttf");
   public static final int PLAIN = Font.PLAIN;
   public static final int BOLD = Font.BOLD;
   public static final int ITALIC = Font.ITALIC;
 
   @WidgetBuilderField(fallback = "\"Hello GameKit\"")
-  protected String text;
+  public String text;
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Text.DEFAULT_FONT")
-  protected Font font;
+  public Font font;
   @WidgetBuilderField(fallback = "20")
-  protected Integer fontSize;
+  public Integer fontSize;
   @WidgetBuilderField(fallback = "1.0")
-  protected Double fontHeightRatio;
+  public Double fontHeightRatio;
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Text.PLAIN")
-  protected Integer fontStyle;
+  public Integer fontStyle;
   @WidgetBuilderField(fallback = "java.awt.Color.WHITE")
-  protected Color color;
+  public Color color;
   @WidgetBuilderField
-  protected Color backgroundColor;
+  public Color backgroundColor;
   @WidgetBuilderField(fallback = "dev.gamekit.ui.enums.Alignment.START")
-  protected Alignment alignment;
+  public Alignment alignment;
   @WidgetBuilderField(fallback = "false")
-  protected Boolean shadowEnabled;
+  public Boolean shadowEnabled;
   @WidgetBuilderField(fallback = "0")
-  protected Integer shadowOffsetX;
+  public Integer shadowOffsetX;
   @WidgetBuilderField(fallback = "0")
-  protected Integer shadowOffsetY;
+  public Integer shadowOffsetY;
   @WidgetBuilderField(fallback = "java.awt.Color.WHITE")
-  protected Color shadowColor;
+  public Color shadowColor;
 
   protected List<Symbol> symbols;
 
@@ -217,9 +216,9 @@ public class Text extends Leaf {
       g.drawString(String.valueOf(symbol.value), (int) symbol.x, (int) (symbol.y + symbol.height));
     }
 
-    if (Widget.DEBUG_DRAW) {
-      g.setColor(UI.DEBUG_COLOR);
-      g.setStroke(UI.DEBUG_STROKE);
+    if (Widget.DEBUG) {
+      g.setColor(Widget.DEBUG_COLOR);
+      g.setStroke(Widget.DEBUG_STROKE);
 
       for (Symbol symbol : symbols) {
         g.drawRect((int) symbol.x, (int) symbol.y, (int) symbol.width, (int) symbol.height);

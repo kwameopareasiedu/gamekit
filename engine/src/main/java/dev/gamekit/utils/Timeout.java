@@ -28,7 +28,7 @@ public class Timeout {
 
   /**
    * Called internally by the application to update the timeout by decrementing its duration till it reaches 0.
-   * When the duration reaches zero, then the task's {@link VoidCallback#run} method is executed.
+   * When the duration reaches zero, then the task's {@link VoidCallback#invoke} method is executed.
    */
   public void update() {
     if (completed) return;
@@ -37,7 +37,7 @@ public class Timeout {
 
     if (durationMs == 0) {
       completed = true;
-      callback.run();
+      callback.invoke();
     }
   }
 }

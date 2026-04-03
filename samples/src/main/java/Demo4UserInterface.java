@@ -10,12 +10,13 @@ import dev.gamekit.ui.widgets.*;
 import dev.gamekit.ui.widgets.Button;
 import dev.gamekit.ui.widgets.Checkbox;
 import dev.gamekit.ui.widgets.Image;
+import dev.gamekit.ui.widgets.Panel;
+import dev.gamekit.utils.EngineImage;
 import dev.gamekit.utils.Spacing;
 import utils.MainMenuButton;
 import utils.SubMenuButton;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 import static dev.gamekit.utils.Math.degToRad;
 
@@ -27,13 +28,13 @@ import static dev.gamekit.utils.Math.degToRad;
  * </ul>
  */
 public class Demo4UserInterface extends Scene {
-  private static final BufferedImage BACKDROP = IO.getResourceImage("planetfall-artwork.jpg");
-  private static final BufferedImage LOGO = IO.getResourceImage("planetfall-logo.png");
-  private static final BufferedImage SCRIM = IO.getResourceImage("transparent-black.png");
-  private static final BufferedImage THUMB = IO.getResourceImage("slider-thumb.png");
-  private static final BufferedImage PROGRESS_TRACK = IO.getResourceImage("progress.png", 0, 4, 48, 8);
-  private static final BufferedImage PROGRESS_FILL = IO.getResourceImage("progress.png", 50, 4, 4, 8);
-  private static final BufferedImage HEADPHONES_IMG = IO.getResourceImage("headphones.jpg");
+  private static final EngineImage BACKDROP = IO.getImage("planetfall-artwork.jpg");
+  private static final EngineImage LOGO = IO.getImage("planetfall-logo.png");
+  private static final EngineImage SCRIM = IO.getImage("transparent-black.png");
+  private static final EngineImage THUMB = IO.getImageWithInsets("slider-thumb.png", 10, 10, 10, 10);
+  private static final EngineImage PROGRESS_TRACK = IO.getImageSlice("progress.png", 0, 4, 48, 8);
+  private static final EngineImage PROGRESS_FILL = IO.getImageSliceWithInsets("progress.png", 50, 4, 4, 8, 0, 1, 0, 1);
+  private static final EngineImage HEADPHONES_IMG = IO.getImage("headphones.jpg");
 
   private String fieldValue = "Hello";
   private boolean checkboxValue = false;
@@ -41,7 +42,7 @@ public class Demo4UserInterface extends Scene {
 
   public Demo4UserInterface() {
     super("Main Scene");
-    Widget.DEBUG_DRAW = true;
+    Widget.DEBUG = true;
   }
 
   public static void main(String[] args) {
@@ -49,7 +50,7 @@ public class Demo4UserInterface extends Scene {
       new Settings(
         "Demo 4 - Declarative UI",
         Resolution.HD,
-        WindowMode.WINDOWED,
+        WindowMode.BORDERLESS,
         Antialiasing.ON,
         TextAntialiasing.ON,
         AlphaInterpolation.SPEED,
@@ -100,14 +101,13 @@ public class Demo4UserInterface extends Scene {
                 props.crossAxisAlignment = CrossAxisAlignment.START;
                 props.gapSize = 24;
               },
-              MainMenuButton.create("Tutorial", e -> System.out.println("0: " + e.type)),
-              MainMenuButton.create("New Planet", e -> System.out.println("1: " + e.type)),
+              MainMenuButton.create("Tutorial", ev -> {}),
+              MainMenuButton.create("New Planet", ev -> {}),
               Field.create(
                 (FieldConfig.Updater) props -> {
                   props.text = fieldValue;
                   props.fontSize = 28;
                   props.fontStyle = Text.PLAIN;
-                  props.edgeInsets = new Spacing(12, 12, 12, 12);
                   props.padding = new Spacing(12, 12, 12, 12);
                   props.changeListener = ev -> {
                     fieldValue = ev.value;
@@ -119,7 +119,6 @@ public class Demo4UserInterface extends Scene {
               Checkbox.create(
                 props -> {
                   props.toggled = checkboxValue;
-                  props.iconPadding = new Spacing(4, 4, 4, 4);
                   props.changeListener = ev -> {
                     checkboxValue = ev.value;
                     updateUI();
@@ -145,7 +144,6 @@ public class Demo4UserInterface extends Scene {
                     props.maxValue = 100.0;
                     props.fillMode = Slider.FillMode.CLIP;
                     props.thumbBackground = THUMB;
-                    props.thumbEdgeInsets = new Spacing(10, 10, 10, 10);
                     props.changeListener = e -> {
                       sliderValue = e.value;
                       updateUI();
@@ -164,10 +162,8 @@ public class Demo4UserInterface extends Scene {
                     props.minValue = 0.0;
                     props.maxValue = 100.0;
                     props.trackBackground = PROGRESS_TRACK;
-                    props.trackEdgeInsets = new Spacing(0, 0, 0, 0);
                     props.fillMargin = new Spacing(0, 12, 0, 12);
                     props.fillBackground = PROGRESS_FILL;
-                    props.fillEdgeInsets = new Spacing(0, 1, 0, 1);
                     props.fillMode = Progress.FillMode.CLIP;
                   }
                 )
@@ -241,31 +237,39 @@ public class Demo4UserInterface extends Scene {
                     props.fixedWidth = 48.0;
                     props.fixedHeight = 48.0;
                   },
-                  Colored.create(
+                  Panel.create(
                     props -> {
                       props.color = Color.RED;
-                      props.borderRadius = 4;
-                    }
+                      props.background = null;
+                      props.cornerRadius = 4;
+                    },
+                    Empty.create()
                   )
                 ),
                 Button.create(
-                  props -> props.padding = new Spacing(12, 12, 18, 12),
-                  Text.create(
-                    props -> {
-                      props.fontSize = 12;
-                      props.fontStyle = Text.BOLD;
-                      props.text = "Create Account";
-                    }
+                  props -> { },
+                  Padding.create(
+                    12, 12, 18, 12,
+                    Text.create(
+                      props -> {
+                        props.fontSize = 12;
+                        props.fontStyle = Text.BOLD;
+                        props.text = "Create Account";
+                      }
+                    )
                   )
                 ),
                 Button.create(
-                  props -> props.padding = new Spacing(12, 12, 18, 12),
-                  Text.create(
-                    props -> {
-                      props.fontSize = 12;
-                      props.fontStyle = Text.BOLD;
-                      props.text = "Login";
-                    }
+                  props -> { },
+                  Padding.create(
+                    12, 12, 18, 12,
+                    Text.create(
+                      props -> {
+                        props.fontSize = 12;
+                        props.fontStyle = Text.BOLD;
+                        props.text = "Login";
+                      }
+                    )
                   )
                 )
               )

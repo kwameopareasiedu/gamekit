@@ -10,7 +10,7 @@ import java.awt.*;
 @WidgetBuilder
 public class Scaled extends SingleChildParent {
   @WidgetBuilderField(fallback = "1.0")
-  protected Double scale;
+  public Double scale;
 
   private Double invScale;
 

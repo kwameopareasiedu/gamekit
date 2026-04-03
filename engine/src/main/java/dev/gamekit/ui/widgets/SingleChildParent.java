@@ -22,6 +22,11 @@ public abstract class SingleChildParent extends Parent {
   }
 
   @Override
+  protected void performMount() {
+    child.mount();
+  }
+
+  @Override
   protected void performPostLayout() {
     child.postLayout();
   }
@@ -48,6 +53,6 @@ public abstract class SingleChildParent extends Parent {
   public final void updateChild(Widget newChild) {
     child.parent = null;
     child = newChild;
-    newChild.parent = this;
+    child.parent = this;
   }
 }

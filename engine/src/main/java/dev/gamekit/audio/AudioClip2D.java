@@ -12,6 +12,8 @@ public class AudioClip2D extends AudioClip {
 
   public AudioClip2D(String resPath, AudioGroup group, double maxVolume) {
     super(resPath, group, maxVolume);
+
+    performUpdate();
   }
 
   @Override

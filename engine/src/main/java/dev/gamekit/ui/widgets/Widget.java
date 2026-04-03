@@ -1,15 +1,14 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.Scene;
-import dev.gamekit.core.UI;
 import dev.gamekit.core.Window;
-import dev.gamekit.utils.Bounds;
-import dev.gamekit.utils.Constraints;
-import dev.gamekit.utils.Size;
+import dev.gamekit.utils.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A widget is an abstract representation of a portion of a {@link Scene scene's} user interface.
@@ -27,7 +26,9 @@ import java.awt.*;
  * model which is used in Flutter, where constraints go down the tree, size go up and parents set positions
  */
 public abstract class Widget {
-  public static boolean DEBUG_DRAW = false;
+  public static final Color DEBUG_COLOR = Color.GREEN;
+  public static final BasicStroke DEBUG_STROKE = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+  public static boolean DEBUG = false;
 
   protected final Logger logger = LogManager.getLogger(getClass());
   protected final Bounds absoluteBounds;
@@ -37,6 +38,8 @@ public abstract class Widget {
   protected Config config;
   protected Widget parent;
   protected Host host;
+
+  private boolean mounted;
 
   /** Creates a new widget with a list of configurations */
   public Widget(Config config) {
@@ -66,8 +69,8 @@ public abstract class Widget {
    * If the widget is updated some time after first initialization, this method is called afterward to re-initialize
    * the widget.
    * <p>
-   * Since the {@link #config} has either been set in the constructor or updated via the {@link #update} method,
-   * it is used to update this widget instance.
+   * The {@link #config} will have either been set in the constructor or updated via the {@link #update} method and is
+   * used to update this widget instance.
    * <p>
    * Since this method is marked as {@code final}, subclasses should override the {@link #performInit} method instead
    * to perform any post-mount operations
@@ -92,12 +95,30 @@ public abstract class Widget {
    * incoming widget to this widget's config class (E.g. the config class for the {@code Image} widget will be the
    * {@code ImageConfig}).
    * <p>
-   * {@link #performInit} method is called afterward to re-initialize the widget.
+   * {@link #init} method is called afterward to re-initialize the widget.
    */
   public final void update(Widget widget) {
     this.config = widget.config;
-    performInit();
+    init(host);
   }
+
+  /**
+   * Called after the widget is initialized and mounted to the active widget tree.
+   * <p>
+   * Since {@link #init} can be called multiple times, this is a good place to run one-off initialization tasks
+   * <p>
+   * Since this method is marked as {@code final}, subclasses should override the {@link #performMount} method instead
+   * to perform any post-mount operations
+   */
+  public final void mount() {
+    if (!mounted) {
+      performMount();
+      mounted = true;
+    }
+  }
+
+  /** Delegate method for subclasses to perform additional mount-related operations */
+  protected void performMount() { /* No-op */ }
 
   /**
    * Computes the size of the widget and the relative position(s) of its child/children
@@ -171,12 +192,12 @@ public abstract class Widget {
   public final void render(Graphics2D canvasGraphics) {
     performRender(canvasGraphics);
 
-    if (DEBUG_DRAW) {
+    if (DEBUG) {
       Color originalColor = canvasGraphics.getColor();
       Stroke originalStroke = canvasGraphics.getStroke();
 
-      canvasGraphics.setColor(UI.DEBUG_COLOR);
-      canvasGraphics.setStroke(UI.DEBUG_STROKE);
+      canvasGraphics.setColor(DEBUG_COLOR);
+      canvasGraphics.setStroke(DEBUG_STROKE);
       canvasGraphics.drawRect(
         (int) absoluteBounds.x,
         (int) absoluteBounds.y,
@@ -242,24 +263,145 @@ public abstract class Widget {
     return null;
   }
 
-  /** Interface for all widget constructor configurations */
+  /** Functional interface for all widget constructor configurators */
+  @FunctionalInterface
   public interface Config {
     /** Updates matching widget configuration variables with its own variables */
     void updateWidget(Widget widget);
   }
 
-  /** Contract for an object which customizes a {@link Config} object */
+  /** Functional interface a {@link Config} customization method */
+  @FunctionalInterface
   public interface ConfigUpdater<T extends Config> {
     /** Called with a newly created {@link Config} for further customization */
     void update(T config);
   }
 
-  /** Interface for the host containing a {@link Widget}, allowing widgets to invoke necessary methods on it */
+  /** Interface for the host containing a {@link Widget} tree, providing methods to it */
   public interface Host {
     /** Returns the font metrics for the given font from the {@link Window} object */
     FontMetrics getFontMetrics(Font font);
 
+    /** Triggers an update of the {@link Widget widget} tree */
+    void triggerUpdate();
+
     /** Triggers a re-render of the {@link Widget widget} tree */
     void triggerRender();
+  }
+
+  /** Mixin interface which provides functionality for comparing and updating two {@link Widget} trees */
+  public interface Updater {
+    List<Widget> CURRENT_QUEUE = new ArrayList<>();
+    List<Widget> NEW_QUEUE = new ArrayList<>();
+
+    /**
+     * Updates the widget tree using a "diffing" algorithm.
+     * <p>
+     * This "diffing" algorithm involves generating a new widget tree with the new state, comparing it to the current
+     * widget tree and updating or replacing widgets whose states have changed.
+     */
+    default void updateTree(
+      Host widgetHost,
+      Constraints constraints,
+      ValueGetter<Widget> treeGetter,
+      ValueGetter<Widget> treeCreator,
+      ValueCallback<Widget> treeSetter,
+      VoidCallback renderTrigger
+    ) {
+      CURRENT_QUEUE.clear();
+      NEW_QUEUE.clear();
+      boolean treeUpdated = false;
+
+      Widget currentTree = treeGetter.get();
+      CURRENT_QUEUE.add(currentTree);
+
+      // Initialize the new tree to set up internal state before comparison
+      Widget newTree = treeCreator.get();
+      newTree.init(widgetHost);
+      NEW_QUEUE.add(newTree);
+
+      while (!CURRENT_QUEUE.isEmpty() && !NEW_QUEUE.isEmpty()) {
+        Widget currentWidget = CURRENT_QUEUE.remove(0);
+        Widget newWidget = NEW_QUEUE.remove(0);
+
+        boolean typeMatch = currentWidget.getClass().equals(newWidget.getClass());
+        boolean configMatch = currentWidget.configEquals(newWidget);
+
+        if (!typeMatch) {
+          Parent currentWidgetParent = (Parent) currentWidget.getParent();
+
+          currentWidget.unmount();
+
+          if (currentWidgetParent == null) {
+            treeSetter.invoke(newWidget);
+          } else if (currentWidgetParent instanceof SingleChildParent currentWidgetSingleChildParent) {
+            currentWidgetSingleChildParent.updateChild(newWidget);
+          } else if (currentWidgetParent instanceof MultiChildParent currentWidgetMultiChildParent) {
+            int index = List.of(currentWidgetMultiChildParent.getChildren()).indexOf(currentWidget);
+            currentWidgetMultiChildParent.updateChild(index, newWidget);
+          }
+
+          treeUpdated = true;
+        } else if (!configMatch) {
+          currentWidget.update(newWidget);
+          treeUpdated = true;
+        }
+
+        if (currentWidget instanceof SingleChildParent currentParent && newWidget instanceof SingleChildParent newParent) {
+          // Add child of SingleChildParent to queue for processing
+          CURRENT_QUEUE.add(currentParent.getChild());
+          NEW_QUEUE.add(newParent.getChild());
+        } else if (currentWidget instanceof MultiChildParent currentParent && newWidget instanceof MultiChildParent newParent) {
+          // Add children of MultiChildParent to queue for processing
+          List<Widget> currentParentChildrenWidgets = List.of(currentParent.getChildren());
+          List<Widget> newParentChildrenWidgets = List.of(newParent.getChildren());
+          CURRENT_QUEUE.addAll(currentParentChildrenWidgets);
+          NEW_QUEUE.addAll(newParentChildrenWidgets);
+        }
+      }
+
+      if (treeUpdated) {
+        Widget updatedTree = treeGetter.get();
+        updatedTree.mount();
+        updatedTree.layout(constraints);
+        updatedTree.postLayout();
+        renderTrigger.invoke();
+      }
+    }
+  }
+
+  /** Mixin interface which provides functionality to travel up or down a widget tree */
+  public interface Traveller {
+    /** Walks up or down a widget tree, passing each visited widget to the {@code visitor} object */
+    default void travelTree(Widget tree, Direction direction, ValueCallback<Widget> visitor) {
+      visitor.invoke(tree);
+
+      switch (direction) {
+        case OUTWARD -> {
+          Widget parent = tree.getParent();
+          if (parent == null) return;
+
+          travelTree(parent, direction, visitor);
+        }
+        case INWARD -> {
+          if (tree instanceof SingleChildParent parent) {
+            travelTree(parent.getChild(), direction, visitor);
+          } else if (tree instanceof MultiChildParent parent) {
+            Widget[] children = parent.getChildren();
+
+            for (Widget child : children)
+              travelTree(child, direction, visitor);
+          }
+        }
+      }
+    }
+
+    /** Direction for widget tree traversal */
+    enum Direction {
+      /** Indicates a walk down the descendants of a tree */
+      INWARD,
+      /** Indicates a walk up the ancestry of a tree */
+      OUTWARD
+    }
   }
 }

@@ -107,11 +107,11 @@ public class AnimatedSprite extends Sprite implements ValueCallback<Animation.St
   }
 
   @Override
-  public void update(Animation.State state) {
+  public void invoke(Animation.State state) {
     if (state == Animation.State.RESTARTED) {
       if (imageIndex == sprites.length - 1 && !this.looping) {
         if (stateListener != null)
-          stateListener.update(Animation.State.ENDED);
+          stateListener.invoke(Animation.State.ENDED);
 
         animation.stop();
         return;
@@ -121,7 +121,7 @@ public class AnimatedSprite extends Sprite implements ValueCallback<Animation.St
       image = sprites[imageIndex];
 
       if (imageIndex == 0 && stateListener != null)
-        stateListener.update(Animation.State.RESTARTED);
+        stateListener.invoke(Animation.State.RESTARTED);
     }
   }
 

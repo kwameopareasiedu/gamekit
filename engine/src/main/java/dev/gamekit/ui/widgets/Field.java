@@ -6,13 +6,12 @@ import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.core.IO;
 import dev.gamekit.core.Input;
 import dev.gamekit.ui.events.*;
-import dev.gamekit.ui.mixins.NinePatch;
 import dev.gamekit.utils.Bounds;
 import dev.gamekit.utils.Constraints;
+import dev.gamekit.utils.EngineImage;
 import dev.gamekit.utils.Spacing;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,24 +23,24 @@ import static dev.gamekit.utils.Math.clamp;
 // TODO: Implement key char and key code modifier detection
 @WidgetBuilder
 public class Field extends Text
-  implements NinePatch, FocusEvent.Handler, MouseEvent.Handler, KeyCharEvent.Handler, KeyCodeEvent.Handler {
-  public static final BufferedImage DEFAULT_BG = IO.getResourceImage("default-sprites.png", 646, 64, 96, 32);
-  public static final BufferedImage DEFAULT_FOCUS_BG = IO.getResourceImage("default-sprites.png", 646, 135, 96, 32);
+  implements FocusEvent.Handler, MouseEvent.Handler, KeyCharEvent.Handler, KeyCodeEvent.Handler {
+  public static final EngineImage DEFAULT_BG =
+    IO.getImageSliceWithInsets("default-sprites.png", 646, 64, 96, 32, 2, 2, 2, 2);
+  public static final EngineImage DEFAULT_FOCUS_BG =
+    IO.getImageSliceWithInsets("default-sprites.png", 646, 135, 96, 32, 2, 2, 2, 2);
 
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Field.DEFAULT_BG")
-  protected BufferedImage defaultBackground;
+  public EngineImage defaultBackground;
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Field.DEFAULT_FOCUS_BG")
-  protected BufferedImage focusBackground;
-  @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing(2)")
-  protected Spacing edgeInsets;
+  public EngineImage focusBackground;
   @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing(4)")
-  protected Spacing padding;
+  public Spacing padding;
   @WidgetBuilderField(comparable = false, themable = false)
-  protected FocusEvent.Handler focusListener;
+  public FocusEvent.Handler focusListener;
   @WidgetBuilderField(comparable = false, themable = false)
-  protected KeyCharEvent.Handler keyCharListener;
+  public KeyCharEvent.Handler keyCharListener;
   @WidgetBuilderField(comparable = false, themable = false)
-  protected ChangeEvent.Handler<String> changeListener;
+  public ChangeEvent.Handler<String> changeListener;
 
   protected boolean focused;
 
@@ -112,10 +111,10 @@ public class Field extends Text
 
   @Override
   protected void performRender(Graphics2D g) {
-    BufferedImage background = !focused ? defaultBackground : focusBackground;
+    EngineImage background = !focused ? defaultBackground : focusBackground;
 
     if (background != null)
-      renderWith9PatchScaling(background, absoluteBounds, edgeInsets, g);
+      background.render(g, absoluteBounds);
 
     if (textModel.cursorVisible) {
       Color originalColor = g.getColor();

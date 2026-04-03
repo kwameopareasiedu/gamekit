@@ -1,3 +1,4 @@
+import dev.gamekit.audio.AudioClip;
 import dev.gamekit.audio.AudioClip3D;
 import dev.gamekit.audio.AudioGroup;
 import dev.gamekit.audio.AudioListener;
@@ -13,11 +14,11 @@ import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.enums.MainAxisAlignment;
 import dev.gamekit.ui.widgets.*;
 import dev.gamekit.ui.widgets.Image;
+import dev.gamekit.utils.EngineImage;
 import dev.gamekit.utils.Position;
 import dev.gamekit.utils.Vector;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.Objects;
 
 /**
@@ -33,7 +34,7 @@ import java.util.Objects;
  * </ul>
  */
 public class Demo5Audio extends Scene {
-  private static final BufferedImage SPEAKER_IMG = IO.getResourceImage("speaker.png");
+  private static final EngineImage SPEAKER_IMG = IO.getImage("speaker.png");
   private static final String MUSIC_KEY = "music";
   private final int halfWindowWidth;
   private final Vector listenerPos;
@@ -47,11 +48,15 @@ public class Demo5Audio extends Scene {
     listenerPos = new Vector(0, 0);
     prevMousePos = new Position(0, 0);
 
-    Audio.preload(MUSIC_KEY,
-      new AudioClip3D("cybertruck.wav", AudioGroup.MUSIC, 1,
-        new LinearAudioAttenuation(), new CircleAudioShape(5, 30)
-      )
+    AudioClip clip = new AudioClip3D("cybertruck.wav", AudioGroup.MUSIC, 1,
+      new LinearAudioAttenuation(), new CircleAudioShape(5, 30)
     );
+
+    clip.addListener(ev -> {
+      logger.debug(ev.type());
+    });
+
+    Audio.preload(MUSIC_KEY, clip);
   }
 
   public static void main(String[] args) {

@@ -8,31 +8,34 @@ returns the custom widget tree.
 ## Usage
 
 ```java
-public class MainMenuButton extends Compose {
-  private final String text;
-  private final MouseEvent.Handler mouseListener;
+public class LabelledText extends Compose {
+  private final String label;
+  private final String content;
 
-  public MainMenuButton(String text, MouseEvent.Handler mouseListener) {
-    this.text = text;
-    this.mouseListener = mouseListener;
+  public MainMenuButton(String label, String content) {
+    this.label = label;
+    this.content = content;
   }
 
   @Override
   protected Widget build() {
-    return Button.create(
+    return Column.create(
       props -> {
-        props.padding = new Spacing(12, 12, 16, 12);
-        props.mouseListener = mouseListener;
+        props.crossAxisAlignment = CrossAxisAlignment.CENTER;
+        props.gapSize = 24;
       },
-      Padding.create(
-        12, 12, 16, 12,
-        Text.create(
-          props -> {
-            props.text = text;
-            props.fontSize = 20;
-            props.fontStyle = Text.BOLD;
-          }
-        )
+      Text.create(
+        props -> {
+          props.text = label;
+          props.alignment = Alignment.CENTER;
+          props.fontStyle = Text.BOLD;
+        }
+      ),
+      Text.create(
+        props -> {
+          props.text = content;
+          props.alignment = Alignment.CENTER;
+        }
       )
     );
   }

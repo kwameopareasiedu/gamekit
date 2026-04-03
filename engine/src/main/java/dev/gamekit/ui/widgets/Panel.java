@@ -4,23 +4,28 @@ import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.core.IO;
 import dev.gamekit.ui.events.MouseEvent;
-import dev.gamekit.ui.mixins.NinePatch;
 import dev.gamekit.utils.Constraints;
-import dev.gamekit.utils.Spacing;
+import dev.gamekit.utils.EngineImage;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.awt.geom.RoundRectangle2D;
 
-/** A {@link SingleChildParent} which uses the 9-patch algorithm to render a background */
+/** A {@link SingleChildParent} which renders a 9-patch background or a solid color behind its children */
 @WidgetBuilder
-public class Panel extends SingleChildParent implements NinePatch, MouseEvent.Handler {
-  public static final BufferedImage DEFAULT_BG = IO.getResourceImage("default-sprites.png", 470, 64, 120, 120);
-  public static final Spacing DEFAULT_PADDING = new Spacing();
+public class Panel extends SingleChildParent implements MouseEvent.Handler {
+  public static final EngineImage DEFAULT_BG = IO.getImageSlice("default-sprites.png", 470, 64, 120, 120);
 
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Panel.DEFAULT_BG")
-  protected BufferedImage background;
-  @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Panel.DEFAULT_PADDING")
-  protected Spacing padding;
+  public EngineImage background;
+  @WidgetBuilderField
+  public Color color;
+  @WidgetBuilderField(fallback = "0")
+  public Integer cornerRadius;
+  @WidgetBuilderField(fallback = "true")
+  public Boolean clip;
+
+  private Shape originalClip;
+  private Color originalColor;
 
   public Panel(PanelConfig config, Widget child) {
     super(config, child);
@@ -46,21 +51,53 @@ public class Panel extends SingleChildParent implements NinePatch, MouseEvent.Ha
       constraints.constrainHeight(intrinsicSize.height)
     );
 
-    child.computedBounds.setPosition(
-      computedBounds.width / 2 - intrinsicSize.width / 2,
-      computedBounds.height / 2 - intrinsicSize.height / 2
-    );
+    child.computedBounds.setPosition(0, 0);
+  }
+
+  @Override
+  protected void preRender(Graphics2D g) {
+    if (clip) {
+      originalClip = g.getClip();
+
+      g.setClip(
+        new RoundRectangle2D.Double(
+          absoluteBounds.x, absoluteBounds.y,
+          absoluteBounds.width, absoluteBounds.height,
+          cornerRadius, cornerRadius
+        )
+      );
+    }
+
+    originalColor = g.getColor();
+
+    g.setColor(color);
   }
 
   @Override
   public void renderSelf(Graphics2D g) {
-    super.renderSelf(g);
+    if (color != null) {
+      g.fillRoundRect(
+        (int) absoluteBounds.x, (int) absoluteBounds.y,
+        (int) absoluteBounds.width, (int) absoluteBounds.height,
+        cornerRadius, cornerRadius
+      );
+    } else if (background != null) {
+      background.render(g, absoluteBounds);
+    }
+  }
 
-    renderWith9PatchScaling(background, absoluteBounds, padding, g);
+  @Override
+  protected void postRender(Graphics2D g) {
+    if (clip)
+      g.setClip(originalClip);
+
+    if (originalColor != null)
+      g.setColor(originalColor);
   }
 
   @Override
   public void handleEvent(MouseEvent event) {
+    // Prevent widgets behind the panel from receiving mouse events
     event.setHandled();
   }
 }

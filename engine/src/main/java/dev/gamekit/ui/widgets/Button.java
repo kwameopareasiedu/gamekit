@@ -4,30 +4,29 @@ import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.core.IO;
 import dev.gamekit.ui.events.MouseEvent;
-import dev.gamekit.ui.mixins.NinePatch;
 import dev.gamekit.utils.Constraints;
-import dev.gamekit.utils.Spacing;
+import dev.gamekit.utils.EngineImage;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 /** A {@link Widget} which can be clicked to trigger an action */
 @WidgetBuilder
-public class Button extends SingleChildParent implements NinePatch, MouseEvent.Handler {
-  public static final BufferedImage DEFAULT_BG = IO.getResourceImage("default-sprites.png", 64, 64, 350, 120);
-  public static final BufferedImage DEFAULT_HOVER_BG = IO.getResourceImage("default-sprites.png", 64, 232, 350, 120);
-  public static final BufferedImage DEFAULT_PRESSED_BG = IO.getResourceImage("default-sprites.png", 64, 400, 350, 120);
+public class Button extends SingleChildParent implements MouseEvent.Handler {
+  public static final EngineImage DEFAULT_BG =
+    IO.getImageSliceWithInsets("default-sprites.png", 64, 64, 350, 120, 24, 24, 24, 24);
+  public static final EngineImage DEFAULT_HOVER_BG =
+    IO.getImageSliceWithInsets("default-sprites.png", 64, 232, 350, 120, 24, 24, 24, 24);
+  public static final EngineImage DEFAULT_PRESSED_BG =
+    IO.getImageSliceWithInsets("default-sprites.png", 64, 400, 350, 120, 24, 24, 24, 24);
 
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Button.DEFAULT_BG")
-  protected BufferedImage defaultBackground;
+  public EngineImage defaultBackground;
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Button.DEFAULT_HOVER_BG")
-  protected BufferedImage hoverBackground;
+  public EngineImage hoverBackground;
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Button.DEFAULT_PRESSED_BG")
-  protected BufferedImage pressedBackground;
-  @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing(24)")
-  protected Spacing padding;
+  public EngineImage pressedBackground;
   @WidgetBuilderField(comparable = false, themable = false)
-  protected MouseEvent.Handler mouseListener;
+  public MouseEvent.Handler mouseListener;
 
   protected boolean mouseEntered;
   protected boolean mousePressed;
@@ -64,16 +63,15 @@ public class Button extends SingleChildParent implements NinePatch, MouseEvent.H
 
   @Override
   protected void renderSelf(Graphics2D g) {
-    BufferedImage bgImage = defaultBackground;
+    EngineImage bgImage = defaultBackground;
 
     if (mousePressed)
       bgImage = pressedBackground;
     else if (mouseEntered)
       bgImage = hoverBackground;
 
-    if (bgImage != null && padding != null) {
-      renderWith9PatchScaling(bgImage, absoluteBounds, padding, g);
-    }
+    if (bgImage != null)
+      bgImage.render(g, absoluteBounds);
   }
 
   @Override

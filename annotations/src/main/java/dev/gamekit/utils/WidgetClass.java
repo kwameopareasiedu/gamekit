@@ -3,11 +3,14 @@ package dev.gamekit.utils;
 import dev.gamekit.annotations.WidgetBuilder;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 /** {@link WidgetField} holds type information for {@code Widgets} annotated with {@link WidgetBuilder} */
 public class WidgetClass implements Serializable {
+  /** Indicates an engine widget */
+  public final boolean internal;
   /** E.g: For a widget {@code Field}, this is {@code dev.gamekit.ui.widgets.Field} */
   public final String typeName;
   /** E.g: For a widget {@code Field}, this is {@code Field} */
@@ -22,16 +25,14 @@ public class WidgetClass implements Serializable {
   public final String configVarName;
   /** E.g: For a widget {@code Field}, this is {@code dev.gamekit.ui.widgets} */
   public final String configPackageName;
-  /** E.g: For a widget {@code Field}, this is {@code dev.gamekit.ui.widgets.Text} */
-  public final String superClassTypeName;
-  /** E.g: For a widget {@code Field}, this is {@code dev.gamekit.ui.widgets.TextConfig} */
-  public final String superClassConfigTypeName;
   public final List<WidgetField> fields;
+  public final WidgetClass base;
 
-  public WidgetClass(String typeName, String superClassTypeName, List<WidgetField> fields) {
+  public WidgetClass(boolean internal, String typeName, List<WidgetField> fields, WidgetClass base) {
+    this.internal = internal;
     this.typeName = typeName;
-    this.superClassTypeName = superClassTypeName;
-    this.fields = fields;
+    this.fields = Collections.unmodifiableList(fields);
+    this.base = base;
 
     simpleTypeName = typeName.substring(typeName.lastIndexOf(".") + 1);
     varName = simpleTypeName.substring(0, 1).toLowerCase() + simpleTypeName.substring(1);
@@ -39,37 +40,43 @@ public class WidgetClass implements Serializable {
     configSimpleTypeName = configTypeName.substring(configTypeName.lastIndexOf(".") + 1);
     configVarName = configSimpleTypeName.substring(0, 1).toLowerCase() + configSimpleTypeName.substring(1);
     configPackageName = configTypeName.substring(0, configTypeName.lastIndexOf("."));
+  }
 
-    superClassConfigTypeName = superClassTypeName != null ? superClassTypeName + "Config" : null;
+  public static void traverse(WidgetClass clazz, Visitor visitor) {
+    if (clazz == null)
+      return;
+
+    visitor.visit(clazz);
+    traverse(clazz.base, visitor);
   }
 
   @Override
   public String toString() {
-    return "WidgetClass{" +
-      "\ntypeName='" + typeName + '\'' +
-      "\nsimpleTypeName='" + simpleTypeName + '\'' +
-      "\nvarName='" + varName + '\'' +
-      "\nconfigTypeName='" + configTypeName + '\'' +
-      "\nconfigSimpleTypeName='" + configSimpleTypeName + '\'' +
-      "\nconfigVarName='" + configVarName + '\'' +
-      "\nconfigPackageName='" + configPackageName + '\'' +
-      "\nsuperClassTypeName='" + superClassTypeName + '\'' +
-      "\nsuperClassConfigTypeName='" + superClassConfigTypeName + '\'' +
-      "\nfields=" + fields.size() +
-      "\n}\n";
+    return String.format(
+      "WidgetClass[internal=%b, typeName=%s, simpleTypeName=%s, varName=%s, configTypeName=%s, " +
+        "configSimpleTypeName=%s, configVarName=%s, configPackageName=%s, fields=%d]",
+      internal,
+      typeName,
+      simpleTypeName,
+      varName,
+      configTypeName,
+      configSimpleTypeName,
+      configVarName,
+      configPackageName,
+      fields.size()
+    );
   }
 
   @Override
   public boolean equals(Object o) {
     return o instanceof WidgetClass other
+      && Objects.equals(internal, other.internal)
       && Objects.equals(typeName, other.typeName)
-      && Objects.equals(simpleTypeName, other.simpleTypeName)
-      && Objects.equals(varName, other.varName)
-      && Objects.equals(configTypeName, other.configTypeName)
-      && Objects.equals(configSimpleTypeName, other.configSimpleTypeName)
-      && Objects.equals(configVarName, other.configVarName)
-      && Objects.equals(configPackageName, other.configPackageName)
-      && Objects.equals(superClassTypeName, other.superClassTypeName)
-      && Objects.equals(superClassConfigTypeName, other.superClassConfigTypeName);
+      && Objects.equals(base, other.base);
+  }
+
+  @FunctionalInterface
+  public interface Visitor {
+    void visit(WidgetClass clazz);
   }
 }

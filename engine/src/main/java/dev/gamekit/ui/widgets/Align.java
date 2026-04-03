@@ -9,9 +9,9 @@ import dev.gamekit.utils.Constraints;
 @WidgetBuilder
 public class Align extends SingleChildParent {
   @WidgetBuilderField(fallback = "dev.gamekit.ui.enums.Alignment.START")
-  protected Alignment horizontalAlignment;
+  public Alignment horizontalAlignment;
   @WidgetBuilderField(fallback = "dev.gamekit.ui.enums.Alignment.START")
-  protected Alignment verticalAlignment;
+  public Alignment verticalAlignment;
 
   public Align(AlignConfig config, Widget child) {
     super(config, child);

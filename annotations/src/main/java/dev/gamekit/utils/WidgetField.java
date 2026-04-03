@@ -6,18 +6,24 @@ import java.io.Serializable;
 
 /** {@link WidgetField} holds type information for {@code Widget} fields annotated with {@link WidgetBuilderField} */
 public final class WidgetField implements Serializable {
-  /** E.g: For a field {@code Spacing Field#edgeInsets = new Spacing()}, this is {@code dev.gamekit.utils.Spacing} */
+  /** E.g: For a field {@code Spacing Field#padding = new Spacing()}, this is {@code dev.gamekit.utils.Spacing} */
   public final String typeName;
-  /** E.g: For a field {@code Spacing Field#edgeInsets = new Spacing()}, this is {@code edgeInsets} */
+  /** E.g: For a field {@code Spacing Field#padding = new Spacing()}, this is {@code padding} */
   public final String varName;
-  /** E.g: For a field {@code Spacing Field#edgeInsets = new Spacing()}, this is {@code EdgeInsets} */
+  /** E.g: For a field {@code Spacing Field#padding = new Spacing()}, this is {@code Padding} */
   public final String varNameAsSuffix;
-  /** E.g: For a field {@code Spacing Field#edgeInsets = new Spacing()}, this is {@code new Spacing()} */
+  /** E.g: For a field {@code Spacing Field#padding = new Spacing()}, this is {@code new Spacing()} */
   public final String fallbackValue;
   public final boolean comparable;
   public final boolean themable;
 
-  public WidgetField(String typeName, String varName, String fallbackValue, boolean comparable, boolean themable) {
+  public WidgetField(
+    String typeName,
+    String varName,
+    String fallbackValue,
+    boolean comparable,
+    boolean themable
+  ) {
     this.typeName = typeName;
     this.varName = varName;
     this.fallbackValue = fallbackValue;
@@ -29,13 +35,9 @@ public final class WidgetField implements Serializable {
 
   @Override
   public String toString() {
-    return "WidgetField{" +
-      "\ntypeName='" + typeName + '\'' +
-      "\nvarName='" + varName + '\'' +
-      "\nnameAsSuffix='" + varNameAsSuffix + '\'' +
-      "\nfallbackValue='" + fallbackValue + '\'' +
-      "\ncomparable='" + comparable + '\'' +
-      "\nthemable='" + themable + '\'' +
-      "\n}\n";
+    return String.format(
+      "WidgetField[typeName=%s, varName=%s, nameAsSuffix=%s, fallbackValue=%s, comparable=%b, themable=%s]",
+      typeName, varName, varNameAsSuffix, fallbackValue, comparable, themable
+    );
   }
 }
