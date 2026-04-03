@@ -27,6 +27,7 @@ public class UITest extends Scene {
         updateUI();
       }
     });
+    Widget.DEBUG = true;
   }
 
   public static void main(String[] args) {
@@ -81,11 +82,7 @@ public class UITest extends Scene {
         "Click Me",
         ev -> { },
         Builder.create(
-          () -> {
-            if (timer > 5)
-              return Text.create("World");
-            return Text.create("Hello");
-          }
+          () -> timer > 5 ? Text.create("World") : Text.create("Hello")
         )
       )
     );

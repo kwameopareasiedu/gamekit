@@ -1,6 +1,5 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.utils.Constraints;
 
 /**
@@ -8,19 +7,20 @@ import dev.gamekit.utils.Constraints;
  * <p>
  * Subclasses must override the {@link #build()} method and return a custom widget tree
  */
-@WidgetBuilder
 public abstract class Compose extends SingleChildParent {
-  protected Compose() {
-    super(new ComposeConfig(), Empty.create());
-  }
+  private boolean updatedChild = false;
 
-  protected Compose(ComposeConfig config) {
-    super(config, Empty.create());
+  protected Compose() {
+    super(ignored -> {}, Empty.create());
   }
 
   @Override
   protected void performInit() {
-    updateChild(build());
+    if (!updatedChild) {
+      updateChild(build());
+      updatedChild = true;
+    }
+
     super.performInit();
   }
 

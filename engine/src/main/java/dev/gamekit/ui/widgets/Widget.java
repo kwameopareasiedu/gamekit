@@ -29,6 +29,7 @@ public abstract class Widget {
   public static final Color DEBUG_COLOR = Color.GREEN;
   public static final BasicStroke DEBUG_STROKE = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
   public static boolean DEBUG = false;
+
   protected final Logger logger = LogManager.getLogger(getClass());
   protected final Bounds absoluteBounds;
   protected final Bounds computedBounds;
@@ -93,18 +94,11 @@ public abstract class Widget {
    * {@code ImageConfig}).
    * <p>
    * {@link #init} method is called afterward to re-initialize the widget.
-   * <p>
-   * Since this method is marked as {@code final}, subclasses should override the  {@link #performUpdate()} method
-   * instead to perform their layout
    */
   public final void update(Widget widget) {
     this.config = widget.config;
     init(host);
-    performUpdate();
   }
-
-  /** Delegate method for subclasses to perform additional update operations */
-  protected void performUpdate() { /* No-op */ }
 
   /**
    * Computes the size of the widget and the relative position(s) of its child/children
@@ -277,8 +271,8 @@ public abstract class Widget {
 
   /** Mixin interface which provides functionality for comparing and updating two {@link Widget} trees */
   public interface Updater {
-    java.util.List<Widget> CURRENT_QUEUE = new ArrayList<>();
-    java.util.List<Widget> NEW_QUEUE = new ArrayList<>();
+    List<Widget> CURRENT_QUEUE = new ArrayList<>();
+    List<Widget> NEW_QUEUE = new ArrayList<>();
 
     /**
      * Updates the widget tree using a "diffing" algorithm.
@@ -298,10 +292,12 @@ public abstract class Widget {
       NEW_QUEUE.clear();
       boolean treeUpdated = false;
 
+      Widget currentTree = treeGetter.get();
+      CURRENT_QUEUE.add(currentTree);
+
       // Initialize the new tree to set up internal state before comparison
       Widget newTree = treeCreator.get();
       newTree.init(widgetHost);
-      CURRENT_QUEUE.add(treeGetter.get());
       NEW_QUEUE.add(newTree);
 
       while (!CURRENT_QUEUE.isEmpty() && !NEW_QUEUE.isEmpty()) {
@@ -321,12 +317,12 @@ public abstract class Widget {
           } else if (currentWidgetParent instanceof SingleChildParent currentWidgetSingleChildParent) {
             currentWidgetSingleChildParent.updateChild(newWidget);
           } else if (currentWidgetParent instanceof MultiChildParent currentWidgetMultiChildParent) {
-            int index = java.util.List.of(currentWidgetMultiChildParent.getChildren()).indexOf(currentWidget);
+            int index = List.of(currentWidgetMultiChildParent.getChildren()).indexOf(currentWidget);
             currentWidgetMultiChildParent.updateChild(index, newWidget);
           }
 
           treeUpdated = true;
-        } else if (!configMatch || currentWidget instanceof Stateful) {
+        } else if (!configMatch) {
           currentWidget.update(newWidget);
           treeUpdated = true;
         }
@@ -337,8 +333,8 @@ public abstract class Widget {
           NEW_QUEUE.add(newParent.getChild());
         } else if (currentWidget instanceof MultiChildParent currentParent && newWidget instanceof MultiChildParent newParent) {
           // Add children of MultiChildParent to queue for processing
-          java.util.List<Widget> currentParentChildrenWidgets = java.util.List.of(currentParent.getChildren());
-          java.util.List<Widget> newParentChildrenWidgets = List.of(newParent.getChildren());
+          List<Widget> currentParentChildrenWidgets = List.of(currentParent.getChildren());
+          List<Widget> newParentChildrenWidgets = List.of(newParent.getChildren());
           CURRENT_QUEUE.addAll(currentParentChildrenWidgets);
           NEW_QUEUE.addAll(newParentChildrenWidgets);
         }

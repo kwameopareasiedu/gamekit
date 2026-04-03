@@ -18,6 +18,8 @@ public class Empty extends Leaf {
 
   @Override
   protected void performLayout(Constraints constraints) {
+    intrinsicSize.set(0, 0);
+
     computedBounds.setSize(
       constraints.constrainWidth(0),
       constraints.constrainHeight(0)

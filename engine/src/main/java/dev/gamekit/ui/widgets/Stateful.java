@@ -1,6 +1,5 @@
 package dev.gamekit.ui.widgets;
 
-import dev.gamekit.annotations.WidgetBuilder;
 import dev.gamekit.utils.Constraints;
 
 import java.util.HashMap;
@@ -15,26 +14,22 @@ import java.util.Map;
  * Subclasses must override the {@link #createState()} method and return a {@link State} object which manages said
  * internal state
  */
-@WidgetBuilder
 public abstract class Stateful extends SingleChildParent {
-  private static final Map<String, State> STATES = new HashMap<>();
+  private static final Map<String, State<Stateful>> STATES = new HashMap<>();
 
   private final String stateKey;
-  private State state;
+  private boolean updatedChild = false;
+  private State<Stateful> state;
 
   protected Stateful(String stateKey) {
-    super(new StatefulConfig(), Empty.create());
-    this.stateKey = stateKey;
-  }
-
-  protected Stateful(StatefulConfig config, String stateKey) {
-    super(config, Empty.create());
+    super(ignored -> { }, Empty.create());
     this.stateKey = stateKey;
   }
 
   /** Returns the custom {@link State} object representing {@link Stateful} */
-  protected abstract State createState();
+  protected abstract State<? extends Stateful> createState();
 
+  @SuppressWarnings("unchecked")
   @Override
   protected final void performInit() {
     if (state == null) {
@@ -42,12 +37,16 @@ public abstract class Stateful extends SingleChildParent {
       if (STATES.containsKey(stateKey)) {
         state = STATES.get(stateKey);
       } else {
-        state = createState();
+        state = (State<Stateful>) createState();
         STATES.put(stateKey, state);
       }
     }
 
-    updateChild(state.build());
+    if (!updatedChild) {
+      updateChild(state.build(this));
+      updatedChild = true;
+    }
+
     super.performInit();
   }
 
@@ -66,17 +65,16 @@ public abstract class Stateful extends SingleChildParent {
   @Override
   protected void performUnmount() {
     super.performUnmount();
-//    STATES.remove(stateKey);
+    STATES.remove(stateKey);
   }
 
-  /** Triggers an update of the widget tree in response to some state change */
-  protected void updateUI() {
-    host.triggerUpdate();
-  }
-
-  /** {@link State} represents the mutable part of a {@link Stateful} widget */
-  protected abstract static class State implements Updater, Traveller {
+  /**
+   * {@link State} represents the mutable part of a {@link Stateful} widget.
+   * <p>
+   * <strong>NB: Subclasses must be either be standalone classes or STATIC inner classes to work properly</strong>
+   */
+  protected abstract static class State<T extends Stateful> implements Updater, Traveller {
     /** Abstract {@link Widget} builder method which constructs the widget tree represented by this {@link State} */
-    protected abstract Widget build();
+    protected abstract Widget build(T widget);
   }
 }
