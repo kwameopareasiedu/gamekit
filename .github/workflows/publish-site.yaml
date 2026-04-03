@@ -19,6 +19,10 @@ jobs:
         with:
           node-version: "20.11.1"
           registry-url: "https://registry.npmjs.org"
+      - name: Setup Python 3
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
       - name: Get dependencies
         run: yarn install
         working-directory: site
@@ -30,6 +34,8 @@ jobs:
       - name: Add firebase token to env
         run: echo "FIREBASE_TOKEN=${{secrets.FIREBASE_TOKEN}}" >> "$GITHUB_ENV"
         working-directory: site
+      - name: Install mkdocs
+        run: pip install mkdocs
       - name: Build project
         run: yarn build
         working-directory: site
