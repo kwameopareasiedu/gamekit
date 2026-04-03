@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <plugins>
+    <plugin>
+      <name>gamekit-maven-plugin</name>
+      <prefix>gamekit</prefix>
+      <artifactId>gamekit-maven-plugin</artifactId>
+    </plugin>
+  </plugins>
+</metadata>
