@@ -73,7 +73,7 @@ public abstract class Stateful extends SingleChildParent {
    * <p>
    * <strong>NB: Subclasses must be either be standalone classes or STATIC inner classes to work properly</strong>
    */
-  protected abstract static class State<T extends Stateful> implements Updater, Traveller {
+  protected abstract static class State<T extends Stateful> {
     /** Abstract {@link Widget} builder method which constructs the widget tree represented by this {@link State} */
     protected abstract Widget build(T widget);
   }

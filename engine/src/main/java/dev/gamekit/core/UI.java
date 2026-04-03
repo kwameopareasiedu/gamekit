@@ -369,10 +369,6 @@ public final class UI implements Widget.Host, Widget.Updater, Widget.Traveller {
     this.tree = tree;
   }
 
-  private interface TreeWidgetVisitor {
-    void visit(Widget widget);
-  }
-
   /** Convenience class which stores structures of {@link InputEvent} */
   private static class EventStore {
     public MouseEvent mouseMotionEvent;

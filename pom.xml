@@ -12,6 +12,16 @@
   <name>GameKit</name>
   <description>A 2D Java game engine for creating simple games fast</description>
 
+  <developers>
+    <developer>
+      <name>Kwame Opare Asiedu</name>
+      <url>https://opare.dev</url>
+      <roles>
+        <role>Creator</role>
+      </roles>
+    </developer>
+  </developers>
+
   <modules>
     <module>engine</module>
     <module>testing</module>
