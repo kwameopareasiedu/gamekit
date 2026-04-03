@@ -1,4 +1,4 @@
-name: Github Maven Publisher
+name: Publish Maven Artifacts
 
 on:
   release:

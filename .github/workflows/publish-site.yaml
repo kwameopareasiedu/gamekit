@@ -1,4 +1,4 @@
-name: Github Maven Publisher
+name: Publish Site
 
 on:
   release:
