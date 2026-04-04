@@ -31,6 +31,8 @@ nav:
           - Attenuation: features/audio/attenuation.md
           - Audio Shape: features/audio/audio-shape.md
       - User Interface (UI): features/ui.md
+  - Tools:
+      - Export: tools/export.md
 theme: mkdocs
 markdown_extensions:
   - attr_list
