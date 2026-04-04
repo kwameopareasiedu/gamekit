@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.DosFileAttributeView;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
@@ -108,15 +109,15 @@ public class BuildMojo extends AbstractMojo {
     getLog().info("Creating output directories");
 
     String name = mavenProject.getArtifactId();
-    String artifactName = String.format("%s-%s.jar", name, mavenProject.getVersion());
-    Path currentArtifactPath = Paths.get(mavenProject.getBuild().getDirectory(), artifactName);
-    Path newArtifactPath = Paths.get(mavenProject.getBuild().getDirectory(), "outputs", "jar", artifactName);
-    Path platformExecutableDirectoryPath = Paths.get(mavenProject.getBuild().getDirectory(), "outputs", os.name);
+    String jarFileName = String.format("%s-%s.jar", name, mavenProject.getVersion());
+    Path jarFilePath = Paths.get(mavenProject.getBuild().getDirectory(), jarFileName);
+    Path jarFileDestPath = Paths.get(mavenProject.getBuild().getDirectory(), "outputs", "jar", jarFileName);
+    Path platformExecutablePath = Paths.get(mavenProject.getBuild().getDirectory(), "outputs", os.name);
 
     try {
-      Files.createDirectories(newArtifactPath.getParent());
-      Files.createDirectories(platformExecutableDirectoryPath.getParent());
-      Files.copy(currentArtifactPath, newArtifactPath);
+      Files.createDirectories(jarFileDestPath.getParent());
+      Files.createDirectories(platformExecutablePath);
+      Files.copy(jarFilePath, jarFileDestPath);
     } catch (IOException e) {
       getLog().error("Unable to create output directories", e);
       throw new MojoExecutionException(e);
@@ -142,9 +143,9 @@ public class BuildMojo extends AbstractMojo {
         element(name("vendor"), vendor),
         element(name("description"), description),
         element(name("appversion"), mavenProject.getVersion()),
-        element(name("input"), reformatPath(newArtifactPath.getParent().toString(), os)),
-        element(name("dest"), reformatPath(platformExecutableDirectoryPath.toString(), os)),
-        element(name("mainjar"), artifactName),
+        element(name("input"), jarFileDestPath.getParent().toString()),
+        element(name("dest"), platformExecutablePath.toString()),
+        element(name("mainjar"), jarFileName),
         element(name("mainclass"), mainClass),
         element(name("resourcedir"), resourceDir)
       ),
@@ -157,8 +158,8 @@ public class BuildMojo extends AbstractMojo {
 
     getLog().info("Generating README");
 
-    Path platformOutputRootPath = Paths.get(platformExecutableDirectoryPath.toString(), name);
-    Path readmeFilePath = Paths.get(platformExecutableDirectoryPath.toString(), name, "README.txt");
+    Path platformOutputRootPath = Paths.get(platformExecutablePath.toString(), name);
+    Path readmeFilePath = Paths.get(platformExecutablePath.toString(), name, "README.txt");
     StringBuilder instructionsBuilder = new StringBuilder(name + "\n");
 
     switch (os) {
@@ -169,7 +170,7 @@ public class BuildMojo extends AbstractMojo {
           .append(name).append("' to make the file " + "executable");
         instructionsBuilder.append("\n").append("Close the terminal and open the file to launch the game");
       }
-      case WINDOWS -> instructionsBuilder.append("\n").append("Launch the game exe file");
+      case WINDOWS -> instructionsBuilder.append("\n").append("Launch the ").append(name).append(".exe file");
     }
 
     try {
@@ -180,7 +181,7 @@ public class BuildMojo extends AbstractMojo {
     }
 
     getLog().info("Zipping files");
-    Path zippedOutputPath = Paths.get(platformExecutableDirectoryPath.toString(), name + ".zip");
+    Path zippedOutputPath = Paths.get(platformExecutablePath.toString(), name + ".zip");
     ZipUtil.pack(readmeFilePath.getParent().toFile(), zippedOutputPath.toFile());
 
     getLog().info("Cleaning up");
@@ -190,17 +191,19 @@ public class BuildMojo extends AbstractMojo {
         List<Path> reversed = new java.util.ArrayList<>(entries.toList());
         Collections.reverse(reversed);
 
-        for (Path entry : reversed)
+        for (Path entry : reversed) {
+          if (os == OS.WINDOWS) {
+            var attrs = Files.getFileAttributeView(entry, DosFileAttributeView.class);
+            if (attrs != null) attrs.setReadOnly(false);
+          }
+
           Files.delete(entry);
+        }
       }
     } catch (IOException e) {
       getLog().error("Unable to delete platform output directory", e);
     }
 
     getLog().info("Outputs generated at " + Paths.get(mavenProject.getBuild().getDirectory(), "outputs"));
-  }
-
-  private String reformatPath(String path, OS os) {
-    return os == OS.WINDOWS ? String.format("\"%s\"", path) : path;
   }
 }
