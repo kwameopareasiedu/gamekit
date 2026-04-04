@@ -65,6 +65,11 @@ public class BuildMojo extends AbstractMojo {
 
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
+    OS os = OS.getCurrent();
+
+    if (os == OS.UNSUPPORTED)
+      throw new MojoExecutionException("Unsupported operating system");
+
     getLog().info("Generating uber JAR with all dependencies");
 
     executeMojo(
@@ -103,11 +108,10 @@ public class BuildMojo extends AbstractMojo {
     getLog().info("Creating output directories");
 
     String name = mavenProject.getArtifactId();
-    String osName = System.getProperty("os.name").toLowerCase();
     String artifactName = String.format("%s-%s.jar", name, mavenProject.getVersion());
     Path currentArtifactPath = Paths.get(mavenProject.getBuild().getDirectory(), artifactName);
     Path newArtifactPath = Paths.get(mavenProject.getBuild().getDirectory(), "outputs", "jar", artifactName);
-    Path platformExecutableDirectoryPath = Paths.get(mavenProject.getBuild().getDirectory(), "outputs", osName);
+    Path platformExecutableDirectoryPath = Paths.get(mavenProject.getBuild().getDirectory(), "outputs", os.name);
 
     try {
       Files.createDirectories(newArtifactPath.getParent());
@@ -123,7 +127,7 @@ public class BuildMojo extends AbstractMojo {
       return;
     }
 
-    getLog().info("Building platform executable: " + osName);
+    getLog().info("Building platform executable: " + os.name);
 
     executeMojo(
       plugin(
@@ -138,8 +142,8 @@ public class BuildMojo extends AbstractMojo {
         element(name("vendor"), vendor),
         element(name("description"), description),
         element(name("appversion"), mavenProject.getVersion()),
-        element(name("input"), newArtifactPath.getParent().toString()),
-        element(name("dest"), platformExecutableDirectoryPath.toString()),
+        element(name("input"), reformatPath(newArtifactPath.getParent().toString(), os)),
+        element(name("dest"), reformatPath(platformExecutableDirectoryPath.toString(), os)),
         element(name("mainjar"), artifactName),
         element(name("mainclass"), mainClass),
         element(name("resourcedir"), resourceDir)
@@ -157,14 +161,15 @@ public class BuildMojo extends AbstractMojo {
     Path readmeFilePath = Paths.get(platformExecutableDirectoryPath.toString(), name, "README.txt");
     StringBuilder instructionsBuilder = new StringBuilder(name + "\n");
 
-    if (osName.equals("linux")) {
-      instructionsBuilder.append("\n").append("Navigate to the bin/ directory");
-      instructionsBuilder.append("\n").append("Open the bin/ directory in a terminal");
-      instructionsBuilder.append("\n").append("Type 'chmod u+x ").append(name).append("' to make the file executable");
-      instructionsBuilder.append("\n").append("Close the terminal and open the file to launch the game");
-    } else if (osName.equals("windows")) {
-      instructionsBuilder.append("\n").append("Navigate to the bin/ directory");
-      instructionsBuilder.append("\n").append("Launch the game exe file");
+    switch (os) {
+      case LINUX -> {
+        instructionsBuilder.append("\n").append("Navigate to the bin/ directory");
+        instructionsBuilder.append("\n").append("Open the bin/ directory in a terminal");
+        instructionsBuilder.append("\n").append("Type 'chmod u+x ")
+          .append(name).append("' to make the file " + "executable");
+        instructionsBuilder.append("\n").append("Close the terminal and open the file to launch the game");
+      }
+      case WINDOWS -> instructionsBuilder.append("\n").append("Launch the game exe file");
     }
 
     try {
@@ -193,5 +198,9 @@ public class BuildMojo extends AbstractMojo {
     }
 
     getLog().info("Outputs generated at " + Paths.get(mavenProject.getBuild().getDirectory(), "outputs"));
+  }
+
+  private String reformatPath(String path, OS os) {
+    return os == OS.WINDOWS ? String.format("\"%s\"", path) : path;
   }
 }
