@@ -162,6 +162,9 @@ public class BuildMojo extends AbstractMojo {
       instructionsBuilder.append("\n").append("Open the bin/ directory in a terminal");
       instructionsBuilder.append("\n").append("Type 'chmod u+x ").append(name).append("' to make the file executable");
       instructionsBuilder.append("\n").append("Close the terminal and open the file to launch the game");
+    } else if (osName.equals("windows")) {
+      instructionsBuilder.append("\n").append("Navigate to the bin/ directory");
+      instructionsBuilder.append("\n").append("Launch the game exe file");
     }
 
     try {
