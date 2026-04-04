@@ -1,5 +1,10 @@
 const showcaseItems: { name: string; src: string; href: string }[] = [
   {
+    name: "Cozy Word Puzzle",
+    src: "/cozy-word-puzzle.png",
+    href: "https://kwameopareasiedu.itch.io/cozy-word-puzzle",
+  },
+  {
     name: "Circle Pong",
     src: "/circle-pong.png",
     href: "https://kwameopareasiedu.itch.io/circle-pong",
