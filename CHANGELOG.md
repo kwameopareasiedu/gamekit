@@ -18,6 +18,16 @@
 
 ### Removed
 
+## 0.8.0
+
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
 ## 0.7.0
 
 ### Added

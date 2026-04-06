@@ -11,7 +11,7 @@
   </parent>
 
   <artifactId>testing</artifactId>
-  <version>0.1.0-SNAPSHOT</version>
+  <version>1.0.0</version>
   <packaging>jar</packaging>
 
   <properties>
@@ -24,7 +24,7 @@
     <dependency>
       <groupId>dev.gamekit</groupId>
       <artifactId>engine</artifactId>
-      <version>0.7.0</version>
+      <version>0.8.0</version>
     </dependency>
 
     <dependency>

@@ -11,6 +11,8 @@
   </parent>
 
   <artifactId>samples</artifactId>
+  <version>1.0.0</version>
+  <packaging>jar</packaging>
 
   <properties>
     <maven.compiler.source>18</maven.compiler.source>
@@ -22,7 +24,7 @@
     <dependency>
       <groupId>dev.gamekit</groupId>
       <artifactId>engine</artifactId>
-      <version>0.7.0</version>
+      <version>0.8.0</version>
     </dependency>
   </dependencies>
 
