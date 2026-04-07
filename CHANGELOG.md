@@ -6,7 +6,6 @@
 - New widgets: Flow, Divider, Scroll
 - Dynamic lighting
 - Networked multiplayer
-- Control debugging level via Application
 
 ## UNRELEASED
 
@@ -26,6 +25,7 @@
 - Added `public int getDisplayHeight()` to `Window` class
 - Added `public int getCenterX()` to `Window` class
 - Added `public int getCenterY()` to `Window` class
+- Added custom goal to maven `process-resources` lifecycle phase to generate `Log4j2.xml` config in final package
 
 ### Changed
 

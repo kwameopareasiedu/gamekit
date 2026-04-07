@@ -142,7 +142,7 @@ public abstract class AudioClip {
       logger.error("Unsupported audio file format", e);
       throw new RuntimeException(e);
     } catch (IOException e) {
-      logger.error("Unable to load resource audio clip at {}", resPath);
+      logger.error("Unable to load resource audio clip at {}", resPath, e);
       throw new RuntimeException(e);
     }
   }

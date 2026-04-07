@@ -41,8 +41,7 @@ public final class IO {
       LOGGER.debug("Loading resource image at {}", resPath);
       return new EngineImage(ImageIO.read(getStream(resPath)));
     } catch (IOException e) {
-      LOGGER.error("Unable to load resource image at {}", resPath);
-      LOGGER.catching(e);
+      LOGGER.error("Unable to load resource image at {}", resPath, e);
       return null;
     }
   }
@@ -55,12 +54,10 @@ public final class IO {
 
       return new EngineImage(img, sliceX, sliceY, sliceWidth, sliceHeight, 0, 0, 0, 0);
     } catch (IOException e) {
-      LOGGER.error("Unable to load resource image at {}", resPath);
-      LOGGER.catching(e);
+      LOGGER.error("Unable to load resource image at {}", resPath, e);
       return null;
     } catch (RasterFormatException e) {
-      LOGGER.error("Invalid slice bounds for {}", resPath);
-      LOGGER.catching(e);
+      LOGGER.error("Invalid slice bounds for {}", resPath, e);
       return null;
     }
   }
@@ -78,8 +75,7 @@ public final class IO {
 
       return new EngineImage(img, topInset, rightInset, bottomInset, leftInset);
     } catch (IOException e) {
-      LOGGER.error("Unable to load resource image at {}", resPath);
-      LOGGER.catching(e);
+      LOGGER.error("Unable to load resource image at {}", resPath, e);
       return null;
     }
   }
@@ -101,12 +97,10 @@ public final class IO {
         img, sliceX, sliceY, sliceWidth, sliceHeight, topInset, rightInset, bottomInset, leftInset
       );
     } catch (IOException e) {
-      LOGGER.error("Unable to load resource image at {}", resPath);
-      LOGGER.catching(e);
+      LOGGER.error("Unable to load resource image at {}", resPath, e);
       return null;
     } catch (RasterFormatException e) {
-      LOGGER.error("Invalid slice bounds for {}", resPath);
-      LOGGER.catching(e);
+      LOGGER.error("Invalid slice bounds for {}", resPath, e);
       return null;
     }
   }
@@ -117,8 +111,7 @@ public final class IO {
       LOGGER.debug("Loading resource font at {}", resPath);
       return Font.createFont(Font.TRUETYPE_FONT, getStream(resPath));
     } catch (FontFormatException | IOException e) {
-      LOGGER.error("Unable to load resource font at {}", resPath);
-      LOGGER.catching(e);
+      LOGGER.error("Unable to load resource font at {}", resPath, e);
       return null;
     }
   }
