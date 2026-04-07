@@ -5,8 +5,6 @@ import dev.gamekit.utils.Position;
 import java.awt.*;
 import java.awt.event.*;
 
-import static dev.gamekit.utils.Math.clamp;
-
 /**
  * {@link Input} handles keyboard and mouse input detection for use in the application.
  * <p>
@@ -216,7 +214,8 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
   private final KeyState[] keyStates;
   private final ButtonState[] buttonStates;
-  private final Position mousePosition;
+  private final Position absoluteMousePosition;
+  private final Position relativeMousePosition;
   private char characterPressed = '\0';
   private int keyCodePressed = 0;
   private boolean frozen = false;
@@ -224,7 +223,8 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   private Input() {
     keyStates = new KeyState[KEY_COUNT];
     buttonStates = new ButtonState[BUTTON_COUNT];
-    mousePosition = new Position(MouseInfo.getPointerInfo().getLocation());
+    absoluteMousePosition = new Position(MouseInfo.getPointerInfo().getLocation());
+    relativeMousePosition = new Position();
 
     for (int i1 = 0; i1 < KEY_COUNT; i1++)
       keyStates[i1] = new KeyState();
@@ -283,7 +283,15 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
    * not keep a reference to it. Rather, retrieve the x and y values and store them if you need to</i>
    */
   public static Position getMousePosition() {
-    return INSTANCE.mousePosition;
+    Window win = Window.getInstance();
+    double invScaling = win.getInvScaling();
+
+    INSTANCE.relativeMousePosition.set(
+      (int) (INSTANCE.absoluteMousePosition.x * invScaling),
+      (int) (INSTANCE.absoluteMousePosition.y * invScaling)
+    );
+
+    return INSTANCE.relativeMousePosition;
   }
 
   /**
@@ -365,14 +373,14 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   public void mouseDragged(MouseEvent e) {
     if (frozen) return;
 
-    mousePosition.set(e.getX(), e.getY());
+    absoluteMousePosition.set(e.getX(), e.getY());
   }
 
   @Override
   public void mouseMoved(MouseEvent e) {
     if (frozen) return;
 
-    mousePosition.set(e.getX(), e.getY());
+    absoluteMousePosition.set(e.getX(), e.getY());
   }
 
   @Override

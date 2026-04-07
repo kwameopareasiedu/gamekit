@@ -62,7 +62,7 @@ public class Demo5Audio extends Scene {
       new Settings(
         "Demo 5 - Audio",
         Resolution.VGA,
-        WindowMode.FULLSCREEN,
+        WindowMode.BORDERLESS,
         TextAntialiasing.ON,
         Antialiasing.ON
       )

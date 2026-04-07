@@ -50,7 +50,7 @@ public class Demo4UserInterface extends Scene {
       new Settings(
         "Demo 4 - Declarative UI",
         Resolution.HD,
-        WindowMode.BORDERLESS,
+        WindowMode.FULLSCREEN,
         Antialiasing.ON,
         TextAntialiasing.ON,
         AlphaInterpolation.SPEED,

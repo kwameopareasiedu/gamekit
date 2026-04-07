@@ -18,10 +18,6 @@ public final class Window {
 
   private static Window instance;
 
-  private final int displayWidth;
-  private final int displayHeight;
-  private final int centerX;
-  private final int centerY;
   private final JFrame frame;
   private final Canvas canvas;
   private final BufferStrategy bufferStrategy;
@@ -29,6 +25,11 @@ public final class Window {
   private final Graphics2D displayGraphics;
   private final BufferedImage uiBuffer;
   private final Graphics2D uiGraphics;
+  private final int displayWidth;
+  private final int displayHeight;
+  private final double invScaling;
+  private final int centerX;
+  private final int centerY;
 
   Window() {
     Settings settings = Application.getInstance().getSettings();
@@ -60,7 +61,18 @@ public final class Window {
       frame.setUndecorated(settings.undecorated);
     }
 
-    Dimension d = new Dimension(displayWidth, displayHeight);
+    double scaling = settings.fullscreen ? Math.min(
+      frame.getWidth() / (double) displayWidth,
+      frame.getHeight() / (double) displayHeight
+    ) : 1;
+
+    invScaling = 1.0 / scaling;
+
+    Dimension d = new Dimension(
+      (int) (displayWidth * scaling),
+      (int) (displayHeight * scaling)
+    );
+
     canvas.setSize(d);
     canvas.setMinimumSize(d);
     canvas.setMaximumSize(d);
@@ -133,6 +145,11 @@ public final class Window {
     return centerY;
   }
 
+  /** Returns the inverse display scaling factor of the {@link Window} */
+  double getInvScaling() {
+    return invScaling;
+  }
+
   /** Returns the visible {@link JFrame} of the {@link Window} */
   JFrame getFrame() {
     return frame;
@@ -163,8 +180,18 @@ public final class Window {
   void update() {
     do {
       Graphics2D bufferGraphics = (Graphics2D) bufferStrategy.getDrawGraphics();
-      bufferGraphics.drawImage(displayBuffer, 0, 0, displayWidth, displayHeight, null);
-      bufferGraphics.drawImage(uiBuffer, 0, 0, displayWidth, displayHeight, null);
+      Settings settings = Application.getInstance().getSettings();
+
+      if (settings.fullscreen) {
+        int cw = canvas.getWidth();
+        int ch = canvas.getHeight();
+        bufferGraphics.drawImage(displayBuffer, 0, 0, cw, ch, 0, 0, displayWidth, displayHeight, null);
+        bufferGraphics.drawImage(uiBuffer, 0, 0, cw, ch, 0, 0, displayWidth, displayHeight, null);
+      } else {
+        bufferGraphics.drawImage(displayBuffer, 0, 0, displayWidth, displayHeight, null);
+        bufferGraphics.drawImage(uiBuffer, 0, 0, displayWidth, displayHeight, null);
+      }
+
       bufferStrategy.show();
       bufferGraphics.dispose();
     } while (bufferStrategy.contentsLost());
