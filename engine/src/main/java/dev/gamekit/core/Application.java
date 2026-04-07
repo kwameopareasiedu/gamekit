@@ -166,9 +166,9 @@ public abstract class Application {
   private void setup() {
     logger.debug("Initializing application");
 
-    window.getFrame().addKeyListener(Input.INSTANCE);
-    window.getFrame().addMouseListener(Input.INSTANCE);
-    window.getFrame().addMouseMotionListener(Input.INSTANCE);
+    window.getCanvas().addKeyListener(Input.INSTANCE);
+    window.getCanvas().addMouseListener(Input.INSTANCE);
+    window.getCanvas().addMouseMotionListener(Input.INSTANCE);
 
     window.getFrame().addWindowListener(new WindowAdapter() {
       @Override

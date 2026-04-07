@@ -39,17 +39,17 @@ public final class UI implements Widget.Host, Widget.Updater, Widget.Traveller {
 
   public UI(Scene scene) {
     Settings settings = Application.getInstance().getSettings();
-    Window.Info windowInfo = Window.getInstance().getInfo();
-    int dw = windowInfo.displayWidth();
-    int dh = windowInfo.displayHeight();
+    Window window = Window.getInstance();
+    int displayWidth = window.getDisplayWidth();
+    int displayHeight = window.getDisplayHeight();
 
     this.scene = scene;
-    this.windowConstraints = new Constraints(dw, dw, dh, dh);
+    this.windowConstraints = new Constraints(displayWidth, displayWidth, displayHeight, displayHeight);
     this.currentHitTestList = new ArrayList<>();
     this.previousHitTestList = new ArrayList<>();
     this.eventStore = new EventStore();
     this.mousePosition = new Position();
-    this.canvasImage = new BufferedImage(dw, dh, BufferedImage.TYPE_INT_ARGB);
+    this.canvasImage = new BufferedImage(displayWidth, displayHeight, BufferedImage.TYPE_INT_ARGB);
     this.canvasGraphics = canvasImage.createGraphics();
 
     settings.antialiasing.apply(canvasGraphics);
@@ -119,10 +119,9 @@ public final class UI implements Widget.Host, Widget.Updater, Widget.Traveller {
   void draw() {
     if (needsDraw) {
       Window win = Window.getInstance();
-      Window.Info windowInfo = Window.getInstance().getInfo();
       Graphics2D uiGraphics = win.getUiGraphics();
-      int displayWidth = windowInfo.displayWidth();
-      int displayHeight = windowInfo.displayHeight();
+      int displayWidth = win.getDisplayWidth();
+      int displayHeight = win.getDisplayHeight();
 
       uiGraphics.setBackground(TRANSPARENT_COLOR);
       uiGraphics.clearRect(0, 0, displayWidth, displayHeight);

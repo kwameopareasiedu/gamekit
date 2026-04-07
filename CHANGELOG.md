@@ -22,11 +22,18 @@
 
 ### Added
 
+- Added `public int getDisplayWidth()` to `Window` class
+- Added `public int getDisplayHeight()` to `Window` class
+- Added `public int getCenterX()` to `Window` class
+- Added `public int getCenterY()` to `Window` class
+
 ### Changed
 
 ### Deprecated
 
 ### Removed
+
+- Removed `public static getInfo()` from `Window` class
 
 ## 0.7.0
 
@@ -47,11 +54,11 @@
 - Added `Spinner` widget which is a `Leaf` widget which displays a loading indicator
 - Added `Measure` widget which is a `SingleChildParent` widget which overlays a ruler on its child (for layout
   debugging)
-- Added `Builder` widget which is a `Compose` widget which delegates is widget tree construction to the provided 
+- Added `Builder` widget which is a `Compose` widget which delegates is widget tree construction to the provided
   delegate object
 - Added `void addListener(AudioClip.Event.Handler handler)` to `AudioClip` class
 - Added `void removeListener(AudioClip.Event.Handler handler)` to `AudioClip` class
-- Added `Stateful` widget which is a `SingleChildParent` which is an abstract base for creating custom widgets 
+- Added `Stateful` widget which is a `SingleChildParent` which is an abstract base for creating custom widgets
   which maintain an internal state
 - Added `ValueGetter<T>` utility interface which exposes a single abstract no-argument method `get` which returns a
   value of type `T`

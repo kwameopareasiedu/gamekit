@@ -29,6 +29,11 @@ public final class Math {
     return java.lang.Math.min(max, java.lang.Math.max(min, val));
   }
 
+  /** Clamps a float to be within the range of {@code min} and {@code max} */
+  public static float clamp(float val, float min, float max) {
+    return java.lang.Math.min(max, java.lang.Math.max(min, val));
+  }
+
   /** Clamps an integer to be within the range of {@code min} and {@code max} */
   public static int clamp(int val, int min, int max) {
     return java.lang.Math.min(max, java.lang.Math.max(min, val));

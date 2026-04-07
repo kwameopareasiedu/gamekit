@@ -216,8 +216,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
   private final KeyState[] keyStates;
   private final ButtonState[] buttonStates;
-  private final Position absoluteMousePosition;
-  private final Position relativeMousePosition;
+  private final Position mousePosition;
   private char characterPressed = '\0';
   private int keyCodePressed = 0;
   private boolean frozen = false;
@@ -225,8 +224,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   private Input() {
     keyStates = new KeyState[KEY_COUNT];
     buttonStates = new ButtonState[BUTTON_COUNT];
-    absoluteMousePosition = new Position(MouseInfo.getPointerInfo().getLocation());
-    relativeMousePosition = new Position(0, 0);
+    mousePosition = new Position(MouseInfo.getPointerInfo().getLocation());
 
     for (int i1 = 0; i1 < KEY_COUNT; i1++)
       keyStates[i1] = new KeyState();
@@ -285,27 +283,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
    * not keep a reference to it. Rather, retrieve the x and y values and store them if you need to</i>
    */
   public static Position getMousePosition() {
-    Window.Info info = Window.getInstance().getInfo();
-    double scaleRatio = info.displayScaleRatio();
-    double windowWidth = info.frameWidth();
-    double windowHeight = info.frameHeight();
-    double displayWidth = info.displayWidth();
-    double displayHeight = info.displayHeight();
-    double inverseScaleRatio = info.inverseDisplayScaleRatio();
-
-    double scaledDisplayWidth = displayWidth * scaleRatio;
-    double scaledDisplayHeight = displayHeight * scaleRatio;
-    double leftMargin = 0.5 * (windowWidth - scaledDisplayWidth);
-    double topMargin = 0.5 * (windowHeight - scaledDisplayHeight);
-    double scaledMouseX = inverseScaleRatio * (INSTANCE.absoluteMousePosition.x - leftMargin);
-    double scaledMouseY = inverseScaleRatio * (INSTANCE.absoluteMousePosition.y - topMargin);
-
-    INSTANCE.relativeMousePosition.set(
-      (int) clamp(scaledMouseX, 0, displayWidth),
-      (int) clamp(scaledMouseY, 0, displayHeight)
-    );
-
-    return INSTANCE.relativeMousePosition;
+    return INSTANCE.mousePosition;
   }
 
   /**
@@ -387,14 +365,14 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
   public void mouseDragged(MouseEvent e) {
     if (frozen) return;
 
-    absoluteMousePosition.set(e.getX(), e.getY());
+    mousePosition.set(e.getX(), e.getY());
   }
 
   @Override
   public void mouseMoved(MouseEvent e) {
     if (frozen) return;
 
-    absoluteMousePosition.set(e.getX(), e.getY());
+    mousePosition.set(e.getX(), e.getY());
   }
 
   @Override

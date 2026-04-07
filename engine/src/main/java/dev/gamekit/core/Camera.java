@@ -27,15 +27,13 @@ public final class Camera {
 
   /** Returns the visible render bounds based on the camera's parameters */
   public static Bounds getRenderBounds() {
-    Window.Info windowInfo = Window.getInstance().getInfo();
-    int centerX = windowInfo.displayCenterX();
-    int centerY = windowInfo.displayCenterY();
+    Window win = Window.getInstance();
 
     BOUNDS_CACHE.set(
-      (int) ((Camera.x - centerX) * invZoom),
-      (int) ((Camera.y - centerY) * invZoom),
-      (int) (windowInfo.displayWidth() * invZoom),
-      (int) (windowInfo.displayHeight() * invZoom)
+      (int) ((Camera.x - win.getCenterX()) * invZoom),
+      (int) ((Camera.y - win.getCenterY()) * invZoom),
+      (int) (win.getDisplayWidth() * invZoom),
+      (int) (win.getDisplayHeight() * invZoom)
     );
 
     return BOUNDS_CACHE;
@@ -43,22 +41,18 @@ public final class Camera {
 
   /** Transforms a screen-space point (sx,sy) into world-space position */
   public static Vector screenToWorldPosition(double sx, double sy) {
-    Window.Info windowInfo = Window.getInstance().getInfo();
-    int centerX = windowInfo.displayCenterX();
-    int centerY = windowInfo.displayCenterY();
-    double wx = invZoom * (centerX - sx - Camera.x);
-    double wy = invZoom * (centerY - sy - Camera.y);
+    Window win = Window.getInstance();
+    double wx = invZoom * (win.getCenterX() - sx - Camera.x);
+    double wy = invZoom * (win.getCenterY() - sy - Camera.y);
     DOUBLE_POSITION_CACHE.set(-wx, wy);
     return DOUBLE_POSITION_CACHE;
   }
 
   /** Transforms a world-space point (sx,sy) into screen-space position */
   public static Position worldToScreenPosition(double wx, double wy) {
-    Window.Info windowInfo = Window.getInstance().getInfo();
-    int centerX = windowInfo.displayCenterX();
-    int centerY = windowInfo.displayCenterY();
-    int sx = (int) (centerX - wx * zoom - Camera.x);
-    int sy = (int) (centerY - wy * zoom - Camera.y);
+    Window win = Window.getInstance();
+    int sx = (int) (win.getCenterX() - wx * zoom - Camera.x);
+    int sy = (int) (win.getCenterY() - wy * zoom - Camera.y);
     INT_POSITION_CACHE.set(-sx, sy);
     return INT_POSITION_CACHE;
   }
@@ -87,12 +81,9 @@ public final class Camera {
 
   /** Applies the camera's position and zoom to the current window's transform matrix */
   static void updateWindowTransform() {
-    Window window = Window.getInstance();
-    Window.Info windowInfo = Window.getInstance().getInfo();
-    int centerX = windowInfo.displayCenterX();
-    int centerY = windowInfo.displayCenterY();
-    TRANSFORM.setTransform(zoom, 0, 0, zoom, centerX - x, centerY - y);
-    window.getDisplayGraphics().setTransform(TRANSFORM);
+    Window win = Window.getInstance();
+    TRANSFORM.setTransform(zoom, 0, 0, zoom, win.getCenterX() - x, win.getCenterY() - y);
+    win.getDisplayGraphics().setTransform(TRANSFORM);
   }
 
   /** Resets {@link Camera} translation and zoom parameters */

@@ -44,7 +44,7 @@ public class Demo5Audio extends Scene {
   public Demo5Audio() {
     super("Main Scene");
 
-    halfWindowWidth = Window.getInstance().getInfo().frameWidth() / 2;
+    halfWindowWidth = Window.getInstance().getDisplayWidth() / 2;
     listenerPos = new Vector(0, 0);
     prevMousePos = new Position(0, 0);
 
@@ -52,9 +52,7 @@ public class Demo5Audio extends Scene {
       new LinearAudioAttenuation(), new CircleAudioShape(5, 30)
     );
 
-    clip.addListener(ev -> {
-      logger.debug(ev.type());
-    });
+    clip.addListener(ev -> logger.debug(ev.type()));
 
     Audio.preload(MUSIC_KEY, clip);
   }
@@ -63,8 +61,8 @@ public class Demo5Audio extends Scene {
     Application game = new Application(
       new Settings(
         "Demo 5 - Audio",
-        Resolution.SVGA,
-        WindowMode.WINDOWED,
+        Resolution.VGA,
+        WindowMode.FULLSCREEN,
         TextAntialiasing.ON,
         Antialiasing.ON
       )
@@ -86,12 +84,12 @@ public class Demo5Audio extends Scene {
     if (Input.isKeyDown(Input.KEY_ESCAPE))
       Audio.get(MUSIC_KEY).stop();
 
-    Window.Info windowInfo = Window.getInstance().getInfo();
+    Window win = Window.getInstance();
     Position mousePos = Input.getMousePosition();
 
     listenerPos.set(
-      0.1 * (windowInfo.displayCenterX() - mousePos.x),
-      0.1 * (windowInfo.displayCenterY() - mousePos.y)
+      0.1 * (win.getCenterX() - mousePos.x),
+      0.1 * (win.getCenterY() - mousePos.y)
     );
 
     AudioListener.setPosition(listenerPos);
