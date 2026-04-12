@@ -86,6 +86,7 @@ public class RigidBody extends Component {
    * @see org.dyn4j.dynamics.PhysicsBody#setLinearVelocity(double, double)
    */
   public void setLinearVelocity(double x, double y) {
+    body.setAtRest(false);
     body.setLinearVelocity(x, y);
   }
 

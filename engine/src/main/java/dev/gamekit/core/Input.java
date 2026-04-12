@@ -226,11 +226,11 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
     absoluteMousePosition = new Position(MouseInfo.getPointerInfo().getLocation());
     relativeMousePosition = new Position();
 
-    for (int i1 = 0; i1 < KEY_COUNT; i1++)
-      keyStates[i1] = new KeyState();
+    for (int kdx = 0; kdx < KEY_COUNT; kdx++)
+      keyStates[kdx] = new KeyState();
 
-    for (int i = 0; i < BUTTON_COUNT; i++)
-      buttonStates[i] = new ButtonState();
+    for (int bdx = 0; bdx < BUTTON_COUNT; bdx++)
+      buttonStates[bdx] = new ButtonState();
   }
 
   /** Checks if a key has just been pressed */
