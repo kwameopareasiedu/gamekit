@@ -14,6 +14,16 @@
   <version>1.0.0</version>
   <packaging>jar</packaging>
 
+  <developers>
+    <developer>
+      <name>Kwame Opare Asiedu</name>
+      <url>https://opare.dev</url>
+      <roles>
+        <role>Creator</role>
+      </roles>
+    </developer>
+  </developers>
+
   <properties>
     <maven.compiler.source>18</maven.compiler.source>
     <maven.compiler.target>18</maven.compiler.target>

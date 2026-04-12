@@ -10,8 +10,18 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>statemachine</artifactId>
-  <version>1.0.0</version>
+  <artifactId>tilemapper</artifactId>
+  <version>0.1.0</version>
+
+  <developers>
+    <developer>
+      <name>Kwame Opare Asiedu</name>
+      <url>https://opare.dev</url>
+      <roles>
+        <role>Creator</role>
+      </roles>
+    </developer>
+  </developers>
 
   <properties>
     <maven.compiler.source>18</maven.compiler.source>
@@ -19,17 +29,4 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <version>2.25.3</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-      <version>2.24.3</version>
-    </dependency>
-  </dependencies>
 </project>
