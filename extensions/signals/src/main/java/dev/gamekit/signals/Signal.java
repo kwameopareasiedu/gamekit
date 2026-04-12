@@ -1,4 +1,4 @@
-package dev.gamekit.systems.signals;
+package dev.gamekit.signals;
 
 import java.util.HashMap;
 import java.util.Iterator;

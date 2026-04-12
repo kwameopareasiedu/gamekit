@@ -28,6 +28,8 @@
     <module>samples</module>
     <module>annotations</module>
     <module>plugin</module>
+    <module>extensions/signals</module>
+    <module>extensions/statemachine</module>
   </modules>
 
   <properties>

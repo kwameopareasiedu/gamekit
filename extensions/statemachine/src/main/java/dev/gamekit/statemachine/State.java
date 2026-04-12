@@ -1,4 +1,4 @@
-package dev.gamekit.systems.statemachine;
+package dev.gamekit.statemachine;
 
 /** A state represents a behaviour in a state machine. Subclasses should extend to represent concrete behaviours */
 public abstract class State<K extends Enum<K>> {
