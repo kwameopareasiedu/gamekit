@@ -6,12 +6,12 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
- * {@link EngineImage} is an extension {@link BufferedImage} with engine-specific features such as:
+ * {@link Picture} is an extension {@link BufferedImage} with additional features such as:
  * <ul>
  *   <li>Insets for <a href="https://en.wikipedia.org/wiki/9-slice_scaling">9-patch</a> rendering</li>
  * </ul>
  */
-public class EngineImage extends BufferedImage {
+public class Picture extends BufferedImage {
   public final int topInset;
   public final int rightInset;
   public final int bottomInset;
@@ -19,15 +19,15 @@ public class EngineImage extends BufferedImage {
   public final int verticalInset;
   public final int horizontalInset;
 
-  public EngineImage(BufferedImage src) {
+  public Picture(BufferedImage src) {
     this(src, 0, 0, 0, 0);
   }
 
-  public EngineImage(BufferedImage src, int topInset, int rightInset, int bottomInset, int leftInset) {
+  public Picture(BufferedImage src, int topInset, int rightInset, int bottomInset, int leftInset) {
     this(src, 0, 0, src.getWidth(), src.getHeight(), topInset, rightInset, bottomInset, leftInset);
   }
 
-  public EngineImage(
+  public Picture(
     BufferedImage src,
     int sliceX, int sliceY, int sliceWidth, int sliceHeight,
     int topInset, int rightInset, int bottomInset, int leftInset

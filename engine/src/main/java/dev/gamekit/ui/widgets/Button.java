@@ -5,26 +5,26 @@ import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.core.IO;
 import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.utils.Constraints;
-import dev.gamekit.utils.EngineImage;
+import dev.gamekit.utils.Picture;
 
 import java.awt.*;
 
 /** A {@link Widget} which can be clicked to trigger an action */
 @WidgetBuilder
 public class Button extends SingleChildParent implements MouseEvent.Handler {
-  public static final EngineImage DEFAULT_BG =
+  public static final Picture DEFAULT_BG =
     IO.getImageSliceWithInsets("default-sprites.png", 64, 64, 350, 120, 24, 24, 24, 24);
-  public static final EngineImage DEFAULT_HOVER_BG =
+  public static final Picture DEFAULT_HOVER_BG =
     IO.getImageSliceWithInsets("default-sprites.png", 64, 232, 350, 120, 24, 24, 24, 24);
-  public static final EngineImage DEFAULT_PRESSED_BG =
+  public static final Picture DEFAULT_PRESSED_BG =
     IO.getImageSliceWithInsets("default-sprites.png", 64, 400, 350, 120, 24, 24, 24, 24);
 
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Button.DEFAULT_BG")
-  public EngineImage defaultBackground;
+  public Picture defaultBackground;
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Button.DEFAULT_HOVER_BG")
-  public EngineImage hoverBackground;
+  public Picture hoverBackground;
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Button.DEFAULT_PRESSED_BG")
-  public EngineImage pressedBackground;
+  public Picture pressedBackground;
   @WidgetBuilderField(comparable = false, themable = false)
   public MouseEvent.Handler mouseListener;
 
@@ -63,7 +63,7 @@ public class Button extends SingleChildParent implements MouseEvent.Handler {
 
   @Override
   protected void renderSelf(Graphics2D g) {
-    EngineImage bgImage = defaultBackground;
+    Picture bgImage = defaultBackground;
 
     if (mousePressed)
       bgImage = pressedBackground;

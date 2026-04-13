@@ -15,7 +15,7 @@ public class Stack extends MultiChildParent {
   }
 
   public static Stack create(Widget... children) {
-    return Stack.create(props -> {}, children);
+    return Stack.create(props -> { }, children);
   }
 
   @Override

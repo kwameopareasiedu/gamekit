@@ -5,7 +5,7 @@ import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.core.IO;
 import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.utils.Constraints;
-import dev.gamekit.utils.EngineImage;
+import dev.gamekit.utils.Picture;
 
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
@@ -13,10 +13,10 @@ import java.awt.geom.RoundRectangle2D;
 /** A {@link SingleChildParent} which renders a 9-patch background or a solid color behind its children */
 @WidgetBuilder
 public class Panel extends SingleChildParent implements MouseEvent.Handler {
-  public static final EngineImage DEFAULT_BG = IO.getImageSlice("default-sprites.png", 470, 64, 120, 120);
+  public static final Picture DEFAULT_BG = IO.getImageSlice("default-sprites.png", 470, 64, 120, 120);
 
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Panel.DEFAULT_BG")
-  public EngineImage background;
+  public Picture background;
   @WidgetBuilderField
   public Color color;
   @WidgetBuilderField(fallback = "0")

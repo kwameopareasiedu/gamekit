@@ -14,7 +14,7 @@ import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.enums.MainAxisAlignment;
 import dev.gamekit.ui.widgets.*;
 import dev.gamekit.ui.widgets.Image;
-import dev.gamekit.utils.EngineImage;
+import dev.gamekit.utils.Picture;
 import dev.gamekit.utils.Position;
 import dev.gamekit.utils.Vector;
 
@@ -34,7 +34,7 @@ import java.util.Objects;
  * </ul>
  */
 public class Demo5Audio extends Scene {
-  private static final EngineImage SPEAKER_IMG = IO.getImage("speaker.png");
+  private static final Picture SPEAKER_IMG = IO.getImage("speaker.png");
   private static final String MUSIC_KEY = "music";
   private final int halfWindowWidth;
   private final Vector listenerPos;

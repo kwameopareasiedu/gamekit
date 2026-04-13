@@ -29,6 +29,9 @@
 
 ### Changed
 
+- Renamed `EngineImage` class to `Picture`
+- Renamed `DEBUG_DRAW` to `DEBUG` in `RigidBody` class
+
 ### Deprecated
 
 ### Removed

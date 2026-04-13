@@ -27,7 +27,7 @@ import java.util.List;
  * component
  */
 public class RigidBody extends Component {
-  public static boolean DEBUG_DRAW = false;
+  public static boolean DEBUG = false;
   private static final Vector2 VEC2_BUFFER = new Vector2();
 
   private final RefBody body;
@@ -211,7 +211,7 @@ public class RigidBody extends Component {
 
   @Override
   protected void render() {
-    if (DEBUG_DRAW) {
+    if (DEBUG) {
       Transform tx = entity.findComponent(Transform.class);
       Vector globalPosition = tx.getGlobalPosition();
       Renderer.fillCircle((int) globalPosition.x, (int) globalPosition.y, 3).withColor(Color.RED);

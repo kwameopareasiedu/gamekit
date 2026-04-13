@@ -5,15 +5,15 @@ import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.settings.ImageInterpolation;
 import dev.gamekit.ui.enums.ImageFit;
 import dev.gamekit.utils.Constraints;
-import dev.gamekit.utils.EngineImage;
+import dev.gamekit.utils.Picture;
 
 import java.awt.*;
 
-/** A {@link Leaf} which renders an {@link EngineImage} to the screen */
+/** A {@link Leaf} which renders an {@link Picture} to the screen */
 @WidgetBuilder
 public class Image extends Leaf {
   @WidgetBuilderField(themable = false)
-  public EngineImage image;
+  public Picture image;
   @WidgetBuilderField(fallback = "dev.gamekit.ui.enums.ImageFit.FIT")
   public ImageFit fit;
   @WidgetBuilderField(fallback = "dev.gamekit.settings.ImageInterpolation.DEFAULT")
@@ -27,7 +27,7 @@ public class Image extends Leaf {
     return new Image(Widgets.configureImage(updater));
   }
 
-  public static Image create(EngineImage image) {
+  public static Image create(Picture image) {
     return Image.create(props -> props.image = image);
   }
 

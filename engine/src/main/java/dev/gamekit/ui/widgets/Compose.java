@@ -11,7 +11,7 @@ public abstract class Compose extends SingleChildParent {
   private boolean updatedChild = false;
 
   protected Compose() {
-    super(ignored -> {}, Empty.create());
+    super(ignored -> { }, Empty.create());
   }
 
   @Override

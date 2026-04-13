@@ -1,6 +1,6 @@
 package dev.gamekit.core;
 
-import dev.gamekit.utils.EngineImage;
+import dev.gamekit.utils.Picture;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -36,10 +36,10 @@ public final class IO {
   }
 
   /** Returns an image <b>resource file</b> */
-  public static EngineImage getImage(String resPath) {
+  public static Picture getImage(String resPath) {
     try {
       LOGGER.debug("Loading resource image at {}", resPath);
-      return new EngineImage(ImageIO.read(getStream(resPath)));
+      return new Picture(ImageIO.read(getStream(resPath)));
     } catch (IOException e) {
       LOGGER.error("Unable to load resource image at {}", resPath, e);
       return null;
@@ -47,12 +47,12 @@ public final class IO {
   }
 
   /** Returns a slice of an image <b>resource file</b> */
-  public static EngineImage getImageSlice(String resPath, int sliceX, int sliceY, int sliceWidth, int sliceHeight) {
+  public static Picture getImageSlice(String resPath, int sliceX, int sliceY, int sliceWidth, int sliceHeight) {
     try {
       LOGGER.debug("Loading resource image at {}", resPath);
       BufferedImage img = ImageIO.read(getStream(resPath));
 
-      return new EngineImage(img, sliceX, sliceY, sliceWidth, sliceHeight, 0, 0, 0, 0);
+      return new Picture(img, sliceX, sliceY, sliceWidth, sliceHeight, 0, 0, 0, 0);
     } catch (IOException e) {
       LOGGER.error("Unable to load resource image at {}", resPath, e);
       return null;
@@ -66,14 +66,14 @@ public final class IO {
    * Returns an image <b>resource file</b> with
    * <a href="https://en.wikipedia.org/wiki/9-slice_scaling">9-patch</a> insets
    */
-  public static EngineImage getImageWithInsets(
+  public static Picture getImageWithInsets(
     String resPath, int topInset, int rightInset, int bottomInset, int leftInset
   ) {
     try {
       LOGGER.debug("Loading resource image at {}", resPath);
       BufferedImage img = ImageIO.read(getStream(resPath));
 
-      return new EngineImage(img, topInset, rightInset, bottomInset, leftInset);
+      return new Picture(img, topInset, rightInset, bottomInset, leftInset);
     } catch (IOException e) {
       LOGGER.error("Unable to load resource image at {}", resPath, e);
       return null;
@@ -84,7 +84,7 @@ public final class IO {
    * Returns a slice of an image <b>resource file</b>, with
    * <a href="https://en.wikipedia.org/wiki/9-slice_scaling">9-patch</a> insets
    */
-  public static EngineImage getImageSliceWithInsets(
+  public static Picture getImageSliceWithInsets(
     String resPath,
     int sliceX, int sliceY, int sliceWidth, int sliceHeight,
     int topInset, int rightInset, int bottomInset, int leftInset
@@ -93,7 +93,7 @@ public final class IO {
       LOGGER.debug("Loading resource image at {}", resPath);
       BufferedImage img = ImageIO.read(getStream(resPath));
 
-      return new EngineImage(
+      return new Picture(
         img, sliceX, sliceY, sliceWidth, sliceHeight, topInset, rightInset, bottomInset, leftInset
       );
     } catch (IOException e) {
