@@ -30,7 +30,6 @@
     <module>samples</module>
     <module>packages/signals</module>
     <module>packages/statemachine</module>
-    <module>packages/tilemapper</module>
   </modules>
 
   <properties>
