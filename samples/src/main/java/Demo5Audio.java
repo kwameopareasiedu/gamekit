@@ -61,8 +61,8 @@ public class Demo5Audio extends Scene {
     Application game = new Application(
       new Settings(
         "Demo 5 - Audio",
-        Resolution.VGA,
-        WindowMode.BORDERLESS,
+        Resolution.WXGA,
+        WindowMode.WINDOWED,
         TextAntialiasing.ON,
         Antialiasing.ON
       )

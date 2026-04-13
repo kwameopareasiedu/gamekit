@@ -3,11 +3,10 @@ package dev.gamekit.settings;
 import dev.gamekit.core.Application;
 
 /** {@link Settings} contains startup configuration object for an {@link Application} instance */
-public class Settings {
+public final class Settings {
   public final String title;
   public final Resolution resolution;
   public final boolean fullscreen;
-  public final boolean undecorated;
   public final Antialiasing antialiasing;
   public final TextAntialiasing textAntialiasing;
   public final AlphaInterpolation alphaInterpolation;
@@ -19,7 +18,6 @@ public class Settings {
     this.title = title;
     this.resolution = get(Resolution.class, settings, Resolution.SVGA);
     this.fullscreen = get(WindowMode.class, settings, WindowMode.WINDOWED) == WindowMode.FULLSCREEN;
-    this.undecorated = get(WindowMode.class, settings, WindowMode.WINDOWED) == WindowMode.BORDERLESS;
     this.antialiasing = get(Antialiasing.class, settings, Antialiasing.DEFAULT);
     this.textAntialiasing = get(TextAntialiasing.class, settings, TextAntialiasing.ON);
     this.alphaInterpolation = get(AlphaInterpolation.class, settings, AlphaInterpolation.DEFAULT);

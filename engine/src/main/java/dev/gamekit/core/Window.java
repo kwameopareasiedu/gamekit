@@ -7,8 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
+import java.awt.event.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 
@@ -20,31 +19,39 @@ public final class Window {
 
   private final JFrame frame;
   private final Canvas canvas;
-  private final BufferStrategy bufferStrategy;
   private final BufferedImage displayBuffer;
   private final Graphics2D displayGraphics;
   private final BufferedImage uiBuffer;
   private final Graphics2D uiGraphics;
   private final int displayWidth;
   private final int displayHeight;
-  private final double invScaling;
   private final int centerX;
   private final int centerY;
+  private BufferStrategy bufferStrategy;
+  private boolean bufferInvalidated = false;
+  private double invScaling;
 
   Window() {
     Settings settings = Application.getInstance().getSettings();
     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
     GraphicsConfiguration gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
 
-    displayWidth = settings.resolution.width();
-    displayHeight = settings.resolution.height();
+    displayWidth = settings.resolution.width;
+    displayHeight = settings.resolution.height;
+
     centerX = displayWidth / 2;
     centerY = displayHeight / 2;
+
     frame = new JFrame(settings.title);
-    canvas = new Canvas();
+    frame.addComponentListener(new ComponentAdapter() {
+      @Override
+      public void componentResized(ComponentEvent ignored) {
+        onFrameResized(settings);
+      }
+    });
 
     if (settings.fullscreen) {
-      Dimension d = new Dimension(Resolution.NATIVE.width(), Resolution.NATIVE.height());
+      Dimension d = new Dimension(Resolution.NATIVE.width, Resolution.NATIVE.height);
 
       frame.setMinimumSize(d);
       frame.setPreferredSize(d);
@@ -52,30 +59,24 @@ public final class Window {
       frame.setUndecorated(true);
 
       ge.getDefaultScreenDevice().setFullScreenWindow(frame);
-    } else {
-      Dimension d = new Dimension(displayWidth, displayHeight);
 
-      frame.setMinimumSize(d);
-      frame.setPreferredSize(d);
-      frame.setResizable(false);
-      frame.setUndecorated(settings.undecorated);
+      invScaling = 1.0 / Math.min(
+        frame.getWidth() / (double) displayWidth,
+        frame.getHeight() / (double) displayHeight
+      );
+    } else {
+      frame.setSize(displayWidth, displayHeight);
+      frame.setResizable(true);
+
+      invScaling = 1;
     }
 
-    double scaling = settings.fullscreen ? Math.min(
-      frame.getWidth() / (double) displayWidth,
-      frame.getHeight() / (double) displayHeight
-    ) : 1;
-
-    invScaling = 1.0 / scaling;
-
     Dimension d = new Dimension(
-      (int) (displayWidth * scaling),
-      (int) (displayHeight * scaling)
+      (int) (displayWidth / invScaling),
+      (int) (displayHeight / invScaling)
     );
 
-    canvas.setSize(d);
-    canvas.setMinimumSize(d);
-    canvas.setMaximumSize(d);
+    canvas = new Canvas();
     canvas.setPreferredSize(d);
     canvas.setFocusTraversalKeysEnabled(false);
     canvas.addFocusListener(new FocusAdapter() {
@@ -102,9 +103,9 @@ public final class Window {
     settings.dithering.apply(uiGraphics);
 
     frame.setIgnoreRepaint(true);
-    frame.setLayout(new GridBagLayout());
-    frame.setBackground(Color.BLACK);
-    frame.getContentPane().add(canvas);
+    frame.setLayout(new BorderLayout());
+    frame.getContentPane().setBackground(Color.BLACK);
+    frame.add(canvas);
     frame.setLocationRelativeTo(null);
     frame.pack();
 
@@ -179,21 +180,59 @@ public final class Window {
   /** Updates the {@link JFrame} buffer strategy with the display and UI buffers */
   void update() {
     do {
-      Graphics2D bufferGraphics = (Graphics2D) bufferStrategy.getDrawGraphics();
-      Settings settings = Application.getInstance().getSettings();
-
-      if (settings.fullscreen) {
-        int cw = canvas.getWidth();
-        int ch = canvas.getHeight();
-        bufferGraphics.drawImage(displayBuffer, 0, 0, cw, ch, 0, 0, displayWidth, displayHeight, null);
-        bufferGraphics.drawImage(uiBuffer, 0, 0, cw, ch, 0, 0, displayWidth, displayHeight, null);
-      } else {
-        bufferGraphics.drawImage(displayBuffer, 0, 0, displayWidth, displayHeight, null);
-        bufferGraphics.drawImage(uiBuffer, 0, 0, displayWidth, displayHeight, null);
-      }
+      Graphics2D canvasGraphics = (Graphics2D) bufferStrategy.getDrawGraphics();
+      int cw = canvas.getWidth();
+      int ch = canvas.getHeight();
+      canvasGraphics.drawImage(displayBuffer, 0, 0, cw, ch, 0, 0, displayWidth, displayHeight, null);
+      canvasGraphics.drawImage(uiBuffer, 0, 0, cw, ch, 0, 0, displayWidth, displayHeight, null);
 
       bufferStrategy.show();
-      bufferGraphics.dispose();
+      canvasGraphics.dispose();
     } while (bufferStrategy.contentsLost());
+
+    if (bufferInvalidated) {
+      canvas.createBufferStrategy(2);
+      bufferStrategy = canvas.getBufferStrategy();
+      bufferInvalidated = false;
+    }
+  }
+
+  /** Callback method for JFrame window resize actions */
+  private void onFrameResized(Settings settings) {
+    int frameWidth = frame.getWidth();
+    int frameHeight = frame.getHeight();
+    int canvasWidth, canvasHeight;
+
+    if (frameWidth >= frameHeight) {
+      canvasHeight = frameHeight;
+      canvasWidth = (int) (canvasHeight * settings.resolution.aspectRatio);
+
+      if (canvasWidth > frameWidth) {
+        canvasWidth = frameWidth;
+        canvasHeight = (int) (canvasWidth / settings.resolution.aspectRatio);
+      }
+    } else {
+      canvasWidth = frameWidth;
+      canvasHeight = (int) (canvasWidth / settings.resolution.aspectRatio);
+
+      if (canvasHeight > frameHeight) {
+        canvasHeight = frameHeight;
+        canvasWidth = (int) (canvasHeight * settings.resolution.aspectRatio);
+      }
+    }
+
+    LOGGER.debug("F: {}x{}, C: {},{}", frameWidth, frameHeight, canvasWidth, canvasHeight);
+
+//    Dimension d = new Dimension(canvasWidth, canvasHeight);
+//    canvas.setPreferredSize(d);
+//    canvas.setSize(d);
+    canvas.setSize(canvasWidth, canvasHeight);
+
+    invScaling = 1.0 / Math.min(
+      frame.getWidth() / (double) displayWidth,
+      frame.getHeight() / (double) displayHeight
+    );
+
+    bufferInvalidated = true;
   }
 }

@@ -34,7 +34,7 @@ public class UITest extends Scene {
     Application app = new Application(
       new Settings(
         "UI Testing",
-        WindowMode.BORDERLESS
+        WindowMode.WINDOWED
       )
     ) { };
     app.loadScene(new UITest());

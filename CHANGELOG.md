@@ -31,12 +31,14 @@
 
 - Renamed `EngineImage` class to `Picture`
 - Renamed `DEBUG_DRAW` to `DEBUG` in `RigidBody` class
+- Modified `Window` class to render and resizable `JFrame` when not in fullscreen
 
 ### Deprecated
 
 ### Removed
 
 - Removed `public static getInfo()` from `Window` class
+- Removed `WindowMode.BORDERLESS` setting value
 
 ## 0.7.0
 
