@@ -16,11 +16,10 @@ public class Calibration extends Scene {
   private static final BufferedImage SPRITE = IO.getImage("zainar.png");
   private static final double INTERVAL = Application.FRAME_INTERVAL_MS / 1000.0;
   private static final double FREQ = 0.5;
-
-  private double time;
-  private double x = 0, y = 0;
   private final int[] polygonPoints;
   private final int[] filledPolygonPoints;
+  private double time;
+  private double x = 0, y = 0;
 
   public Calibration() {
     super("Calibration Test");
@@ -62,37 +61,40 @@ public class Calibration extends Scene {
   @Override
   public void render() {
     Renderer.clear(Color.DARK_GRAY);
-    Renderer.drawRect((int) x, (int) y, Resolution.SVGA.width, Resolution.SVGA.height)
-      .withColor(Color.CYAN);
 
-    Renderer.drawHorizontalLine(-WORLD_WIDTH / 2, WORLD_WIDTH / 2, 0).withColor(Color.BLUE);
-    Renderer.drawVerticalLine(0, -WORLD_HEIGHT / 2, WORLD_HEIGHT / 2).withColor(Color.BLUE);
+    Renderer.onLayer(3, () -> {
+      Renderer.drawRect((int) x, (int) y, Resolution.SVGA.width, Resolution.SVGA.height)
+        .withColor(Color.CYAN);
 
-    // Top right quadrant
-    Renderer.fillRect(100, 100, 20, 20).withColor(Color.RED);
-    Renderer.drawRect(100, 100, 30, 30).withColor(Color.RED);
+      Renderer.drawHorizontalLine(-WORLD_WIDTH / 2, WORLD_WIDTH / 2, 0).withColor(Color.BLUE);
+      Renderer.drawVerticalLine(0, -WORLD_HEIGHT / 2, WORLD_HEIGHT / 2).withColor(Color.BLUE);
 
-    // Top left quadrant
-    Renderer.fillOval(-100, 100, 20, 30).withColor(Color.YELLOW);
-    Renderer.drawOval(-100, 100, 30, 40).withColor(Color.YELLOW);
+      // Top right quadrant
+      Renderer.fillRect(100, 100, 20, 20).withColor(Color.RED);
+      Renderer.drawRect(100, 100, 30, 30).withColor(Color.RED);
 
-    // Bottom left quadrant
-    Renderer.fillRoundRect(-100, -100, 50, 50, 10, 10).withColor(Color.GREEN);
-    Renderer.drawRoundRect(-100, -100, 60, 60, 10, 10).withColor(Color.GREEN);
+      // Top left quadrant
+      Renderer.fillOval(-100, 100, 20, 30).withColor(Color.YELLOW);
+      Renderer.drawOval(-100, 100, 30, 40).withColor(Color.YELLOW);
 
-    // Bottom right quadrant
-    Renderer.fillCircle(100, -100, 20).withColor(Color.BLUE);
-    Renderer.drawCircle(100, -100, 25).withColor(Color.BLUE);
+      // Bottom left quadrant
+      Renderer.fillRoundRect(-100, -100, 50, 50, 10, 10).withColor(Color.GREEN);
+      Renderer.drawRoundRect(-100, -100, 60, 60, 10, 10).withColor(Color.GREEN);
 
-    Renderer.drawPolygon(polygonPoints).withColor(Color.ORANGE);
-    Renderer.fillPolygon(filledPolygonPoints).withColor(Color.PINK);
+      // Bottom right quadrant
+      Renderer.fillCircle(100, -100, 20).withColor(Color.BLUE);
+      Renderer.drawCircle(100, -100, 25).withColor(Color.BLUE);
 
-    for (int i = 0; i <= WORLD_WIDTH / 2; i += 50) {
-      Renderer.drawHorizontalLine(0, 10, i).withColor(Color.CYAN);
-      Renderer.drawVerticalLine(i, 0, -10).withColor(Color.CYAN);
-    }
+      Renderer.drawPolygon(polygonPoints).withColor(Color.ORANGE);
+      Renderer.fillPolygon(filledPolygonPoints).withColor(Color.PINK);
 
-    Renderer.drawRect(0, 0, 10, 10).withColor(Color.MAGENTA);
+      for (int i = 0; i <= WORLD_WIDTH / 2; i += 50) {
+        Renderer.drawHorizontalLine(0, 10, i).withColor(Color.CYAN);
+        Renderer.drawVerticalLine(i, 0, -10).withColor(Color.CYAN);
+      }
+
+      Renderer.drawRect(0, 0, 10, 10).withColor(Color.MAGENTA);
+    });
 
     Renderer.drawImage(SPRITE, (int) x, (int) y, 10, 10);
   }

@@ -26,6 +26,7 @@
 - Added `public int getCenterX()` to `Window` class
 - Added `public int getCenterY()` to `Window` class
 - Added custom goal to maven `process-resources` lifecycle phase to generate `Log4j2.xml` config in final package
+- Added `public static void onLayer(int layerIndex, VoidCallback renderAction)` to `Renderer` class
 
 ### Changed
 
