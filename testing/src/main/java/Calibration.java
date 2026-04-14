@@ -62,7 +62,7 @@ public class Calibration extends Scene {
   @Override
   public void render() {
     Renderer.clear(Color.DARK_GRAY);
-    Renderer.drawRect((int) x, (int) y, Resolution.SVGA.width(), Resolution.SVGA.height())
+    Renderer.drawRect((int) x, (int) y, Resolution.SVGA.width, Resolution.SVGA.height)
       .withColor(Color.CYAN);
 
     Renderer.drawHorizontalLine(-WORLD_WIDTH / 2, WORLD_WIDTH / 2, 0).withColor(Color.BLUE);

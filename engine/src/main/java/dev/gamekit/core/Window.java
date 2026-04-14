@@ -7,7 +7,10 @@ import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 
@@ -45,8 +48,9 @@ public final class Window {
     frame = new JFrame(settings.title);
     frame.addComponentListener(new ComponentAdapter() {
       @Override
-      public void componentResized(ComponentEvent ignored) {
-        onFrameResized(settings);
+      public void componentResized(ComponentEvent ev) {
+        if (ev.getComponent().isVisible())
+          handleFrameResized();
       }
     });
 
@@ -102,11 +106,11 @@ public final class Window {
     settings.renderingStrategy.apply(uiGraphics);
     settings.dithering.apply(uiGraphics);
 
-    frame.setIgnoreRepaint(true);
-    frame.setLayout(new BorderLayout());
+    frame.setLayout(new GridBagLayout());
     frame.getContentPane().setBackground(Color.BLACK);
-    frame.add(canvas);
+    frame.getContentPane().add(canvas);
     frame.setLocationRelativeTo(null);
+    frame.setIgnoreRepaint(true);
     frame.pack();
 
     canvas.createBufferStrategy(2);
@@ -198,9 +202,11 @@ public final class Window {
   }
 
   /** Callback method for JFrame window resize actions */
-  private void onFrameResized(Settings settings) {
-    int frameWidth = frame.getWidth();
-    int frameHeight = frame.getHeight();
+  private void handleFrameResized() {
+    Settings settings = Application.getInstance().getSettings();
+
+    int frameWidth = frame.getContentPane().getWidth();
+    int frameHeight = frame.getContentPane().getHeight();
     int canvasWidth, canvasHeight;
 
     if (frameWidth >= frameHeight) {
@@ -221,16 +227,15 @@ public final class Window {
       }
     }
 
-    LOGGER.debug("F: {}x{}, C: {},{}", frameWidth, frameHeight, canvasWidth, canvasHeight);
+    Dimension d = new Dimension(canvasWidth, canvasHeight);
 
-//    Dimension d = new Dimension(canvasWidth, canvasHeight);
-//    canvas.setPreferredSize(d);
-//    canvas.setSize(d);
-    canvas.setSize(canvasWidth, canvasHeight);
+    canvas.setSize(d);
+    canvas.setPreferredSize(d);
+    canvas.revalidate();
 
     invScaling = 1.0 / Math.min(
-      frame.getWidth() / (double) displayWidth,
-      frame.getHeight() / (double) displayHeight
+      canvasWidth / (double) displayWidth,
+      canvasHeight / (double) displayHeight
     );
 
     bufferInvalidated = true;

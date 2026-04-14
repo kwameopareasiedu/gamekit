@@ -49,8 +49,8 @@ public class Demo4UserInterface extends Scene {
     Application game = new Application(
       new Settings(
         "Demo 4 - Declarative UI",
-        Resolution.HD,
-        WindowMode.FULLSCREEN,
+        Resolution.FULL_HD,
+        WindowMode.WINDOWED,
         Antialiasing.ON,
         TextAntialiasing.ON,
         AlphaInterpolation.SPEED,
