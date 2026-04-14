@@ -99,39 +99,41 @@ public abstract class Collider extends Component {
   @Override
   protected void render() {
     if (DEBUG) {
-      Transform tx = entity.findComponent(Transform.class);
-      Vector globalPosition = tx.getGlobalPosition();
-      int positionX = (int) globalPosition.x;
-      int positionY = (int) globalPosition.y;
-      double rotation = tx.getGlobalRotation();
+      Renderer.onLayer(Renderer.LAYER_COUNT - 1, () -> {
+        Transform tx = entity.findComponent(Transform.class);
+        Vector globalPosition = tx.getGlobalPosition();
+        int positionX = (int) globalPosition.x;
+        int positionY = (int) globalPosition.y;
+        double rotation = tx.getGlobalRotation();
 
-      Convex shape = fixture.getShape();
-      Vector2 shapeCenter = shape.getCenter();
-      int shapePositionX = (int) (globalPosition.x + shapeCenter.x * Physics.PIXELS_PER_METER);
-      int shapePositionY = (int) (globalPosition.y + shapeCenter.y * Physics.PIXELS_PER_METER);
-      Stroke stroke = fixture.isSensor() ? SENSOR_DEBUG_STROKE : null;
+        Convex shape = fixture.getShape();
+        Vector2 shapeCenter = shape.getCenter();
+        int shapePositionX = (int) (globalPosition.x + shapeCenter.x * Physics.PIXELS_PER_METER);
+        int shapePositionY = (int) (globalPosition.y + shapeCenter.y * Physics.PIXELS_PER_METER);
+        Stroke stroke = fixture.isSensor() ? SENSOR_DEBUG_STROKE : null;
 
-      if (shape instanceof Circle circle) {
-        int radius = (int) (circle.getRadius() * Physics.PIXELS_PER_METER);
+        if (shape instanceof Circle circle) {
+          int radius = (int) (circle.getRadius() * Physics.PIXELS_PER_METER);
 
-        Renderer.drawCircle(shapePositionX, shapePositionY, radius)
-          .withColor(Color.CYAN).withStroke(stroke).withRotation(positionX, positionY, rotation);
+          Renderer.drawCircle(shapePositionX, shapePositionY, radius)
+            .withColor(Color.CYAN).withStroke(stroke).withRotation(positionX, positionY, rotation);
 
-        Renderer.drawVerticalLine(shapePositionX, shapePositionY, shapePositionY + radius)
-          .withRotation(positionX, positionY, rotation);
-      } else if (shape instanceof Rectangle rect) {
-        int width = (int) (rect.getWidth() * Physics.PIXELS_PER_METER);
-        int height = (int) (rect.getHeight() * Physics.PIXELS_PER_METER);
+          Renderer.drawVerticalLine(shapePositionX, shapePositionY, shapePositionY + radius)
+            .withRotation(positionX, positionY, rotation);
+        } else if (shape instanceof Rectangle rect) {
+          int width = (int) (rect.getWidth() * Physics.PIXELS_PER_METER);
+          int height = (int) (rect.getHeight() * Physics.PIXELS_PER_METER);
 
-        Renderer.drawRect(shapePositionX, shapePositionY, width, height)
-          .withColor(Color.CYAN).withStroke(stroke).withRotation(positionX, positionY, rotation);
+          Renderer.drawRect(shapePositionX, shapePositionY, width, height)
+            .withColor(Color.CYAN).withStroke(stroke).withRotation(positionX, positionY, rotation);
 
-        Renderer.drawVerticalLine(shapePositionX, shapePositionY, shapePositionY + height / 2)
-          .withRotation(positionX, positionY, rotation);
-      }
+          Renderer.drawVerticalLine(shapePositionX, shapePositionY, shapePositionY + height / 2)
+            .withRotation(positionX, positionY, rotation);
+        }
 
-      Renderer.fillCircle(shapePositionX, shapePositionY, 2)
-        .withColor(Color.ORANGE).withRotation(positionX, positionY, rotation);
+        Renderer.fillCircle(shapePositionX, shapePositionY, 2)
+          .withColor(Color.ORANGE).withRotation(positionX, positionY, rotation);
+      });
     }
   }
 

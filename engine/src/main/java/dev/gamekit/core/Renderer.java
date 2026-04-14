@@ -13,7 +13,8 @@ import java.util.ArrayList;
  */
 @SuppressWarnings({ "JavaExistingMethodCanBeUsed", "unchecked" })
 public final class Renderer {
-  private static final int LAYER_COUNT = 64;
+  public static final int LAYER_COUNT = 64;
+
   private static final ArrayList<DrawCall<?>>[] BUFFERS = new ArrayList[LAYER_COUNT];
   private static boolean committed = false;
   private static boolean completed = false;

@@ -212,9 +212,11 @@ public class RigidBody extends Component {
   @Override
   protected void render() {
     if (DEBUG) {
-      Transform tx = entity.findComponent(Transform.class);
-      Vector globalPosition = tx.getGlobalPosition();
-      Renderer.fillCircle((int) globalPosition.x, (int) globalPosition.y, 3).withColor(Color.RED);
+      Renderer.onLayer(Renderer.LAYER_COUNT - 1, () -> {
+        Transform tx = entity.findComponent(Transform.class);
+        Vector globalPosition = tx.getGlobalPosition();
+        Renderer.fillCircle((int) globalPosition.x, (int) globalPosition.y, 3).withColor(Color.RED);
+      });
     }
   }
 

@@ -22,6 +22,7 @@ public class Sprite extends Component {
 
   private double aspectRatio;
   private double opacity = 1;
+  private int layer = 0;
 
   public Sprite(BufferedImage image, ImageInterpolation interpolation) {
     if (image == null) throw new IllegalArgumentException("Image cannot be null");
@@ -88,6 +89,15 @@ public class Sprite extends Component {
     flippedY = flipped;
   }
 
+  /**
+   * Sets the layer on which the sprite is rendered (0 - 63)
+   * <p>
+   * Layers with higher indices are rendered in front of layers with lower indices
+   */
+  public void setLayer(int layer) {
+    this.layer = layer;
+  }
+
   @Override
   protected void render() {
     Transform transform = entity.findComponent(Transform.class);
@@ -103,19 +113,21 @@ public class Sprite extends Component {
     double resolvedScaleX = parentSpriteScaleX * scaleX;
     double resolvedScaleY = parentSpriteScaleY * scaleY;
 
-    Renderer.drawImage(
-        image,
-        (int) (globalPosition.x + bounds.x),
-        (int) (globalPosition.y + bounds.y),
-        (int) (signedWidth * resolvedScaleX),
-        (int) (signedHeight * resolvedScaleY)
-      )
-      .withInterpolation(interpolation)
-      .withOpacity(resolvedOpacity)
-      .withRotation(
-        (int) (globalPosition.x),
-        (int) (globalPosition.y),
-        transform.getGlobalRotation()
-      );
+    Renderer.onLayer(layer, () -> {
+      Renderer.drawImage(
+          image,
+          (int) (globalPosition.x + bounds.x),
+          (int) (globalPosition.y + bounds.y),
+          (int) (signedWidth * resolvedScaleX),
+          (int) (signedHeight * resolvedScaleY)
+        )
+        .withInterpolation(interpolation)
+        .withOpacity(resolvedOpacity)
+        .withRotation(
+          (int) (globalPosition.x),
+          (int) (globalPosition.y),
+          transform.getGlobalRotation()
+        );
+    });
   }
 }
