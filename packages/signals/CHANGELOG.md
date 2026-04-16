@@ -12,6 +12,10 @@
 
 ## 1.1.0
 
+### Added
+
+- Added `void unsubscibe()` to `Signal.Subscription` class
+
 ### Changed
 
 - Changed signature of `void subscribe(String key, Subscriber<T> subscriber, boolean notifyImmediately)` in `Signal`

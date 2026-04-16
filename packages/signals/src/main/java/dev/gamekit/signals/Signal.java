@@ -96,7 +96,7 @@ public class Signal<T> {
   private Subscription<T> subscribe(Subscriber<T> subscriber, boolean once, boolean notifyImmediately) {
     if (!open) throw new IllegalStateException("Attempting to subscribe to a closed signal");
 
-    Subscription<T> subscription = new Subscription<>(subscriber, once);
+    Subscription<T> subscription = new Subscription<>(this, subscriber, once);
 
     if (notifyImmediately) subscription.notifySubscriber(value);
 
@@ -115,17 +115,24 @@ public class Signal<T> {
   /** Internal wrapper class for {@link Subscriber} interface, with additional metadata */
   public static final class Subscription<T> {
     private final String id;
+    private final Signal<T> signal;
     private final Subscriber<T> subscriber;
     private final boolean once;
 
-    private Subscription(Subscriber<T> subscriber, boolean once) {
+    private Subscription(Signal<T> signal, Subscriber<T> subscriber, boolean once) {
       this.id = UUID.randomUUID().toString();
+      this.signal = signal;
       this.subscriber = subscriber;
       this.once = once;
     }
 
     void notifySubscriber(T value) {
       subscriber.onNotified(value);
+    }
+
+    /** Removes this {@link Subscription} from its associated {@link Signal} */
+    public void unsubscribe() {
+      signal.unsubscribe(this);
     }
   }
 }
