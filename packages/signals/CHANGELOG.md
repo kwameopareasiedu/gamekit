@@ -15,9 +15,10 @@
 ### Changed
 
 - Changed signature of `void subscribe(String key, Subscriber<T> subscriber, boolean notifyImmediately)` in `Signal`
-  class to `int subscribe(Subscriber<T> subscriber, boolean notifyImmediately)`
+  class to `Subscription<T> subscribe(Subscriber<T> subscriber, boolean notifyImmediately)`
 - Changed signature of `void subscribeOnce(String key, Subscriber<T> subscriber, boolean notifyImmediately)` in `Signal`
-  class to `int subscribeOnce(Subscriber<T> subscriber, boolean notifyImmediately)`
+  class to `Subscription<T> subscribeOnce(Subscriber<T> subscriber, boolean notifyImmediately)`
+- Changed signature of `void unsubscribe(String key)` in `Signal` class to `void unsubscribe(Subscription<T> key)`
 
 ## 1.0.0
 
