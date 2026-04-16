@@ -11,12 +11,14 @@ import java.util.Map;
  * allowing event listeners to subscribe/unsubscribe directly to it.
  */
 public class Signal<T> {
-  private final Map<String, Subscription<T>> subscribers;
+  private final Map<Integer, Subscription<T>> subscribers;
+  private int currentSubscriptionIndex;
   private boolean open;
   private T value;
 
   public Signal() {
     subscribers = new HashMap<>();
+    currentSubscriptionIndex = 0;
     value = null;
     open = true;
   }
@@ -27,27 +29,31 @@ public class Signal<T> {
   }
 
   /**
-   * Registers a {@link Subscriber} to be notified when the signal value changes
+   * Registers a {@link Subscriber} to be notified when the signal value changes.
    * <p>
    * If {@code notifyImmediately} is set, the subscriber will immediately be notified of the last value of this
    * {@link Signal}
+   *
+   * @return The integer key of the subscription which can later be used to unsubscribe
    */
-  public void subscribe(String key, Subscriber<T> subscriber, boolean notifyImmediately) {
-    subscribe(key, subscriber, false, notifyImmediately);
+  public int subscribe(Subscriber<T> subscriber, boolean notifyImmediately) {
+    return subscribe(subscriber, false, notifyImmediately);
   }
 
   /**
-   * Registers a {@link Subscriber} to be notified when the signal value changes and subsequently removed
+   * Registers a {@link Subscriber} to be notified when the signal value changes <strong>only once</strong>
    * <p>
    * If {@code notifyImmediately} is set, the subscriber will immediately be notified of the last value of this
    * {@link Signal}
+   *
+   * @return The integer key of the subscription which can later be used to unsubscribe
    */
-  public void subscribeOnce(String key, Subscriber<T> subscriber, boolean notifyImmediately) {
-    subscribe(key, subscriber, true, notifyImmediately);
+  public int subscribeOnce(Subscriber<T> subscriber, boolean notifyImmediately) {
+    return subscribe(subscriber, true, notifyImmediately);
   }
 
   /** Removes a {@link Subscriber} with the specified {@code key} from this signal */
-  public void unsubscribe(String key) {
+  public void unsubscribe(int key) {
     subscribers.remove(key);
   }
 
@@ -87,17 +93,17 @@ public class Signal<T> {
    * <p>
    * If {@code notifyImmediately} is set, the subscriber will immediately be notified of the last value of this
    * {@link Signal}
-   * <p>
-   * NB: <i>The provided {@code subscriber} will overwrite an existing subscriber with the same {@code key}</i>
    */
-  private void subscribe(String key, Subscriber<T> subscriber, boolean once, boolean notifyImmediately) {
+  private int subscribe(Subscriber<T> subscriber, boolean once, boolean notifyImmediately) {
     if (!open) throw new IllegalStateException("Attempting to subscribe to a closed signal");
 
     Subscription<T> subscription = new Subscription<>(subscriber, once);
 
     if (notifyImmediately) subscription.notifySubscriber(value);
 
-    subscribers.put(key, subscription);
+    subscribers.put(currentSubscriptionIndex++, subscription);
+
+    return currentSubscriptionIndex;
   }
 
   /** Handler interface for {@link Signal} data changes */
