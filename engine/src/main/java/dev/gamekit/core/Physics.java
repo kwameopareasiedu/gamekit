@@ -38,8 +38,8 @@ public final class Physics {
       public boolean collision(ManifoldCollisionData<Body, BodyFixture> collision) {
         if (COLLISION_LISTENER_MAP.isEmpty()) return true;
 
-        Collider.RefFixture fx1 = (Collider.RefFixture) collision.getFixture1();
-        Collider.RefFixture fx2 = (Collider.RefFixture) collision.getFixture2();
+        Collider.Fixture fx1 = (Collider.Fixture) collision.getFixture1();
+        Collider.Fixture fx2 = (Collider.Fixture) collision.getFixture2();
 
         if (COLLISION_LISTENER_MAP.containsKey(fx1.id)) {
           CollisionListener listener = COLLISION_LISTENER_MAP.get(fx1.id);
@@ -155,7 +155,7 @@ public final class Physics {
           new Vector(p.x * PIXELS_PER_METER, -p.y * PIXELS_PER_METER),
           new Vector(n.x * PIXELS_PER_METER, -n.y * PIXELS_PER_METER),
           ((RigidBody.RefBody) result.getBody()).getRigidBody(),
-          ((Collider.RefFixture) result.getFixture()).getCollider()
+          ((Collider.Fixture) result.getFixture()).getCollider()
         )
       );
     }
@@ -187,7 +187,7 @@ public final class Physics {
     }
 
     /** Called when a collision occurs and is passed the bodies and fixtures of the collision */
-    void handleCollision(Collider.RefFixture otherFixture) {
+    void handleCollision(Collider.Fixture otherFixture) {
       if (!prevColliderMap.containsKey(otherFixture.id)) {
         onCollisionEnter(otherFixture.getCollider());
       } else {

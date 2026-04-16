@@ -20,10 +20,10 @@ public abstract class Collider extends Component {
   private static final Stroke SENSOR_DEBUG_STROKE =
     new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{ 10, 2 }, 0);
 
-  protected final RefFixture fixture;
+  protected final Fixture fixture;
   protected Physics.CollisionListener collisionListener;
 
-  protected Collider(RefFixture fixture) {
+  protected Collider(Fixture fixture) {
     this.fixture = fixture;
     fixture.setCollider(this);
   }
@@ -144,14 +144,14 @@ public abstract class Collider extends Component {
     }
   }
 
-  /** {@link RefFixture} extends {@link BodyFixture} adding a reference to its parent {@link Collider} */
-  public static class RefFixture extends BodyFixture {
+  /** {@link Fixture} extends {@link BodyFixture} adding a reference to its parent {@link Collider} */
+  public static class Fixture extends BodyFixture {
     public final String id = UUID.randomUUID().toString();
 
     private Collider collider;
 
-    /** Creates a {@link RefFixture} with the associated {@link Convex shape} */
-    public RefFixture(Convex shape) {
+    /** Creates a {@link Fixture} with the associated {@link Convex shape} */
+    public Fixture(Convex shape) {
       super(shape);
     }
 
