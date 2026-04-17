@@ -33,14 +33,18 @@ public class Slider extends Progress implements MouseEvent.Handler {
   private final Position lastMousePosition;
   private boolean mouseDown = false;
 
-  public Slider(SliderConfig config) {
-    super(config);
+  public Slider(String key, SliderConfig config) {
+    super(key, config);
     thumbAbsoluteBounds = new Bounds();
     lastMousePosition = new Position();
   }
 
+  public static Slider create(String key, SliderConfig.Updater updater) {
+    return new Slider(key, Widgets.configureSlider(updater));
+  }
+
   public static Slider create(SliderConfig.Updater updater) {
-    return new Slider(Widgets.configureSlider(updater));
+    return new Slider(null, Widgets.configureSlider(updater));
   }
 
   @Override

@@ -19,12 +19,20 @@ public class Image extends Leaf {
   @WidgetBuilderField(fallback = "dev.gamekit.settings.ImageInterpolation.DEFAULT")
   public ImageInterpolation interpolation;
 
-  public Image(ImageConfig config) {
-    super(config);
+  public Image(String key, ImageConfig config) {
+    super(key, config);
+  }
+
+  public static Image create(String key, ImageConfig.Updater updater) {
+    return new Image(key, Widgets.configureImage(updater));
   }
 
   public static Image create(ImageConfig.Updater updater) {
-    return new Image(Widgets.configureImage(updater));
+    return new Image(null, Widgets.configureImage(updater));
+  }
+
+  public static Image create(String key, Picture image) {
+    return Image.create(key, props -> props.image = image);
   }
 
   public static Image create(Picture image) {

@@ -9,8 +9,8 @@ import java.awt.*;
  * box-constraint model used.
  */
 public abstract class Parent extends Widget {
-  public Parent(Config config) {
-    super(config);
+  public Parent(String key, Config config) {
+    super(key, config);
   }
 
   /**

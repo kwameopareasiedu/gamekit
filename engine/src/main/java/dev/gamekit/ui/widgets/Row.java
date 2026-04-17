@@ -7,12 +7,20 @@ import dev.gamekit.utils.Constraints;
 /** A {@link Flex} which arranges its children horizontally */
 @WidgetBuilder
 public class Row extends Flex {
-  public Row(RowConfig config, Widget... children) {
-    super(config, children);
+  public Row(String key, RowConfig config, Widget... children) {
+    super(key, config, children);
+  }
+
+  public static Row create(String key, RowConfig.Updater updater, Widget... children) {
+    return new Row(key, Widgets.configureRow(updater), children);
   }
 
   public static Row create(RowConfig.Updater updater, Widget... children) {
-    return new Row(Widgets.configureRow(updater), children);
+    return new Row(null, Widgets.configureRow(updater), children);
+  }
+
+  public static Row create(String key, Widget... children) {
+    return Row.create(key, props -> { }, children);
   }
 
   public static Row create(Widget... children) {

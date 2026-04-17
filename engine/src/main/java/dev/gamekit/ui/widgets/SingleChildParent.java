@@ -6,8 +6,8 @@ import java.awt.*;
 public abstract class SingleChildParent extends Parent {
   protected Widget child;
 
-  public SingleChildParent(Config config, Widget child) {
-    super(config);
+  public SingleChildParent(String key, Config config, Widget child) {
+    super(key, config);
 
     if (child == null)
       throw new IllegalArgumentException("Child of SingleChildParent cannot be null");

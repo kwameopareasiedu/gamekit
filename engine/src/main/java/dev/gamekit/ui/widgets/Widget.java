@@ -9,6 +9,9 @@ import org.apache.logging.log4j.Logger;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import static dev.gamekit.utils.Misc.coalesce;
 
 /**
  * A widget is an abstract representation of a portion of a {@link Scene scene's} user interface.
@@ -29,7 +32,15 @@ public abstract class Widget {
   public static final Color DEBUG_COLOR = Color.GREEN;
   public static final BasicStroke DEBUG_STROKE = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
   public static boolean DEBUG = false;
+  public static boolean DEBUG_NAME = false;
 
+  /**
+   * Keys are a mechanism to explicitly ensure uniqueness of widgets when comparing.
+   * <p>
+   * During reconciliation, the UI engine will replace a widget subtree when there is class type mismatch or a key
+   * mismatch.
+   */
+  protected final String key;
   protected final Logger logger = LogManager.getLogger(getClass());
   protected final Bounds absoluteBounds;
   protected final Bounds computedBounds;
@@ -41,11 +52,11 @@ public abstract class Widget {
 
   private boolean mounted;
 
-  /** Creates a new widget with a list of configurations */
-  public Widget(Config config) {
+  public Widget(String key, Config config) {
     if (config == null)
       throw new IllegalArgumentException("Widget config cannot be null");
 
+    this.key = key;
     this.config = config;
     this.absoluteBounds = new Bounds(0, 0, 0, 0);
     this.computedBounds = new Bounds(0, 0, 0, 0);
@@ -205,6 +216,14 @@ public abstract class Widget {
         (int) absoluteBounds.height
       );
 
+      if (DEBUG_NAME) {
+        canvasGraphics.drawString(
+          getClass().getName(),
+          (int) absoluteBounds.x,
+          (int) absoluteBounds.y
+        );
+      }
+
       canvasGraphics.setColor(originalColor);
       canvasGraphics.setStroke(originalStroke);
     }
@@ -325,19 +344,20 @@ public abstract class Widget {
         Widget newWidget = NEW_QUEUE.remove(0);
 
         boolean typeMatch = currentWidget.getClass().equals(newWidget.getClass());
+        boolean keyMatch = Objects.equals(currentWidget.key, newWidget.key);
         boolean configMatch = currentWidget.configEquals(newWidget);
 
-        if (!typeMatch) {
-          Parent currentWidgetParent = (Parent) currentWidget.getParent();
-
+        if (!typeMatch || !keyMatch) {
           currentWidget.unmount();
+
+          Parent currentWidgetParent = (Parent) currentWidget.getParent();
 
           if (currentWidgetParent == null) {
             treeSetter.invoke(newWidget);
           } else if (currentWidgetParent instanceof SingleChildParent currentWidgetSingleChildParent) {
             currentWidgetSingleChildParent.updateChild(newWidget);
           } else if (currentWidgetParent instanceof MultiChildParent currentWidgetMultiChildParent) {
-            int index = List.of(currentWidgetMultiChildParent.getChildren()).indexOf(currentWidget);
+            int index = currentWidgetMultiChildParent.getChildrenList().indexOf(currentWidget);
             currentWidgetMultiChildParent.updateChild(index, newWidget);
           }
 
@@ -353,10 +373,25 @@ public abstract class Widget {
           NEW_QUEUE.add(newParent.getChild());
         } else if (currentWidget instanceof MultiChildParent currentParent && newWidget instanceof MultiChildParent newParent) {
           // Add children of MultiChildParent to queue for processing
-          List<Widget> currentParentChildrenWidgets = List.of(currentParent.getChildren());
-          List<Widget> newParentChildrenWidgets = List.of(newParent.getChildren());
-          CURRENT_QUEUE.addAll(currentParentChildrenWidgets);
-          NEW_QUEUE.addAll(newParentChildrenWidgets);
+          List<Widget> currentParentChildrenWidgets = currentParent.getChildrenList();
+          List<Widget> newParentChildrenWidgets = newParent.getChildrenList();
+
+          for (int i = 0; i < newParentChildrenWidgets.size(); i++) {
+            Widget newParentWidget = newParentChildrenWidgets.get(i);
+            Widget currentParentWidget =
+              currentParentChildrenWidgets.stream()
+                .filter(widget -> widget.key != null && Objects.equals(widget.key, newWidget.key))
+                .findFirst()
+                .orElse(coalesce(currentParentChildrenWidgets.get(i), Empty.create()));
+
+            if (!CURRENT_QUEUE.contains(currentParentWidget))
+              CURRENT_QUEUE.add(currentParentWidget);
+
+            if (!NEW_QUEUE.contains(newParentWidget))
+              NEW_QUEUE.add(newParentWidget);
+          }
+
+          currentParent.resizeChildren(newParent.getChildren().length);
         }
       }
 

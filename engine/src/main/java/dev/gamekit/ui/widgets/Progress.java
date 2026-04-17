@@ -37,14 +37,18 @@ public class Progress extends Leaf {
 
   private final Bounds fillAbsoluteBounds;
 
-  public Progress(ProgressConfig config) {
-    super(config);
+  public Progress(String key, ProgressConfig config) {
+    super(key, config);
 
     fillAbsoluteBounds = new Bounds();
   }
 
+  public static Progress create(String key, ProgressConfig.Updater updater) {
+    return new Progress(key, Widgets.configureProgress(updater));
+  }
+
   public static Progress create(ProgressConfig.Updater updater) {
-    return new Progress(Widgets.configureProgress(updater));
+    return new Progress(null, Widgets.configureProgress(updater));
   }
 
   @Override

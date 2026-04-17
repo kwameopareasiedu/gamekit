@@ -6,12 +6,16 @@ import dev.gamekit.utils.Constraints;
 /** A {@link MultiChildParent} which stacks its children on top of each other */
 @WidgetBuilder
 public class Stack extends MultiChildParent {
-  public Stack(StackConfig config, Widget... children) {
-    super(config, children);
+  public Stack(String key, StackConfig config, Widget... children) {
+    super(key, config, children);
+  }
+
+  public static Stack create(String key, StackConfig.Updater updater, Widget... children) {
+    return new Stack(key, Widgets.configureStack(updater), children);
   }
 
   public static Stack create(StackConfig.Updater updater, Widget... children) {
-    return new Stack(Widgets.configureStack(updater), children);
+    return new Stack(null, Widgets.configureStack(updater), children);
   }
 
   public static Stack create(Widget... children) {

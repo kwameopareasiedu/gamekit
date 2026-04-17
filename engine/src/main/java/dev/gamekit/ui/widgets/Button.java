@@ -31,12 +31,16 @@ public class Button extends SingleChildParent implements MouseEvent.Handler {
   protected boolean mouseEntered;
   protected boolean mousePressed;
 
-  public Button(ButtonConfig config, Widget child) {
-    super(config, child);
+  public Button(String key, ButtonConfig config, Widget child) {
+    super(key, config, child);
+  }
+
+  public static Button create(String key, ButtonConfig.Updater updater, Widget child) {
+    return new Button(key, Widgets.configureButton(updater), child);
   }
 
   public static Button create(ButtonConfig.Updater updater, Widget child) {
-    return new Button(Widgets.configureButton(updater), child);
+    return new Button(null, Widgets.configureButton(updater), child);
   }
 
   @Override

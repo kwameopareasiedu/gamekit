@@ -22,12 +22,16 @@ public class Spinner extends Leaf {
   private Animation timerAnimation;
   private int index = 0;
 
-  public Spinner() {
-    super(new SpinnerConfig());
+  public Spinner(String key) {
+    super(key, new SpinnerConfig());
+  }
+
+  public static Spinner create(String key) {
+    return new Spinner(key);
   }
 
   public static Spinner create() {
-    return new Spinner();
+    return new Spinner(null);
   }
 
   @Override

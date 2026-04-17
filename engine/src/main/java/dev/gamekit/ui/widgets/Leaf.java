@@ -6,7 +6,7 @@ package dev.gamekit.ui.widgets;
  * Common functionality for widgets with no children will be implemented here instead of individually in subclasses
  */
 public abstract class Leaf extends Widget {
-  public Leaf(Config config) {
-    super(config);
+  public Leaf(String key, Config config) {
+    super(key, config);
   }
 }

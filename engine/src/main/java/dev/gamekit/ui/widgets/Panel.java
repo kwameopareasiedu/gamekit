@@ -27,12 +27,16 @@ public class Panel extends SingleChildParent implements MouseEvent.Handler {
   private Shape originalClip;
   private Color originalColor;
 
-  public Panel(PanelConfig config, Widget child) {
-    super(config, child);
+  public Panel(String key, PanelConfig config, Widget child) {
+    super(key, config, child);
+  }
+
+  public static Panel create(String key, PanelConfig.Updater updater, Widget child) {
+    return new Panel(key, Widgets.configurePanel(updater), child);
   }
 
   public static Panel create(PanelConfig.Updater updater, Widget child) {
-    return new Panel(Widgets.configurePanel(updater), child);
+    return new Panel(null, Widgets.configurePanel(updater), child);
   }
 
   @Override

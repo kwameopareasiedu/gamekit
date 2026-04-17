@@ -28,6 +28,7 @@
 - Added custom goal to maven `process-resources` lifecycle phase to generate `Log4j2.xml` config in final package
 - Added `public static void onLayer(int layerIndex, VoidCallback renderAction)` to `Renderer` class
 - Added `public void setLayer(int layer)` to `Sprite` class
+- Added constructors variants for all widget classes which accepts the new `key` field defined by `Widget` class.
 
 ### Changed
 

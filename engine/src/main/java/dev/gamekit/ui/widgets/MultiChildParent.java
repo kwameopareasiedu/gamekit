@@ -1,13 +1,16 @@
 package dev.gamekit.ui.widgets;
 
 import java.awt.*;
+import java.util.List;
 
 /** A parent which contains multiple child {@link Widget widgets} */
 public abstract class MultiChildParent extends Parent {
   protected Widget[] children;
 
-  public MultiChildParent(Config config, Widget... children) {
-    super(config);
+  private List<Widget> childrenList;
+
+  public MultiChildParent(String key, Config config, Widget... children) {
+    super(key, config);
 
     if (children == null)
       throw new IllegalArgumentException("MultiChildParent children cannot be null");
@@ -18,6 +21,7 @@ public abstract class MultiChildParent extends Parent {
     }
 
     this.children = children;
+    this.childrenList = List.of(children);
   }
 
   @Override
@@ -62,6 +66,11 @@ public abstract class MultiChildParent extends Parent {
     return children;
   }
 
+  /** Returns the backing {@link #children} list */
+  public List<Widget> getChildrenList() {
+    return childrenList;
+  }
+
   /** Replaces an existing child at the specified {@code index} with the {@code newChild} widget */
   public final void updateChild(int index, Widget newChild) {
     if (index >= children.length) {
@@ -76,5 +85,23 @@ public abstract class MultiChildParent extends Parent {
     children[index].parent = null;
     children[index] = newChild;
     children[index].parent = this;
+  }
+
+  /**
+   * Resizes the children array, keeping children up to the specified {@code newSize}.
+   * <p>
+   * During UI reconciliation, if a {@link MultiChildParent} at the same position in the new tree has fewer children
+   * than this one, the children must be resized, removing excess children and preventing them from being rendered.
+   */
+  public final void resizeChildren(int newSize) {
+    if (children.length == newSize)
+      return;
+
+    Widget[] newChildren = new Widget[newSize];
+
+    System.arraycopy(children, 0, newChildren, 0, newSize);
+
+    children = newChildren;
+    childrenList = List.of(children);
   }
 }

@@ -34,13 +34,13 @@
     <dependency>
       <groupId>dev.gamekit</groupId>
       <artifactId>annotations</artifactId>
-      <version>0.1.0</version>
+      <version>0.2.0</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
-      <version>2.25.3</version>
+      <version>2.25.4</version>
     </dependency>
 
     <dependency>

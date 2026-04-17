@@ -49,8 +49,8 @@ public class Field extends Text
   private final Animation cursorAnimation;
   private final TextModel textModel;
 
-  public Field(FieldConfig config) {
-    super(config);
+  public Field(String key, FieldConfig config) {
+    super(key, config);
 
     contentAbsoluteBounds = new Bounds();
     tempAbsoluteBounds = new Bounds();
@@ -67,8 +67,12 @@ public class Field extends Text
     });
   }
 
+  public static Field create(String key, FieldConfig.Updater updater) {
+    return new Field(key, Widgets.configureField(updater));
+  }
+
   public static Field create(FieldConfig.Updater updater) {
-    return new Field(Widgets.configureField(updater));
+    return new Field(null, Widgets.configureField(updater));
   }
 
   @Override

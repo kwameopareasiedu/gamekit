@@ -15,7 +15,7 @@ public abstract class Flex extends MultiChildParent {
   @WidgetBuilderField(fallback = "dev.gamekit.ui.enums.CrossAxisAlignment.START")
   public CrossAxisAlignment crossAxisAlignment;
 
-  public Flex(FlexConfig config, Widget... children) {
-    super(config, children);
+  public Flex(String key, FlexConfig config, Widget... children) {
+    super(key, config, children);
   }
 }

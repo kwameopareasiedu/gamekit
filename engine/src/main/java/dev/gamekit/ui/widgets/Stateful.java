@@ -21,8 +21,13 @@ public abstract class Stateful extends SingleChildParent {
   private boolean updatedChild = false;
   private State<Stateful> state;
 
+  protected Stateful(String key, String stateKey) {
+    super(key, ignored -> { }, Empty.create());
+    this.stateKey = stateKey;
+  }
+
   protected Stateful(String stateKey) {
-    super(ignored -> { }, Empty.create());
+    super(null, ignored -> { }, Empty.create());
     this.stateKey = stateKey;
   }
 

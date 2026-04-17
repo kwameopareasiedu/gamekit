@@ -17,12 +17,16 @@ public class Opacity extends SingleChildParent {
   private AlphaComposite composite;
   private Composite originalComposite;
 
-  public Opacity(OpacityConfig config, Widget child) {
-    super(config, child);
+  public Opacity(String key, OpacityConfig config, Widget child) {
+    super(key, config, child);
+  }
+
+  public static Opacity create(String key, OpacityConfig.Updater updater, Widget child) {
+    return new Opacity(key, Widgets.configureOpacity(updater), child);
   }
 
   public static Opacity create(OpacityConfig.Updater updater, Widget child) {
-    return new Opacity(Widgets.configureOpacity(updater), child);
+    return new Opacity(null, Widgets.configureOpacity(updater), child);
   }
 
   public static Opacity create(Double opacity, Widget child) {

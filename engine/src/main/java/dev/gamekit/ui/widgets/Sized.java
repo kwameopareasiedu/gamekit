@@ -26,12 +26,16 @@ public class Sized extends SingleChildParent {
   private DimensionType widthType;
   private DimensionType heightType;
 
-  public Sized(SizedConfig config, Widget child) {
-    super(config, child);
+  public Sized(String key, SizedConfig config, Widget child) {
+    super(key, config, child);
+  }
+
+  public static Sized create(String key, SizedConfig.Updater updater, Widget child) {
+    return new Sized(key, Widgets.configureSized(updater), child);
   }
 
   public static Sized create(SizedConfig.Updater updater, Widget child) {
-    return new Sized(Widgets.configureSized(updater), child);
+    return new Sized(null, Widgets.configureSized(updater), child);
   }
 
   @Override

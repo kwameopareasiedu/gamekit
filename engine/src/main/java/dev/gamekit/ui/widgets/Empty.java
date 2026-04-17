@@ -8,12 +8,16 @@ import java.awt.*;
 /** A {@link Leaf} with no size and appearance, used in places where {@code null} would have been preferable */
 @WidgetBuilder
 public class Empty extends Leaf {
-  public Empty() {
-    super(new EmptyConfig());
+  public Empty(String key) {
+    super(key, new EmptyConfig());
+  }
+
+  public static Empty create(String key) {
+    return new Empty(key);
   }
 
   public static Empty create() {
-    return new Empty();
+    return new Empty(null);
   }
 
   @Override

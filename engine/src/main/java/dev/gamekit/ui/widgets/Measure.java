@@ -16,12 +16,16 @@ public class Measure extends SingleChildParent {
   @WidgetBuilderField(themable = false)
   public Integer rulerTicks;
 
-  public Measure(MeasureConfig config, Widget child) {
-    super(config, child);
+  public Measure(String key, MeasureConfig config, Widget child) {
+    super(key, config, child);
+  }
+
+  public static Measure create(String key, MeasureConfig.Updater updater, Widget child) {
+    return new Measure(key, Widgets.configureMeasure(updater), child);
   }
 
   public static Measure create(MeasureConfig.Updater updater, Widget child) {
-    return new Measure(Widgets.configureMeasure(updater), child);
+    return new Measure(null, Widgets.configureMeasure(updater), child);
   }
 
   @Override

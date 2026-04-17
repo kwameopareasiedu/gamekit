@@ -7,12 +7,20 @@ import dev.gamekit.utils.Constraints;
 /** A {@link Flex} which arranges its children vertically */
 @WidgetBuilder
 public class Column extends Flex {
-  public Column(ColumnConfig config, Widget... children) {
-    super(config, children);
+  public Column(String key, ColumnConfig config, Widget... children) {
+    super(key, config, children);
+  }
+
+  public static Column create(String key, ColumnConfig.Updater updater, Widget... children) {
+    return new Column(key, Widgets.configureColumn(updater), children);
   }
 
   public static Column create(ColumnConfig.Updater updater, Widget... children) {
-    return new Column(Widgets.configureColumn(updater), children);
+    return new Column(null, Widgets.configureColumn(updater), children);
+  }
+
+  public static Column create(String key, Widget... children) {
+    return Column.create(key, props -> { }, children);
   }
 
   public static Column create(Widget... children) {
