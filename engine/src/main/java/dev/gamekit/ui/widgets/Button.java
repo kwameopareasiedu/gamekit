@@ -25,7 +25,7 @@ public class Button extends SingleChildParent implements MouseEvent.Handler {
   public Picture hoverBackground;
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Button.DEFAULT_PRESSED_BG")
   public Picture pressedBackground;
-  @WidgetBuilderField(comparable = false, themable = false)
+  @WidgetBuilderField(themable = false)
   public MouseEvent.Handler mouseListener;
 
   protected boolean mouseEntered;
