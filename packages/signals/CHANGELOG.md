@@ -15,6 +15,8 @@
 ### Added
 
 - Added `void unsubscibe()` to `Signal.Subscription` class
+- Added `T getValue()` to `Signal` class
+- Added `Signal(T initialValue)` constructor to `Signal` class
 
 ### Changed
 

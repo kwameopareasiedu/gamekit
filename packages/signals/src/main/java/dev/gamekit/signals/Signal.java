@@ -16,15 +16,24 @@ public class Signal<T> {
   private boolean open;
   private T value;
 
-  public Signal() {
+  public Signal(T initialValue) {
     subscribers = new HashMap<>();
-    value = null;
+    value = initialValue;
     open = true;
+  }
+
+  public Signal() {
+    this(null);
   }
 
   /** Returns {@code true} if this {@link Signal} is open, or {@code false} otherwise */
   public boolean isOpen() {
     return open;
+  }
+
+  /** Returns the current value of this signal */
+  public T getValue() {
+    return value;
   }
 
   /**
