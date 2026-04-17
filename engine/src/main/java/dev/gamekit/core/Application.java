@@ -87,7 +87,11 @@ public abstract class Application {
     logger.debug("Primed next scene: {}", scene.name);
   }
 
-  /** Schedules and returns a {@link Timeout timeout} to be executed immediately after the end of the current frame */
+  /**
+   * Schedules and returns a {@link Timeout timeout} to be executed immediately after the end of the current frame
+   *
+   * @see #scheduleTask(VoidCallback, long)
+   */
   public Timeout scheduleTask(VoidCallback callback) {
     return scheduleTask(callback, 0);
   }
@@ -114,9 +118,8 @@ public abstract class Application {
    * NB: <i>{@link Animation#start} calls this method internally, so there is no need to explicitly invoke this</i>
    */
   public void playAnimation(Animation animation) {
-    if (animation != null && !animations.contains(animation)) {
+    if (animation != null && !animations.contains(animation))
       scheduleTask(() -> animations.add(animation));
-    }
   }
 
   /**
@@ -230,11 +233,11 @@ public abstract class Application {
     }
 
     if (nextScene != null) {
-      animations.clear();
-      timeouts.clear();
-      newTimeouts.clear();
-
       if (currentScene != null) {
+        animations.clear();
+        timeouts.clear();
+        newTimeouts.clear();
+
         synchronized (currentScene) {
           currentScene._dispose();
         }
