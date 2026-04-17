@@ -205,6 +205,13 @@ public class RigidBody extends Component {
   }
 
   @Override
+  protected void restart() {
+    Physics.addBody(body);
+
+    syncPositionAndRotation();
+  }
+
+  @Override
   protected void update() {
     syncPositionAndRotation();
   }
@@ -218,6 +225,11 @@ public class RigidBody extends Component {
         Renderer.fillCircle((int) globalPosition.x, (int) globalPosition.y, 3).withColor(Color.RED);
       });
     }
+  }
+
+  @Override
+  protected void stop() {
+    Physics.removeBody(body);
   }
 
   @Override

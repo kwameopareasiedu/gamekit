@@ -78,11 +78,16 @@ public class Animation {
 
   /** Starts / Restarts this animation and changes its state to {@link State#RUNNING} */
   public void start() {
-    if (state == State.ENDED) return;
-    if (state == State.IDLE) Application.getInstance().playAnimation(this);
+    if (state == State.ENDED)
+      return;
+
+    if (state == State.IDLE)
+      Application.getInstance().playAnimation(this);
+
+    if (state != State.PAUSED)
+      value = 0;
 
     state = State.RUNNING;
-    value = 0;
 
     if (stateListener != null)
       stateListener.invoke(state);
@@ -147,6 +152,8 @@ public class Animation {
     IDLE,
     /** Indicates a started animation */
     RUNNING,
+    /** Indicates a paused animation which can be resumed */
+    PAUSED,
     /** Pseudo-state indicating an animation has restarted */
     RESTARTED,
     /** Pseudo-state indicating an animation whose direction changes */

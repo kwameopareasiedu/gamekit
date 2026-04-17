@@ -29,8 +29,8 @@ public final class Settings {
   @Override
   public String toString() {
     return String.format(
-      "%s[title:%s,resolution:%s,fullscreen:%b,antialiasing:%s,text antialiasing:%s," +
-        "alpha interpolation:%s,image interpolation:%s,rendering:%s,dithering:%s]",
+      "%s[title=%s, resolution=%s, fullscreen=%b, antialiasing=%s, text_antialiasing=%s, " +
+        "alpha_interpolation=%s, image_interpolation=%s, rendering=%s, dithering=%s]",
       getClass().getName(),
       title,
       resolution,

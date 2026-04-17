@@ -91,9 +91,14 @@ public abstract class Collider extends Component {
 
   @Override
   protected void start() {
-    if (collisionListener != null) {
+    if (collisionListener != null)
       Physics.addCollisionListener(fixture.id, collisionListener);
-    }
+  }
+
+  @Override
+  protected void restart() {
+    if (collisionListener != null)
+      Physics.addCollisionListener(fixture.id, collisionListener);
   }
 
   @Override
@@ -138,10 +143,15 @@ public abstract class Collider extends Component {
   }
 
   @Override
-  protected void dispose() {
-    if (collisionListener != null) {
+  protected void stop() {
+    if (collisionListener != null)
       Physics.removeCollisionListener(fixture.id, collisionListener);
-    }
+  }
+
+  @Override
+  protected void dispose() {
+    if (collisionListener != null)
+      Physics.removeCollisionListener(fixture.id, collisionListener);
   }
 
   /** {@link Fixture} extends {@link BodyFixture} adding a reference to its parent {@link Collider} */
