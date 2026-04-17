@@ -65,9 +65,9 @@ public class Signal<T> {
     subscribers.remove(subscription.id);
   }
 
-  /** Dispatches the provided value to all subscribers */
-  public void emit(T value) {
-    if (!open) throw new IllegalStateException("Attempting to emit from a closed signal");
+  /** Updates the value of this {@link Signal} and notifies all subscribers */
+  public void update(T value) {
+    if (!open) throw new IllegalStateException("Attempting to update a closed signal");
 
     Iterator<Subscription<T>> iterator = subscribers.values().iterator();
 
@@ -85,7 +85,7 @@ public class Signal<T> {
   /**
    * Removes all subscribers and closes this signal
    * <p>
-   * After this method is called, further calls to {@link #emit} will throw an {@link IllegalStateException}
+   * After this method is called, further calls to {@link #update} will throw an {@link IllegalStateException}
    */
   public void dispose() {
     Iterator<Subscription<T>> iterator = subscribers.values().iterator();

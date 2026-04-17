@@ -25,6 +25,7 @@
 - Changed signature of `void subscribeOnce(String key, Subscriber<T> subscriber, boolean notifyImmediately)` in `Signal`
   class to `Subscription<T> subscribeOnce(Subscriber<T> subscriber, boolean notifyImmediately)`
 - Changed signature of `void unsubscribe(String key)` in `Signal` class to `void unsubscribe(Subscription<T> key)`
+- Changed signature of `void emit(T value)` in `Signal` class to `void update(T value)`
 
 ## 1.0.0
 
