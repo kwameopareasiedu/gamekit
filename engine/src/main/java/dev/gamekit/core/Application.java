@@ -9,8 +9,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * {@link Application} is the heart of a GameKit program. A game or application must extend this class to do anything
@@ -33,9 +31,6 @@ public abstract class Application {
 
   private final Window window;
   private final Settings settings;
-  private final List<Timeout> timeouts;
-  private final List<Timeout> newTimeouts;
-  private final List<Animation> animations;
   private final WorkerThread audioThread;
   private final WorkerThread physicsThread;
   private final WorkerThread drawThread;
@@ -57,9 +52,6 @@ public abstract class Application {
     Application.instance = this;
     this.settings = settings;
     this.window = new Window();
-    this.timeouts = new ArrayList<>();
-    this.newTimeouts = new ArrayList<>();
-    this.animations = new ArrayList<>();
     this.audioThread = new WorkerThread("audio", FRAME_INTERVAL_MS, Audio::update);
     this.physicsThread = new WorkerThread("physics", FRAME_INTERVAL_MS, Physics::update);
     this.drawThread = new WorkerThread("draw", DRAW_INTERVAL_MS, this::draw);
@@ -88,7 +80,7 @@ public abstract class Application {
   }
 
   /**
-   * Schedules and returns a {@link Timeout timeout} to be executed immediately after the end of the current frame
+   * Schedules a task to be executed immediately after the end of the current frame
    *
    * @see #scheduleTask(VoidCallback, long)
    */
@@ -97,17 +89,18 @@ public abstract class Application {
   }
 
   /**
-   * Schedules and returns a {@link Timeout task} to be executed after a specified time.
+   * Schedules a task to be executed after a specified time.
    * <p>
    * If {@code timeoutMs} is zero, {@code task} is executed immediately after the current frame
    *
    * @see #scheduleTask(VoidCallback)
    */
   public Timeout scheduleTask(VoidCallback callback, long timeoutMs) {
+    if (currentScene == null) throw new IllegalStateException("No currently loaded scene");
     if (timeoutMs < 0) throw new IllegalArgumentException("Timeout cannot be negative");
 
     Timeout timeout = new Timeout(timeoutMs, callback);
-    newTimeouts.add(timeout);
+    currentScene.newTimeouts.add(timeout);
     return timeout;
   }
 
@@ -118,8 +111,10 @@ public abstract class Application {
    * NB: <i>{@link Animation#start} calls this method internally, so there is no need to explicitly invoke this</i>
    */
   public void playAnimation(Animation animation) {
-    if (animation != null && !animations.contains(animation))
-      scheduleTask(() -> animations.add(animation));
+    if (currentScene == null) throw new IllegalStateException("No currently loaded scene");
+
+    if (animation != null && !currentScene.animations.contains(animation))
+      scheduleTask(() -> currentScene.animations.add(animation));
   }
 
   /**
@@ -190,17 +185,8 @@ public abstract class Application {
 
   /** Called in each frame to update the current scene */
   private void update() {
-    for (Animation animation : animations)
-      animation.update();
-
-    for (Timeout timeout : timeouts)
-      timeout.update();
-
     if (currentScene != null)
       currentScene._update();
-
-    animations.removeIf(Animation::isEnded);
-    timeouts.removeIf(Timeout::isCompleted);
   }
 
   /** Called in each frame to render the current scene */
@@ -227,17 +213,11 @@ public abstract class Application {
 
   /** Runs cleanup code at the end of a frame */
   private void disposeFrame() {
-    if (!newTimeouts.isEmpty()) {
-      timeouts.addAll(newTimeouts);
-      newTimeouts.clear();
-    }
+    if (currentScene != null)
+      currentScene._disposeFrame();
 
     if (nextScene != null) {
       if (currentScene != null) {
-        animations.clear();
-        timeouts.clear();
-        newTimeouts.clear();
-
         synchronized (currentScene) {
           currentScene._dispose();
         }

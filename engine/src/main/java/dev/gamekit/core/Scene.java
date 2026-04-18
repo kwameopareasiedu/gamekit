@@ -1,9 +1,12 @@
 package dev.gamekit.core;
 
+import dev.gamekit.animation.Animation;
 import dev.gamekit.ui.widgets.Widget;
+import dev.gamekit.utils.Timeout;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,11 +17,18 @@ import java.util.List;
 public abstract class Scene extends Entity {
   protected final Logger logger;
 
+  final List<Timeout> timeouts;
+  final List<Timeout> newTimeouts;
+  final List<Animation> animations;
+
   private final UI ui;
 
   public Scene(String name) {
     super(name);
     logger = LogManager.getLogger(getClass());
+    timeouts = new ArrayList<>();
+    newTimeouts = new ArrayList<>();
+    animations = new ArrayList<>();
     ui = new UI(this);
   }
 
@@ -53,12 +63,21 @@ public abstract class Scene extends Entity {
   /** Called by {@link Application} to update the scene */
   @Override
   void _update() {
+    for (Animation animation : animations)
+      animation.update();
+
+    for (Timeout timeout : timeouts)
+      timeout.update();
+
     super._update();
     ui.update();
 
     if (Renderer.isCompleted()) {
       Renderer.reset();
     }
+
+    animations.removeIf(Animation::isEnded);
+    timeouts.removeIf(Timeout::isCompleted);
   }
 
   @Override
@@ -80,10 +99,23 @@ public abstract class Scene extends Entity {
     ui.draw();
   }
 
+  /** Called by {@link Application} to run cleanup at the end of a frame */
+  void _disposeFrame() {
+    if (!newTimeouts.isEmpty()) {
+      timeouts.addAll(newTimeouts);
+      newTimeouts.clear();
+    }
+  }
+
   /** Called <b>once</b> by {@link Application} to dispose the scene */
   @Override
   void _dispose() {
     logger.debug("Disposing scene");
+
+    animations.clear();
+    timeouts.clear();
+    newTimeouts.clear();
+
     super._dispose();
     ui.unmount();
     dispose();
