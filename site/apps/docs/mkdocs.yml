@@ -19,7 +19,6 @@ nav:
           - RigidBody: features/components/rigidbody.md
           - Collider: features/components/collider.md
       - Renderer: features/rendering.md
-      - Camera: features/camera.md
       - Input: features/input.md
       - File IO: features/file-io.md
       - Physics: features/physics.md

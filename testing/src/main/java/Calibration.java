@@ -42,7 +42,7 @@ public class Calibration extends Scene {
 
     if (Input.isButtonPressed(Input.BUTTON_LMB)) {
       Position mousePos = Input.getMousePosition();
-      Vector pos = Camera.screenToWorldPosition(mousePos.x, mousePos.y);
+      Vector pos = camera.screenToWorldPosition(mousePos.x, mousePos.y);
       x = pos.x;
       y = pos.y;
     }
@@ -52,8 +52,8 @@ public class Calibration extends Scene {
 
     double x = 50 * vsin;
     double y = 50 * Math.cos(v);
-    Camera.lookAt(x, y);
-    Camera.setZoom(clamp(1 + vsin, 1, 2));
+    camera.lookAt(x, y);
+    camera.setZoom(clamp(1 + vsin, 1, 2));
     //    Camera.lookAt(-200, -100);
     //    Camera.setZoom(1);
   }

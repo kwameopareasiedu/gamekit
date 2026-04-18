@@ -15,7 +15,7 @@ public class ClearCall extends DrawCall<ClearCall> {
 
   @Override
   protected void draw(Graphics2D g) {
-    Bounds rb = Camera.getRenderBounds();
+    Bounds rb = Camera.getCurrent().getRenderBounds();
     Color prevColor = g.getBackground();
 
     g.setBackground(color);

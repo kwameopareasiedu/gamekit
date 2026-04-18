@@ -16,6 +16,7 @@ import java.util.List;
  */
 public abstract class Scene extends Entity {
   protected final Logger logger;
+  protected final Camera camera;
 
   final List<Timeout> timeouts;
   final List<Timeout> newTimeouts;
@@ -26,6 +27,7 @@ public abstract class Scene extends Entity {
   public Scene(String name) {
     super(name);
     logger = LogManager.getLogger(getClass());
+    camera = new Camera();
     timeouts = new ArrayList<>();
     newTimeouts = new ArrayList<>();
     animations = new ArrayList<>();
@@ -60,8 +62,16 @@ public abstract class Scene extends Entity {
   void _start(Entity parent) {
     logger.debug("Starting scene");
     super._start(parent);
+    Camera.current = camera;
     ui.setWidgetTree(createUI());
     ui.clear();
+  }
+
+  @Override
+  void _resume(Entity parent) {
+    logger.debug("Resuming scene");
+    super._resume(parent);
+    Camera.current = camera;
   }
 
   /** Called by {@link Application} to update the scene */
@@ -96,6 +106,8 @@ public abstract class Scene extends Entity {
 
   /** Called by {@link Application} to draw the scene to the {@link Window} */
   void _draw() {
+    camera.updateWindowTransform();
+
     if (Renderer.isCommitted() && !Renderer.isCompleted()) {
       Renderer.draw(Window.getInstance().getDisplayGraphics());
     }

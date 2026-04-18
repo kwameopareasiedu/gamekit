@@ -251,8 +251,6 @@ public abstract class Application {
    */
   private void draw() {
     if (currentScene != null) {
-      Camera.updateWindowTransform();
-
       synchronized (currentScene) {
         currentScene._draw();
       }
@@ -279,8 +277,6 @@ public abstract class Application {
           }
         }
       }
-
-      Camera.reset();
 
       currentScene = nextScene;
 

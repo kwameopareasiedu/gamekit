@@ -37,6 +37,7 @@
 - Added `void stackScene(Scene scene)` method to `Application` class
 - Added `void popSceneStack(Object data)` method to `Application` class
 - Added `void popSceneStack()` method to `Application` class
+- Added protected `camera` field to `Scene` class
 
 ### Changed
 
@@ -46,6 +47,7 @@
 - Updated `RigidBody` class to remove body from physics world when stopped 
 - Updated `RigidBody` class to add body to physics world when restarted 
 - Changed signature of `void restart()` method in `Entity` class to `void resume()`
+- Changed `Camera` class from static to instance
 
 ### Deprecated
 
