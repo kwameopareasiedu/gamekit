@@ -67,13 +67,6 @@ public abstract class Scene extends Entity {
     ui.clear();
   }
 
-  @Override
-  void _resume(Entity parent) {
-    logger.debug("Resuming scene");
-    super._resume(parent);
-    Camera.current = camera;
-  }
-
   /** Called by {@link Application} to update the scene */
   @Override
   void _update() {
@@ -117,8 +110,9 @@ public abstract class Scene extends Entity {
 
   /** Called by {@link Application} to resume the scene with optional data */
   void _resume(Object data) {
+    logger.debug("Resuming scene");
     super._resume(parent);
-
+    Camera.current = camera;
     resume(data);
   }
 
