@@ -131,6 +131,16 @@ public class AnimatedSprite extends Sprite implements ValueCallback<Animation.St
   }
 
   @Override
+  protected void resume() {
+    animation.start();
+  }
+
+  @Override
+  protected void stop() {
+    animation.pause();
+  }
+
+  @Override
   protected void dispose() {
     animation.end();
   }

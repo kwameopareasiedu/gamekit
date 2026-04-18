@@ -33,21 +33,21 @@ public class MyObject extends Entity {
   protected void stop() {  }
   
   @Override
-  protected void restart() {  }
+  protected void resume() {  }
   
   @Override
   protected void dispose() {  }
 }
 ```
 
-| Lifecycle | Description                                                                | State Before     | State After      |
-|-----------|----------------------------------------------------------------------------|------------------|------------------|
-| `start`   | Called once to initialize itself                                           | `State.NEW`      | `State.ACTIVE`   |
-| `update`  | Called continuously to update itself                                       | `State.ACTIVE`   | `State.ACTIVE`   |
-| `render`  | Called continuously to render itself                                       | `State.ACTIVE`   | `State.ACTIVE`   |
-| `stop`    | When parent calls `removeChild(Entity)`, this is called before removal     | `State.ACTIVE`   | `State.INACTIVE` |
-| `restart` | When parent calls `addChild(Entity)` on an inactive entity, this is called | `State.INACTIVE` | `State.ACTIVE`   |
-| `dispose` | Called when scheduled for destruction using `destroy()`                    | `State.ACTIVE`   | `State.DOOMED`   |
+| Lifecycle | Description                                                              | State Before     | State After      |
+|-----------|--------------------------------------------------------------------------|------------------|------------------|
+| `start`   | Called once to initialize itself                                         | `State.NEW`      | `State.ACTIVE`   |
+| `update`  | Called continuously to update itself                                     | `State.ACTIVE`   | `State.ACTIVE`   |
+| `render`  | Called continuously to render itself                                     | `State.ACTIVE`   | `State.ACTIVE`   |
+| `stop`    | Called when entity is stopped, before it moves to the inactive state     | `State.ACTIVE`   | `State.INACTIVE` |
+| `resume`  | Called to resume an inactive entity, before it moves to the active state | `State.INACTIVE` | `State.ACTIVE`   |
+| `dispose` | Called when scheduled for destruction using `destroy()`                  | `State.ACTIVE`   | `State.DOOMED`   |
 
 ## Entity Members
 
@@ -149,6 +149,35 @@ public class UIShowcase extends Scene {
 This is just a simple use case showcasing how easy it is to
 create [declarative UI](https://medium.com/@kemal_codes/declarative-ui-2ebf11e72059){:target="_blank"} with GameKit. The
 topic of [UI](ui.md) is explored in much more detail in a later section.
+
+### Loading Scenes
+
+To load your scene class into your [application](/features/application), use the `loadScene` method in the `Application`
+instance.
+
+```java
+Application.getInstance().loadScene(new CustomScene());
+```
+
+This primes your scene to be started at the end of the current scene. If another scene is currently running, it will be
+disposed of at the end of the frame prior to the new scene being loaded.
+
+### Scene Stacking
+
+Scene stacking is a unique feature of GameKit where you can load a new scene without disposing the current scene.
+
+When a new scene is stacked, the current scene is put in a suspended state which can be resumed later with optional data
+returned from the new scene.
+
+This allows you to maintain clean separation of logic and entities between scenes.
+
+The video below is taken from **GTA: Vice City**, where the player character is entering the hotel building. Notice how
+the scene transitions from the outdoor to the hotel interior scene following the fade to black. This is what scene
+stacking allows you to accomplish in your game.
+
+<video controls style="max-width:480px;width:100%">
+  <source src="/assets/gta-vice-city-scene-transition.mp4">
+</video>
 
 ## Next Steps
 

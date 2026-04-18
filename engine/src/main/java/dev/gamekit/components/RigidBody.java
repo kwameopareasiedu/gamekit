@@ -205,7 +205,7 @@ public class RigidBody extends Component {
   }
 
   @Override
-  protected void restart() {
+  protected void resume() {
     Physics.addBody(body);
 
     syncPositionAndRotation();

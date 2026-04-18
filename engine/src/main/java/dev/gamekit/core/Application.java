@@ -9,6 +9,9 @@ import org.apache.logging.log4j.Logger;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 
 /**
  * {@link Application} is the heart of a GameKit program. A game or application must extend this class to do anything
@@ -25,6 +28,7 @@ public abstract class Application {
   public static final long FRAME_INTERVAL_MS = 1000 / 240;
   public static final long DRAW_INTERVAL_MS = 1000 / 60;
 
+  private static final int STACK_SCENE_FLAG = 1;
   private static Application instance;
 
   protected final Logger logger = LogManager.getLogger(getClass());
@@ -34,9 +38,13 @@ public abstract class Application {
   private final WorkerThread audioThread;
   private final WorkerThread physicsThread;
   private final WorkerThread drawThread;
+  private final List<Timeout> pendingTimeouts;
+  private final Stack<Scene> sceneStack;
   private boolean isRunning;
   private Scene currentScene;
   private Scene nextScene;
+  private int sceneFlags;
+  private Object sceneData;
 
   public Application(String title) {
     this(new Settings(title));
@@ -55,7 +63,10 @@ public abstract class Application {
     this.audioThread = new WorkerThread("audio", FRAME_INTERVAL_MS, Audio::update);
     this.physicsThread = new WorkerThread("physics", FRAME_INTERVAL_MS, Physics::update);
     this.drawThread = new WorkerThread("draw", DRAW_INTERVAL_MS, this::draw);
+    this.pendingTimeouts = new ArrayList<>();
+    this.sceneStack = new Stack<>();
     this.isRunning = true;
+    this.sceneFlags = 0;
   }
 
   /** Returns the current instance of {@link Application} */
@@ -68,15 +79,38 @@ public abstract class Application {
     return settings;
   }
 
-  /** Schedules a scene to be loaded after the end of the current frame */
+  /** Schedules a scene to be loaded at the end of the current frame, replacing the current scene */
   public void loadScene(Scene scene) {
-    if (scene == null) {
-      logger.fatal("Unable to load a null scene");
-      throw new IllegalArgumentException("Unable to load a null scene");
-    }
+    loadScene(scene, 0);
+  }
 
-    this.nextScene = scene;
-    logger.debug("Primed next scene: {}", scene.name);
+  /** Schedules a scene to be loaded at the end of the current frame, stacking the current scene */
+  public void stackScene(Scene scene) {
+    loadScene(scene, STACK_SCENE_FLAG);
+  }
+
+  /**
+   * Pops the scene stack and schedules the popped scene to be resumed at the end of the current frame.
+   * <p>
+   * If the current scene was loaded to generate some data, it can be passed here to be forwarded to the popped scene
+   *
+   * @see #popSceneStack()
+   */
+  public void popSceneStack(Object data) {
+    if (sceneStack.empty())
+      throw new IllegalStateException("Scene stack is empty");
+
+    this.sceneData = data;
+    loadScene(sceneStack.pop());
+  }
+
+  /**
+   * Pops the scene stack and schedules the popped scene to be resumed at the end of the current frame
+   *
+   * @see #popSceneStack(Object)
+   */
+  public void popSceneStack() {
+    popSceneStack(null);
   }
 
   /**
@@ -96,11 +130,16 @@ public abstract class Application {
    * @see #scheduleTask(VoidCallback)
    */
   public Timeout scheduleTask(VoidCallback callback, long timeoutMs) {
-    if (currentScene == null) throw new IllegalStateException("No currently loaded scene");
     if (timeoutMs < 0) throw new IllegalArgumentException("Timeout cannot be negative");
 
     Timeout timeout = new Timeout(timeoutMs, callback);
-    currentScene.newTimeouts.add(timeout);
+
+    if (currentScene != null) {
+      currentScene.newTimeouts.add(timeout);
+    } else {
+      pendingTimeouts.add(timeout);
+    }
+
     return timeout;
   }
 
@@ -160,6 +199,16 @@ public abstract class Application {
     System.exit(0);
   }
 
+  /** Schedules a scene to be loaded after the end of the current frame */
+  private void loadScene(Scene scene, int flags) {
+    if (scene == null)
+      throw new IllegalArgumentException("Unable to load a null scene");
+
+    nextScene = scene;
+    sceneFlags = flags;
+    logger.debug("Loaded next scene: {}, Flags: {}", scene.name, flags);
+  }
+
   /** Sets up GameKit's internals before starting the game loop */
   private void setup() {
     logger.debug("Initializing application");
@@ -217,16 +266,35 @@ public abstract class Application {
       currentScene._disposeFrame();
 
     if (nextScene != null) {
+      final boolean stackCurrentScene = (sceneFlags | STACK_SCENE_FLAG) == STACK_SCENE_FLAG;
+
       if (currentScene != null) {
         synchronized (currentScene) {
-          currentScene._dispose();
+          if (stackCurrentScene) {
+            currentScene._stop();
+            sceneStack.push(currentScene);
+          } else {
+            currentScene._dispose();
+          }
         }
       }
 
-      Camera.reset();
       currentScene = nextScene;
-      currentScene._start(null);
+
+      Entity.State currentSceneState = currentScene.getState();
+
+      if (currentSceneState == Entity.State.NEW) {
+        currentScene._start(null);
+        currentScene.newTimeouts.addAll(pendingTimeouts);
+        pendingTimeouts.clear();
+      } else if (currentSceneState == Entity.State.INACTIVE) {
+        currentScene._resume(sceneData);
+      }
+
+      Camera.reset();
       nextScene = null;
+      sceneData = null;
+      sceneFlags = 0;
     }
   }
 

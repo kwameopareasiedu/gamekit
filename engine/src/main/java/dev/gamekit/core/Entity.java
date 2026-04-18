@@ -50,7 +50,7 @@ public abstract class Entity {
    * Adds a child to this entity, at the end of the current frame.
    * <p>
    * The child's {@link Entity#_start} method is called if it's state is {@link State#NEW} new or
-   * {@link Entity#_restart} if it's state is {@link State#INACTIVE}.
+   * {@link Entity#_resume} if it's state is {@link State#INACTIVE}.
    */
   public void addChild(Entity child) {
     if (children.contains(child)) return;
@@ -69,7 +69,7 @@ public abstract class Entity {
 
       switch (child.state) {
         case NEW -> child._start(this);
-        case INACTIVE -> child._restart(this);
+        case INACTIVE -> child._resume(this);
       }
 
       children.add(child);
@@ -79,12 +79,10 @@ public abstract class Entity {
   /**
    * Removes a child from this entity at the end of the current frame.
    * <p>
-   * The child's {@link Entity#_stop} method is called prior to this
+   * The child's {@link Entity#_stop} method is called prior to this.
    */
   public void removeChild(Entity child) {
     if (children.contains(child)) {
-      child.state = State.INACTIVE;
-
       Application.getInstance().scheduleTask(() -> {
         logger.debug("Removing {} from {}", child.name, name);
         child._stop();
@@ -150,8 +148,8 @@ public abstract class Entity {
   /** Called to set up the entity */
   protected void start() { }
 
-  /** Called to restart the entity after being added to a new parent */
-  protected void restart() { }
+  /** Called to resume the entity after being added to a new parent */
+  protected void resume() { }
 
   /** Called to update the entity */
   protected void update() { }
@@ -187,16 +185,16 @@ public abstract class Entity {
   }
 
   /** Called by a new parent {@link Entity} after previously being stopped, to re-initialize this entity */
-  void _restart(Entity parent) {
+  void _resume(Entity parent) {
     this.parent = parent;
 
     for (Component component : components)
-      component._restart();
+      component._resume();
 
-    restart();
+    resume();
 
     for (Entity child : children)
-      child._restart(this);
+      child._resume(this);
 
     state = State.ACTIVE;
   }
@@ -237,6 +235,8 @@ public abstract class Entity {
         component._stop();
 
       stop();
+
+      state = State.INACTIVE;
     }
   }
 

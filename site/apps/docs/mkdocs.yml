@@ -31,8 +31,7 @@ nav:
           - Attenuation: features/audio/attenuation.md
           - Audio Shape: features/audio/audio-shape.md
       - User Interface (UI): features/ui.md
-  - Tools:
-      - Export: tools/export.md
+      - Export: features/export.md
 theme: mkdocs
 markdown_extensions:
   - attr_list
@@ -42,3 +41,7 @@ extra_css:
   - assets/css/custom.css
 extra_javascript:
   - assets/js/page-config.js
+plugins:
+  - redirects:
+      redirect_maps:
+        "tools/export.md": "features/export.md"

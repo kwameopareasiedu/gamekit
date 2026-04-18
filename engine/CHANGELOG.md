@@ -29,10 +29,14 @@
 - Added `public static void onLayer(int layerIndex, VoidCallback renderAction)` to `Renderer` class
 - Added `public void setLayer(int layer)` to `Sprite` class
 - Added constructors variants for all widget classes which accepts the new `key` field defined by `Widget` class.
-- Added `void restart()` lifecycle method to `Component` class
+- Added `void resume()` lifecycle method to `Component` class
 - Added `void stop()` lifecycle method to `Component` class
 - Added `void _stop()` lifecycle method to `Entity` class
 - Added `void pause()` method to `Animation` class
+- Added `void resume(Object data)` lifecycle method to `Scene` class
+- Added `void stackScene(Scene scene)` method to `Application` class
+- Added `void popSceneStack(Object data)` method to `Application` class
+- Added `void popSceneStack()` method to `Application` class
 
 ### Changed
 
@@ -41,6 +45,7 @@
 - Modified `Window` class to render and resizable `JFrame` when not in fullscreen
 - Updated `RigidBody` class to remove body from physics world when stopped 
 - Updated `RigidBody` class to add body to physics world when restarted 
+- Changed signature of `void restart()` method in `Entity` class to `void resume()`
 
 ### Deprecated
 

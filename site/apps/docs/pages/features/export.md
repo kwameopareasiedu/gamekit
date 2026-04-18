@@ -1,9 +1,9 @@
-# Export Tool
+# Exporting Your Game
 
 So, you've built your awesome game using **GameKit**, now what? Well, you need to export it so that others can play, and
 GameKit makes this very easy to do.
 
-GameKit is a Java-based built using the [Maven](https://maven.apache.org/){:target=\_blank} build tool and dependency
+GameKit is Java-based, built using the [Maven](https://maven.apache.org/){:target=\_blank} build tool and dependency
 manager, and Maven is a [plugin-execution framework at heart](https://maven.apache.org/plugins/index){:target=\_blank}.
 
 As such, GameKit provides a custom Maven plugin, `gamekit-maven-plugin` to handle project build and export.

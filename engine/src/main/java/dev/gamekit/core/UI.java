@@ -60,6 +60,13 @@ public final class UI implements Widget.Host, Widget.Updater, Widget.Traveller {
     settings.dithering.apply(canvasGraphics);
   }
 
+  /** Clears the UI buffer with transparent pixels */
+  public void clear() {
+    canvasGraphics.setBackground(TRANSPARENT_COLOR);
+    canvasGraphics.clearRect(0, 0, canvasImage.getWidth(), canvasImage.getHeight());
+    needsDraw = true;
+  }
+
   @Override
   public FontMetrics getFontMetrics(Font font) {
     return Window.getInstance().getUiGraphics().getFontMetrics(font);
@@ -136,8 +143,7 @@ public final class UI implements Widget.Host, Widget.Updater, Widget.Traveller {
     if (tree != null)
       tree.unmount();
 
-    canvasGraphics.setBackground(TRANSPARENT_COLOR);
-    canvasGraphics.clearRect(0, 0, canvasImage.getWidth(), canvasImage.getHeight());
+    clear();
   }
 
   /** Monitors {@link Input} and generates events for input actions */

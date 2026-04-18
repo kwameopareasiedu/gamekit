@@ -96,7 +96,7 @@ public abstract class Collider extends Component {
   }
 
   @Override
-  protected void restart() {
+  protected void resume() {
     if (collisionListener != null)
       Physics.addCollisionListener(fixture.id, collisionListener);
   }

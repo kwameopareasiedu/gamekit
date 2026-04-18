@@ -37,6 +37,9 @@ public abstract class Scene extends Entity {
     throw new IllegalStateException("Destroy cannot be called on scene");
   }
 
+  /** Called when the scene resumes after being suspended with some optional data */
+  protected void resume(Object data) { /* No-op */ }
+
   /** Called to create the UI {@link Widget} tree of the scene */
   protected Widget createUI() {
     return null;
@@ -58,6 +61,7 @@ public abstract class Scene extends Entity {
     logger.debug("Starting scene");
     super._start(parent);
     ui.setWidgetTree(createUI());
+    ui.clear();
   }
 
   /** Called by {@link Application} to update the scene */
@@ -97,6 +101,13 @@ public abstract class Scene extends Entity {
     }
 
     ui.draw();
+  }
+
+  /** Called by {@link Application} to resume the scene with optional data */
+  void _resume(Object data) {
+    super._resume(parent);
+
+    resume(data);
   }
 
   /** Called by {@link Application} to run cleanup at the end of a frame */
