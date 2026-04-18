@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static dev.gamekit.utils.Misc.coalesce;
+import static dev.gamekit.utils.Misc.getFirstMatch;
 
 /**
  * A widget is an abstract representation of a portion of a {@link Scene scene's} user interface.
@@ -357,7 +357,7 @@ public abstract class Widget {
           } else if (currentWidgetParent instanceof SingleChildParent currentWidgetSingleChildParent) {
             currentWidgetSingleChildParent.updateChild(newWidget);
           } else if (currentWidgetParent instanceof MultiChildParent currentWidgetMultiChildParent) {
-            int index = currentWidgetMultiChildParent.getChildrenList().indexOf(currentWidget);
+            int index = currentWidgetMultiChildParent.getIndexOf(currentWidget);
             currentWidgetMultiChildParent.updateChild(index, newWidget);
           }
 
@@ -369,31 +369,29 @@ public abstract class Widget {
 
         if (currentWidget instanceof SingleChildParent currentParent && newWidget instanceof SingleChildParent newParent) {
           // Add child of SingleChildParent to queue for processing
-          CURRENT_QUEUE.add(currentParent.getChild());
-          NEW_QUEUE.add(newParent.getChild());
+          CURRENT_QUEUE.add(currentParent.child);
+          NEW_QUEUE.add(newParent.child);
         } else if (currentWidget instanceof MultiChildParent currentParent && newWidget instanceof MultiChildParent newParent) {
           // Add children of MultiChildParent to queue for processing
-          List<Widget> currentParentChildrenWidgets = currentParent.getChildrenList();
-          List<Widget> newParentChildrenWidgets = newParent.getChildrenList();
+          currentParent.resize(newParent.children.length);
 
-          for (int i = 0; i < newParentChildrenWidgets.size(); i++) {
-            Widget newParentWidget = newParentChildrenWidgets.get(i);
-            Widget currentParentWidget =
-              currentParentChildrenWidgets.stream()
-                .filter(widget -> widget.key != null && Objects.equals(widget.key, newWidget.key))
-                .findFirst()
-                .orElse(coalesce(currentParentChildrenWidgets.get(i), Empty.create()));
+          for (int i = 0; i < newParent.children.length; i++) {
+            final int ii = i;
+            Widget newParentWidget = newParent.children[i];
+            Widget currentParentWidget = getFirstMatch(
+              currentParent.children,
+              widget -> newParentWidget.key != null && Objects.equals(newParentWidget.key, widget.key),
+              () -> currentParent.children[ii]
+            );
 
-            if (!CURRENT_QUEUE.contains(currentParentWidget))
-              CURRENT_QUEUE.add(currentParentWidget);
-
-            if (!NEW_QUEUE.contains(newParentWidget))
-              NEW_QUEUE.add(newParentWidget);
+            CURRENT_QUEUE.add(currentParentWidget);
+            NEW_QUEUE.add(newParentWidget);
           }
-
-          currentParent.resizeChildren(newParent.getChildren().length);
         }
       }
+
+      Traveller t = new Traveller() { };
+      t.printTree(treeGetter.get(), 0);
 
       if (treeUpdated) {
         Widget updatedTree = treeGetter.get();
@@ -407,6 +405,19 @@ public abstract class Widget {
 
   /** Mixin interface which provides functionality to travel up or down a widget tree */
   public interface Traveller {
+    default void printTree(Widget tree, int depth) {
+      String tabs = "  ".repeat(depth);
+
+      System.out.println(tabs + tree.getClass().getSimpleName());
+
+      if (tree instanceof SingleChildParent parent) {
+        printTree(parent.child, depth + 1);
+      } else if (tree instanceof MultiChildParent parent) {
+        for (Widget child : parent.children)
+          printTree(child, depth + 1);
+      }
+    }
+
     /** Walks up or down a widget tree, passing each visited widget to the {@code visitor} object */
     default void travelTree(Widget tree, Direction direction, ValueCallback<Widget> visitor) {
       visitor.invoke(tree);
@@ -420,11 +431,9 @@ public abstract class Widget {
         }
         case INWARD -> {
           if (tree instanceof SingleChildParent parent) {
-            travelTree(parent.getChild(), direction, visitor);
+            travelTree(parent.child, direction, visitor);
           } else if (tree instanceof MultiChildParent parent) {
-            Widget[] children = parent.getChildren();
-
-            for (Widget child : children)
+            for (Widget child : parent.children)
               travelTree(child, direction, visitor);
           }
         }

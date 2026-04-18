@@ -1,13 +1,10 @@
 package dev.gamekit.ui.widgets;
 
 import java.awt.*;
-import java.util.List;
 
 /** A parent which contains multiple child {@link Widget widgets} */
 public abstract class MultiChildParent extends Parent {
   protected Widget[] children;
-
-  private List<Widget> childrenList;
 
   public MultiChildParent(String key, Config config, Widget... children) {
     super(key, config);
@@ -21,7 +18,6 @@ public abstract class MultiChildParent extends Parent {
     }
 
     this.children = children;
-    this.childrenList = List.of(children);
   }
 
   @Override
@@ -61,18 +57,17 @@ public abstract class MultiChildParent extends Parent {
       child.unmount();
   }
 
-  /** Returns the {@link #children} array */
-  public Widget[] getChildren() {
-    return children;
-  }
+  /** Returns the index of the given child widget */
+  protected int getIndexOf(Widget child) {
+    for (int i = 0; i < children.length; i++)
+      if (children[i] == child)
+        return i;
 
-  /** Returns the backing {@link #children} list */
-  public List<Widget> getChildrenList() {
-    return childrenList;
+    return -1;
   }
 
   /** Replaces an existing child at the specified {@code index} with the {@code newChild} widget */
-  public final void updateChild(int index, Widget newChild) {
+  protected final void updateChild(int index, Widget newChild) {
     if (index >= children.length) {
       throw new ArrayIndexOutOfBoundsException(
         String.format(
@@ -82,26 +77,30 @@ public abstract class MultiChildParent extends Parent {
       );
     }
 
-    children[index].parent = null;
+    if (children[index] != null)
+      children[index].parent = null;
+
     children[index] = newChild;
     children[index].parent = this;
   }
 
   /**
-   * Resizes the children array, keeping children up to the specified {@code newSize}.
+   * Resizes the children array to match the new size.
    * <p>
-   * During UI reconciliation, if a {@link MultiChildParent} at the same position in the new tree has fewer children
-   * than this one, the children must be resized, removing excess children and preventing them from being rendered.
+   * If the new size is greater, the remaining slots are filled with empty placeholders
    */
-  public final void resizeChildren(int newSize) {
-    if (children.length == newSize)
+  protected void resize(int newSize) {
+    if (newSize == children.length)
       return;
 
+    int oldSize = children.length;
     Widget[] newChildren = new Widget[newSize];
-
-    System.arraycopy(children, 0, newChildren, 0, newSize);
-
+    System.arraycopy(children, 0, newChildren, 0, Math.min(children.length, newSize));
     children = newChildren;
-    childrenList = List.of(children);
+
+    if (newSize > oldSize) {
+      for (int i = oldSize; i < newSize; i++)
+        updateChild(i, Empty.create());
+    }
   }
 }
