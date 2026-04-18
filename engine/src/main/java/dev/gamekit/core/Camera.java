@@ -76,7 +76,7 @@ public final class Camera {
 
   /** Returns the {@code y} translation of the {@link Camera} */
   public static double getY() {
-    return y;
+    return -y;
   }
 
   /** Applies the camera's position and zoom to the current window's transform matrix */

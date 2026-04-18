@@ -175,6 +175,9 @@ The video below is taken from **GTA: Vice City**, where the player character is 
 the scene transitions from the outdoor to the hotel interior scene following the fade to black. This is what scene
 stacking allows you to accomplish in your game.
 
+The "outdoor" (current) scene is effectively paused while the "indoor" (new) scene runs. When the player is ready to
+leave the "inside" scene, you can resume the "outdoor" scene.
+
 <video controls style="max-width:480px;width:100%">
   <source src="/assets/gta-vice-city-scene-transition.mp4">
 </video>

@@ -178,11 +178,12 @@ public abstract class Application {
         lastFrameTime = currentFrameTime;
         frameTimeAccumulator += timeDiff;
 
-        while (frameTimeAccumulator >= FRAME_INTERVAL_MS) {
+        while (frameTimeAccumulator >= FRAME_INTERVAL_MS && isRunning) {
           frameTimeAccumulator -= FRAME_INTERVAL_MS;
           Input.freeze();
           update();
           Input.reset();
+          Thread.sleep(1);
         }
 
         render();
