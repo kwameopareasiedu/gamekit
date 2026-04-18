@@ -97,8 +97,21 @@ public class Animation {
   }
 
   /**
-   * Stops and resets this animation by changing its state to {@link State#STOPPED} and its value
-   * to {@code 0}. Stopped animations can be restarted by calling {@link #start}
+   * Pauses this animation by changing its state to {@link State#PAUSED}.
+   * <p>
+   * Paused animations can be restarted by calling {@link #start}
+   */
+  public void pause() {
+    state = State.PAUSED;
+
+    if (stateListener != null)
+      stateListener.invoke(state);
+  }
+
+  /**
+   * Stops and resets this animation by changing its state to {@link State#STOPPED} and its value to {@code 0}.
+   * <p>
+   * Stopped animations can be restarted by calling {@link #start}
    */
   public void stop() {
     state = State.STOPPED;

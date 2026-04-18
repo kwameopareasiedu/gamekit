@@ -32,6 +32,7 @@
 - Added `void restart()` lifecycle method to `Component` class
 - Added `void stop()` lifecycle method to `Component` class
 - Added `void _stop()` lifecycle method to `Entity` class
+- Added `void pause()` method to `Animation` class
 
 ### Changed
 
