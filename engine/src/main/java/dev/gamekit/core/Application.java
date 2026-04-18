@@ -280,6 +280,8 @@ public abstract class Application {
         }
       }
 
+      Camera.reset();
+
       currentScene = nextScene;
 
       Entity.State currentSceneState = currentScene.getState();
@@ -292,7 +294,6 @@ public abstract class Application {
         currentScene._resume(sceneData);
       }
 
-      Camera.reset();
       nextScene = null;
       sceneData = null;
       sceneFlags = 0;
