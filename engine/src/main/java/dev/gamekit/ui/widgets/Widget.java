@@ -390,8 +390,10 @@ public abstract class Widget {
         }
       }
 
-      Traveller t = new Traveller() { };
-      t.printTree(treeGetter.get(), 0);
+      if (Widget.DEBUG) {
+        Traveller t = new Traveller() { };
+        t.printTree(treeGetter.get(), 0);
+      }
 
       if (treeUpdated) {
         Widget updatedTree = treeGetter.get();
