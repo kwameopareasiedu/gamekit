@@ -38,6 +38,7 @@
 - Added `void popSceneStack(Object data)` method to `Application` class
 - Added `void popSceneStack()` method to `Application` class
 - Added protected `camera` field to `Scene` class
+- Added `Vector getLinearVelocity()` method to `RigidBody` class
 
 ### Changed
 

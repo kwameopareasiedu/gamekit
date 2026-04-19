@@ -28,6 +28,7 @@ import java.util.List;
  */
 public class RigidBody extends Component {
   public static boolean DEBUG = false;
+  private static final Vector VEC_BUFFER = new Vector();
   private static final Vector2 VEC2_BUFFER = new Vector2();
 
   private final RefBody body;
@@ -88,6 +89,18 @@ public class RigidBody extends Component {
   public void setLinearVelocity(double x, double y) {
     body.setAtRest(false);
     body.setLinearVelocity(x, y);
+  }
+
+  /**
+   * Returns the linear velocity of this {@link RigidBody}
+   * <p>
+   * <i>NB: For added performance, the returned {@link Vector} is reused across multiple invocations, so you should
+   * not keep a reference to it. Rather, retrieve the x and y values and store them if you need to</i>
+   */
+  public Vector getLinearVelocity() {
+    Vector2 vel = body.getLinearVelocity();
+    VEC_BUFFER.set(vel.x, vel.y);
+    return VEC_BUFFER;
   }
 
   /**
