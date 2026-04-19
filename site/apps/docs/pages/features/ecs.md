@@ -168,8 +168,7 @@ topic of [UI](ui.md) is explored in much more detail in a later section.
 
 ### Loading Scenes
 
-To load your scene class into your [application](/features/application), use the `loadScene` method in the `Application`
-instance.
+To load a scene class into your game, use the `loadScene` method on the `Application` instance.
 
 ```java
 Application.getInstance().loadScene(new CustomScene());
@@ -197,6 +196,33 @@ leave the "inside" scene, you can resume the "outdoor" scene.
 <video controls style="max-width:480px;width:100%">
   <source src="/assets/gta-vice-city-scene-transition.mp4">
 </video>
+
+To stack a new scene class on top of the current scene, use the `stackScene` method on the `Application` instance.
+
+```java
+Application.getInstance().stackScene(new CustomScene());
+```
+
+You can later use the `popSceneStack` method on the `Application` instance to end new scene and resume the previously
+suspended scene. The `popSceneStack` has an overload which accepts data to be passed back to the suspended scene.
+
+```java
+// End the current scene and resume the suspended scene
+Application.getInstance().popSceneStack();
+
+// or
+
+// End the current scene and resume the suspended scene, passing back some data
+Application.getInstance().popSceneStack(data);
+```
+
+In the suspended scene, you can override the `void resume(Object data)` method to access the data passed from the ended
+stacked scene.
+```java
+void resume(Object data) {
+  // Do something with the returned data
+}
+```
 
 ## Next Steps
 

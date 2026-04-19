@@ -53,11 +53,11 @@ public abstract class Entity {
    * {@link Entity#_resume} if it's state is {@link State#INACTIVE}.
    */
   public void addChild(Entity child) {
-    if (children.contains(child)) return;
+    if (children.contains(child))
+      return;
 
-    if (child.parent != null) {
+    if (child.parent != null)
       throw new IllegalStateException("Cannot add child with parent. Remove from parent first");
-    }
 
     switch (child.state) {
       case DOOMED, DEAD -> throw new IllegalStateException("Cannot add a doomed or dead child");
@@ -100,10 +100,12 @@ public abstract class Entity {
   /** Returns a {@link Component} of the specified class, matching the provided filter else {@code null} */
   public <T extends Component> T findComponent(Class<T> clazz, Component.Filter<T> filter) {
     // Optimization for finding the Transform component
-    if (clazz == Transform.class) return (T) components.get(0);
+    if (clazz == Transform.class)
+      return (T) components.get(0);
 
     for (Component component : components) {
-      if (clazz.isInstance(component) && filter.filter((T) component)) return (T) component;
+      if (clazz.isInstance(component) && filter.filter((T) component))
+        return (T) component;
     }
 
     return null;

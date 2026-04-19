@@ -28,7 +28,8 @@ public abstract class Application {
   public static final long FRAME_INTERVAL_MS = 1000 / 240;
   public static final long DRAW_INTERVAL_MS = 1000 / 60;
 
-  private static final int STACK_SCENE_FLAG = 1;
+  private static final int SCENE_FLAG_NONE = 0;
+  private static final int SCENE_FLAG_STACK = 1;
   private static Application instance;
 
   protected final Logger logger = LogManager.getLogger(getClass());
@@ -81,12 +82,12 @@ public abstract class Application {
 
   /** Schedules a scene to be loaded at the end of the current frame, replacing the current scene */
   public void loadScene(Scene scene) {
-    loadScene(scene, 0);
+    loadScene(scene, SCENE_FLAG_NONE, null);
   }
 
   /** Schedules a scene to be loaded at the end of the current frame, stacking the current scene */
   public void stackScene(Scene scene) {
-    loadScene(scene, STACK_SCENE_FLAG);
+    loadScene(scene, SCENE_FLAG_STACK, null);
   }
 
   /**
@@ -100,8 +101,7 @@ public abstract class Application {
     if (sceneStack.empty())
       throw new IllegalStateException("Scene stack is empty");
 
-    this.sceneData = data;
-    loadScene(sceneStack.pop());
+    loadScene(sceneStack.pop(), SCENE_FLAG_NONE, data);
   }
 
   /**
@@ -202,12 +202,13 @@ public abstract class Application {
   }
 
   /** Schedules a scene to be loaded after the end of the current frame */
-  private void loadScene(Scene scene, int flags) {
+  private void loadScene(Scene scene, int flags, Object data) {
     if (scene == null)
       throw new IllegalArgumentException("Unable to load a null scene");
 
     nextScene = scene;
     sceneFlags = flags;
+    sceneData = data;
     logger.debug("Loaded next scene: {}, Flags: {}", scene.name, flags);
   }
 
@@ -266,11 +267,11 @@ public abstract class Application {
       currentScene._disposeFrame();
 
     if (nextScene != null) {
-      final boolean stackCurrentScene = (sceneFlags | STACK_SCENE_FLAG) == STACK_SCENE_FLAG;
+      boolean shouldStackCurrentScene = (sceneFlags | SCENE_FLAG_STACK) == SCENE_FLAG_STACK;
 
       if (currentScene != null) {
         synchronized (currentScene) {
-          if (stackCurrentScene) {
+          if (shouldStackCurrentScene) {
             currentScene._stop();
             sceneStack.push(currentScene);
           } else {
@@ -293,7 +294,7 @@ public abstract class Application {
 
       nextScene = null;
       sceneData = null;
-      sceneFlags = 0;
+      sceneFlags = SCENE_FLAG_NONE;
     }
   }
 
