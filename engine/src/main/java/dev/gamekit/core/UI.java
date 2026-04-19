@@ -62,9 +62,13 @@ public final class UI implements Widget.Host, Widget.Updater, Widget.Traveller {
 
   /** Clears the UI buffer with transparent pixels */
   public void clear() {
-    canvasGraphics.setBackground(TRANSPARENT_COLOR);
-    canvasGraphics.clearRect(0, 0, canvasImage.getWidth(), canvasImage.getHeight());
-    needsDraw = true;
+    Window win = Window.getInstance();
+    Graphics2D uiGraphics = win.getUiGraphics();
+    int displayWidth = win.getDisplayWidth();
+    int displayHeight = win.getDisplayHeight();
+
+    uiGraphics.setBackground(TRANSPARENT_COLOR);
+    uiGraphics.clearRect(0, 0, displayWidth, displayHeight);
   }
 
   @Override
