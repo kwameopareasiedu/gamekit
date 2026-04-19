@@ -87,9 +87,8 @@ public abstract class Scene extends Entity {
     super._update();
     ui.update();
 
-    if (Renderer.isCompleted()) {
+    if (Renderer.isCompleted())
       Renderer.reset();
-    }
 
     animations.removeIf(Animation::isEnded);
     timeouts.removeIf(Timeout::isCompleted);
@@ -109,9 +108,8 @@ public abstract class Scene extends Entity {
   void _draw() {
     camera.updateWindowTransform();
 
-    if (Renderer.isCommitted() && !Renderer.isCompleted()) {
+    if (Renderer.isCommitted() && !Renderer.isCompleted())
       Renderer.draw(Window.getInstance().getDisplayGraphics());
-    }
 
     ui.draw();
   }

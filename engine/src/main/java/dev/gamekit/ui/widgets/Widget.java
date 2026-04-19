@@ -372,9 +372,10 @@ public abstract class Widget {
           CURRENT_QUEUE.add(currentParent.child);
           NEW_QUEUE.add(newParent.child);
         } else if (currentWidget instanceof MultiChildParent currentParent && newWidget instanceof MultiChildParent newParent) {
-          // Add children of MultiChildParent to queue for processing
+          // Resize children array of current parent to accommodate for new widgets from new parent
           currentParent.resize(newParent.children.length);
 
+          // Add children of MultiChildParent to queue for processing
           for (int i = 0; i < newParent.children.length; i++) {
             final int ii = i;
             Widget newParentWidget = newParent.children[i];
