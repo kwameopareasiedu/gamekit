@@ -4,8 +4,12 @@ package dev.gamekit.animation;
  * {@link AnimationSlice} observes a slice of an {@link Animation}'s value and maps it to a new 0 - 1 range.
  * <p>
  * For example, if you are interested in the animation's value between 0.5 and 0.8, you can create an
- * {@link AnimationSlice} with this range. In this case, the slice's value will remain at 0 until the backing animation
- * value reaches 0.5
+ * {@link AnimationSlice} with this range.
+ * <p>
+ * In this case, the slice's value will remain at 0 until the backing animation value reaches 0.5 and will reach a
+ * value of 1 when the backing animation reaches 0.8 and stay there.
+ * <p>
+ * Additionally, an {@link AnimationCurve} can be attached to change how the slice's value is interpolated.
  */
 public class AnimationSlice {
   private final Animation animation;

@@ -9,8 +9,9 @@ import static dev.gamekit.utils.Math.clamp;
  * {@link Animation} holds a value which increments from 0 to 1 over some duration. The value can then be connected
  * to any property for smooth transitions.
  * <p>
- * Animation can be set to run once or repeat (either restart or alternate). Additionally, an {@link AnimationCurve}
- * can be attached to change how the animation's value is interpolated.
+ * Animation can be set to run once or repeat (either restart or alternate).
+ * <p>
+ * Additionally, an {@link AnimationCurve} can be attached to change how the animation's value is interpolated.
  */
 public class Animation {
   private final RepeatMode repeatMode;
@@ -93,7 +94,7 @@ public class Animation {
       stateListener.invoke(state);
 
     if (valueListener != null)
-      valueListener.invoke(value);
+      valueListener.invoke(getValue());
   }
 
   /**

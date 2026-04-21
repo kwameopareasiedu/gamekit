@@ -6,6 +6,7 @@
 - New widgets: Flow, Divider, Scroll
 - Dynamic lighting
 - Networked multiplayer
+- Update AudioClip to preload in constructor to be able to use clip instances without Audio.get();
 
 ## UNRELEASED
 
