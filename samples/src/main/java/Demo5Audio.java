@@ -52,9 +52,11 @@ public class Demo5Audio extends Scene {
       new LinearAudioAttenuation(), new CircleAudioShape(5, 30)
     );
 
-    clip.addListener(ev -> logger.debug(ev.type()));
+    logger.debug("Loaded clip: {}", Audio.loadClip("cybertruck.wav") != null);
 
-    Audio.preload(MUSIC_KEY, clip);
+//    clip.addListener(ev -> logger.debug(ev.type()));
+//
+//    Audio.preload(MUSIC_KEY, clip);
   }
 
   public static void main(String[] args) {
@@ -73,16 +75,16 @@ public class Demo5Audio extends Scene {
 
   @Override
   protected void start() {
-    Audio.<AudioClip3D>get(MUSIC_KEY).setPosition(0, 0);
+//    Audio.<AudioClip3D>get(MUSIC_KEY).setPosition(0, 0);
   }
 
   @Override
   protected void update() {
-    if (Input.isKeyDown(Input.KEY_SPACE))
-      Audio.get(MUSIC_KEY).play();
-
-    if (Input.isKeyDown(Input.KEY_ESCAPE))
-      Audio.get(MUSIC_KEY).stop();
+//    if (Input.isKeyDown(Input.KEY_SPACE))
+//      Audio.get(MUSIC_KEY).play();
+//
+//    if (Input.isKeyDown(Input.KEY_ESCAPE))
+//      Audio.get(MUSIC_KEY).stop();
 
     Window win = Window.getInstance();
     Position mousePos = Input.getMousePosition();

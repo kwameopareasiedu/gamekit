@@ -3,8 +3,11 @@ package dev.gamekit.audio;
 import static dev.gamekit.utils.Math.clamp;
 
 /**
- * {@link AudioGroup} are attached to multiple a group of {@link AudioClip} objects in order to group control their
- * properties
+ * An {@link AudioGroup} is a channel that feeds audio into the system's audio mixer. Input audio from all groups are
+ * then mixed into the final output audio sent to the sound output devices.
+ * <p>
+ * {@link AudioGroup} provides the ability to adjust controls for all audio streams channelled through it. These
+ * controls include volume, pan, speed, pitch and reverberation.
  * <p>
  * A common use-case is setting the volume of all background music and all sound effects in a game
  */
@@ -14,12 +17,18 @@ public class AudioGroup {
 
   private final String name;
   private boolean muted;
-  private double maxVolume;
+  private double volume;
+  private double pitch;
+  private double speed;
+  private double reverb;
 
-  public AudioGroup(String name, double maxVolume) {
+  public AudioGroup(String name, double volume) {
     this.name = name;
-    this.maxVolume = maxVolume;
+    this.volume = volume;
     this.muted = false;
+    this.pitch = 1;
+    this.speed = 1;
+    this.reverb = 1;
   }
 
   /** Returns the name of this {@link AudioGroup} */
@@ -28,7 +37,7 @@ public class AudioGroup {
   }
 
   /** Returns the mute status of this {@link AudioGroup} */
-  public boolean isMuted() {
+  boolean isMuted() {
     return muted;
   }
 
@@ -38,12 +47,12 @@ public class AudioGroup {
   }
 
   /** Returns the max volume of this {@link AudioGroup} */
-  public double getMaxVolume() {
-    return maxVolume;
+  double getVolume() {
+    return volume;
   }
 
   /** Sets the max volume of this {@link AudioGroup}, affecting any associated {@link AudioClip} */
-  public void setMaxVolume(double maxVolume) {
-    this.maxVolume = clamp(maxVolume, 0, 1);
+  public void setVolume(double volume) {
+    this.volume = clamp(volume, 0, 1);
   }
 }

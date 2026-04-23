@@ -11,24 +11,24 @@ public class AudioClip2D extends AudioClip {
   private double effectiveVolume = -1;
 
   public AudioClip2D(String resPath, AudioGroup group, double maxVolume) {
-    super(resPath, group, maxVolume);
+    super(null, null, null, false);
 
-    performUpdate();
+//    performUpdate();
   }
 
-  @Override
-  public void performUpdate() {
-    double effectiveVolume = !group.isMuted() ?
-      group.getMaxVolume() * maxVolume : 0;
-
-    if (this.effectiveVolume != effectiveVolume) {
-      if (gainControl != null) {
-        double gain = 20 * Math.log10(effectiveVolume);
-        gain = clamp(gain, gainControl.getMinimum(), gainControl.getMaximum());
-        gainControl.setValue((float) gain);
-      }
-
-      this.effectiveVolume = effectiveVolume;
-    }
-  }
+//  @Override
+//  public void performUpdate() {
+//    double effectiveVolume = !group.isMuted() ?
+//      group.getVolume() * maxVolume : 0;
+//
+//    if (this.effectiveVolume != effectiveVolume) {
+//      if (gainControl != null) {
+//        double gain = 20 * Math.log10(effectiveVolume);
+//        gain = clamp(gain, gainControl.getMinimum(), gainControl.getMaximum());
+//        gainControl.setValue((float) gain);
+//      }
+//
+//      this.effectiveVolume = effectiveVolume;
+//    }
+//  }
 }
