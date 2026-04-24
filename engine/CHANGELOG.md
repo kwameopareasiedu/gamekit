@@ -46,10 +46,11 @@
 - Renamed `EngineImage` class to `Picture`
 - Renamed `DEBUG_DRAW` to `DEBUG` in `RigidBody` class
 - Modified `Window` class to render and resizable `JFrame` when not in fullscreen
-- Updated `RigidBody` class to remove body from physics world when stopped 
-- Updated `RigidBody` class to add body to physics world when restarted 
+- Updated `RigidBody` class to remove body from physics world when stopped
+- Updated `RigidBody` class to add body to physics world when restarted
 - Changed signature of `void restart()` method in `Entity` class to `void resume()`
 - Changed `Camera` class from static to instance
+- Renamed `Math` utility class to `GMath`
 
 ### Deprecated
 

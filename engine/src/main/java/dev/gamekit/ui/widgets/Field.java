@@ -15,7 +15,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static dev.gamekit.utils.Math.clamp;
+import static dev.gamekit.utils.GMath.clamp;
 
 /** A {@link Text} widget extension which accepts text input */
 // TODO: Implement sliding window for text rendering

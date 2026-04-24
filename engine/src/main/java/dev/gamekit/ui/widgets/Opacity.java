@@ -6,7 +6,7 @@ import dev.gamekit.utils.Constraints;
 
 import java.awt.*;
 
-import static dev.gamekit.utils.Math.clamp;
+import static dev.gamekit.utils.GMath.clamp;
 
 /** A {@link SingleChildParent} which renders its child with transparency */
 @WidgetBuilder

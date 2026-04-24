@@ -122,7 +122,7 @@ import dev.gamekit.ui.widgets.Align;
 import dev.gamekit.ui.widgets.Padding;
 import dev.gamekit.ui.widgets.Text;
 import dev.gamekit.ui.widgets.Widget;
-import dev.gamekit.utils.Math;
+import dev.gamekit.utils.GMath;
 
 import java.awt.*;
 

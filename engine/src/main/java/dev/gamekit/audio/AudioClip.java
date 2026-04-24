@@ -1,7 +1,7 @@
 package dev.gamekit.audio;
 
 import dev.gamekit.core.Audio;
-import dev.gamekit.utils.Math;
+import dev.gamekit.utils.GMath;
 
 /**
  * {@link AudioClip} is abstract class which stores audio data.
@@ -9,15 +9,13 @@ import dev.gamekit.utils.Math;
  * {@link AudioClip} is not instantiated directly, but by using methods in the {@link Audio} utility
  */
 public class AudioClip {
-  private final AudioBus bus;
   private final byte[] channelLBytes;
   private final byte[] channelRBytes;
   private boolean playing;
   private boolean looping;
   private int position;
 
-  public AudioClip(AudioBus bus, byte[] channelLBytes, byte[] channelRBytes, boolean looping) {
-    this.bus = bus;
+  public AudioClip(byte[] channelLBytes, byte[] channelRBytes, boolean looping) {
     this.channelLBytes = channelLBytes;
     this.channelRBytes = channelRBytes;
     this.playing = false;
@@ -52,10 +50,23 @@ public class AudioClip {
 
   /** Sets the position of this clip */
   public void setPosition(int position) {
-    this.position = Math.clamp(position, 0, channelLBytes.length - 1);
+    this.position = GMath.clamp(position, 0, channelLBytes.length - 1);
   }
 
   public int getRemainingBytes() {
-    return this.channelLBytes.length - this.position;
+    return channelLBytes.length - position;
+  }
+
+  public void readNextTwoBytes(int[] out) {
+    // Little endian byte ordering
+    out[0] = (channelLBytes[position + 1] << 8) | (channelLBytes[position] & 0xFF);
+    out[1] = (channelRBytes[position + 1] << 8) | (channelRBytes[position] & 0xFF);
+
+    position += 2;
+
+    if (position > channelLBytes.length) {
+      if (looping) position = 0;
+      else playing = false;
+    }
   }
 }

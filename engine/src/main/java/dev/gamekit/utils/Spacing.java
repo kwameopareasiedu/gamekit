@@ -2,8 +2,6 @@ package dev.gamekit.utils;
 
 import dev.gamekit.ui.widgets.Widget;
 
-import java.lang.Math;
-
 /** Represents a padding or margin of a {@link Widget} */
 public class Spacing {
   public int top;
@@ -31,9 +29,9 @@ public class Spacing {
   }
 
   public Spacing(int top, int right, int bottom, int left) {
-    this.top = java.lang.Math.max(0, top);
-    this.right = java.lang.Math.max(0, right);
-    this.bottom = java.lang.Math.max(0, bottom);
+    this.top = Math.max(0, top);
+    this.right = Math.max(0, right);
+    this.bottom = Math.max(0, bottom);
     this.left = Math.max(0, left);
   }
 

@@ -1,6 +1,6 @@
 package dev.gamekit.audio;
 
-import static dev.gamekit.utils.Math.clamp;
+import static dev.gamekit.utils.GMath.clamp;
 
 /**
  * An {@link AudioGroup} is a channel that feeds audio into the system's audio mixer. Input audio from all groups are

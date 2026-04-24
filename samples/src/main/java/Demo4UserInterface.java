@@ -18,7 +18,7 @@ import utils.SubMenuButton;
 
 import java.awt.*;
 
-import static dev.gamekit.utils.Math.degToRad;
+import static dev.gamekit.utils.GMath.degToRad;
 
 /**
  * This demo shows how to build user interfaces and performs the following actions:

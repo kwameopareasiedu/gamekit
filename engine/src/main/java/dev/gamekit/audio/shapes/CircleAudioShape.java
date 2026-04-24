@@ -3,7 +3,7 @@ package dev.gamekit.audio.shapes;
 import dev.gamekit.audio.AudioClip3D;
 import dev.gamekit.utils.Vector;
 
-import static dev.gamekit.utils.Math.clamp;
+import static dev.gamekit.utils.GMath.clamp;
 
 /** A {@link AudioShape} which defines a circular attenuation area around {@link AudioClip3D} */
 public class CircleAudioShape extends AudioShape {

@@ -2,10 +2,9 @@ package dev.gamekit.utils;
 
 import org.junit.jupiter.api.Test;
 
-import static dev.gamekit.utils.Math.degToRad;
-import static dev.gamekit.utils.Math.radToDeg;
-import static java.lang.Math.PI;
-import static java.lang.Math.abs;
+import static dev.gamekit.utils.GMath.degToRad;
+import static Math.PI;
+import static Math.abs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -35,7 +34,7 @@ public class VectorTest {
 
   @Test
   public void fromMagnitudeRotationTest() {
-    double hs2 = 0.5 * java.lang.Math.sqrt(2);
+    double hs2 = 0.5 * Math.sqrt(2);
 
     Vector v1, v2;
 
@@ -87,13 +86,13 @@ public class VectorTest {
     assertEquals(10, v.getMagnitude());
 
     v.lerpAngle(new Vector(1, 0), 0.5);
-    assertTrue(abs(degToRad(45) - v.getAngle()) < Math.EPSILON);
+    assertTrue(abs(degToRad(45) - v.getAngle()) < GMath.EPSILON);
 
     v.lerpAngle(new Vector(1, 0), 0.5);
-    assertTrue(abs(degToRad(67.5) - v.getAngle()) < Math.EPSILON);
+    assertTrue(abs(degToRad(67.5) - v.getAngle()) < GMath.EPSILON);
 
     v.lerpAngle(new Vector(1, 0), 1);
-    assertTrue(abs(PI * 0.5 - v.getAngle()) < Math.EPSILON);
-    assertTrue(abs(10 - v.getMagnitude()) < Math.EPSILON);
+    assertTrue(abs(PI * 0.5 - v.getAngle()) < GMath.EPSILON);
+    assertTrue(abs(10 - v.getMagnitude()) < GMath.EPSILON);
   }
 }

@@ -1,11 +1,7 @@
-import dev.gamekit.audio.AudioClip;
 import dev.gamekit.audio.AudioClip3D;
-import dev.gamekit.audio.AudioGroup;
 import dev.gamekit.audio.AudioListener;
 import dev.gamekit.audio.attenuation.AudioAttenuation;
-import dev.gamekit.audio.attenuation.LinearAudioAttenuation;
 import dev.gamekit.audio.shapes.AudioShape;
-import dev.gamekit.audio.shapes.CircleAudioShape;
 import dev.gamekit.core.*;
 import dev.gamekit.core.Window;
 import dev.gamekit.settings.*;
@@ -18,7 +14,9 @@ import dev.gamekit.utils.Picture;
 import dev.gamekit.utils.Position;
 import dev.gamekit.utils.Vector;
 
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.awt.*;
+import java.io.IOException;
 import java.util.Objects;
 
 /**
@@ -48,11 +46,20 @@ public class Demo5Audio extends Scene {
     listenerPos = new Vector(0, 0);
     prevMousePos = new Position(0, 0);
 
-    AudioClip clip = new AudioClip3D("cybertruck.wav", AudioGroup.MUSIC, 1,
-      new LinearAudioAttenuation(), new CircleAudioShape(5, 30)
-    );
+//    AudioClip clip = new AudioClip3D("cybertruck.wav", AudioGroup.MUSIC, 1,
+//      new LinearAudioAttenuation(), new CircleAudioShape(5, 30)
+//    );
+    try {
+      var clip1 = Audio.loadClip("cybertruck.wav");
+      var clip2 = Audio.loadClip("beats.wav");
 
-    logger.debug("Loaded clip: {}", Audio.loadClip("cybertruck.wav") != null);
+      clip1.setPlaying(true);
+      clip2.setPlaying(true);
+    } catch (UnsupportedAudioFileException | IOException e) {
+      throw new RuntimeException(e);
+    }
+
+//    logger.debug("Loaded clip: {}", Audio.loadClip("cybertruck.wav") != null);
 
 //    clip.addListener(ev -> logger.debug(ev.type()));
 //

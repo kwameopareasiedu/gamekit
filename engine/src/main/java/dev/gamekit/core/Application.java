@@ -319,9 +319,9 @@ public abstract class Application {
 
   private static class WorkerThread extends Thread {
     private final long frameTimeMs;
-    private final Runnable runnable;
+    private final VoidCallback runnable;
 
-    private WorkerThread(String threadName, long frameTimeMs, Runnable runnable) {
+    private WorkerThread(String threadName, long frameTimeMs, VoidCallback runnable) {
       super(threadName);
       this.frameTimeMs = frameTimeMs;
       this.runnable = runnable;
@@ -342,7 +342,7 @@ public abstract class Application {
 
         while (frameTimeAccumulator >= frameTimeMs) {
           frameTimeAccumulator -= frameTimeMs;
-          try { runnable.run(); } //
+          try { runnable.invoke(); } //
           catch (Exception ignored) { }
         }
 

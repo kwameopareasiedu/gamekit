@@ -4,9 +4,7 @@ import dev.gamekit.audio.attenuation.AudioAttenuation;
 import dev.gamekit.audio.shapes.AudioShape;
 import dev.gamekit.utils.Vector;
 
-import javax.sound.sampled.FloatControl;
-
-import static dev.gamekit.utils.Math.clamp;
+import static dev.gamekit.utils.GMath.clamp;
 
 /**
  * {@link AudioClip3D} is a {@link AudioClip} whose volume and sound change with respect to their position from the
@@ -34,7 +32,7 @@ public class AudioClip3D extends AudioClip {
     AudioAttenuation attenuation,
     AudioShape shape
   ) {
-    super(null, null, null, false);
+    super(null, null, false);
 //    this.attenuation = attenuation;
 //    this.shape = shape;
 //    this.position = new Vector();

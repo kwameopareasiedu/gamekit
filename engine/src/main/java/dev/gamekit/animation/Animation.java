@@ -3,7 +3,7 @@ package dev.gamekit.animation;
 import dev.gamekit.core.Application;
 import dev.gamekit.utils.ValueCallback;
 
-import static dev.gamekit.utils.Math.clamp;
+import static dev.gamekit.utils.GMath.clamp;
 
 /**
  * {@link Animation} holds a value which increments from 0 to 1 over some duration. The value can then be connected

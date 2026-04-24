@@ -1,6 +1,6 @@
 package dev.gamekit.audio;
 
-import static dev.gamekit.utils.Math.clamp;
+import static dev.gamekit.utils.GMath.clamp;
 
 /**
  * {@link AudioClip2D} is a {@link AudioClip} which plays back consistently at the same volume and pan regardless of
@@ -11,7 +11,7 @@ public class AudioClip2D extends AudioClip {
   private double effectiveVolume = -1;
 
   public AudioClip2D(String resPath, AudioGroup group, double maxVolume) {
-    super(null, null, null, false);
+    super(null, null, false);
 
 //    performUpdate();
   }
