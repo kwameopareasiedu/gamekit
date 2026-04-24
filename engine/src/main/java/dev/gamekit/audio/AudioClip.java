@@ -141,6 +141,15 @@ public class AudioClip {
     }
   }
 
+  /** Clears all audio data and resets internal state */
+  public void dispose() {
+    playing = false;
+    head = 0;
+
+    if (eventListener != null)
+      eventListener.invoke(Event.DISPOSE);
+  }
+
   /** Constants for the events emitted by an {@link AudioClip} */
   public enum Event {
     /** Indicates a playing clip */
@@ -150,6 +159,8 @@ public class AudioClip {
     /** Pseudo-state indicating a clip has restarted */
     RESTART,
     /** Indicates a stopped clip which can be restarted */
-    STOP
+    STOP,
+    /** Indicates a clip is being disposed */
+    DISPOSE
   }
 }

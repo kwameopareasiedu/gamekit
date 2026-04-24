@@ -304,6 +304,9 @@ public abstract class Application {
 
     if (currentScene != null) currentScene._dispose();
 
+    Audio.dispose();
+    IO.dispose();
+
     audioThread.interrupt();
     audioThread.join(500);
 
@@ -312,9 +315,6 @@ public abstract class Application {
 
     drawThread.interrupt();
     drawThread.join(500);
-
-    Audio.dispose();
-    IO.dispose();
   }
 
   private static class WorkerThread extends Thread {

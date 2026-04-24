@@ -14,25 +14,76 @@ import java.util.List;
 public class AudioBus {
   public static final String DEFAULT_ID = "default";
 
-  final Object id;
+  public final Object id;
+
   private final List<AudioClip> clips;
   private final int[] byteBuffer;
-  private double volume = 1.0;
-  private double pan = -0.5;
+  private double volume;
+  private double pan;
+  private boolean muted;
 
-  public AudioBus(Object id) {
+  public AudioBus(Object id, double volume, double pan, boolean muted) {
     this.id = id;
+    this.volume = volume;
+    this.pan = pan;
+    this.muted = muted;
+
     clips = new ArrayList<>();
     byteBuffer = new int[2];
   }
 
-  public void addClip(AudioClip clip) {
-    if (clips.contains(clip))
-      return;
-
-    clips.add(clip);
+  public AudioBus(Object id) {
+    this(id, 1, 0, false);
   }
 
+  /** Called internally to add an {@link AudioClip} to this bus */
+  public AudioBus addClip(AudioClip clip) {
+    if (clips.contains(clip))
+      return this;
+
+    clips.add(clip);
+    return this;
+  }
+
+  /** Returns the volume value of this bus */
+  public double getVolume() {
+    return volume;
+  }
+
+  /** Sets the volume value of this bus */
+  public AudioBus setVolume(double volume) {
+    this.volume = volume;
+    return this;
+  }
+
+  /** Returns the pan value of this bus */
+  public double getPan() {
+    return pan;
+  }
+
+  /** Sets the pan value of this bus */
+  public AudioBus setPan(double pan) {
+    this.pan = pan;
+    return this;
+  }
+
+  /** Returns the muted status of this bus */
+  public boolean isMuted() {
+    return muted;
+  }
+
+  /** Sets the muted status of this bus */
+  public AudioBus setMuted(boolean muted) {
+    this.muted = muted;
+    return this;
+  }
+
+  /**
+   * Reads a specified number of bytes from a given offset of the audio data of all {@link AudioClip} objects,
+   * returning the number of bytes actually read.
+   * <p>
+   * Audio filters are applied to the signal sum of all audio clips.
+   */
   public int read(byte[] out, int offset, int length) {
     int bytesRead = 0;
     boolean didReadBytes = true;
@@ -49,8 +100,8 @@ public class AudioBus {
         clip.readNextTwoBytes(byteBuffer);
         didReadBytes = true;
 
-        double clipLv = volume * byteBuffer[0];
-        double clipRv = volume * byteBuffer[1];
+        double clipLv = (!muted ? volume : 0) * byteBuffer[0];
+        double clipRv = (!muted ? volume : 0) * byteBuffer[1];
 
         if (!GMath.isPracticallyZero(pan)) {
           double ll = (pan <= 0) ? 1.0 : (1.0 - pan);
@@ -87,7 +138,11 @@ public class AudioBus {
     return bytesRead;
   }
 
+  /** Disposes the bus, releasing any consumed resources */
   public void dispose() {
+    for (AudioClip clip : clips)
+      clip.dispose();
 
+    clips.clear();
   }
 }

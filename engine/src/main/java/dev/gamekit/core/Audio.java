@@ -47,15 +47,39 @@ public final class Audio {
 
   private Audio() { }
 
+  /** Loads the audio data at the audio resource path into an {@link AudioClip} object */
   public static AudioClip loadClip(String resPath) throws UnsupportedAudioFileException, IOException {
     AudioInputStream audioStream = get16BitAudioInputStream(resPath);
-    byte[][] data = getStereoStreamData(audioStream);
+    byte[][] data = getChannelStreamData(audioStream);
     AudioClip clip = new AudioClip(data[0], data[1], false);
 
     AudioBus defaultBus = BUSSES.get(AudioBus.DEFAULT_ID);
     defaultBus.addClip(clip);
 
     return clip;
+  }
+
+  /** Creates and returns a new {@link AudioBus} with the given id and default parameters */
+  public static AudioBus createBus(Object id) {
+    AudioBus existingBus = getBus(id);
+
+    if (existingBus != null)
+      return existingBus;
+
+    AudioBus bus = new AudioBus(id);
+    BUSSES.put(id, bus);
+    return bus;
+  }
+
+  /** Returns the {@link AudioBus} with the given id else {@code null} */
+  public static AudioBus getBus(Object id) {
+    Collection<AudioBus> busList = BUSSES.values();
+
+    for (AudioBus bus : busList)
+      if (Objects.equals(id, bus.id))
+        return bus;
+
+    return null;
   }
 
   /** Called internally to perform update logic */
@@ -68,7 +92,6 @@ public final class Audio {
     for (AudioBus bus : busList) {
       int bytesRead = bus.read(BYTE_BUFFER, totalBytesRead, bytesToRead);
       int paddingRequired = bytesToRead - bytesRead;
-      LOGGER.debug(bytesRead);
 
       if (paddingRequired > 0) {
         for (int i = bytesRead; i < bytesToRead; i++)
@@ -84,14 +107,20 @@ public final class Audio {
       OUT.write(BYTE_BUFFER, 0, totalBytesRead);
   }
 
-  static void dispose() {
-    BUSSES.forEach((key, clip) -> clip.dispose());
+  /** Disposes the Audio object and releases resources */
+  static synchronized void dispose() {
+    BUSSES.forEach((key, bus) -> bus.dispose());
     BUSSES.clear();
 
     OUT.close();
     OUT.flush();
   }
 
+  /**
+   * Opens and returns an audio stream to the resource path specified.
+   * <p>
+   * If the stream is not a 16-bit stream, an attempt is made to convert it to one else an error is thrown
+   */
   private static AudioInputStream get16BitAudioInputStream(String resPath)
     throws IOException, UnsupportedAudioFileException {
     AudioInputStream stream = AudioSystem.getAudioInputStream(IO.getStream(resPath));
@@ -128,6 +157,7 @@ public final class Audio {
     return stream;
   }
 
+  /** Converts an 8-bit stereo audio stream to a 16-bit stereo audio stream */
   private static AudioInputStream convert8BitStereoStreamTo16BitStereo(AudioInputStream stream) throws IOException {
     byte[] streamData = getRawStreamData(stream);
     byte[] newStreamData;
@@ -165,6 +195,7 @@ public final class Audio {
     return new AudioInputStream(new ByteArrayInputStream(newStreamData), stereo16, newStreamData.length / 4);
   }
 
+  /** Converts an 8-bit mono audio stream to a 16-bit mono audio stream */
   private static AudioInputStream convert8BitMonoStreamTo16BitMono(AudioInputStream stream) throws IOException {
     byte[] streamData = getRawStreamData(stream);
     byte[] newStreamData;
@@ -193,7 +224,8 @@ public final class Audio {
     return new AudioInputStream(new ByteArrayInputStream(newStreamData), stereo16, newStreamData.length / 2);
   }
 
-  private static byte[][] getStereoStreamData(AudioInputStream stream) throws IOException {
+  /** Reads and returns all the channel bytes in the given audio stream */
+  private static byte[][] getChannelStreamData(AudioInputStream stream) throws IOException {
     int channels = stream.getFormat().getChannels();
     byte[] data = getRawStreamData(stream);
 
@@ -217,6 +249,7 @@ public final class Audio {
     }
   }
 
+  /** Reads and returns all the bytes in the given audio stream */
   private static byte[] getRawStreamData(AudioInputStream stream) throws IOException {
     int bufSize = (int) PREFERRED_FORMAT.getSampleRate()
       * PREFERRED_FORMAT.getChannels()
