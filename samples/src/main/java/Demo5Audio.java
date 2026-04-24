@@ -50,11 +50,8 @@ public class Demo5Audio extends Scene {
 //      new LinearAudioAttenuation(), new CircleAudioShape(5, 30)
 //    );
     try {
-      var clip1 = Audio.loadClip("cybertruck.wav");
-      var clip2 = Audio.loadClip("beats.wav");
-
-      clip1.setPlaying(true);
-      clip2.setPlaying(true);
+      Audio.loadClip("cybertruck.wav").setEventListener(logger::debug).play();
+//      Audio.loadClip("beats.wav").play();
     } catch (UnsupportedAudioFileException | IOException e) {
       throw new RuntimeException(e);
     }

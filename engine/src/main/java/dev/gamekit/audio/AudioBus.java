@@ -5,6 +5,12 @@ import dev.gamekit.utils.GMath;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * {@link AudioBus} is a channel which can process playback of one or more {@link AudioClip}.
+ * <p>
+ * {@link AudioBus} are also an interface for filters to be applied on an audio data stream. These include gain
+ * (volume), pan, pitch, reverb, etc.
+ */
 public class AudioBus {
   public static final String DEFAULT_ID = "default";
 
@@ -12,7 +18,7 @@ public class AudioBus {
   private final List<AudioClip> clips;
   private final int[] byteBuffer;
   private double volume = 1.0;
-  private double pan = 0.0;
+  private double pan = -0.5;
 
   public AudioBus(Object id) {
     this.id = id;
