@@ -235,35 +235,35 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
   /** Checks if a key has just been pressed */
   public static boolean isKeyDown(int keyCode) {
-    return INSTANCE.keyStates[keyCode].isDown;
+    return INSTANCE.keyStates[keyCode].down;
   }
 
   /** Checks if a key is being held down */
   public static boolean isKeyPressed(int keyCode) {
-    return INSTANCE.keyStates[keyCode].isPressed;
+    return INSTANCE.keyStates[keyCode].pressed;
   }
 
   /** Checks if a key has just been released */
   public static boolean isKeyReleased(int keyCode) {
-    return INSTANCE.keyStates[keyCode].isReleased;
+    return INSTANCE.keyStates[keyCode].released;
   }
 
   /** Checks if a button has just been pressed */
   public static boolean isButtonDown(int buttonId) {
     int buttonIndex = buttonId - 1;
-    return INSTANCE.buttonStates[buttonIndex].isDown;
+    return INSTANCE.buttonStates[buttonIndex].down;
   }
 
   /** Checks if a button is being held down */
   public static boolean isButtonPressed(int buttonId) {
     int buttonIndex = buttonId - 1;
-    return INSTANCE.buttonStates[buttonIndex].isPressed;
+    return INSTANCE.buttonStates[buttonIndex].pressed;
   }
 
   /** Checks if a button has just been released */
   public static boolean isButtonReleased(int buttonId) {
     int buttonIndex = buttonId - 1;
-    return INSTANCE.buttonStates[buttonIndex].isReleased;
+    return INSTANCE.buttonStates[buttonIndex].released;
   }
 
   /** Returns the key character which was just pressed */
@@ -394,9 +394,9 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
   /** Represents an input state */
   private static abstract class ActionState {
-    boolean isPressed = false;
-    boolean isDown = false;
-    boolean isReleased = false;
+    boolean pressed = false;
+    boolean down = false;
+    boolean released = false;
 
     /**
      * Updates the key state
@@ -404,15 +404,15 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
      * @param isPressed Whether the action has been pressed
      */
     protected void update(boolean isPressed) {
-      isDown = !this.isPressed && isPressed;
-      isReleased = this.isPressed && !isPressed;
-      this.isPressed = isPressed;
+      down = !this.pressed && isPressed;
+      released = this.pressed && !isPressed;
+      this.pressed = isPressed;
     }
 
     /** Resets this action state */
     protected void reset() {
-      isDown = false;
-      isReleased = false;
+      down = false;
+      released = false;
     }
   }
 

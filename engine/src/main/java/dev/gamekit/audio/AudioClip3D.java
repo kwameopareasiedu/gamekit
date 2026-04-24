@@ -4,8 +4,6 @@ import dev.gamekit.audio.attenuation.AudioAttenuation;
 import dev.gamekit.audio.shapes.AudioShape;
 import dev.gamekit.utils.Vector;
 
-import static dev.gamekit.utils.GMath.clamp;
-
 /**
  * {@link AudioClip3D} is a {@link AudioClip} whose volume and sound change with respect to their position from the
  * {@link AudioListener}.
@@ -27,7 +25,6 @@ public class AudioClip3D extends AudioClip {
 
   public AudioClip3D(
     String resPath,
-    AudioGroup group,
     double maxVolume,
     AudioAttenuation attenuation,
     AudioShape shape

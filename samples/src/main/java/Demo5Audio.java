@@ -1,6 +1,9 @@
+import dev.gamekit.audio.AudioBus;
+import dev.gamekit.audio.AudioClip;
 import dev.gamekit.audio.AudioClip3D;
 import dev.gamekit.audio.AudioListener;
 import dev.gamekit.audio.attenuation.AudioAttenuation;
+import dev.gamekit.audio.filters.ExponentialMovingAverageFilter;
 import dev.gamekit.audio.shapes.AudioShape;
 import dev.gamekit.core.*;
 import dev.gamekit.core.Window;
@@ -38,6 +41,7 @@ public class Demo5Audio extends Scene {
   private final Vector listenerPos;
   private final Position prevMousePos;
   private double pan = 0;
+  private AudioClip clip;
 
   public Demo5Audio() {
     super("Main Scene");
@@ -46,21 +50,13 @@ public class Demo5Audio extends Scene {
     listenerPos = new Vector(0, 0);
     prevMousePos = new Position(0, 0);
 
-//    AudioClip clip = new AudioClip3D("cybertruck.wav", AudioGroup.MUSIC, 1,
-//      new LinearAudioAttenuation(), new CircleAudioShape(5, 30)
-//    );
     try {
-      Audio.loadClip("cybertruck.wav").setEventListener(logger::debug).play();
+      Audio.getBus(AudioBus.DEFAULT_ID).addFilter(new ExponentialMovingAverageFilter(0.1));
+      clip = Audio.loadClip("cybertruck.wav").setEventListener(logger::debug);
 //      Audio.loadClip("beats.wav").play();
     } catch (UnsupportedAudioFileException | IOException e) {
       throw new RuntimeException(e);
     }
-
-//    logger.debug("Loaded clip: {}", Audio.loadClip("cybertruck.wav") != null);
-
-//    clip.addListener(ev -> logger.debug(ev.type()));
-//
-//    Audio.preload(MUSIC_KEY, clip);
   }
 
   public static void main(String[] args) {
@@ -84,11 +80,11 @@ public class Demo5Audio extends Scene {
 
   @Override
   protected void update() {
-//    if (Input.isKeyDown(Input.KEY_SPACE))
-//      Audio.get(MUSIC_KEY).play();
-//
-//    if (Input.isKeyDown(Input.KEY_ESCAPE))
-//      Audio.get(MUSIC_KEY).stop();
+    if (Input.isKeyDown(Input.KEY_SPACE))
+      clip.play();
+
+    if (Input.isKeyDown(Input.KEY_ESCAPE))
+      clip.stop();
 
     Window win = Window.getInstance();
     Position mousePos = Input.getMousePosition();

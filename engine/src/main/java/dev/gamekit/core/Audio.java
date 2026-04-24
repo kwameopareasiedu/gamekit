@@ -47,16 +47,27 @@ public final class Audio {
 
   private Audio() { }
 
-  /** Loads the audio data at the audio resource path into an {@link AudioClip} object */
-  public static AudioClip loadClip(String resPath) throws UnsupportedAudioFileException, IOException {
+  /**
+   * Loads audio data at the resource path into an {@link AudioClip} object and places it in an {@link AudioBus}
+   * matching the {@code busId}
+   */
+  public static AudioClip loadClip(String resPath, Object busId) throws UnsupportedAudioFileException, IOException {
     AudioInputStream audioStream = get16BitAudioInputStream(resPath);
     byte[][] data = getChannelStreamData(audioStream);
     AudioClip clip = new AudioClip(data[0], data[1], false);
 
-    AudioBus defaultBus = BUSSES.get(AudioBus.DEFAULT_ID);
+    AudioBus defaultBus = createBus(busId);
     defaultBus.addClip(clip);
 
     return clip;
+  }
+
+  /**
+   * Loads the audio data at the audio resource path into an {@link AudioClip} object and places it in the default
+   * {@link AudioBus}
+   */
+  public static AudioClip loadClip(String resPath) throws UnsupportedAudioFileException, IOException {
+    return loadClip(resPath, AudioBus.DEFAULT_ID);
   }
 
   /** Creates and returns a new {@link AudioBus} with the given id and default parameters */

@@ -1,5 +1,6 @@
 package dev.gamekit.audio;
 
+import dev.gamekit.audio.filters.AudioFilter;
 import dev.gamekit.utils.GMath;
 
 import java.util.ArrayList;
@@ -17,10 +18,12 @@ public class AudioBus {
   public final Object id;
 
   private final List<AudioClip> clips;
+  private final List<AudioFilter> filters;
   private final int[] byteBuffer;
   private double volume;
   private double pan;
   private boolean muted;
+  private final double alpha = 0.81;
 
   public AudioBus(Object id, double volume, double pan, boolean muted) {
     this.id = id;
@@ -29,6 +32,7 @@ public class AudioBus {
     this.muted = muted;
 
     clips = new ArrayList<>();
+    filters = new ArrayList<>();
     byteBuffer = new int[2];
   }
 
@@ -42,6 +46,15 @@ public class AudioBus {
       return this;
 
     clips.add(clip);
+    return this;
+  }
+
+  /** Adds an {@link AudioFilter} to this bus */
+  public AudioBus addFilter(AudioFilter filter) {
+    if (filters.contains(filter))
+      return this;
+
+    filters.add(filter);
     return this;
   }
 
@@ -119,17 +132,26 @@ public class AudioBus {
         busRv += clipRv;
       }
 
+      double filteredBusLv = busLv;
+      double filteredBusRv = busRv;
+
+      for (AudioFilter filter : filters) {
+        double[] filterResults = filter.process(filteredBusLv, filteredBusRv);
+        filteredBusLv = filterResults[0];
+        filteredBusRv = filterResults[1];
+      }
+
       if (didReadBytes) {
-        int finalBusLv = GMath.clamp((int) busLv, -Short.MAX_VALUE, Short.MAX_VALUE);
-        int finalBusRv = GMath.clamp((int) busRv, -Short.MAX_VALUE, Short.MAX_VALUE);
+        int clampedBusLv = GMath.clamp((int) filteredBusLv, -Short.MAX_VALUE, Short.MAX_VALUE);
+        int clampedBusRv = GMath.clamp((int) filteredBusRv, -Short.MAX_VALUE, Short.MAX_VALUE);
 
         // Left channel bytes
-        out[i + 1] = (byte) ((finalBusLv >> 8) & 0xFF); //MSB
-        out[i] = (byte) (finalBusLv & 0xFF); //LSB
+        out[i + 1] = (byte) ((clampedBusLv >> 8) & 0xFF); //MSB
+        out[i] = (byte) (clampedBusLv & 0xFF); //LSB
 
         // Right channel bytes
-        out[i + 3] = (byte) ((finalBusRv >> 8) & 0xFF); //MSB
-        out[i + 2] = (byte) (finalBusRv & 0xFF); //LSB
+        out[i + 3] = (byte) ((clampedBusRv >> 8) & 0xFF); //MSB
+        out[i + 2] = (byte) (clampedBusRv & 0xFF); //LSB
 
         bytesRead += 4;
       }
