@@ -4,7 +4,7 @@ import dev.gamekit.core.Audio;
 import dev.gamekit.utils.ValueCallback;
 
 /**
- * {@link AudioClip} stores audio data retrieved from a resource file.
+ * {@link AudioClip} stores 16-bit, dual channel audio data retrieved from a resource file.
  * <p>
  * To load an {@link AudioClip} use {@link Audio#loadClip}
  */
@@ -51,6 +51,9 @@ public class AudioClip {
    * and it is marked as playable
    */
   public AudioClip play() {
+    if (playing)
+      return this;
+
     if (getRemainingBytes() > 0) {
       playing = true;
 

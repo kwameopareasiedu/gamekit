@@ -193,13 +193,13 @@ public final class Audio {
       int leftVal = (int) (leftFloatVal * Short.MAX_VALUE);
       int rightVal = (int) (rightFloatVal * Short.MAX_VALUE);
 
-      // Left channel bytes
-      newStreamData[j + 1] = (byte) ((leftVal >> 8) & 0xFF); //MSB
-      newStreamData[j] = (byte) (leftVal & 0xFF); //LSB
+      // Left channel bytes (little endian byte ordering)
+      newStreamData[j] = (byte) (leftVal & 0xFF);
+      newStreamData[j + 1] = (byte) ((leftVal >> 8) & 0xFF);
 
-      // Right channel bytes
-      newStreamData[j + 3] = (byte) ((rightVal >> 8) & 0xFF); //MSB
-      newStreamData[j + 2] = (byte) (rightVal & 0xFF); //LSB
+      // Right channel bytes (little endian byte ordering)
+      newStreamData[j + 2] = (byte) (rightVal & 0xFF);
+      newStreamData[j + 3] = (byte) ((rightVal >> 8) & 0xFF);
     }
 
     AudioFormat stereo16 = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2, 4, 44100, false);
@@ -226,9 +226,9 @@ public final class Audio {
 
       int val = (int) (floatVal * Short.MAX_VALUE);
 
-      // Left channel bytes
-      newStreamData[j + 1] = (byte) ((val >> 8) & 0xFF); //MSB
-      newStreamData[j] = (byte) (val & 0xFF); //LSB
+      // Left channel bytes (little endian byte ordering)
+      newStreamData[j] = (byte) (val & 0xFF);
+      newStreamData[j + 1] = (byte) ((val >> 8) & 0xFF);
     }
 
     AudioFormat stereo16 = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 1, 2, 44100, false);

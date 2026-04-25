@@ -180,11 +180,9 @@ public abstract class Application {
 
         while (frameTimeAccumulator >= FRAME_INTERVAL_MS && isRunning) {
           frameTimeAccumulator -= FRAME_INTERVAL_MS;
-          // TODO: Monitor to see if this solves the "sticky keys" bug
-//          Input.freeze();
+          Input.freeze();
           update();
-//          Input.reset();
-          Thread.sleep(1);
+          Input.reset();
         }
 
         render();

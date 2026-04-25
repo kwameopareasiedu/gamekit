@@ -80,7 +80,7 @@ public class Demo5Audio extends Scene {
 
   @Override
   protected void update() {
-    if (Input.isKeyDown(Input.KEY_SPACE))
+    if (Input.isKeyReleased(Input.KEY_SPACE))
       clip.play();
 
     if (Input.isKeyDown(Input.KEY_ESCAPE))

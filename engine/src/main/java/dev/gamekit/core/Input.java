@@ -322,22 +322,20 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
     int keyCode = e.getKeyCode();
 
-    if (keyCode >= 0 && keyCode < KEY_COUNT) {
+    if (keyCode >= 0 && keyCode < KEY_COUNT)
       keyStates[keyCode].update(true);
-    }
 
     keyCodePressed = e.getKeyCode();
   }
 
   @Override
   public void keyReleased(KeyEvent e) {
-    if (frozen) return;
+    // Key release events exempted from input freeze to prevent 'sticky keys' bug
 
     int keyCode = e.getKeyCode();
 
-    if (keyCode >= 0 && keyCode < KEY_COUNT) {
+    if (keyCode >= 0 && keyCode < KEY_COUNT)
       keyStates[keyCode].update(false);
-    }
   }
 
   @Override
@@ -353,20 +351,18 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
     int buttonCode = e.getButton();
 
-    if (buttonCode >= 1) {
+    if (buttonCode >= 1)
       buttonStates[buttonCode - 1].update(true);
-    }
   }
 
   @Override
   public void mouseReleased(MouseEvent e) {
-    if (frozen) return;
+    // Mouse release events exempted from input freeze to prevent 'sticky buttons' bug
 
     int buttonCode = e.getButton();
 
-    if (buttonCode >= 1) {
+    if (buttonCode >= 1)
       buttonStates[buttonCode - 1].update(false);
-    }
   }
 
   @Override
@@ -401,12 +397,12 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
     /**
      * Updates the key state
      *
-     * @param isPressed Whether the action has been pressed
+     * @param pressed Whether the action has been pressed
      */
-    protected void update(boolean isPressed) {
-      down = !this.pressed && isPressed;
-      released = this.pressed && !isPressed;
-      this.pressed = isPressed;
+    protected void update(boolean pressed) {
+      down = !this.pressed && pressed;
+      released = this.pressed && !pressed;
+      this.pressed = pressed;
     }
 
     /** Resets this action state */
