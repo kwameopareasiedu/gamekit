@@ -47,8 +47,8 @@ public class AudioClip {
   /**
    * Marks this clip as playable.
    * <p>
-   * If this clip is at its end and {@link #looping} is false, this method does nothing the clip's position is reset,
-   * and it is marked as playable
+   * If this clip is at its end and {@link #looping} is false, this method does nothing, else the clip's position is
+   * reset, and it is marked as playable
    */
   public AudioClip play() {
     if (playing)

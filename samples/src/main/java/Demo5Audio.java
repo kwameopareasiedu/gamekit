@@ -3,7 +3,8 @@ import dev.gamekit.audio.AudioClip;
 import dev.gamekit.audio.AudioClip3D;
 import dev.gamekit.audio.AudioListener;
 import dev.gamekit.audio.attenuation.AudioAttenuation;
-import dev.gamekit.audio.filters.ExponentialMovingAverageFilter;
+import dev.gamekit.audio.filters.LowPassBiquadFilter;
+import dev.gamekit.audio.filters.LowPassMovingAverageFilter;
 import dev.gamekit.audio.shapes.AudioShape;
 import dev.gamekit.core.*;
 import dev.gamekit.core.Window;
@@ -51,7 +52,7 @@ public class Demo5Audio extends Scene {
     prevMousePos = new Position(0, 0);
 
     try {
-      Audio.getBus(AudioBus.DEFAULT_ID).addFilter(new ExponentialMovingAverageFilter(0.1));
+      Audio.getBus(AudioBus.DEFAULT_ID).addFilter(new LowPassBiquadFilter(6000, 3));
       clip = Audio.loadClip("cybertruck.wav").setEventListener(logger::debug);
 //      Audio.loadClip("beats.wav").play();
     } catch (UnsupportedAudioFileException | IOException e) {
@@ -80,7 +81,7 @@ public class Demo5Audio extends Scene {
 
   @Override
   protected void update() {
-    if (Input.isKeyReleased(Input.KEY_SPACE))
+    if (Input.isKeyDown(Input.KEY_SPACE))
       clip.play();
 
     if (Input.isKeyDown(Input.KEY_ESCAPE))

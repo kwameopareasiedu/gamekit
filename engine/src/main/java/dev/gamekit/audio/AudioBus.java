@@ -19,7 +19,7 @@ public class AudioBus {
 
   private final List<AudioClip> clips;
   private final List<AudioFilter> filters;
-  private final int[] byteBuffer;
+  private final int[] clipByteBuffer;
   private final double alpha = 0.81;
   private double volume;
   private double pan;
@@ -33,7 +33,7 @@ public class AudioBus {
 
     clips = new ArrayList<>();
     filters = new ArrayList<>();
-    byteBuffer = new int[2];
+    clipByteBuffer = new int[2];
   }
 
   public AudioBus(Object id) {
@@ -110,11 +110,11 @@ public class AudioBus {
         if (!clip.isPlaying() || clip.getRemainingBytes() <= 0)
           continue;
 
-        clip.readNextTwoBytes(byteBuffer);
+        clip.readNextTwoBytes(clipByteBuffer);
         didReadBytes = true;
 
-        double clipOutL = (!muted ? volume : 0) * byteBuffer[0];
-        double clipOutR = (!muted ? volume : 0) * byteBuffer[1];
+        double clipOutL = (!muted ? volume : 0) * clipByteBuffer[0];
+        double clipOutR = (!muted ? volume : 0) * clipByteBuffer[1];
 
         if (!GMath.isPracticallyZero(pan)) {
           double ll = (pan <= 0) ? 1.0 : (1.0 - pan);
