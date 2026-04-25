@@ -45,7 +45,10 @@ public class AudioBus {
     if (clips.contains(clip))
       return this;
 
-    clips.add(clip);
+    synchronized (clips) {
+      clips.add(clip);
+    }
+
     return this;
   }
 
@@ -54,7 +57,10 @@ public class AudioBus {
     if (filters.contains(filter))
       return this;
 
-    filters.add(filter);
+    synchronized (filters) {
+      filters.add(filter);
+    }
+
     return this;
   }
 
@@ -106,36 +112,40 @@ public class AudioBus {
 
       didReadBytes = false;
 
-      for (AudioClip clip : clips) {
-        if (!clip.isPlaying() || clip.getRemainingBytes() <= 0)
-          continue;
+      synchronized (clips) {
+        for (AudioClip clip : clips) {
+          if (!clip.isPlaying() || clip.getRemainingBytes() <= 0)
+            continue;
 
-        clip.readNextTwoBytes(clipByteBuffer);
-        didReadBytes = true;
+          clip.readNextTwoBytes(clipByteBuffer);
+          didReadBytes = true;
 
-        double clipOutL = (!muted ? volume : 0) * clipByteBuffer[0];
-        double clipOutR = (!muted ? volume : 0) * clipByteBuffer[1];
+          double clipOutL = (!muted ? volume : 0) * clipByteBuffer[0];
+          double clipOutR = (!muted ? volume : 0) * clipByteBuffer[1];
 
-        if (!GMath.isPracticallyZero(pan)) {
-          double ll = (pan <= 0) ? 1.0 : (1.0 - pan);
-          double lr = (pan <= 0) ? Math.abs(pan) : 0.0;
-          double rl = (pan >= 0) ? pan : 0.0;
-          double rr = (pan >= 0) ? 1.0 : (1.0 - Math.abs(pan));
-          double tmpL = (ll * clipOutL) + (lr * clipOutR);
-          double tmpR = (rl * clipOutL) + (rr * clipOutR);
+          if (!GMath.isPracticallyZero(pan)) {
+            double ll = (pan <= 0) ? 1.0 : (1.0 - pan);
+            double lr = (pan <= 0) ? Math.abs(pan) : 0.0;
+            double rl = (pan >= 0) ? pan : 0.0;
+            double rr = (pan >= 0) ? 1.0 : (1.0 - Math.abs(pan));
+            double tmpL = (ll * clipOutL) + (lr * clipOutR);
+            double tmpR = (rl * clipOutL) + (rr * clipOutR);
 
-          clipOutL = tmpL;
-          clipOutR = tmpR;
+            clipOutL = tmpL;
+            clipOutR = tmpR;
+          }
+
+          busOutL += clipOutL;
+          busOutR += clipOutR;
         }
-
-        busOutL += clipOutL;
-        busOutR += clipOutR;
       }
 
-      for (AudioFilter filter : filters) {
-        double[] filterOut = filter.process(busOutL, busOutR);
-        busOutL = filterOut[0];
-        busOutR = filterOut[1];
+      synchronized (filters) {
+        for (AudioFilter filter : filters) {
+          double[] filterOut = filter.process(busOutL, busOutR);
+          busOutL = filterOut[0];
+          busOutR = filterOut[1];
+        }
       }
 
       if (didReadBytes) {

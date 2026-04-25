@@ -3,8 +3,6 @@ package dev.gamekit.utils;
 import org.junit.jupiter.api.Test;
 
 import static dev.gamekit.utils.GMath.degToRad;
-import static Math.PI;
-import static Math.abs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -40,43 +38,43 @@ public class VectorTest {
 
     v1 = new Vector(0, 1);
     v2 = Vector.from(1, degToRad(0));
-    assertTrue(abs(v1.x - v2.x) <= EPSILON);
-    assertTrue(abs(v1.y - v2.y) <= EPSILON);
+    assertTrue(Math.abs(v1.x - v2.x) <= EPSILON);
+    assertTrue(Math.abs(v1.y - v2.y) <= EPSILON);
 
     v1 = new Vector(hs2, hs2);
     v2 = Vector.from(1, degToRad(45));
-    assertTrue(abs(v1.x - v2.x) <= EPSILON);
-    assertTrue(abs(v1.y - v2.y) <= EPSILON);
+    assertTrue(Math.abs(v1.x - v2.x) <= EPSILON);
+    assertTrue(Math.abs(v1.y - v2.y) <= EPSILON);
 
     v1 = new Vector(1, 0);
     v2 = Vector.from(1, degToRad(90));
-    assertTrue(abs(v1.x - v2.x) <= EPSILON);
-    assertTrue(abs(v1.y - v2.y) <= EPSILON);
+    assertTrue(Math.abs(v1.x - v2.x) <= EPSILON);
+    assertTrue(Math.abs(v1.y - v2.y) <= EPSILON);
 
     v1 = new Vector(hs2, -hs2);
     v2 = Vector.from(1, degToRad(135));
-    assertTrue(abs(v1.x - v2.x) <= EPSILON);
-    assertTrue(abs(v1.y - v2.y) <= EPSILON);
+    assertTrue(Math.abs(v1.x - v2.x) <= EPSILON);
+    assertTrue(Math.abs(v1.y - v2.y) <= EPSILON);
 
     v1 = new Vector(0, -1);
     v2 = Vector.from(1, degToRad(180));
-    assertTrue(abs(v1.x - v2.x) <= EPSILON);
-    assertTrue(abs(v1.y - v2.y) <= EPSILON);
+    assertTrue(Math.abs(v1.x - v2.x) <= EPSILON);
+    assertTrue(Math.abs(v1.y - v2.y) <= EPSILON);
 
     v1 = new Vector(-hs2, -hs2);
     v2 = Vector.from(1, degToRad(225));
-    assertTrue(abs(v1.x - v2.x) <= EPSILON);
-    assertTrue(abs(v1.y - v2.y) <= EPSILON);
+    assertTrue(Math.abs(v1.x - v2.x) <= EPSILON);
+    assertTrue(Math.abs(v1.y - v2.y) <= EPSILON);
 
     v1 = new Vector(-1, 0);
     v2 = Vector.from(1, degToRad(270));
-    assertTrue(abs(v1.x - v2.x) <= EPSILON);
-    assertTrue(abs(v1.y - v2.y) <= EPSILON);
+    assertTrue(Math.abs(v1.x - v2.x) <= EPSILON);
+    assertTrue(Math.abs(v1.y - v2.y) <= EPSILON);
 
     v1 = new Vector(-hs2, hs2);
     v2 = Vector.from(1, degToRad(315));
-    assertTrue(abs(v1.x - v2.x) <= EPSILON);
-    assertTrue(abs(v1.y - v2.y) <= EPSILON);
+    assertTrue(Math.abs(v1.x - v2.x) <= EPSILON);
+    assertTrue(Math.abs(v1.y - v2.y) <= EPSILON);
   }
 
   @Test
@@ -86,13 +84,13 @@ public class VectorTest {
     assertEquals(10, v.getMagnitude());
 
     v.lerpAngle(new Vector(1, 0), 0.5);
-    assertTrue(abs(degToRad(45) - v.getAngle()) < GMath.EPSILON);
+    assertTrue(Math.abs(degToRad(45) - v.getAngle()) < GMath.EPSILON);
 
     v.lerpAngle(new Vector(1, 0), 0.5);
-    assertTrue(abs(degToRad(67.5) - v.getAngle()) < GMath.EPSILON);
+    assertTrue(Math.abs(degToRad(67.5) - v.getAngle()) < GMath.EPSILON);
 
     v.lerpAngle(new Vector(1, 0), 1);
-    assertTrue(abs(PI * 0.5 - v.getAngle()) < GMath.EPSILON);
-    assertTrue(abs(10 - v.getMagnitude()) < GMath.EPSILON);
+    assertTrue(Math.abs(GMath.HALF_PI - v.getAngle()) < GMath.EPSILON);
+    assertTrue(Math.abs(10 - v.getMagnitude()) < GMath.EPSILON);
   }
 }
