@@ -19,8 +19,6 @@ public class AudioBus {
 
   private final List<AudioClip> clips;
   private final List<AudioFilter> filters;
-  private final int[] clipByteBuffer;
-  private final double alpha = 0.81;
   private double volume;
   private double pan;
   private boolean muted;
@@ -33,7 +31,6 @@ public class AudioBus {
 
     clips = new ArrayList<>();
     filters = new ArrayList<>();
-    clipByteBuffer = new int[2];
   }
 
   public AudioBus(Object id) {
@@ -108,7 +105,7 @@ public class AudioBus {
     boolean didReadBytes = true;
 
     for (int i = offset; i < (offset + length) && didReadBytes; i += 4) {
-      double busOutL = 0, busOutR = 0;
+      double busSampleL = 0, busSampleR = 0;
 
       didReadBytes = false;
 
@@ -117,48 +114,48 @@ public class AudioBus {
           if (!clip.isPlaying() || clip.getRemainingBytes() <= 0)
             continue;
 
-          clip.readNextTwoBytes(clipByteBuffer);
+          clip.readNextTwoBytes(AudioClip.BUFFER);
           didReadBytes = true;
 
-          double clipOutL = (!muted ? volume : 0) * clipByteBuffer[0];
-          double clipOutR = (!muted ? volume : 0) * clipByteBuffer[1];
+          double clipSampleL = (!muted ? volume : 0) * AudioClip.BUFFER[0];
+          double clipSampleR = (!muted ? volume : 0) * AudioClip.BUFFER[1];
 
           if (!GMath.isPracticallyZero(pan)) {
             double ll = (pan <= 0) ? 1.0 : (1.0 - pan);
             double lr = (pan <= 0) ? Math.abs(pan) : 0.0;
             double rl = (pan >= 0) ? pan : 0.0;
             double rr = (pan >= 0) ? 1.0 : (1.0 - Math.abs(pan));
-            double tmpL = (ll * clipOutL) + (lr * clipOutR);
-            double tmpR = (rl * clipOutL) + (rr * clipOutR);
+            double tmpL = (ll * clipSampleL) + (lr * clipSampleR);
+            double tmpR = (rl * clipSampleL) + (rr * clipSampleR);
 
-            clipOutL = tmpL;
-            clipOutR = tmpR;
+            clipSampleL = tmpL;
+            clipSampleR = tmpR;
           }
 
-          busOutL += clipOutL;
-          busOutR += clipOutR;
+          busSampleL += clipSampleL;
+          busSampleR += clipSampleR;
         }
       }
 
       synchronized (filters) {
         for (AudioFilter filter : filters) {
-          double[] filterOut = filter.process(busOutL, busOutR);
-          busOutL = filterOut[0];
-          busOutR = filterOut[1];
+          double[] filterSample = filter.process(busSampleL, busSampleR);
+          busSampleL = filterSample[0];
+          busSampleR = filterSample[1];
         }
       }
 
       if (didReadBytes) {
-        int finalOutL = GMath.clamp((int) busOutL, -Short.MAX_VALUE, Short.MAX_VALUE);
-        int finalOutR = GMath.clamp((int) busOutR, -Short.MAX_VALUE, Short.MAX_VALUE);
+        int finalSampleL = GMath.clamp((int) busSampleL, -Short.MAX_VALUE, Short.MAX_VALUE);
+        int finalSampleR = GMath.clamp((int) busSampleR, -Short.MAX_VALUE, Short.MAX_VALUE);
 
         // Left channel bytes (little endian byte ordering)
-        out[i] = (byte) (finalOutL & 0xFF);
-        out[i + 1] = (byte) ((finalOutL >> 8) & 0xFF);
+        out[i] = (byte) (finalSampleL & 0xFF);
+        out[i + 1] = (byte) ((finalSampleL >> 8) & 0xFF);
 
         // Right channel bytes (little endian byte ordering)
-        out[i + 2] = (byte) (finalOutR & 0xFF);
-        out[i + 3] = (byte) ((finalOutR >> 8) & 0xFF);
+        out[i + 2] = (byte) (finalSampleR & 0xFF);
+        out[i + 3] = (byte) ((finalSampleR >> 8) & 0xFF);
 
         bytesRead += 4;
       }

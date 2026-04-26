@@ -14,19 +14,14 @@ import java.util.*;
 
 /** {@link Audio} handles loading and playback of sounds in GameKit */
 public final class Audio {
+  public static final float SAMPLE_RATE = 44100;
+
   private static final Logger LOGGER = LogManager.getLogger(Audio.class);
-  private static final AudioFormat PREFERRED_FORMAT = new AudioFormat(
-    AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2, 4, 44100, false
-  );
-  private static final AudioFormat STEREO_8 = new AudioFormat(
-    AudioFormat.Encoding.PCM_SIGNED, 44100, 8, 2, 2, 44100, false
-  );
-  private static final AudioFormat MONO_16 = new AudioFormat(
-    AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 1, 2, 44100, false
-  );
-  private static final AudioFormat MONO_8 = new AudioFormat(
-    AudioFormat.Encoding.PCM_SIGNED, 44100, 8, 1, 1, 44100, false
-  );
+  private static final AudioFormat.Encoding ENCODING = AudioFormat.Encoding.PCM_SIGNED;
+  private static final AudioFormat AUDIO_FORMAT = new AudioFormat(ENCODING, SAMPLE_RATE, 16, 2, 4, SAMPLE_RATE, false);
+  private static final AudioFormat STEREO_8 = new AudioFormat(ENCODING, SAMPLE_RATE, 8, 2, 2, SAMPLE_RATE, false);
+  private static final AudioFormat MONO_16 = new AudioFormat(ENCODING, SAMPLE_RATE, 16, 1, 2, SAMPLE_RATE, false);
+  private static final AudioFormat MONO_8 = new AudioFormat(ENCODING, SAMPLE_RATE, 8, 1, 1, SAMPLE_RATE, false);
   private static final Map<Object, AudioBus> BUSSES = new HashMap<>();
   private static final SourceDataLine OUT;
   private static final byte[] BYTE_BUFFER;
@@ -34,11 +29,11 @@ public final class Audio {
   static {
     try {
       BUSSES.put(AudioBus.DEFAULT_ID, new AudioBus(AudioBus.DEFAULT_ID));
-      OUT = AudioSystem.getSourceDataLine(PREFERRED_FORMAT);
-      OUT.open(PREFERRED_FORMAT);
+      OUT = AudioSystem.getSourceDataLine(AUDIO_FORMAT);
+      OUT.open(AUDIO_FORMAT);
       OUT.start();
 
-      BYTE_BUFFER = new byte[(int) PREFERRED_FORMAT.getSampleRate() * PREFERRED_FORMAT.getFrameSize()];
+      BYTE_BUFFER = new byte[(int) AUDIO_FORMAT.getSampleRate() * AUDIO_FORMAT.getFrameSize()];
     } catch (LineUnavailableException e) {
       LOGGER.fatal("Unable to create audio output line", e);
       throw new RuntimeException(e);
@@ -96,8 +91,8 @@ public final class Audio {
   /** Called internally to perform update logic */
   static void update() {
     Collection<AudioBus> busList = BUSSES.values();
-    int framesToRead = (int) (PREFERRED_FORMAT.getFrameRate() / Application.FRAME_INTERVAL_MS);
-    int bytesToRead = framesToRead * PREFERRED_FORMAT.getFrameSize();
+    int framesToRead = (int) (AUDIO_FORMAT.getFrameRate() / Application.FRAME_INTERVAL_MS);
+    int bytesToRead = framesToRead * AUDIO_FORMAT.getFrameSize();
     int totalBytesRead = 0;
 
     for (AudioBus bus : busList) {
@@ -141,10 +136,10 @@ public final class Audio {
 
     AudioFormat streamFormat = stream.getFormat();
 
-    if (streamFormat.matches(PREFERRED_FORMAT) || streamFormat.matches(MONO_16)) {
+    if (streamFormat.matches(AUDIO_FORMAT) || streamFormat.matches(MONO_16)) {
       return stream;
-    } else if (AudioSystem.isConversionSupported(PREFERRED_FORMAT, streamFormat)) {
-      stream = AudioSystem.getAudioInputStream(PREFERRED_FORMAT, stream);
+    } else if (AudioSystem.isConversionSupported(AUDIO_FORMAT, streamFormat)) {
+      stream = AudioSystem.getAudioInputStream(AUDIO_FORMAT, stream);
     } else if (AudioSystem.isConversionSupported(MONO_16, streamFormat)) {
       stream = AudioSystem.getAudioInputStream(MONO_16, stream);
     } else if (streamFormat.matches(STEREO_8) || AudioSystem.isConversionSupported(STEREO_8, streamFormat)) {
@@ -202,7 +197,7 @@ public final class Audio {
       newStreamData[j + 3] = (byte) ((rightVal >> 8) & 0xFF);
     }
 
-    AudioFormat stereo16 = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2, 4, 44100, false);
+    AudioFormat stereo16 = new AudioFormat(ENCODING, SAMPLE_RATE, 16, 2, 4, SAMPLE_RATE, false);
     return new AudioInputStream(new ByteArrayInputStream(newStreamData), stereo16, newStreamData.length / 4);
   }
 
@@ -231,7 +226,7 @@ public final class Audio {
       newStreamData[j + 1] = (byte) ((val >> 8) & 0xFF);
     }
 
-    AudioFormat stereo16 = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 1, 2, 44100, false);
+    AudioFormat stereo16 = new AudioFormat(ENCODING, SAMPLE_RATE, 16, 1, 2, SAMPLE_RATE, false);
     return new AudioInputStream(new ByteArrayInputStream(newStreamData), stereo16, newStreamData.length / 2);
   }
 
@@ -262,9 +257,9 @@ public final class Audio {
 
   /** Reads and returns all the bytes in the given audio stream */
   private static byte[] getRawStreamData(AudioInputStream stream) throws IOException {
-    int bufSize = (int) PREFERRED_FORMAT.getSampleRate()
-      * PREFERRED_FORMAT.getChannels()
-      * PREFERRED_FORMAT.getFrameSize();
+    int bufSize = (int) AUDIO_FORMAT.getSampleRate()
+      * AUDIO_FORMAT.getChannels()
+      * AUDIO_FORMAT.getFrameSize();
 
     byte[] buffer = new byte[bufSize];
     List<Byte> list = new ArrayList<>(bufSize);

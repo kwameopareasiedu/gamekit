@@ -3,8 +3,7 @@ import dev.gamekit.audio.AudioClip;
 import dev.gamekit.audio.AudioClip3D;
 import dev.gamekit.audio.AudioListener;
 import dev.gamekit.audio.attenuation.AudioAttenuation;
-import dev.gamekit.audio.filters.LowPassBiquadFilter;
-import dev.gamekit.audio.filters.LowPassMovingAverageFilter;
+import dev.gamekit.audio.filters.*;
 import dev.gamekit.audio.shapes.AudioShape;
 import dev.gamekit.core.*;
 import dev.gamekit.core.Window;
@@ -41,8 +40,8 @@ public class Demo5Audio extends Scene {
   private final int halfWindowWidth;
   private final Vector listenerPos;
   private final Position prevMousePos;
+  private final AudioClip clip;
   private double pan = 0;
-  private AudioClip clip;
 
   public Demo5Audio() {
     super("Main Scene");
@@ -52,9 +51,12 @@ public class Demo5Audio extends Scene {
     prevMousePos = new Position(0, 0);
 
     try {
-      Audio.getBus(AudioBus.DEFAULT_ID).addFilter(new LowPassBiquadFilter(6000, 3));
+//      Audio.getBus(AudioBus.DEFAULT_ID).addFilter(new LowPassFilter(1000));
+//      Audio.getBus(AudioBus.DEFAULT_ID).addFilter(new DelayFilter(100));
+//      Audio.getBus(AudioBus.DEFAULT_ID).addFilter(new CombFilter(50, 0.8));
+//      Audio.getBus(AudioBus.DEFAULT_ID).addFilter(new AllPassFilter(100, 0.8));
+      Audio.getBus(AudioBus.DEFAULT_ID).addFilter(new ReverbFilter(2500, 0.5, 0.));
       clip = Audio.loadClip("cybertruck.wav").setEventListener(logger::debug);
-//      Audio.loadClip("beats.wav").play();
     } catch (UnsupportedAudioFileException | IOException e) {
       throw new RuntimeException(e);
     }

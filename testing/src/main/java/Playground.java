@@ -1,8 +1,21 @@
+import dev.gamekit.audio.filters.AudioFilter;
+import dev.gamekit.audio.filters.DelayFilter;
+import dev.gamekit.audio.filters.ReverbFilter;
+import dev.gamekit.core.Audio;
+
 public class Playground {
-  public static void main(String[] args) {
-    for (Object key : System.getProperties().keySet()) {
-      System.out.println(key);
+  public static void main(String[] args) throws InterruptedException {
+    double[] noise = new double[(int) Audio.SAMPLE_RATE];
+
+    for (int i = 0; i < noise.length; i++) {
+      noise[i] = Short.MAX_VALUE * (Math.random() * 2 - 1);
     }
-    System.out.println(System.getProperty("os.arch"));
+
+    AudioFilter filter = new DelayFilter(0.1);
+
+    for (int i = 0; i < noise.length; i += 2) {
+      double[] out = filter.process(noise[i], noise[i + 1]);
+      Thread.sleep(100);
+    }
   }
 }

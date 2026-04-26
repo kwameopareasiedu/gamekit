@@ -9,6 +9,8 @@ import dev.gamekit.utils.ValueCallback;
  * To load an {@link AudioClip} use {@link Audio#loadClip}
  */
 public class AudioClip {
+  static final int[] BUFFER = new int[2];
+
   private final byte[] channelLBytes;
   private final byte[] channelRBytes;
   private ValueCallback<Event> eventListener;
