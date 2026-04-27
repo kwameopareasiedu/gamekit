@@ -1,6 +1,7 @@
 package dev.gamekit.audio;
 
 import dev.gamekit.audio.filters.AudioFilter;
+import dev.gamekit.utils.GMath;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,27 +18,29 @@ public class AudioMixer {
 
   private final List<AudioFilter> filters;
   private double volume;
+  private double gain;
   private boolean muted;
 
-  public AudioMixer(Object id, double volume, boolean muted) {
+  public AudioMixer(Object id, boolean muted) {
     this.id = id;
-    this.volume = volume;
+    this.volume = 1;
+    this.gain = 1;
     this.muted = muted;
 
     filters = new ArrayList<>();
   }
 
   public AudioMixer(Object id) {
-    this(id, 1, false);
+    this(id, false);
   }
 
-  /** Adds an {@link AudioFilter} to this mixer */
-  public AudioMixer addFilter(AudioFilter filter) {
-    if (filters.contains(filter))
-      return this;
-
-    synchronized (filters) {
-      filters.add(filter);
+  /** Adds a list of {@link AudioFilter} to this mixer */
+  public AudioMixer addFilters(AudioFilter... filters) {
+    synchronized (this.filters) {
+      for (AudioFilter filter : filters) {
+        if (!this.filters.contains(filter))
+          this.filters.add(filter);
+      }
     }
 
     return this;
@@ -50,7 +53,15 @@ public class AudioMixer {
 
   /** Sets the volume value of this mixer */
   public AudioMixer setVolume(double volume) {
-    this.volume = volume;
+    this.volume = GMath.clamp(volume, 0, 1.5);
+
+    if (GMath.isPracticallyZero(this.volume)) {
+      gain = 0;
+    } else {
+      double db = GMath.lerp(-60, 6, volume / 1.5);
+      gain = Math.pow(10, db / 20);
+    }
+
     return this;
   }
 
@@ -66,18 +77,20 @@ public class AudioMixer {
   }
 
   /**
-   * Processes an audio sample in {@code buffer},  applying the mixer volume, mute and filters to it, and storing the
+   * Processes an audio sample in {@code buffer}, applying the mixer volume, mute and filters to it, and storing the
    * result back in the {@code buffer}
    */
   public void process(final double[] buffer) {
-    buffer[0] *= (!muted ? volume : 0);
-    buffer[1] *= (!muted ? volume : 0);
+    buffer[0] *= (!muted ? gain : 0);
+    buffer[1] *= (!muted ? gain : 0);
 
-    synchronized (filters) {
-      for (AudioFilter filter : filters) {
-        double[] filterSample = filter.process(buffer[0], buffer[1]);
-        buffer[0] = filterSample[0];
-        buffer[1] = filterSample[1];
+    if (!muted) {
+      synchronized (filters) {
+        for (AudioFilter filter : filters) {
+          double[] filterSample = filter.process(buffer[0], buffer[1]);
+          buffer[0] = filterSample[0];
+          buffer[1] = filterSample[1];
+        }
       }
     }
   }

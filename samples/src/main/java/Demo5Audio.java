@@ -1,8 +1,6 @@
 import dev.gamekit.audio.AudioClip;
-import dev.gamekit.audio.AudioClip3D;
 import dev.gamekit.audio.AudioListener;
-import dev.gamekit.audio.attenuation.AudioAttenuation;
-import dev.gamekit.audio.shapes.AudioShape;
+import dev.gamekit.audio.attenuation.LinearAttenuation;
 import dev.gamekit.core.*;
 import dev.gamekit.core.Window;
 import dev.gamekit.settings.*;
@@ -25,8 +23,7 @@ import java.util.Objects;
  * <ul>
  *   <li>Creates an {@link Application application}</li>
  *   <li>
- *     Preloads a {@link AudioClip3D 3D audio clip} with a circle {@link AudioShape shape} and
- *     linear {@link AudioAttenuation attenuation}
+ *     Preloads a spatial {@link AudioClip} with {@link LinearAttenuation}
  *   </li>
  *   <li>Detects mouse input using {@link Input} to start/restart/stop the audio playback</li>
  *   <li>Overrides the {@link Scene#createUI}} method to construct a simple user interface</li>
@@ -54,7 +51,7 @@ public class Demo5Audio extends Scene {
 //      Audio.getBus(AudioBus.DEFAULT_ID).addFilter(new CombFilter(50, 0.8));
 //      Audio.getBus(AudioBus.DEFAULT_ID).addFilter(new AllPassFilter(100, 0.8));
 //      Audio.getBus(AudioBus.DEFAULT_ID).addFilter(new ReverbFilter(2500, 0.5, 0.));
-      clip = Audio.loadClip("cybertruck.wav").setEventListener(logger::debug);
+      clip = Audio.loadClip("cybertruck.wav").setSpatial(true).setEventListener(logger::debug);
       clip2 = Audio.loadClip("beats.wav").setEventListener(logger::debug);
     } catch (UnsupportedAudioFileException | IOException e) {
       throw new RuntimeException(e);
@@ -84,12 +81,12 @@ public class Demo5Audio extends Scene {
   protected void update() {
     if (Input.isKeyDown(Input.KEY_SPACE)) {
       clip.play();
-      clip2.play();
+//      clip2.play();
     }
 
     if (Input.isKeyDown(Input.KEY_ESCAPE)) {
       clip.stop();
-      clip2.stop();
+//      clip2.stop();
     }
 
     Window win = Window.getInstance();
@@ -100,7 +97,7 @@ public class Demo5Audio extends Scene {
       0.1 * (win.getCenterY() - mousePos.y)
     );
 
-    AudioListener.setPosition(listenerPos);
+    AudioListener.POSITION.set(listenerPos);
 
     if (!Objects.equals(prevMousePos, mousePos)) {
       pan = (double) (mousePos.x - halfWindowWidth) / halfWindowWidth;

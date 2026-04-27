@@ -51,6 +51,10 @@
 - Changed signature of `void restart()` method in `Entity` class to `void resume()`
 - Changed `Camera` class from static to instance
 - Renamed `Math` utility class to `GMath`
+- Changed `AudioAttentuation` to an abstract class requiring min and max distances
+- Changes signature of `double attenuate(double distance, double minDistance, double maxDistance)` method in
+  `AudioAttenuation` class to `double attenuate(double distance)`
+- Changed signature of `private static Vector POSITION` constant in `AudioListener` to `public static Vector POSITION`
 
 ### Deprecated
 
@@ -58,6 +62,13 @@
 
 - Removed `public static getInfo()` from `Window` class
 - Removed `WindowMode.BORDERLESS` setting value
+- Removed `public static Vector getPosition()` from `AudioListener` class
+- Removed `public static void setPosition(Vector position)` from `AudioListener` class
+- Removed `public static void setPosition(double x, double y)` from `AudioListener` class
+- Removed `AudioShape` interface
+- Removed `CircleAudioShape` class
+- Removed `AudioClip2D` class
+- Removed `AudioClip3D` class
 
 ## 0.7.0
 

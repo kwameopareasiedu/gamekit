@@ -1,8 +1,11 @@
 package dev.gamekit.audio;
 
+import dev.gamekit.audio.attenuation.AudioAttenuation;
+import dev.gamekit.audio.attenuation.LinearAttenuation;
 import dev.gamekit.core.Audio;
 import dev.gamekit.utils.GMath;
 import dev.gamekit.utils.ValueCallback;
+import dev.gamekit.utils.Vector;
 
 /**
  * {@link AudioClip} stores 16-bit, dual channel audio data retrieved from a resource file.
@@ -10,56 +13,55 @@ import dev.gamekit.utils.ValueCallback;
  * To load an {@link AudioClip} use {@link Audio#loadClip}
  */
 public class AudioClip {
+  private static final Vector UP = new Vector(0, 1);
+  private static final AudioAttenuation DEFAULT_ATTENUATION = new LinearAttenuation(0, 100);
+
   private final byte[] dataL;
   private final byte[] dataR;
-  private final double[] buffer;
+  private final Vector position;
+  private final Vector listenerVector;
   private boolean playing;
   private boolean looping;
   private double volume;
-  private double pan;
+  private double gain;
   private boolean muted;
+  private boolean spatial;
   private AudioMixer mixer;
   private ValueCallback<Event> eventListener;
+  private AudioAttenuation attenuation;
   private int head;
 
-  public AudioClip(
-    byte[] dataL,
-    byte[] dataR,
-    boolean playing,
-    boolean looping,
-    double volume,
-    double pan,
-    boolean muted,
-    AudioMixer mixer,
-    ValueCallback<Event> eventListener
-  ) {
+  public AudioClip(byte[] dataL, byte[] dataR, boolean playing, boolean looping, boolean muted, AudioMixer mixer) {
     this.dataL = dataL;
     this.dataR = dataR;
     this.playing = playing;
     this.looping = looping;
-    this.volume = GMath.clamp(volume, 0, 1.5);
-    this.pan = GMath.clamp(pan, -1, 1);
+    this.volume = 1;
+    this.gain = 1;
+    this.spatial = false;
     this.muted = muted;
     this.mixer = mixer;
-    this.eventListener = eventListener;
+    this.eventListener = null;
+    this.position = new Vector();
+    this.listenerVector = new Vector();
+    this.attenuation = DEFAULT_ATTENUATION;
     this.head = 0;
-    this.buffer = new double[2];
   }
 
   public AudioClip(byte[] dataL, byte[] dataR) {
-    this(dataL, dataR, false, false, 1, 0, false, null, null);
+    this(dataL, dataR, false, false, false, null);
   }
 
   public AudioClip(byte[] dataL, byte[] dataR, AudioMixer mixer) {
-    this(dataL, dataR, false, false, 1, 0, false, mixer, null);
+    this(dataL, dataR, false, false, false, mixer);
   }
 
   public AudioClip(byte[] dataL, byte[] dataR, boolean looping) {
-    this(dataL, dataR, false, looping, 1, 0, false, null, null);
+    this(dataL, dataR, false, looping, false, null);
   }
 
   public AudioClip(byte[] dataL, byte[] dataR, boolean looping, AudioMixer mixer) {
-    this(dataL, dataR, false, looping, 1, 0, false, mixer, null);
+    this(dataL, dataR, false, looping, false, mixer);
   }
 
   /** Returns {@code true} if this clip is currently playing */
@@ -135,18 +137,30 @@ public class AudioClip {
 
   /** Sets the volume of this clip */
   public AudioClip setVolume(double volume) {
+    if (GMath.isPracticallyZero(Math.abs(this.volume - volume)))
+      return this;
+
+    System.out.printf("Vol: %.2f\n", volume);
     this.volume = GMath.clamp(volume, 0, 1.5);
+
+    if (GMath.isPracticallyZero(this.volume)) {
+      gain = 0;
+    } else {
+      double db = GMath.lerp(-60, 6, volume);
+      gain = Math.pow(10, db / 20);
+    }
+
     return this;
   }
 
-  /** Returns the pan of this clip */
-  public double getPan() {
-    return pan;
+  /** Returns whether this clip is 2D (non-spatial) or 3D (spatial) */
+  public boolean isSpatial() {
+    return spatial;
   }
 
-  /** Sets the pan of this clip */
-  public AudioClip setPan(double pan) {
-    this.pan = pan;
+  /** Sets whether this clip is 2D (non-spatial) or 3D (spatial) */
+  public AudioClip setSpatial(boolean spatial) {
+    this.spatial = spatial;
     return this;
   }
 
@@ -172,15 +186,21 @@ public class AudioClip {
     return this;
   }
 
-  /** Returns the number of bytes remaining till the end of the clip */
-  public int getRemainingBytes() {
-    return dataL.length - head;
-  }
-
   /** Sets the listener to be notified when this clip emits an event */
   public AudioClip setEventListener(ValueCallback<Event> eventListener) {
     this.eventListener = eventListener;
     return this;
+  }
+
+  /** Sets the attenuation (fall-off) of this clip */
+  public AudioClip setAttenuation(AudioAttenuation attenuation) {
+    this.attenuation = attenuation != null ? attenuation : DEFAULT_ATTENUATION;
+    return this;
+  }
+
+  /** Returns the number of bytes remaining till the end of the clip */
+  public int getRemainingBytes() {
+    return dataL.length - head;
   }
 
   /**
@@ -189,35 +209,44 @@ public class AudioClip {
    * If the head exceeds the buffer length, it is reset and a {@link Event#STOP} or {@link Event#RESTART} event
    * emitted depending on whether the clip is looping.
    */
-  public void readNextTwoBytes(int[] out) {
+  public void readNextTwoBytes(double[] out) {
     // Little endian byte ordering
-    buffer[0] = (dataL[head + 1] << 8) | (dataL[head] & 0xFF);
-    buffer[1] = (dataR[head + 1] << 8) | (dataR[head] & 0xFF);
+    out[0] = (dataL[head + 1] << 8) | (dataL[head] & 0xFF);
+    out[1] = (dataR[head + 1] << 8) | (dataR[head] & 0xFF);
 
-    buffer[0] *= (!muted ? volume : 0);
-    buffer[1] *= (!muted ? volume : 0);
+    out[0] *= (!muted ? gain : 0);
+    out[1] *= (!muted ? gain : 0);
 
-    if (!GMath.isPracticallyZero(pan)) {
-      double ll = (pan <= 0) ? 1.0 : (1.0 - pan);
-      double lr = (pan <= 0) ? Math.abs(pan) : 0.0;
-      double rl = (pan >= 0) ? pan : 0.0;
-      double rr = (pan >= 0) ? 1.0 : (1.0 - Math.abs(pan));
-      double tmpL = (ll * buffer[0]) + (lr * buffer[1]);
-      double tmpR = (rl * buffer[0]) + (rr * buffer[1]);
+    if (spatial) {
+      listenerVector.set(
+        AudioListener.POSITION.x - position.x,
+        AudioListener.POSITION.y - position.y
+      );
 
-      buffer[0] = tmpL;
-      buffer[1] = tmpR;
+      setVolume(attenuation.attenuate(listenerVector.getMagnitude()));
+
+      Vector normalizedListenerVector = listenerVector.getNormalized();
+      double pan = Math.signum(normalizedListenerVector.x) * (Math.abs(Vector.dot(normalizedListenerVector, UP)) - 1);
+
+      if (!GMath.isPracticallyZero(pan)) {
+        double ll = (pan <= 0) ? 1.0 : (1.0 - pan);
+        double lr = (pan <= 0) ? Math.abs(pan) : 0.0;
+        double rl = (pan >= 0) ? pan : 0.0;
+        double rr = (pan >= 0) ? 1.0 : (1.0 - Math.abs(pan));
+        double tmpL = (ll * out[0]) + (lr * out[1]);
+        double tmpR = (rl * out[0]) + (rr * out[1]);
+
+        out[0] = tmpL;
+        out[1] = tmpR;
+      }
     }
 
     if (mixer != null)
-      mixer.process(buffer);
-
-    out[0] = (int) buffer[0];
-    out[1] = (int) buffer[1];
+      mixer.process(out);
 
     head += 2;
 
-    if (head > dataL.length) {
+    if (head >= dataL.length) {
       head = 0;
 
       if (looping) {

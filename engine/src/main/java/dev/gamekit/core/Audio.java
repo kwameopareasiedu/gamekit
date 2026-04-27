@@ -25,7 +25,7 @@ public final class Audio {
   private static final Map<Object, AudioMixer> MIXERS = new HashMap<>();
   private static final Map<String, AudioClip> CLIPS = new HashMap<>();
   private static final SourceDataLine OUT;
-  private static final int[] CLIP_BUFFER;
+  private static final double[] CLIP_BUFFER;
   private static final byte[] OUT_BUFFER;
 
   static {
@@ -36,7 +36,7 @@ public final class Audio {
       OUT.open(FORMAT);
       OUT.start();
 
-      CLIP_BUFFER = new int[2];
+      CLIP_BUFFER = new double[2];
       OUT_BUFFER = new byte[2048];
     } catch (LineUnavailableException e) {
       LOGGER.fatal("Unable to create audio output line", e);
