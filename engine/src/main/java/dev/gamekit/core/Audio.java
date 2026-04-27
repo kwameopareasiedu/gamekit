@@ -1,7 +1,7 @@
 package dev.gamekit.core;
 
-import dev.gamekit.audio.AudioBus;
 import dev.gamekit.audio.AudioClip;
+import dev.gamekit.audio.AudioMixer;
 import dev.gamekit.utils.GMath;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,22 +18,26 @@ public final class Audio {
 
   private static final Logger LOGGER = LogManager.getLogger(Audio.class);
   private static final AudioFormat.Encoding ENCODING = AudioFormat.Encoding.PCM_SIGNED;
-  private static final AudioFormat AUDIO_FORMAT = new AudioFormat(ENCODING, SAMPLE_RATE, 16, 2, 4, SAMPLE_RATE, false);
+  private static final AudioFormat FORMAT = new AudioFormat(ENCODING, SAMPLE_RATE, 16, 2, 4, SAMPLE_RATE, false);
   private static final AudioFormat STEREO_8 = new AudioFormat(ENCODING, SAMPLE_RATE, 8, 2, 2, SAMPLE_RATE, false);
   private static final AudioFormat MONO_16 = new AudioFormat(ENCODING, SAMPLE_RATE, 16, 1, 2, SAMPLE_RATE, false);
   private static final AudioFormat MONO_8 = new AudioFormat(ENCODING, SAMPLE_RATE, 8, 1, 1, SAMPLE_RATE, false);
-  private static final Map<Object, AudioBus> BUSSES = new HashMap<>();
+  private static final Map<Object, AudioMixer> MIXERS = new HashMap<>();
+  private static final Map<String, AudioClip> CLIPS = new HashMap<>();
   private static final SourceDataLine OUT;
-  private static final byte[] BYTE_BUFFER;
+  private static final int[] CLIP_BUFFER;
+  private static final byte[] OUT_BUFFER;
 
   static {
     try {
-      BUSSES.put(AudioBus.DEFAULT_ID, new AudioBus(AudioBus.DEFAULT_ID));
-      OUT = AudioSystem.getSourceDataLine(AUDIO_FORMAT);
-      OUT.open(AUDIO_FORMAT);
+      MIXERS.put(AudioMixer.DEFAULT_ID, new AudioMixer(AudioMixer.DEFAULT_ID));
+
+      OUT = AudioSystem.getSourceDataLine(FORMAT);
+      OUT.open(FORMAT);
       OUT.start();
 
-      BYTE_BUFFER = new byte[(int) AUDIO_FORMAT.getSampleRate() * AUDIO_FORMAT.getFrameSize()];
+      CLIP_BUFFER = new int[2];
+      OUT_BUFFER = new byte[2048];
     } catch (LineUnavailableException e) {
       LOGGER.fatal("Unable to create audio output line", e);
       throw new RuntimeException(e);
@@ -43,80 +47,97 @@ public final class Audio {
   private Audio() { }
 
   /**
-   * Loads audio data at the resource path into an {@link AudioClip} object and places it in an {@link AudioBus}
-   * matching the {@code busId}
+   * Loads audio data at the resource path into an {@link AudioClip} object and places it in an {@link AudioMixer}
+   * matching the {@code mixerId}
    */
-  public static AudioClip loadClip(String resPath, Object busId) throws UnsupportedAudioFileException, IOException {
+  public static AudioClip loadClip(String resPath, Object mixerId) throws UnsupportedAudioFileException, IOException {
+    if (CLIPS.containsKey(resPath))
+      return CLIPS.get(resPath);
+
     AudioInputStream audioStream = get16BitAudioInputStream(resPath);
     byte[][] data = getChannelStreamData(audioStream);
-    AudioClip clip = new AudioClip(data[0], data[1], false);
 
-    AudioBus defaultBus = createBus(busId);
-    defaultBus.addClip(clip);
+    AudioMixer mixer = createMixer(mixerId);
+    AudioClip clip = new AudioClip(data[0], data[1], false, mixer);
+    CLIPS.put(resPath, clip);
 
     return clip;
   }
 
   /**
-   * Loads the audio data at the audio resource path into an {@link AudioClip} object and places it in the default
-   * {@link AudioBus}
+   * Loads the audio data at the audio resource path into an {@link AudioClip} object, attaching the default
+   * {@link AudioMixer} to it
    */
   public static AudioClip loadClip(String resPath) throws UnsupportedAudioFileException, IOException {
-    return loadClip(resPath, AudioBus.DEFAULT_ID);
+    return loadClip(resPath, AudioMixer.DEFAULT_ID);
   }
 
-  /** Creates and returns a new {@link AudioBus} with the given id and default parameters */
-  public static AudioBus createBus(Object id) {
-    AudioBus existingBus = getBus(id);
+  /** Creates and returns a new {@link AudioMixer} with the given id and default parameters */
+  public static AudioMixer createMixer(Object id) {
+    AudioMixer existingMixer = getMixer(id);
 
-    if (existingBus != null)
-      return existingBus;
+    if (existingMixer != null)
+      return existingMixer;
 
-    AudioBus bus = new AudioBus(id);
-    BUSSES.put(id, bus);
-    return bus;
+    AudioMixer newMixer = new AudioMixer(id);
+    MIXERS.put(id, newMixer);
+    return newMixer;
   }
 
-  /** Returns the {@link AudioBus} with the given id else {@code null} */
-  public static AudioBus getBus(Object id) {
-    Collection<AudioBus> busList = BUSSES.values();
-
-    for (AudioBus bus : busList)
-      if (Objects.equals(id, bus.id))
-        return bus;
-
-    return null;
+  /** Returns the {@link AudioMixer} with the given id else {@code null} */
+  public static AudioMixer getMixer(Object id) {
+    return MIXERS.get(id);
   }
 
   /** Called internally to perform update logic */
   static void update() {
-    Collection<AudioBus> busList = BUSSES.values();
-    int framesToRead = (int) (AUDIO_FORMAT.getFrameRate() / Application.FRAME_INTERVAL_MS);
-    int bytesToRead = framesToRead * AUDIO_FORMAT.getFrameSize();
-    int totalBytesRead = 0;
+    int bytesRead = 0;
 
-    for (AudioBus bus : busList) {
-      int bytesRead = bus.read(BYTE_BUFFER, totalBytesRead, bytesToRead);
-      int paddingRequired = bytesToRead - bytesRead;
+    Arrays.fill(OUT_BUFFER, (byte) 0);
 
-      if (paddingRequired > 0) {
-        for (int i = bytesRead; i < bytesToRead; i++)
-          BYTE_BUFFER[i] = 0;
+    for (int i = 0; i < OUT_BUFFER.length; i += 4) {
+      double outL = 0, outR = 0;
+      boolean didReadBytes = false;
 
-        bytesRead += paddingRequired;
+      synchronized (CLIPS) {
+        Collection<AudioClip> clips = CLIPS.values();
+
+        for (AudioClip clip : clips) {
+          if (!clip.isPlaying() || clip.getRemainingBytes() <= 0)
+            continue;
+
+          clip.readNextTwoBytes(CLIP_BUFFER);
+          didReadBytes = true;
+
+          outL += CLIP_BUFFER[0];
+          outR += CLIP_BUFFER[1];
+        }
       }
 
-      totalBytesRead += bytesRead;
+      if (didReadBytes) {
+        int finalOutL = GMath.clamp((int) outL, -Short.MAX_VALUE, Short.MAX_VALUE);
+        int finalOutR = GMath.clamp((int) outR, -Short.MAX_VALUE, Short.MAX_VALUE);
+
+        // Left channel bytes (little endian byte ordering)
+        OUT_BUFFER[i] = (byte) (finalOutL & 0xFF);
+        OUT_BUFFER[i + 1] = (byte) ((finalOutL >> 8) & 0xFF);
+
+        // Right channel bytes (little endian byte ordering)
+        OUT_BUFFER[i + 2] = (byte) (finalOutR & 0xFF);
+        OUT_BUFFER[i + 3] = (byte) ((finalOutR >> 8) & 0xFF);
+
+        bytesRead += 4;
+      }
     }
 
-    if (totalBytesRead > 0)
-      OUT.write(BYTE_BUFFER, 0, totalBytesRead);
+    if (bytesRead > 0)
+      OUT.write(OUT_BUFFER, 0, bytesRead);
   }
 
   /** Disposes the Audio object and releases resources */
   static synchronized void dispose() {
-    BUSSES.forEach((key, bus) -> bus.dispose());
-    BUSSES.clear();
+    CLIPS.forEach((ignored, clip) -> clip.dispose());
+    CLIPS.clear();
 
     OUT.close();
     OUT.flush();
@@ -136,10 +157,10 @@ public final class Audio {
 
     AudioFormat streamFormat = stream.getFormat();
 
-    if (streamFormat.matches(AUDIO_FORMAT) || streamFormat.matches(MONO_16)) {
+    if (streamFormat.matches(FORMAT) || streamFormat.matches(MONO_16)) {
       return stream;
-    } else if (AudioSystem.isConversionSupported(AUDIO_FORMAT, streamFormat)) {
-      stream = AudioSystem.getAudioInputStream(AUDIO_FORMAT, stream);
+    } else if (AudioSystem.isConversionSupported(FORMAT, streamFormat)) {
+      stream = AudioSystem.getAudioInputStream(FORMAT, stream);
     } else if (AudioSystem.isConversionSupported(MONO_16, streamFormat)) {
       stream = AudioSystem.getAudioInputStream(MONO_16, stream);
     } else if (streamFormat.matches(STEREO_8) || AudioSystem.isConversionSupported(STEREO_8, streamFormat)) {
@@ -257,9 +278,9 @@ public final class Audio {
 
   /** Reads and returns all the bytes in the given audio stream */
   private static byte[] getRawStreamData(AudioInputStream stream) throws IOException {
-    int bufSize = (int) AUDIO_FORMAT.getSampleRate()
-      * AUDIO_FORMAT.getChannels()
-      * AUDIO_FORMAT.getFrameSize();
+    int bufSize = (int) FORMAT.getSampleRate()
+      * FORMAT.getChannels()
+      * FORMAT.getFrameSize();
 
     byte[] buffer = new byte[bufSize];
     List<Byte> list = new ArrayList<>(bufSize);

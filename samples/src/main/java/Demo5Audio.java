@@ -1,9 +1,7 @@
-import dev.gamekit.audio.AudioBus;
 import dev.gamekit.audio.AudioClip;
 import dev.gamekit.audio.AudioClip3D;
 import dev.gamekit.audio.AudioListener;
 import dev.gamekit.audio.attenuation.AudioAttenuation;
-import dev.gamekit.audio.filters.*;
 import dev.gamekit.audio.shapes.AudioShape;
 import dev.gamekit.core.*;
 import dev.gamekit.core.Window;
@@ -40,7 +38,7 @@ public class Demo5Audio extends Scene {
   private final int halfWindowWidth;
   private final Vector listenerPos;
   private final Position prevMousePos;
-  private final AudioClip clip;
+  private final AudioClip clip, clip2;
   private double pan = 0;
 
   public Demo5Audio() {
@@ -55,8 +53,9 @@ public class Demo5Audio extends Scene {
 //      Audio.getBus(AudioBus.DEFAULT_ID).addFilter(new DelayFilter(100));
 //      Audio.getBus(AudioBus.DEFAULT_ID).addFilter(new CombFilter(50, 0.8));
 //      Audio.getBus(AudioBus.DEFAULT_ID).addFilter(new AllPassFilter(100, 0.8));
-      Audio.getBus(AudioBus.DEFAULT_ID).addFilter(new ReverbFilter(2500, 0.5, 0.));
+//      Audio.getBus(AudioBus.DEFAULT_ID).addFilter(new ReverbFilter(2500, 0.5, 0.));
       clip = Audio.loadClip("cybertruck.wav").setEventListener(logger::debug);
+      clip2 = Audio.loadClip("beats.wav").setEventListener(logger::debug);
     } catch (UnsupportedAudioFileException | IOException e) {
       throw new RuntimeException(e);
     }
@@ -83,11 +82,15 @@ public class Demo5Audio extends Scene {
 
   @Override
   protected void update() {
-    if (Input.isKeyDown(Input.KEY_SPACE))
+    if (Input.isKeyDown(Input.KEY_SPACE)) {
       clip.play();
+      clip2.play();
+    }
 
-    if (Input.isKeyDown(Input.KEY_ESCAPE))
+    if (Input.isKeyDown(Input.KEY_ESCAPE)) {
       clip.stop();
+      clip2.stop();
+    }
 
     Window win = Window.getInstance();
     Position mousePos = Input.getMousePosition();
