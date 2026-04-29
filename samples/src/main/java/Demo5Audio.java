@@ -1,6 +1,10 @@
 import dev.gamekit.audio.AudioClip;
 import dev.gamekit.audio.AudioListener;
+import dev.gamekit.audio.AudioMixer;
 import dev.gamekit.audio.attenuation.LinearAttenuation;
+import dev.gamekit.audio.effects.AudioEffect;
+import dev.gamekit.audio.effects.LowPassFilter;
+import dev.gamekit.audio.effects.ReverbFilter;
 import dev.gamekit.core.*;
 import dev.gamekit.core.Window;
 import dev.gamekit.settings.*;
@@ -9,6 +13,7 @@ import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.enums.MainAxisAlignment;
 import dev.gamekit.ui.widgets.*;
 import dev.gamekit.ui.widgets.Image;
+import dev.gamekit.utils.GMath;
 import dev.gamekit.utils.Picture;
 import dev.gamekit.utils.Position;
 import dev.gamekit.utils.Vector;
@@ -31,11 +36,13 @@ import java.util.Objects;
  */
 public class Demo5Audio extends Scene {
   private static final Picture SPEAKER_IMG = IO.getImage("speaker.png");
-  private static final String MUSIC_KEY = "music";
   private final int halfWindowWidth;
   private final Vector listenerPos;
   private final Position prevMousePos;
-  private final AudioClip clip, clip2;
+  private final AudioClip clip;
+  private final AudioEffect[] effects;
+  private final String[] effectNames;
+  private int effectIndex = 0;
   private double pan = 0;
 
   public Demo5Audio() {
@@ -45,14 +52,20 @@ public class Demo5Audio extends Scene {
     listenerPos = new Vector(0, 0);
     prevMousePos = new Position(0, 0);
 
+    effects = new AudioEffect[]{
+      null,
+      new LowPassFilter(1200),
+      new ReverbFilter(300, 0.8, 0.7)
+    };
+
+    effectNames = new String[]{
+      "None",
+      "Low Pass Filter [Cutoff=1.2KHz]",
+      "Reverb Filter: [Delay=300ms, Damping=0.8, Mix=0.7]"
+    };
+
     try {
-//      Audio.getBus(AudioBus.DEFAULT_ID).addFilter(new LowPassFilter(1000));
-//      Audio.getBus(AudioBus.DEFAULT_ID).addFilter(new DelayFilter(100));
-//      Audio.getBus(AudioBus.DEFAULT_ID).addFilter(new CombFilter(50, 0.8));
-//      Audio.getBus(AudioBus.DEFAULT_ID).addFilter(new AllPassFilter(100, 0.8));
-//      Audio.getBus(AudioBus.DEFAULT_ID).addFilter(new ReverbFilter(2500, 0.5, 0.));
       clip = Audio.loadClip("cybertruck.wav").setSpatial(true).setEventListener(logger::debug);
-      clip2 = Audio.loadClip("beats.wav").setEventListener(logger::debug);
     } catch (UnsupportedAudioFileException | IOException e) {
       throw new RuntimeException(e);
     }
@@ -73,20 +86,17 @@ public class Demo5Audio extends Scene {
   }
 
   @Override
-  protected void start() {
-//    Audio.<AudioClip3D>get(MUSIC_KEY).setPosition(0, 0);
-  }
-
-  @Override
   protected void update() {
-    if (Input.isKeyDown(Input.KEY_SPACE)) {
+    if (Input.isKeyDown(Input.KEY_SPACE))
       clip.play();
-//      clip2.play();
-    }
 
-    if (Input.isKeyDown(Input.KEY_ESCAPE)) {
+    if (Input.isKeyDown(Input.KEY_ESCAPE))
       clip.stop();
-//      clip2.stop();
+
+    if (Input.isKeyDown(Input.KEY_S)) {
+      effectIndex = GMath.cycle(effectIndex + 1, 0, effects.length - 1);
+      Audio.getMixer(AudioMixer.DEFAULT_ID).setEffects(effects[effectIndex]);
+      updateUI();
     }
 
     Window win = Window.getInstance();
@@ -134,6 +144,12 @@ public class Demo5Audio extends Scene {
       Text.create(
         props -> {
           props.alignment = Alignment.CENTER;
+          props.text = "'S' to cycle through audio effects";
+        }
+      ),
+      Text.create(
+        props -> {
+          props.alignment = Alignment.CENTER;
           props.text = "Move the mouse from left to right to pan the audio ";
         }
       ),
@@ -153,6 +169,23 @@ public class Demo5Audio extends Scene {
                 props.image = SPEAKER_IMG;
               }
             )
+          )
+        ),
+        Column.create(
+          props -> props.crossAxisAlignment = CrossAxisAlignment.CENTER,
+          Text.create(
+            props -> {
+              props.text = "Current Effect";
+              props.fontSize = 32;
+            }
+          ),
+          Text.create(
+            props -> {
+              props.text = effectNames[effectIndex];
+              props.fontSize = 24;
+              props.fontStyle = Text.BOLD;
+              props.alignment = Alignment.CENTER;
+            }
           )
         ),
         Opacity.create(

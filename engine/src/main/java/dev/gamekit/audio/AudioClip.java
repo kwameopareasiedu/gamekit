@@ -142,7 +142,6 @@ public class AudioClip {
     if (GMath.isPracticallyZero(Math.abs(this.volume - volume)))
       return this;
 
-    System.out.printf("Vol: %.2f\n", volume);
     this.volume = GMath.clamp(volume, 0, 1.5);
 
     if (GMath.isPracticallyZero(this.volume)) {

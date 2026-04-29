@@ -38,7 +38,21 @@ public class AudioMixer {
   public AudioMixer addEffects(AudioEffect... effects) {
     synchronized (this.effects) {
       for (AudioEffect effect : effects) {
-        if (!this.effects.contains(effect))
+        if (effect != null && !this.effects.contains(effect))
+          this.effects.add(effect);
+      }
+    }
+
+    return this;
+  }
+
+  /** Sets the list of {@link AudioEffect} of this mixer */
+  public AudioMixer setEffects(AudioEffect... effects) {
+    synchronized (this.effects) {
+      this.effects.clear();
+
+      for (AudioEffect effect : effects) {
+        if (effect != null && !this.effects.contains(effect))
           this.effects.add(effect);
       }
     }

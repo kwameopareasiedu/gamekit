@@ -9,10 +9,11 @@ import dev.gamekit.utils.GMath;
  */
 public class LowPassFilter extends AudioEffect {
   private final double b0, b1, b2, a1, a2;
+  private double il1, il2, ir1, ir2;
 
   /** Creates a new {@link LowPassFilter} filter with the {@code cutoff} frequency in Hz and resonance factor */
   public LowPassFilter(double cutoff, double resonance) {
-    super(new double[4], new double[4]);
+    super(3);
     double omega = (GMath.TWO_PI * cutoff / Audio.SAMPLE_RATE);
     double alpha = Math.sin(omega) / (2 * resonance);
     double cs = Math.cos(omega);
@@ -23,7 +24,9 @@ public class LowPassFilter extends AudioEffect {
     b2 = ((1 - cs) / 2) / a0;
     a1 = (-2 * cs) / a0;
     a2 = (1 - alpha) / a0;
+    il1 = il2 = ir1 = ir2 = 0;
   }
+
 
   /** Creates a new {@link LowPassFilter} filter with the {@code cutoff} frequency in Hz and a resonance factor of 1 */
   public LowPassFilter(double cutoff) {
@@ -31,8 +34,17 @@ public class LowPassFilter extends AudioEffect {
   }
 
   @Override
-  public void performProcess(double sampleL, double sampleR) {
-    out[0] = b0 * sampleL + b1 * inputSamples[0] + b2 * inputSamples[2] - a1 * outputSamples[0] - a2 * outputSamples[2];
-    out[1] = b0 * sampleR + b1 * inputSamples[1] + b2 * inputSamples[3] - a1 * outputSamples[1] - a2 * outputSamples[3];
+  public void performProcess(double[] out, double il0, double ir0) {
+    int dh1 = getWrappedIndex(head - 1);
+    int dh2 = getWrappedIndex(head - 2);
+
+    out[0] = bufferL[head] = b0 * il0 + b1 * il1 + b2 * il2 - a1 * bufferL[dh1] - a2 * bufferL[dh2];
+    out[1] = bufferR[head] = b0 * ir0 + b1 * ir1 + b2 * ir2 - a1 * bufferR[dh1] - a2 * bufferR[dh2];
+
+    il2 = il1;
+    il1 = il0;
+
+    ir2 = ir1;
+    ir1 = ir0;
   }
 }

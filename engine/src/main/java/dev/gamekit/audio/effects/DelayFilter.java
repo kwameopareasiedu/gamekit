@@ -5,15 +5,16 @@ import dev.gamekit.core.Audio;
 /** {@link DelayFilter} is an audio filter delays an audio signal by a specified time */
 public class DelayFilter extends AudioEffect {
   public DelayFilter(double delayMs) {
-    super(
-      new double[2 * (int) (0.001 * delayMs * Audio.SAMPLE_RATE)],
-      new double[2 * (int) (0.001 * delayMs * Audio.SAMPLE_RATE)]
-    );
+    super((int) (0.001 * delayMs * Audio.SAMPLE_RATE));
   }
 
   @Override
-  public void performProcess(double sampleL, double sampleR) {
-    out[0] = inputSamples[inputSamples.length - 2];
-    out[1] = inputSamples[inputSamples.length - 1];
+  public void performProcess(double[] out, double sampleL, double sampleR) {
+    int delayHead = getWrappedIndex(head - 1);
+    bufferL[delayHead] = sampleL;
+    bufferR[delayHead] = sampleR;
+
+    out[0] = bufferL[head];
+    out[1] = bufferR[head];
   }
 }

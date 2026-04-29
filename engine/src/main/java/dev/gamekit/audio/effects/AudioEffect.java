@@ -8,39 +8,50 @@ import java.util.Arrays;
 /** {@link AudioEffect} represents objects that can perform some manipulation to a chunk of audio stream data */
 public abstract class AudioEffect {
   protected final Logger logger = LogManager.getLogger(getClass());
-  protected final double[] out, inputSamples, outputSamples;
+  protected final int bufferLength;
+  protected final double[] bufferL;
+  protected final double[] bufferR;
+  protected final double[] out;
+  protected int head = 0;
 
-  protected AudioEffect(double[] inputSamples, double[] outputSamples) {
-    this.inputSamples = inputSamples;
-    this.outputSamples = outputSamples;
-    out = new double[2];
+  protected AudioEffect(int bufferLength) {
+    this.bufferLength = bufferLength;
+    this.bufferL = new double[bufferLength];
+    this.bufferR = new double[bufferLength];
+    this.out = new double[2];
 
-    Arrays.fill(inputSamples, 0);
-    Arrays.fill(outputSamples, 0);
+    Arrays.fill(bufferL, 0);
+    Arrays.fill(bufferR, 0);
     Arrays.fill(out, 0);
   }
 
-  /** Processes the instantaneous left and right channel values of an audio stream, and returns the results */
+  /** Processes the instantaneous value of an audio signal */
   public final double[] process(double sampleL, double sampleR) {
-    performProcess(sampleL, sampleR);
-    shiftSamplesAndInsertNew(inputSamples, sampleL, sampleR);
-    shiftSamplesAndInsertNew(outputSamples, out[0], out[1]);
+    performProcess(out, sampleL, sampleR);
+
+    head += 1;
+
+    if (head >= bufferLength)
+      head = 0;
+
     return out;
   }
 
-  /** Delegate method which implements the effect processing logic and writes the outputs to the {@link #out} array */
-  protected abstract void performProcess(double sampleL, double sampleR);
+  /** Delegate method which implements the effect logic, writing its result to the out array  */
+  protected abstract void performProcess(double[] out, double sampleL, double sampleR);
 
-  /** Shifts given samples to the right by 2, and inserts 2 new samples at the beginning */
-  protected void shiftSamplesAndInsertNew(double[] samples, double newL, double newR) {
-    System.arraycopy(samples, 0, samples, 2, samples.length - 2);
-    samples[0] = newL;
-    samples[1] = newR;
-  }
+  /** Returns the index wrapped around the buffer size */
+  protected int getWrappedIndex(int index) {
+    int newIndex = index;
 
-  /** Retrieves a delayed output sample value */
-  protected double[] getDelayedOutputSamples(double delayMs) {
-    int sampleIndex = (int) Math.round(0.001 * delayMs * 2 * (outputSamples.length - 2));
-    return new double[]{ outputSamples[sampleIndex], outputSamples[sampleIndex + 1] };
+    if (newIndex >= bufferLength) {
+      while (newIndex >= bufferLength)
+        newIndex -= bufferLength;
+    } else if (newIndex < 0) {
+      while (newIndex < 0)
+        newIndex += bufferLength;
+    }
+
+    return newIndex;
   }
 }

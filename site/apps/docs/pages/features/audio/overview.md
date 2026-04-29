@@ -5,14 +5,6 @@ _[Back To Features](../overview.md)_
 Sound is crucial in creating games. From background music to environment ambience to sound effects, audio in a game can
 make or break your player immersion.
 
-GameKit's audio system allows you to import audio and manipulate them in-game to fit your desired outcomes.
-
-The general workflow for GameKit audio is as follows:
-
-- Preload your audio file into an audio clip
-- Assign the audio clip to an audio group
-- Begin/Pause/Stop playback of your clip within your game
-
 Before proceeding, here are a few points to take note of:
 
 > - GameKit does not support streaming audio from disk/network

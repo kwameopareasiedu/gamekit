@@ -130,8 +130,12 @@ public final class Audio {
       }
     }
 
-    if (bytesRead > 0)
+    if (bytesRead > 0) {
       OUT.write(OUT_BUFFER, 0, bytesRead);
+    } else if (OUT.available() > 0) {
+      OUT.drain();
+      OUT.flush();
+    }
   }
 
   /** Disposes the Audio object and releases resources */
