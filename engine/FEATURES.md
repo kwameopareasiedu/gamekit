@@ -10,6 +10,8 @@
 
 ### Scene Stacking
 
+### Audio Effects
+
 ## 0.7.0
 
 ### Maven Plugin
