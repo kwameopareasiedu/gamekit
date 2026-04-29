@@ -1,6 +1,6 @@
 package dev.gamekit.audio;
 
-import dev.gamekit.audio.filters.AudioFilter;
+import dev.gamekit.audio.effects.AudioEffect;
 import dev.gamekit.utils.GMath;
 
 import java.util.ArrayList;
@@ -9,14 +9,14 @@ import java.util.List;
 /**
  * {@link AudioMixer} is a channel which can process playback of one or more {@link AudioClip}.
  * <p>
- * {@link AudioMixer} also allow {@link AudioFilter filters} to be applied on all connected {@link AudioClip clips}.
+ * {@link AudioMixer} also allow {@link AudioEffect effects} to be applied on all connected {@link AudioClip clips}.
  */
 public class AudioMixer {
   public static final String DEFAULT_ID = "default";
 
   public final Object id;
 
-  private final List<AudioFilter> filters;
+  private final List<AudioEffect> effects;
   private double volume;
   private double gain;
   private boolean muted;
@@ -27,19 +27,19 @@ public class AudioMixer {
     this.gain = 1;
     this.muted = muted;
 
-    filters = new ArrayList<>();
+    effects = new ArrayList<>();
   }
 
   public AudioMixer(Object id) {
     this(id, false);
   }
 
-  /** Adds a list of {@link AudioFilter} to this mixer */
-  public AudioMixer addFilters(AudioFilter... filters) {
-    synchronized (this.filters) {
-      for (AudioFilter filter : filters) {
-        if (!this.filters.contains(filter))
-          this.filters.add(filter);
+  /** Adds a list of {@link AudioEffect} to this mixer */
+  public AudioMixer addEffects(AudioEffect... effects) {
+    synchronized (this.effects) {
+      for (AudioEffect effect : effects) {
+        if (!this.effects.contains(effect))
+          this.effects.add(effect);
       }
     }
 
@@ -77,19 +77,19 @@ public class AudioMixer {
   }
 
   /**
-   * Processes an audio sample in {@code buffer}, applying the mixer volume, mute and filters to it, and storing the
-   * result back in the {@code buffer}
+   * Processes an audio sample in {@code buffer}, applying the mixer volume, mute and audio effects to it, and storing
+   * the result back in the {@code buffer}
    */
   public void process(final double[] buffer) {
     buffer[0] *= (!muted ? gain : 0);
     buffer[1] *= (!muted ? gain : 0);
 
     if (!muted) {
-      synchronized (filters) {
-        for (AudioFilter filter : filters) {
-          double[] filterSample = filter.process(buffer[0], buffer[1]);
-          buffer[0] = filterSample[0];
-          buffer[1] = filterSample[1];
+      synchronized (effects) {
+        for (AudioEffect effect : effects) {
+          double[] effectSample = effect.process(buffer[0], buffer[1]);
+          buffer[0] = effectSample[0];
+          buffer[1] = effectSample[1];
         }
       }
     }

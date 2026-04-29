@@ -1,4 +1,4 @@
-package dev.gamekit.audio.filters;
+package dev.gamekit.audio.effects;
 
 import dev.gamekit.core.Audio;
 
@@ -6,7 +6,7 @@ import dev.gamekit.core.Audio;
  * {@link AllPassFilter} is an audio filter which allows all frequencies of an audio signal to pass, but affects the
  * phase relationship between frequencies
  */
-public class AllPassFilter extends AudioFilter {
+public class AllPassFilter extends AudioEffect {
   private final DelayFilter delayFilter;
   private final CombFilter combFilter;
   private final double decayFactor;

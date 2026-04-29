@@ -1,4 +1,4 @@
-package dev.gamekit.audio.filters;
+package dev.gamekit.audio.effects;
 
 import dev.gamekit.core.Audio;
 import dev.gamekit.utils.GMath;
@@ -7,7 +7,7 @@ import dev.gamekit.utils.GMath;
  * {@link LowPassFilter} is an audio filter which allows frequencies of an audio signal below a certain cutoff to
  * pass unaffected while heavily attenuating higher frequencies.
  */
-public class LowPassFilter extends AudioFilter {
+public class LowPassFilter extends AudioEffect {
   private final double b0, b1, b2, a1, a2;
 
   /** Creates a new {@link LowPassFilter} filter with the {@code cutoff} frequency in Hz and resonance factor */

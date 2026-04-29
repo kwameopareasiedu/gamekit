@@ -8,9 +8,8 @@ import dev.gamekit.utils.ValueCallback;
 import dev.gamekit.utils.Vector;
 
 /**
- * {@link AudioClip} stores 16-bit, dual channel audio data retrieved from a resource file.
- * <p>
- * To load an {@link AudioClip} use {@link Audio#loadClip}
+ * {@link AudioClip} stores 16-bit, dual channel audio data retrieved from a resource file, and provides methods to
+ * control playback
  */
 public class AudioClip {
   private static final Vector UP = new Vector(0, 1);
@@ -110,6 +109,9 @@ public class AudioClip {
 
   /** Stops playback of this clip and resets its head */
   public AudioClip stop() {
+    if (!playing)
+      return this;
+
     playing = false;
     head = 0;
 
@@ -182,7 +184,7 @@ public class AudioClip {
 
   /** Sets the attached {@link AudioMixer} */
   public AudioClip setMixer(AudioMixer mixer) {
-    this.mixer = mixer;
+    this.mixer = mixer != null ? mixer : Audio.getMixer(AudioMixer.DEFAULT_ID);
     return this;
   }
 
@@ -198,6 +200,21 @@ public class AudioClip {
     return this;
   }
 
+  /** Returns the position of the clip in the world */
+  public Vector getPosition() {
+    return position;
+  }
+
+  /** Sets the position of the clip in the world */
+  public void setPosition(Vector position) {
+    this.position.set(position);
+  }
+
+  /** Sets the position of the clip in the world */
+  public void setPosition(double x, double y) {
+    position.set(x, y);
+  }
+
   /** Returns the number of bytes remaining till the end of the clip */
   public int getRemainingBytes() {
     return dataL.length - head;
@@ -206,8 +223,8 @@ public class AudioClip {
   /**
    * Writes the next two bytes of this clip's data to the provided {@code out} array, advancing the head by 2 bytes.
    * <p>
-   * If the head exceeds the buffer length, it is reset and a {@link Event#STOP} or {@link Event#RESTART} event
-   * emitted depending on whether the clip is looping.
+   * When the head reaches or exceeds the data length, it is reset. If the clip is set to loop, a {@link Event#RESTART}
+   * event is emitted else an {@link Event#END} event is emitted.
    */
   public void readNextTwoBytes(double[] out) {
     // Little endian byte ordering
@@ -256,7 +273,7 @@ public class AudioClip {
         playing = false;
 
         if (eventListener != null)
-          eventListener.invoke(Event.STOP);
+          eventListener.invoke(Event.END);
       }
     }
   }
@@ -272,15 +289,17 @@ public class AudioClip {
 
   /** Constants for the events emitted by an {@link AudioClip} */
   public enum Event {
-    /** Indicates a playing clip */
+    /** Emitted when a clip begins a playback */
     PLAY,
-    /** Indicates a paused clip which can be resumed */
+    /** Emitted when a clip is paused */
     PAUSE,
-    /** Pseudo-state indicating a clip has restarted */
+    /** Emitted when a clip has restarts playback */
     RESTART,
-    /** Indicates a stopped clip which can be restarted */
+    /** Emitted when a clip's playback stops before it completes */
     STOP,
-    /** Indicates a clip is being disposed */
+    /** Emitted when a clip finishes playback */
+    END,
+    /** Emitted when a clip is disposed */
     DISPOSE
   }
 }

@@ -1,9 +1,9 @@
-package dev.gamekit.audio.filters;
+package dev.gamekit.audio.effects;
 
 import dev.gamekit.core.Audio;
 
 /** {@link CombFilter} is an audio filter which adds delayed version of an audio signal back unto itself */
-public class CombFilter extends AudioFilter {
+public class CombFilter extends AudioEffect {
   private final double delayMs;
   private final double decayFactor;
 

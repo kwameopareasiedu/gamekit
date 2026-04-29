@@ -1,8 +1,8 @@
-package dev.gamekit.audio.filters;
+package dev.gamekit.audio.effects;
 
 import dev.gamekit.core.Audio;
 
-public class ReverbFilter extends AudioFilter {
+public class ReverbFilter extends AudioEffect {
   private final CombFilter[] combFilters;
   private final AllPassFilter[] allPassFilters;
   private final double decayFactor;
