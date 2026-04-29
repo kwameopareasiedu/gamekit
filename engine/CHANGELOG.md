@@ -63,8 +63,6 @@
 - Removed `public static getInfo()` from `Window` class
 - Removed `WindowMode.BORDERLESS` setting value
 - Removed `public static Vector getPosition()` from `AudioListener` class
-- Removed `public static void setPosition(Vector position)` from `AudioListener` class
-- Removed `public static void setPosition(double x, double y)` from `AudioListener` class
 - Removed `AudioShape` interface
 - Removed `CircleAudioShape` class
 - Removed `AudioClip2D` class

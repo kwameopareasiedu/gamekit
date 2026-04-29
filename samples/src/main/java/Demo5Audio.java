@@ -97,7 +97,7 @@ public class Demo5Audio extends Scene {
       0.1 * (win.getCenterY() - mousePos.y)
     );
 
-    AudioListener.POSITION.set(listenerPos);
+    AudioListener.setPosition(listenerPos);
 
     if (!Objects.equals(prevMousePos, mousePos)) {
       pan = (double) (mousePos.x - halfWindowWidth) / halfWindowWidth;

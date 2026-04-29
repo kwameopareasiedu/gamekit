@@ -1,48 +1,45 @@
-# Audio Group
+# Audio Mixer
 
 _[Back To Audio](overview.md)_
 
-Audio groups are the answer to the question **_"How do I control the properties of multiple audio clips at once?"_**.
-By requiring an audio group on every audio clip, the volume and muted status of all clips in the group can be
-controlled at the same time.
+Audio mixers are the channels through which [audio clip](audio-clip.md) data is sent to the speakers. By routing audio
+clips through mixers, you can effectively control multiple audio clips properties using the mixer controls.
 
-The most practical example is implementation of a sound settings screen within your game.
+With mixers, you can perform the following:
 
-GameKit ships with two (2) default audio groups:
+- Control the volume/gain of multiple audio clips
+- Mute/Unmute multiple audio clips
+- Apply audio filters to multiple audio clips
 
-- `AudioGroup.MUSIC`
-- `AudioGroup.EFFECTS`
+## Obtain A Mixer
 
-However, you can create more by extending the `AudioGroup` class as shown in the sample below:
-
-```java
-import dev.gamekit.audio.AudioGroup;
-
-/** An audio group called "Narration" with an initial max volume of 50% */
-public class NarrationAudioGroup extends AudioGroup {
-  public static final NarrationAudioGroup INSTANCE = new NarrationAudioGroup();
-
-  private NarrationAudioGroup() {
-    super("Narration", 0.5);
-  }
-}
-
-```
-
-The new audio group can then be used on audio clips.
+Use the static `Audio` utility to create or get a mixer.
 
 ```java
-Audio.preload("opening-dialog", new AudioClip2D("path-to-audio-resource", NarrationAudioGroup.INSTANCE, 1);
+AudioMixer newMixer = Audio.createMixer("<mixer-id>");    // Create a new mixer
+AudioMixer existingMixer = Audio.getMixer("<mixer-id>");  // Obtain an existing mixer
 ```
 
-> It is important to use the same instance of your custom audio group.
+## Mixer Audio Effects
+
+You can modify the output of mixers by applying [audio effects](audio-effect.md). These can filter the frequency ranges
+of the sound or apply reverb and other effects.
+
+Use the `addEffects` method to add one or more audio effect to a mixer.
+
+```java
+Audio.getMixer("<mixer-id>").addEffects(
+  new LowPassFilter(1500),
+  new ReverbFilter(10, 0.5, 0.9)
+);
+```
 
 ## Public Methods
 
-| Method         | Description                           |
-|----------------|---------------------------------------|
-| `getName`      | Returns the name of the group         |
-| `isMuted`      | Returns the muted status of the group |
-| `setMuted`     | Mutes/Unmutes the group               |
-| `getMaxVolume` | Returns the max volume of the group   |
-| `setMaxVolume` | Sets the max volume of the group      |
+| Method       | Description                                              |
+|--------------|----------------------------------------------------------|
+| `addEffects` | Adds one or more effects to this mixer                   |
+| `getVolume`  | Returns the volume of this mixer                         |
+| `setVolume`  | Sets the volume of the mixer (Clamped between 0 and 1.5) |
+| `isMuted`    | Returns whether the mixer is muted                       |
+| `setMuted`   | Mutes or unmutes the mixer                               |

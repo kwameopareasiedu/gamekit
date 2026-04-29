@@ -9,7 +9,17 @@ import dev.gamekit.utils.Vector;
  * This way, spatial {@link AudioClip} would sound differently relative to their position and direction from the player
  */
 public class AudioListener {
-  public static final Vector POSITION = new Vector();
+  static final Vector POSITION = new Vector();
 
   private AudioListener() { }
+
+  /** Sets the position of the {@link AudioListener} which effectively "moves" the listener within the game world */
+  public static void setPosition(Vector pos) {
+    POSITION.set(pos);
+  }
+
+  /** Sets the position of the {@link AudioListener} which effectively "moves" the listener within the game world */
+  public static void setPosition(double x, double y) {
+    POSITION.set(x, y);
+  }
 }

@@ -25,10 +25,10 @@ nav:
       - Audio:
           - Overview: features/audio/overview.md
           - Audio Clip: features/audio/audio-clip.md
-          - Audio Group: features/audio/audio-group.md
+          - Audio Mixer: features/audio/audio-mixer.md
+          - Audio Effect: features/audio/audio-effect.md
           - Audio Listener: features/audio/audio-listener.md
           - Attenuation: features/audio/attenuation.md
-          - Audio Shape: features/audio/audio-shape.md
       - User Interface (UI): features/ui.md
       - Export: features/export.md
 theme: mkdocs
@@ -40,7 +40,3 @@ extra_css:
   - assets/css/custom.css
 extra_javascript:
   - assets/js/page-config.js
-plugins:
-  - redirects:
-      redirect_maps:
-        "tools/export.md": "features/export.md"

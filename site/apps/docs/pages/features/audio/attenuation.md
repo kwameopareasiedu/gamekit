@@ -2,9 +2,8 @@
 
 _[Back To Audio](overview.md)_
 
-[Spatial audio](audio-clip.md#spatial-audio) is positional sound in-game. Therefore, as the listener moves away from it,
-we expect the sound to falloff and vice versa. This falloff (I.e. the way the sounds fades) is what is known as
-**attenuation**.
+Attenuation refers to how [spatial audio](audio-clip.md#spatial-audio) falls off/fades as
+the [listener](audio-listener.md) moves away from it.
 
 Formally, attenuation is a mathematical function which maps the distance between the source and listener to a volume
 value.
@@ -34,10 +33,13 @@ In GameKit, these curves can be modelled by implementing the `AudioAttenuation` 
 The `attenuate` method is called with the following arguments and should return a 0 - 1 ratio of the max volume:
 
 1. Distance between the audio source and the listener
-2. Minimum possible distance defined by the [audio shape](audio-shape.md)
-3. Maximum possible distance defined by the [audio shape](audio-shape.md)
+2. Minimum possible distance, below which the audio clip should play at max volume
+3. Maximum possible distance, above which the audio clip should be effectively silent
 
-GameKit ships with one (1) attenuation implementation which is `LinearAudioAttenuation` class.
+[//]: # (@formatter:off)
+GameKit ships with one (1) attenuation implementation which is
+[LinearAttenuation](https://github.com/kwameopareasiedu/gamekit/blob/master/engine/src/main/java/dev/gamekit/audio/attenuation/LinearAttenuation.java){:target="_blank"}.
+[//]: # (@formatter:on)
 
 ## Public Methods
 
