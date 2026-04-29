@@ -6,7 +6,7 @@ import dev.gamekit.utils.ValueCallback;
 
 import java.awt.image.BufferedImage;
 
-import static dev.gamekit.utils.Math.cycle;
+import static dev.gamekit.utils.GMath.cycle;
 
 /** {@link AnimatedSprite} extends {@link Sprite} to render an animated sprite sheet */
 public class AnimatedSprite extends Sprite implements ValueCallback<Animation.State> {

@@ -2,87 +2,85 @@
 
 _[Back To Audio](overview.md)_
 
-The abstract `AudioClip` class handles the loading of audio files from the resources directory and has methods to
-control playback.
+`AudioClip` class stores 16-bit, dual channel audio data retrieved from a resource file, and provides methods to control
+playback.
 
-## Preloading Audio Clips
+## Loading Audio Clips
 
-Audio must be preloaded into memory before it can be used in your scene. This is handled by the static `Audio` utility.
-You preload an audio file as [non-spatial (2D)](#non-spatial-audio) or [spatial (3D)](#spatial-audio).
+Use the static `Audio` utility to load a clip from file into and `AudioClip`.
 
 ```java
-Audio.preload(<Unique string key>, new AudioClip2D("path-to-audio-resource", <Audio Group>, <Max Volume>));
-// or
-Audio.preload(<Unique string key>, new AudioClip3D("path-to-audio-resource", <Audio Group>, <Max Volume>, <Attenutation Function>, <Audio Shape>));
+try {
+  AudioClip clip = Audio.loadClip("path-to-audio-resource");
+  AudioClip clip2 = Audio.loadClip("path-to-audio-resource", "<mixer-id>");
+} catch (UnsupportedAudioFileException | IOException e) {
+  // Handle error
+}
 ```
 
-## Spatial vs Non-Spatial
+> Audio clips are cached, so loading the same clip does not perform additional disk operations.
 
-You may have noticed that we used two different audio clip classes in the samples so far which are `AudioClip2D` and
-`AudioClip3D`. This is because GameKit supports two different kinds of audio. These are:
+## Spatialization
 
-- Non-spatial or 2D audio
-- Spatial or 3D audio
+`AudioClip` supports spatialization, which is the ability to appear to originate from a specific location in your game
+world. This can be enabled or disabled using the `setSpatial` method on the clip.
 
 ### Non-Spatial Audio
 
 Non-spatial (2D) audio, plays back at the same volume through both speakers and does not pan (I.e. it sounds the same
 through both speakers). This is the type of audio used for background music, UI sound effects and narration voice-overs.
 
-Using this audio in-game is relatively straightforward. Preload the audio file into an `AudioClip2D`, specifying the
-group and max volume, start/stop as needed in-game.
-
-```java
-// Preload 2D audio clip
-Audio.preload(
-  "main-bg-music", 
-  new AudioClip2D(
-    "path-to-audio-resource", 
-    AudioGroup.MUSIC, 
-    1
-  )
-);
-```
-
 ### Spatial Audio
 
-Spatial (3D) audio refers to positional sound whose output through stereo speakers is panned with respect to the
-[AudioListener](audio-listener.md) instance . This means, if the audio is placed to the right of the listener, it will
-be heard more from the right speaker than the left and vice versa.
+Spatial (3D) audio refers to directional audio whose output through stereo speakers depends on the position of the
+[AudioListener](audio-listener.md) instance (I.e. panning).
 
-Spatial audio is great for sound-emitting objects in your game world, which are panned relative to the player (E.g.
+This means, if the audio is positioned to the right of the listener, it will be heard more from the right speaker than
+the left and vice versa.
+
+Spatial audio is ideal for sound-emitting objects in your game world, which are panned relative to the player (E.g.
 explosions, gunshots, waterfall).
 
-Using this audio in-game is a bit more involved. Preload the audio file into an `AudioClip3D`, specifying the
-group, max volume, [attenuation function](attenuation.md) and [audio shape](audio-shape.md), then start/stop as needed
-in-game.
+## Attaching To A Mixer
+
+[Audio mixers](audio-mixer.md) allow for group control of multiple audio clips. To add this clip to a mixer, specify the
+mixer id when loading the clip, or use the `setMixer` method.
 
 ```java
-// Preload 3D audio clip
-Audio.preload(
-  "bomb-explosion",
-  new AudioClip3D(
-    "path-to-audio-resource", 
-    AudioGroup.EFFECTS, 
-    1, 
-    new LinearAudioAttenuation(), 
-    new CircleAudioShape(10, 75)
-  )
-);
+// Specify the mixer when loading the clip
+try {
+  AudioClip clip = Audio.loadClip("path-to-audio-resource", "<mixer-id>");
+} catch (UnsupportedAudioFileException | IOException e) {
+  e.printStackTrace();
+}
+
+/* or */
+
+// Set/Update the mixer on the clip instance
+clip.setMixer(Audio.getMixer("<mixer-id>"));
 ```
 
 ## Public Methods
 
-| Method   | Description                                                                                                               |
-|----------|---------------------------------------------------------------------------------------------------------------------------|
-| `play`   | `+1` Begins playback from the beginning without looping<br/>`+2` Begins playback from the beginning with optional looping |
-| `pause`  | Stops playback without resetting the clip                                                                                 |
-| `resume` | Resumes playback from paused position                                                                                     |
-| `stop`   | Stops playback, resetting the clip to the beginning                                                                       |
+| Method             | Description                                                                          |
+|--------------------|--------------------------------------------------------------------------------------|
+| `isPlaying`        | Returns whether the clip is playing                                                  |
+| `play`             | Begins playback from the beginning                                                   |
+| `pause`            | Pauses playback without resetting the head                                           |
+| `stop`             | Stops playback and resets the head                                                   |
+| `isLooping`        | Returns whether the clip is set to loop                                              |
+| `setLooping`       | Sets the clip to loop playback or not                                                |
+| `getVolume`        | Returns the volume of this clip                                                      |
+| `setVolume`        | Sets the volume of the clip (Clamped between 0 and 1.5)                              |
+| `isMuted`          | Returns whether the clip is muted                                                    |
+| `setMuted`         | Mutes or unmutes the clip                                                            |
+| `isSpatial`        | Returns whether the clip is spatial                                                  |
+| `setSpatial`       | Sets whether this clip is spatial                                                    |
+| `getMixer`         | Returns mixer to which this clip is attached                                         |
+| `setMixer`         | Sets the audio mixer of this clip                                                    |
+| `getPosition`      | Returns the position of this clip (Relevant to spatial clips only)                   |
+| `setPosition`      | Sets the position of this clip (Relevant to spatial clips only)                      |
+| `setAttenuation`   | Sets the attenuation/falloff behaviour of this clip (Relevant to spatial clips only) |
+| `setEventListener` | Adds a listener to this clip to be notified of playback events                       |
 
-_`AudioClip3D` has these methods in addition to the common public methods_.
-
-| Method        | Description                                  |
-|---------------|----------------------------------------------|
-| `getPosition` | Returns the position vector                  |
-| `setPosition` | Sets the position of the clip in world-space |
+> All setter methods return the clip instance, allowing for method chaining

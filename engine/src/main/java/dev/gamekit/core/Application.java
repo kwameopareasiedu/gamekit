@@ -180,11 +180,9 @@ public abstract class Application {
 
         while (frameTimeAccumulator >= FRAME_INTERVAL_MS && isRunning) {
           frameTimeAccumulator -= FRAME_INTERVAL_MS;
-          // TODO: Monitor to see if this solves the "sticky keys" bug
-//          Input.freeze();
+          Input.freeze();
           update();
-//          Input.reset();
-          Thread.sleep(1);
+          Input.reset();
         }
 
         render();
@@ -304,6 +302,9 @@ public abstract class Application {
 
     if (currentScene != null) currentScene._dispose();
 
+    Audio.dispose();
+    IO.dispose();
+
     audioThread.interrupt();
     audioThread.join(500);
 
@@ -312,16 +313,13 @@ public abstract class Application {
 
     drawThread.interrupt();
     drawThread.join(500);
-
-    Audio.dispose();
-    IO.dispose();
   }
 
   private static class WorkerThread extends Thread {
     private final long frameTimeMs;
-    private final Runnable runnable;
+    private final VoidCallback runnable;
 
-    private WorkerThread(String threadName, long frameTimeMs, Runnable runnable) {
+    private WorkerThread(String threadName, long frameTimeMs, VoidCallback runnable) {
       super(threadName);
       this.frameTimeMs = frameTimeMs;
       this.runnable = runnable;
@@ -342,7 +340,7 @@ public abstract class Application {
 
         while (frameTimeAccumulator >= frameTimeMs) {
           frameTimeAccumulator -= frameTimeMs;
-          try { runnable.run(); } //
+          try { runnable.invoke(); } //
           catch (Exception ignored) { }
         }
 

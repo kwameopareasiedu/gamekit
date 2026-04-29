@@ -1,166 +1,304 @@
 package dev.gamekit.audio;
 
-import dev.gamekit.core.IO;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import javax.sound.sampled.*;
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import static dev.gamekit.utils.Math.clamp;
+import dev.gamekit.audio.attenuation.AudioAttenuation;
+import dev.gamekit.audio.attenuation.LinearAttenuation;
+import dev.gamekit.core.Audio;
+import dev.gamekit.utils.GMath;
+import dev.gamekit.utils.ValueCallback;
+import dev.gamekit.utils.Vector;
 
 /**
- * {@link AudioClip} is abstract class which stores and handles playback for audio in GameKit.
- * <p>
- * All {@link AudioClip} must belong to an {@link AudioGroup}. This makes it possible to control the properties of
- * all audio clips in specific groups by adjusting the group's properties.
+ * {@link AudioClip} stores 16-bit, dual channel audio data retrieved from a resource file, and provides methods to
+ * control playback
  */
-public abstract class AudioClip {
-  protected final Logger logger = LogManager.getLogger(getClass());
-  protected final Clip clip;
-  protected final AudioGroup group;
-  protected final double maxVolume;
-  protected final FloatControl gainControl;
-  protected final Map<Event.Handler, LineListener> listenerMap;
+public class AudioClip {
+  private static final Vector UP = new Vector(0, 1);
+  private static final AudioAttenuation DEFAULT_ATTENUATION = new LinearAttenuation(0, 100);
 
-  public AudioClip(String resPath, AudioGroup group, double maxVolume) {
-    this.clip = loadClip(resPath);
-    this.group = group;
-    this.maxVolume = clamp(maxVolume, 0, 1);
+  private final byte[] dataL;
+  private final byte[] dataR;
+  private final Vector position;
+  private final Vector listenerVector;
+  private boolean playing;
+  private boolean looping;
+  private double volume;
+  private double gain;
+  private boolean muted;
+  private boolean spatial;
+  private AudioMixer mixer;
+  private ValueCallback<Event> eventListener;
+  private AudioAttenuation attenuation;
+  private int head;
 
-    gainControl = getControl(FloatControl.Type.MASTER_GAIN);
-    listenerMap = new HashMap<>();
+  public AudioClip(byte[] dataL, byte[] dataR, boolean playing, boolean looping, boolean muted, AudioMixer mixer) {
+    this.dataL = dataL;
+    this.dataR = dataR;
+    this.playing = playing;
+    this.looping = looping;
+    this.volume = 1;
+    this.gain = 1;
+    this.spatial = false;
+    this.muted = muted;
+    this.mixer = mixer;
+    this.eventListener = null;
+    this.position = new Vector();
+    this.listenerVector = new Vector();
+    this.attenuation = DEFAULT_ATTENUATION;
+    this.head = 0;
   }
 
-  /** Begins playback of this {@link AudioClip} from the beginning without looping */
-  public void play() {
-    play(false);
+  public AudioClip(byte[] dataL, byte[] dataR) {
+    this(dataL, dataR, false, false, false, null);
+  }
+
+  public AudioClip(byte[] dataL, byte[] dataR, AudioMixer mixer) {
+    this(dataL, dataR, false, false, false, mixer);
+  }
+
+  public AudioClip(byte[] dataL, byte[] dataR, boolean looping) {
+    this(dataL, dataR, false, looping, false, null);
+  }
+
+  public AudioClip(byte[] dataL, byte[] dataR, boolean looping, AudioMixer mixer) {
+    this(dataL, dataR, false, looping, false, mixer);
+  }
+
+  /** Returns {@code true} if this clip is currently playing */
+  public boolean isPlaying() {
+    return playing;
   }
 
   /**
-   * Begins playback of this {@link AudioClip} from the beginning
+   * Marks this clip as playable.
    * <p>
-   * If {@code loop} is {@code true}, playback restarts automatically after playback is complete
+   * If this clip is at its end and {@link #looping} is false, this method does nothing, else the clip's position is
+   * reset, and it is marked as playable
    */
-  public void play(boolean loop) {
-    stop();
+  public AudioClip play() {
+    if (playing)
+      return this;
 
-    if (loop) {
-      clip.loop(Clip.LOOP_CONTINUOUSLY);
+    if (getRemainingBytes() > 0) {
+      playing = true;
+
+      if (eventListener != null)
+        eventListener.invoke(Event.PLAY);
+    } else if (looping) {
+      playing = true;
+      head = 0;
+
+      if (eventListener != null)
+        eventListener.invoke(Event.RESTART);
+    }
+
+    return this;
+  }
+
+  /** Pauses playback of this clip */
+  public AudioClip pause() {
+    if (!playing)
+      return this;
+
+    playing = false;
+
+    if (eventListener != null)
+      eventListener.invoke(Event.PAUSE);
+
+    return this;
+  }
+
+  /** Stops playback of this clip and resets its head */
+  public AudioClip stop() {
+    if (!playing)
+      return this;
+
+    playing = false;
+    head = 0;
+
+    if (eventListener != null)
+      eventListener.invoke(Event.STOP);
+
+    return this;
+  }
+
+  /** Returns {@code true} if this clip is set to loop */
+  public boolean isLooping() {
+    return looping;
+  }
+
+  /** Sets the clip should loop when playback is finished */
+  public AudioClip setLooping(boolean looping) {
+    this.looping = looping;
+    return this;
+  }
+
+  /** Returns the volume of this clip */
+  public double getVolume() {
+    return volume;
+  }
+
+  /** Sets the volume of this clip */
+  public AudioClip setVolume(double volume) {
+    if (GMath.isPracticallyZero(Math.abs(this.volume - volume)))
+      return this;
+
+    this.volume = GMath.clamp(volume, 0, 1.5);
+
+    if (GMath.isPracticallyZero(this.volume)) {
+      gain = 0;
     } else {
-      clip.start();
+      double db = GMath.lerp(-60, 6, volume);
+      gain = Math.pow(10, db / 20);
     }
+
+    return this;
   }
 
-  /** Resumes playback of this {@link AudioClip} */
-  public void resume() {
-    clip.start();
+  /** Returns whether this clip is 2D (non-spatial) or 3D (spatial) */
+  public boolean isSpatial() {
+    return spatial;
   }
 
-  /** Pauses playback of this {@link AudioClip} */
-  public void pause() {
-    clip.stop();
+  /** Sets whether this clip is 2D (non-spatial) or 3D (spatial) */
+  public AudioClip setSpatial(boolean spatial) {
+    this.spatial = spatial;
+    return this;
   }
 
-  /** Stops playback of this {@link AudioClip}, resetting the clip position to the beginning */
-  public void stop() {
-    clip.stop();
-    clip.flush();
-    clip.setMicrosecondPosition(0);
+  /** Returns the muted status of this clip */
+  public boolean isMuted() {
+    return muted;
   }
 
-  /** Registers an {@link Event.Handler} object to be notified of changes to playback state */
-  public void addListener(Event.Handler handler) {
-    if (listenerMap.containsKey(handler))
-      return;
+  /** Sets the muted status of this clip */
+  public AudioClip setMuted(boolean muted) {
+    this.muted = muted;
+    return this;
+  }
 
-    LineListener listener = (ev) -> {
-      String evName = ev.getType().toString();
+  /** Returns the attached {@link AudioMixer} */
+  public AudioMixer getMixer() {
+    return mixer;
+  }
 
-      if (evName.equals("Start")) {
-        handler.handleEvent(new Event(Event.Type.START));
-      } else if (evName.equals("Stop")) {
-        handler.handleEvent(new Event(Event.Type.STOP));
+  /** Sets the attached {@link AudioMixer} */
+  public AudioClip setMixer(AudioMixer mixer) {
+    this.mixer = mixer != null ? mixer : Audio.getMixer(AudioMixer.DEFAULT_ID);
+    return this;
+  }
+
+  /** Sets the listener to be notified when this clip emits an event */
+  public AudioClip setEventListener(ValueCallback<Event> eventListener) {
+    this.eventListener = eventListener;
+    return this;
+  }
+
+  /** Sets the attenuation (fall-off) of this clip */
+  public AudioClip setAttenuation(AudioAttenuation attenuation) {
+    this.attenuation = attenuation != null ? attenuation : DEFAULT_ATTENUATION;
+    return this;
+  }
+
+  /** Returns the position of the clip in the world */
+  public Vector getPosition() {
+    return position;
+  }
+
+  /** Sets the position of the clip in the world */
+  public void setPosition(Vector position) {
+    this.position.set(position);
+  }
+
+  /** Sets the position of the clip in the world */
+  public void setPosition(double x, double y) {
+    position.set(x, y);
+  }
+
+  /** Returns the number of bytes remaining till the end of the clip */
+  public int getRemainingBytes() {
+    return dataL.length - head;
+  }
+
+  /**
+   * Writes the next two bytes of this clip's data to the provided {@code out} array, advancing the head by 2 bytes.
+   * <p>
+   * When the head reaches or exceeds the data length, it is reset. If the clip is set to loop, a {@link Event#RESTART}
+   * event is emitted else an {@link Event#END} event is emitted.
+   */
+  public void readNextTwoBytes(double[] out) {
+    // Little endian byte ordering
+    out[0] = (dataL[head + 1] << 8) | (dataL[head] & 0xFF);
+    out[1] = (dataR[head + 1] << 8) | (dataR[head] & 0xFF);
+
+    out[0] *= (!muted ? gain : 0);
+    out[1] *= (!muted ? gain : 0);
+
+    if (spatial) {
+      listenerVector.set(
+        AudioListener.POSITION.x - position.x,
+        AudioListener.POSITION.y - position.y
+      );
+
+      setVolume(attenuation.attenuate(listenerVector.getMagnitude()));
+
+      Vector normalizedListenerVector = listenerVector.getNormalized();
+      double pan = Math.signum(normalizedListenerVector.x) * (Math.abs(Vector.dot(normalizedListenerVector, UP)) - 1);
+
+      if (!GMath.isPracticallyZero(pan)) {
+        double ll = (pan <= 0) ? 1.0 : (1.0 - pan);
+        double lr = (pan <= 0) ? Math.abs(pan) : 0.0;
+        double rl = (pan >= 0) ? pan : 0.0;
+        double rr = (pan >= 0) ? 1.0 : (1.0 - Math.abs(pan));
+        double tmpL = (ll * out[0]) + (lr * out[1]);
+        double tmpR = (rl * out[0]) + (rr * out[1]);
+
+        out[0] = tmpL;
+        out[1] = tmpR;
       }
-    };
+    }
 
-    listenerMap.put(handler, listener);
+    if (mixer != null)
+      mixer.process(out);
 
-    clip.addLineListener(listener);
-  }
+    head += 2;
 
-  /** Unregisters an {@link Event.Handler} object */
-  public void removeListener(Event.Handler handler) {
-    if (listenerMap.containsKey(handler)) {
-      LineListener listener = listenerMap.get(handler);
+    if (head >= dataL.length) {
+      head = 0;
 
-      if (listener != null)
-        clip.removeLineListener(listener);
+      if (looping) {
+        if (eventListener != null)
+          eventListener.invoke(Event.RESTART);
+      } else {
+        playing = false;
 
-      listenerMap.remove(handler);
+        if (eventListener != null)
+          eventListener.invoke(Event.END);
+      }
     }
   }
 
-  /** Called internally to update the clip's parameters */
-  public final void update() {
-    if (clip.isRunning()) performUpdate();
+  /** Clears all audio data and resets internal state */
+  public void dispose() {
+    playing = false;
+    head = 0;
+
+    if (eventListener != null)
+      eventListener.invoke(Event.DISPOSE);
   }
 
-  /** Delegate method which performs the actual update and must be overridden in subclasses */
-  public abstract void performUpdate();
-
-  /** Called internally to dispose resources held by this clip */
-  public final void dispose() {
-    stop();
-    clip.close();
-    performDispose();
-  }
-
-  /** Delegate method for subclasses to perform additional dispose logic */
-  public void performDispose() { /* No-op */ }
-
-  @SuppressWarnings("unchecked")
-  protected <T extends Control> T getControl(T.Type controlType) {
-    if (clip != null && clip.isControlSupported(controlType)) return (T) clip.getControl(controlType);
-    return null;
-  }
-
-  private Clip loadClip(String resPath) {
-    try {
-      logger.debug("Loading audio clip at {}", resPath);
-
-      Clip clip = AudioSystem.getClip();
-      clip.open(AudioSystem.getAudioInputStream(new BufferedInputStream(IO.getStream(resPath))));
-      return clip;
-    } catch (LineUnavailableException e) {
-      logger.error("Could not get audio clip resource from system mixer", e);
-      throw new RuntimeException(e);
-    } catch (UnsupportedAudioFileException e) {
-      logger.error("Unsupported audio file format", e);
-      throw new RuntimeException(e);
-    } catch (IOException e) {
-      logger.error("Unable to load resource audio clip at {}", resPath, e);
-      throw new RuntimeException(e);
-    }
-  }
-
-  /** Event class for {@link AudioClip} playback events */
-  public record Event(Type type) {
-    /** Constants form {@link Event} types */
-    public enum Type {
-      /** Indicates that the {@link AudioClip} has started or restarted playback */
-      START,
-      /** Indicates that the {@link AudioClip} has paused or stopped playback */
-      STOP
-    }
-
-    /** Handler interface for {@link Event} */
-    public interface Handler {
-      /** Called to handle an {@link Event} */
-      void handleEvent(Event ev);
-    }
+  /** Constants for the events emitted by an {@link AudioClip} */
+  public enum Event {
+    /** Emitted when a clip begins a playback */
+    PLAY,
+    /** Emitted when a clip is paused */
+    PAUSE,
+    /** Emitted when a clip has restarts playback */
+    RESTART,
+    /** Emitted when a clip's playback stops before it completes */
+    STOP,
+    /** Emitted when a clip finishes playback */
+    END,
+    /** Emitted when a clip is disposed */
+    DISPOSE
   }
 }

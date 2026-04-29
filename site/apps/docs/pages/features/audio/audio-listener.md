@@ -2,9 +2,11 @@
 
 _[Back To Audio](overview.md)_
 
-[Spatial audio](audio-clip.md#spatial-audio) requires a **listener reference** position to compute the relative panning.
-(I.e. How much of it is heard through the left and right speakers). This **listener reference** is represented by the
-`AudioListener` instance. It is essentially the position of your "ears" in the scene.
+[Spatial audio](audio-clip.md#spatial-audio) requires a **reference position** to compute the panning
+(I.e. How much of it is heard through the left and right speakers). This **reference position** is represented by the
+`AudioListener` instance.
+
+The `AudioListener` is essentially the position of your "ears" in the scene.
 
 As an example, if your player character is the entity responsible for "hearing", you should make sure to update the
 `AudioListener` instance position to match the player's in-game position. This way, if the player gets close to, say a
@@ -12,12 +14,11 @@ fireplace which emits sound, you'd hear the sound more on the right speaker if t
 
 ## Public Methods
 
-| Method        | Description                                      |
-|---------------|--------------------------------------------------|
-| `getPosition` | Returns the position of the listener             |
-| `setPosition` | Sets the position of the listener in world-space |
+| Method        | Description                       |
+|---------------|-----------------------------------|
+| `setPosition` | Sets the position of the listener |
 
-## AudioListener Sample
+## Sample
 
 The sample below shows how you would update the `AudioListener` instance in a player entity class.
 
@@ -30,9 +31,7 @@ class PlayerCharacter extends Entity {
   public PlayerCharacter() {
     super("Player Character");
   }
-  
-  /** Omitted code */
-  
+
   @Override
   protected void update() {
     if (Input.isKeyPressed(Input.KEY_A)) {

@@ -1,6 +1,7 @@
 package dev.gamekit.core;
 
 import dev.gamekit.utils.Bounds;
+import dev.gamekit.utils.GMath;
 import dev.gamekit.utils.Position;
 import dev.gamekit.utils.Vector;
 import org.apache.logging.log4j.LogManager;
@@ -72,7 +73,7 @@ public final class Camera {
 
   /** Sets the zoom level of the camera, clamped to a min of 1 */
   public void setZoom(double zoom) {
-    this.zoom = Math.max(zoom, dev.gamekit.utils.Math.EPSILON);
+    this.zoom = Math.max(zoom, GMath.EPSILON);
     this.invZoom = 1.0 / zoom;
   }
 

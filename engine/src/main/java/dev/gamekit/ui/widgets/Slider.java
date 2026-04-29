@@ -12,7 +12,7 @@ import dev.gamekit.utils.Position;
 
 import java.awt.*;
 
-import static dev.gamekit.utils.Math.clamp;
+import static dev.gamekit.utils.GMath.clamp;
 
 /** A {@link Progress} widget extension which adjusts a value by moving a slider */
 @WidgetBuilder

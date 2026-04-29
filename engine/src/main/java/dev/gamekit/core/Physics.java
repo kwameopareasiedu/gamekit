@@ -2,7 +2,7 @@ package dev.gamekit.core;
 
 import dev.gamekit.components.Collider;
 import dev.gamekit.components.RigidBody;
-import dev.gamekit.utils.Math;
+import dev.gamekit.utils.GMath;
 import dev.gamekit.utils.Vector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -134,7 +134,7 @@ public final class Physics {
     List<RaycastResult<Body, BodyFixture>> results = WORLD.raycast(
       new Ray(
         new Vector2(start.x / PIXELS_PER_METER, -start.y / PIXELS_PER_METER),
-        angle - Math.HALF_PI
+        angle - GMath.HALF_PI
       ),
       distance / PIXELS_PER_METER,
       new DetectFilter<>(false, true, filter -> {

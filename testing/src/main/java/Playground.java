@@ -1,8 +1,23 @@
 public class Playground {
-  public static void main(String[] args) {
-    for (Object key : System.getProperties().keySet()) {
-      System.out.println(key);
+  public static void main(String[] args) throws InterruptedException {
+    int[] buffer = new int[10];
+
+    for (int i = -10; i < 0; i++) {
+      System.out.printf("%d => %d%n", i, getWrappedIndex(buffer, i));
     }
-    System.out.println(System.getProperty("os.arch"));
+  }
+
+  protected static int getWrappedIndex(int[] buffer, int index) {
+    int newIndex = index;
+
+    if (newIndex >= buffer.length) {
+      while (newIndex >= buffer.length)
+        newIndex -= buffer.length;
+    } else if (newIndex < 0) {
+      while (newIndex < 0)
+        newIndex += buffer.length;
+    }
+
+    return newIndex;
   }
 }

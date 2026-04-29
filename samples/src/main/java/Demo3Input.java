@@ -10,7 +10,7 @@ import dev.gamekit.ui.widgets.Widget;
 
 import java.awt.*;
 
-import static dev.gamekit.utils.Math.cycle;
+import static dev.gamekit.utils.GMath.cycle;
 
 /**
  * This demo shows how to detect input using the {@link Input} interface and performs the

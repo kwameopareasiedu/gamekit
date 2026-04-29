@@ -8,7 +8,7 @@ import dev.gamekit.utils.Vector;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-import static dev.gamekit.utils.Math.clamp;
+import static dev.gamekit.utils.GMath.clamp;
 
 public class Calibration extends Scene {
   private static final int WORLD_WIDTH = 2400;
