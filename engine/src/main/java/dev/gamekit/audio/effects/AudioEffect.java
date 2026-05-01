@@ -7,6 +7,8 @@ import java.util.Arrays;
 
 /** {@link AudioEffect} represents objects that can perform some manipulation to a chunk of audio stream data */
 public abstract class AudioEffect {
+  public final String id;
+
   protected final Logger logger = LogManager.getLogger(getClass());
   protected final int bufferLength;
   protected final double[] bufferL;
@@ -14,7 +16,8 @@ public abstract class AudioEffect {
   protected final double[] out;
   protected int head = 0;
 
-  protected AudioEffect(int bufferLength) {
+  protected AudioEffect(String id, int bufferLength) {
+    this.id = id;
     this.bufferLength = bufferLength;
     this.bufferL = new double[bufferLength];
     this.bufferR = new double[bufferLength];
@@ -37,7 +40,7 @@ public abstract class AudioEffect {
     return out;
   }
 
-  /** Delegate method which implements the effect logic, writing its result to the out array  */
+  /** Delegate method which implements the effect logic, writing its result to the out array */
   protected abstract void performProcess(double[] out, double sampleL, double sampleR);
 
   /** Returns the index wrapped around the buffer size */

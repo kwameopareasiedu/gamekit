@@ -89,6 +89,11 @@ public final class Audio {
     return MIXERS.get(id);
   }
 
+  /** Returns the default {@link AudioMixer} */
+  public static AudioMixer getDefaultMixer() {
+    return MIXERS.get(AudioMixer.DEFAULT_ID);
+  }
+
   /** Called internally to perform update logic */
   static void update() {
     int bytesRead = 0;

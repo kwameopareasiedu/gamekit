@@ -60,6 +60,25 @@ public class AudioMixer {
     return this;
   }
 
+  /** Returns an effect which matches the given {@code effectId} or {@code null} */
+  public AudioEffect getEffect(String effectId) {
+    for (AudioEffect effect : effects) {
+      if (effect.id.equals(effectId))
+        return effect;
+    }
+
+    return null;
+  }
+
+  /** Removes an effect which matches the given {@code effectId} */
+  public AudioMixer removeEffect(String effectId) {
+    synchronized (this.effects) {
+      this.effects.removeIf(effect -> effect.id.equals(effectId));
+    }
+
+    return this;
+  }
+
   /** Returns the volume value of this mixer */
   public double getVolume() {
     return volume;

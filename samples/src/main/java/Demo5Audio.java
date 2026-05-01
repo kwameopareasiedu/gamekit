@@ -54,8 +54,8 @@ public class Demo5Audio extends Scene {
 
     effects = new AudioEffect[]{
       null,
-      new LowPassFilter(1200),
-      new ReverbFilter(300, 0.8, 0.7)
+      new LowPassFilter("lp", 1200, 1),
+      new ReverbFilter("rv", 300, 0.8, 0.7)
     };
 
     effectNames = new String[]{
@@ -86,6 +86,12 @@ public class Demo5Audio extends Scene {
   }
 
   @Override
+  protected void start() {
+    clip.setPosition(0, 0);
+    AudioListener.setPosition(0, 0);
+  }
+
+  @Override
   protected void update() {
     if (Input.isKeyDown(Input.KEY_SPACE))
       clip.play();
@@ -102,14 +108,14 @@ public class Demo5Audio extends Scene {
     Window win = Window.getInstance();
     Position mousePos = Input.getMousePosition();
 
-    listenerPos.set(
-      0.1 * (win.getCenterX() - mousePos.x),
-      0.1 * (win.getCenterY() - mousePos.y)
-    );
-
-    AudioListener.setPosition(listenerPos);
-
     if (!Objects.equals(prevMousePos, mousePos)) {
+      listenerPos.set(
+        0.1 * (win.getCenterX() - mousePos.x),
+        0.1 * (win.getCenterY() - mousePos.y)
+      );
+
+      AudioListener.setPosition(listenerPos);
+
       pan = (double) (mousePos.x - halfWindowWidth) / halfWindowWidth;
       prevMousePos.set(mousePos);
       updateUI();

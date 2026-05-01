@@ -2,6 +2,8 @@ package dev.gamekit.audio.effects;
 
 import dev.gamekit.core.Audio;
 
+import java.util.UUID;
+
 /**
  * {@link AllPassFilter} is an audio filter which allows all frequencies of an audio signal to pass, but affects the
  * phase relationship between frequencies
@@ -12,13 +14,17 @@ public class AllPassFilter extends AudioEffect {
   private final double damping;
   private final double delayedDamping;
 
-  public AllPassFilter(double delayMs, double damping) {
-    super((int) (0.001 * delayMs * Audio.SAMPLE_RATE));
+  public AllPassFilter(String id, double delayMs, double damping) {
+    super(id, (int) (0.001 * delayMs * Audio.SAMPLE_RATE));
 
     this.delayFilter = new DelayFilter(delayMs);
     this.combFilter = new CombFilter(delayMs, damping);
     this.damping = damping;
     this.delayedDamping = 1 - Math.pow(damping, 2);
+  }
+
+  public AllPassFilter(double delayMs, double damping) {
+    this(UUID.randomUUID().toString(), delayMs, damping);
   }
 
   @Override

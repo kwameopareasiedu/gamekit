@@ -243,17 +243,21 @@ public class AudioClip {
 
       Vector normalizedListenerVector = listenerVector.getNormalized();
       double pan = Math.signum(normalizedListenerVector.x) * (Math.abs(Vector.dot(normalizedListenerVector, UP)) - 1);
+      if (Double.isNaN(pan)) pan = 0;
 
       if (!GMath.isPracticallyZero(pan)) {
+        double absPan = Math.abs(pan);
+        double divisor = 1 + absPan;
+
         double ll = (pan <= 0) ? 1.0 : (1.0 - pan);
-        double lr = (pan <= 0) ? Math.abs(pan) : 0.0;
+        double lr = (pan <= 0) ? absPan : 0.0;
         double rl = (pan >= 0) ? pan : 0.0;
-        double rr = (pan >= 0) ? 1.0 : (1.0 - Math.abs(pan));
+        double rr = (pan >= 0) ? 1.0 : (1.0 - absPan);
         double tmpL = (ll * out[0]) + (lr * out[1]);
         double tmpR = (rl * out[0]) + (rr * out[1]);
 
-        out[0] = tmpL;
-        out[1] = tmpR;
+        out[0] = tmpL / divisor;
+        out[1] = tmpR / divisor;
       }
     }
 
