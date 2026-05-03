@@ -161,21 +161,11 @@ public final class Renderer {
 
   /** Applies accumulated draw calls to the provided {@link Graphics2D} object */
   static void draw(Graphics2D g) {
-    Camera camera = Camera.getCurrent();
-    Shape originalClip = g.getClip();
-
-    if (camera != null) {
-      Bounds rb = camera.getRenderBounds();
-      g.setClip((int) rb.x, (int) rb.y, (int) rb.width, (int) rb.height);
-    }
-
     for (ArrayList<DrawCall<?>> buffer : BUFFERS)
       for (DrawCall<?> call : buffer)
         call.apply(g);
 
     completed = true;
-
-    g.setClip(originalClip);
   }
 
   static void reset() {

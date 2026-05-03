@@ -7,6 +7,7 @@ import dev.gamekit.utils.Vector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 
 /**
@@ -90,7 +91,10 @@ public final class Camera {
   /** Applies the camera's position and zoom to the current window's transform matrix */
   void updateWindowTransform() {
     Window win = Window.getInstance();
+    Graphics2D g = win.getDisplayGraphics();
+    Bounds rb = getRenderBounds();
     transform.setTransform(zoom, 0, 0, zoom, win.getCenterX() - x, win.getCenterY() - y);
-    win.getDisplayGraphics().setTransform(transform);
+    g.setTransform(transform);
+    g.setClip((int) rb.x, (int) rb.y, (int) rb.width, (int) rb.height);
   }
 }
