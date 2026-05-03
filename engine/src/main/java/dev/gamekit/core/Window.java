@@ -107,6 +107,7 @@ public final class Window {
     settings.dithering.apply(uiGraphics);
 
     frame.setLayout(new GridBagLayout());
+    frame.setBackground(Color.BLACK);
     frame.getContentPane().setBackground(Color.BLACK);
     frame.getContentPane().add(canvas);
     frame.setLocationRelativeTo(null);
