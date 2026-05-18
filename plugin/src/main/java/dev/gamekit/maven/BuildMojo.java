@@ -66,9 +66,9 @@ public class BuildMojo extends AbstractMojo {
 
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
-    OS os = OS.getCurrent();
+    OperatingSystem os = OperatingSystem.getCurrent();
 
-    if (os == OS.UNSUPPORTED)
+    if (os == OperatingSystem.UNSUPPORTED)
       throw new MojoExecutionException("Unsupported operating system");
 
     getLog().info("Generating uber JAR with all dependencies");
@@ -192,7 +192,7 @@ public class BuildMojo extends AbstractMojo {
         Collections.reverse(reversed);
 
         for (Path entry : reversed) {
-          if (os == OS.WINDOWS) {
+          if (os == OperatingSystem.WINDOWS) {
             var attrs = Files.getFileAttributeView(entry, DosFileAttributeView.class);
             if (attrs != null) attrs.setReadOnly(false);
           }

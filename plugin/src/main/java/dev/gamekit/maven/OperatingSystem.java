@@ -1,15 +1,15 @@
 package dev.gamekit.maven;
 
-public enum OS {
+public enum OperatingSystem {
   LINUX("linux"), WINDOWS("windows"), MAC("macos"), UNSUPPORTED("N/a");
 
   public final String name;
 
-  OS(String name) {
+  OperatingSystem(String name) {
     this.name = name;
   }
 
-  public static OS getCurrent() {
+  public static OperatingSystem getCurrent() {
     String prop = System.getProperty("os.name").toLowerCase();
 
     if (prop.contains("nix") || prop.contains("nux") || prop.contains("aix")) return LINUX;

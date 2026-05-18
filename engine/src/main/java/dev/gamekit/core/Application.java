@@ -298,9 +298,8 @@ public abstract class Application {
 
   /** Runs cleanup code before exiting the application */
   protected void dispose() throws InterruptedException {
-    logger.debug("Disposing application");
-
-    if (currentScene != null) currentScene._dispose();
+    if (currentScene != null)
+      currentScene._dispose();
 
     Audio.dispose();
     IO.dispose();
@@ -313,6 +312,8 @@ public abstract class Application {
 
     drawThread.interrupt();
     drawThread.join(500);
+
+    logger.debug("Disposing application");
   }
 
   private static class WorkerThread extends Thread {
