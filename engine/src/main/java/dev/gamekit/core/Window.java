@@ -72,6 +72,9 @@ public final class Window {
       frame.setSize(displayWidth, displayHeight);
       frame.setResizable(true);
 
+      if (settings.maximized)
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+
       invScaling = 1;
     }
 

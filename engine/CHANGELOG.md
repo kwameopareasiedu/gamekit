@@ -40,6 +40,7 @@
 - Added `void popSceneStack()` method to `Application` class
 - Added protected `camera` field to `Scene` class
 - Added `Vector getLinearVelocity()` method to `RigidBody` class
+- Added `MAXIMIZED` value to `WindowMode` setting enum
 
 ### Changed
 

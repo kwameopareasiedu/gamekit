@@ -6,6 +6,7 @@ import dev.gamekit.core.Application;
 public final class Settings {
   public final String title;
   public final Resolution resolution;
+  public final boolean maximized;
   public final boolean fullscreen;
   public final Antialiasing antialiasing;
   public final TextAntialiasing textAntialiasing;
@@ -17,6 +18,7 @@ public final class Settings {
   public Settings(String title, Setting... settings) {
     this.title = title;
     this.resolution = get(Resolution.class, settings, Resolution.SVGA);
+    this.maximized = get(WindowMode.class, settings, WindowMode.WINDOWED) == WindowMode.MAXIMIZED;
     this.fullscreen = get(WindowMode.class, settings, WindowMode.WINDOWED) == WindowMode.FULLSCREEN;
     this.antialiasing = get(Antialiasing.class, settings, Antialiasing.DEFAULT);
     this.textAntialiasing = get(TextAntialiasing.class, settings, TextAntialiasing.ON);
