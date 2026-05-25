@@ -14,6 +14,7 @@ public class Sprite extends Component {
   protected final Bounds bounds;
 
   protected BufferedImage image;
+  protected BufferedImage maskImage;
   protected ImageInterpolation interpolation;
   protected boolean flippedX = false;
   protected boolean flippedY = false;
@@ -41,6 +42,19 @@ public class Sprite extends Component {
   public void setImage(BufferedImage image) {
     this.image = image;
     this.aspectRatio = (double) image.getWidth() / (double) image.getHeight();
+  }
+
+  /**
+   * Sets the {@link Sprite sprite's} masking image
+   * <p>
+   * The alpha channel of the provided mask image is used to control the visibility of the drawn pixels of the
+   * underlying image.
+   * <p>
+   * If the alpha = 1.0, the pixels in the corresponding area of the underlying image are cleared and if
+   * the alpha is 0.0, the pixels in the overlapping area are unchanged.
+   */
+  public void setMaskImage(BufferedImage maskImage) {
+    this.maskImage = maskImage;
   }
 
   /** Sets the image interpolation setting */
@@ -122,6 +136,7 @@ public class Sprite extends Component {
           (int) (signedHeight * resolvedScaleY)
         )
         .withInterpolation(interpolation)
+        .withMaskImage(maskImage)
         .withOpacity(resolvedOpacity)
         .withRotation(
           (int) (globalPosition.x),

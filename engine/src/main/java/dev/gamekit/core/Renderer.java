@@ -7,6 +7,8 @@ import dev.gamekit.utils.VoidCallback;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * {@link Renderer} dispatches {@link DrawCall draw calls} which are processed by the render thread to draw on the
@@ -195,15 +197,15 @@ public final class Renderer {
 
       Composite originalComposite = g.getComposite();
 
-      if (opacityComposite != null) {
+      if (opacityComposite != null)
         g.setComposite(opacityComposite);
-      }
 
       setup(g);
       draw(g);
       cleanup(g);
 
-      g.setComposite(originalComposite);
+      if (opacityComposite != null)
+        g.setComposite(originalComposite);
 
       if (rotationAngle != 0) {
         g.translate(rotationPointX, -rotationPointY);
@@ -265,6 +267,9 @@ public final class Renderer {
 
   /** {@link DrawImage} renders a <b>center-origin</b> image to the window */
   public static class DrawImage extends DrawCall<DrawImage> {
+    private static final AlphaComposite ALPHA_MASK_COMPOSITE = AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1);
+    private static final Map<String, BufferedImage> IMAGE_CACHE = new HashMap<>();
+
     private final BufferedImage image;
     private final int x, y;
     private final int width;
@@ -272,6 +277,7 @@ public final class Renderer {
 
     private ImageInterpolation interpolation;
     private ImageInterpolation prevInterpolation;
+    private BufferedImage maskImage;
 
     private DrawImage(BufferedImage image, int x, int y, int width, int height) {
       this.image = image;
@@ -282,12 +288,45 @@ public final class Renderer {
     }
 
     /**
+     * Returns a cached {@link BufferedImage} to be used for temporary rendering.
+     * <p>
+     * This is way more performant than rapidly creating new {@link BufferedImage} objects every render frame
+     */
+    private static BufferedImage getCachedImage(int width, int height) {
+      String key = width + "-" + height;
+      BufferedImage image = IMAGE_CACHE.get(key);
+
+      if (image != null)
+        return image;
+
+      image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+      IMAGE_CACHE.put(key, image);
+      return image;
+    }
+
+    /**
      * A modifier which sets an {@link ImageInterpolation} strategy to the {@link Graphics2D} object.
      * <p>
      * This method returns the object on which it was called for further chaining
      */
     public final DrawImage withInterpolation(ImageInterpolation interpolation) {
       this.interpolation = interpolation;
+      return this;
+    }
+
+    /**
+     * A modifier which sets an alpha layer mask to use on this image.
+     * <p>
+     * The alpha channel of the provided mask image is used to control the visibility of the drawn pixels of the
+     * underlying image.
+     * <p>
+     * If the alpha = 1.0, the pixels in the corresponding area of the underlying image are cleared and if
+     * the alpha is 0.0, the pixels in the overlapping area are unchanged.
+     * <p>
+     * This method returns the object on which it was called for further chaining
+     */
+    public final DrawImage withMaskImage(BufferedImage maskImage) {
+      this.maskImage = maskImage;
       return this;
     }
 
@@ -301,6 +340,33 @@ public final class Renderer {
 
     @Override
     protected void draw(Graphics2D g) {
+      BufferedImage image = this.image;
+
+      if (maskImage != null) {
+        image = getCachedImage(width, height);
+
+        int imageWidth = image.getWidth();
+        int imageHeight = image.getHeight();
+        Graphics2D bg = image.createGraphics();
+
+        bg.drawImage(
+          this.image, 0, 0, imageWidth, imageHeight,
+          0, 0, this.image.getWidth(), this.image.getHeight(), null
+        );
+
+        int maskImageWidth = maskImage.getWidth();
+        int maskImageHeight = maskImage.getHeight();
+
+        int x0 = (imageWidth - maskImageWidth) / 2;
+        int y0 = (imageHeight - maskImageHeight) / 2;
+        int x1 = x0 + maskImageWidth;
+        int y1 = y0 + maskImageHeight;
+
+        bg.setComposite(ALPHA_MASK_COMPOSITE);
+        bg.drawImage(maskImage, x0, y0, x1, y1, 0, 0, maskImageWidth, maskImageHeight, null);
+        bg.dispose();
+      }
+
       int x0 = x - width / 2, y0 = y + height / 2;
       int x1 = x0 + width, y1 = y0 - height;
       g.drawImage(image, x0, -y0, x1, -y1, 0, 0, image.getWidth(), image.getHeight(), null);

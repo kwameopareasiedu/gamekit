@@ -12,6 +12,8 @@
 
 ### Audio Effects
 
+### Renderer Image Masking
+
 ## 0.7.0
 
 ### Maven Plugin

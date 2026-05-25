@@ -41,6 +41,8 @@
 - Added protected `camera` field to `Scene` class
 - Added `Vector getLinearVelocity()` method to `RigidBody` class
 - Added `MAXIMIZED` value to `WindowMode` setting enum
+- Added `public DrawImage withMaskImage(BufferedImage maskImage)` modifier method to `DrawImage` class
+- Added `public void setMaskImage(BufferedImage maskImage)` method to `Sprite` component class
 
 ### Changed
 
