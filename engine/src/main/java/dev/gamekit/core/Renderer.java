@@ -359,11 +359,9 @@ public final class Renderer {
 
         int x0 = (imageWidth - maskImageWidth) / 2;
         int y0 = (imageHeight - maskImageHeight) / 2;
-        int x1 = x0 + maskImageWidth;
-        int y1 = y0 + maskImageHeight;
 
         bg.setComposite(ALPHA_MASK_COMPOSITE);
-        bg.drawImage(maskImage, x0, y0, x1, y1, 0, 0, maskImageWidth, maskImageHeight, null);
+        bg.drawImage(maskImage, x0, y0, maskImageWidth, maskImageHeight, null);
         bg.dispose();
       }
 

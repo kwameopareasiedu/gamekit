@@ -7,10 +7,13 @@ import dev.gamekit.settings.ImageInterpolation;
 import dev.gamekit.utils.Bounds;
 import dev.gamekit.utils.Vector;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /** {@link Sprite} renders a {@link BufferedImage} appearance  for an {@link Entity} */
 public class Sprite extends Component {
+  public static final BasicStroke DEBUG_STROKE = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+  public static boolean DEBUG = false;
   protected final Bounds bounds;
 
   protected BufferedImage image;
@@ -144,5 +147,20 @@ public class Sprite extends Component {
           transform.getGlobalRotation()
         );
     });
+
+    if (DEBUG) {
+      Renderer.onLayer(Renderer.LAYER_COUNT - 1, () -> {
+        Renderer.drawRect(
+          (int) (globalPosition.x + bounds.x),
+          (int) (globalPosition.y + bounds.y),
+          (int) (signedWidth * resolvedScaleX),
+          (int) (signedHeight * resolvedScaleY)
+        ).withRotation(
+          (int) (globalPosition.x + bounds.x),
+          (int) (globalPosition.y + bounds.y),
+          transform.getGlobalRotation()
+        ).withColor(Color.GREEN).withStroke(DEBUG_STROKE);
+      });
+    }
   }
 }
