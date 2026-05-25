@@ -48,8 +48,8 @@ public final class Camera {
     return boundsCache;
   }
 
-  /** Transforms a screen-space point (sx,sy) into world-space position */
-  public Vector screenToWorldPosition(double sx, double sy) {
+  /** Transforms the screen-space point (sx,sy) into world-space position */
+  public Vector screenToWorldPosition(int sx, int sy) {
     Window win = Window.getInstance();
     double wx = invZoom * (win.getCenterX() - sx - x);
     double wy = invZoom * (win.getCenterY() - sy - y);
@@ -57,12 +57,12 @@ public final class Camera {
     return doublePositionCache;
   }
 
-  /** Transforms a world-space point (sx,sy) into screen-space position */
+  /** Transforms the world-space point (wx,wy) into screen-space position */
   public Position worldToScreenPosition(double wx, double wy) {
     Window win = Window.getInstance();
-    int sx = (int) (win.getCenterX() - wx * zoom - x);
+    int sx = (int) (win.getCenterX() + wx * zoom - x);
     int sy = (int) (win.getCenterY() - wy * zoom - y);
-    intPositionCache.set(-sx, sy);
+    intPositionCache.set(sx, sy);
     return intPositionCache;
   }
 
