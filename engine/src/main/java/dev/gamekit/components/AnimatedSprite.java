@@ -54,10 +54,10 @@ public class AnimatedSprite extends Sprite implements ValueCallback<Animation.St
     boolean looping
   ) {
     if (coordinates.length % 2 != 0)
-      throw new IllegalArgumentException("Sprite coordinates must be an even array");
+      throw new IllegalArgumentException("AnimatedSprite coordinates must be an even array");
 
     if (coordinates.length < 4)
-      throw new IllegalArgumentException("At least two (2) pairs of sprite coordinates required");
+      throw new IllegalArgumentException("At least two (2) pairs of AnimatedSprite coordinates required");
 
     BufferedImage[] sprites = new BufferedImage[coordinates.length / 2];
 

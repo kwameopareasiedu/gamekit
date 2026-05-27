@@ -6,10 +6,9 @@ import dev.gamekit.core.Renderer;
 import dev.gamekit.utils.Vector;
 import org.dyn4j.collision.CategoryFilter;
 import org.dyn4j.dynamics.BodyFixture;
-import org.dyn4j.geometry.Circle;
-import org.dyn4j.geometry.Convex;
+import org.dyn4j.geometry.*;
+import org.dyn4j.geometry.Polygon;
 import org.dyn4j.geometry.Rectangle;
-import org.dyn4j.geometry.Vector2;
 
 import java.awt.*;
 import java.util.UUID;
@@ -134,6 +133,22 @@ public abstract class Collider extends Component {
 
           Renderer.drawVerticalLine(shapePositionX, shapePositionY, shapePositionY + height / 2)
             .withRotation(positionX, positionY, rotation);
+        } else if (shape instanceof Polygon poly) {
+          Vector2[] vertices = poly.getVertices();
+
+          for (int i = 0; i < vertices.length; i++) {
+            Vector2 vertex = vertices[i];
+            int vx = (int) (positionX + vertex.x * Physics.PIXELS_PER_METER);
+            int vy = (int) (positionY + vertex.y * Physics.PIXELS_PER_METER);
+
+            Renderer.fillCircle(vx, vy, 1).withRotation(positionX, positionY, rotation);
+
+            Vector2 vertex2 = i < vertices.length - 1 ? vertices[i + 1] : vertices[0];
+            int v2x = (int) (positionX + vertex2.x * Physics.PIXELS_PER_METER);
+            int v2y = (int) (positionY + vertex2.y * Physics.PIXELS_PER_METER);
+
+            Renderer.drawLine(vx, vy, v2x, v2y).withRotation(positionX, positionY, rotation);
+          }
         }
 
         Renderer.fillCircle(shapePositionX, shapePositionY, 2)

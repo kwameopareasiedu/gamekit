@@ -131,6 +131,19 @@ public class RigidBody extends Component {
   }
 
   /**
+   * Marks/unmarks this {@link RigidBody} as a bullet.
+   * <p>
+   * In collision detection, bullets are very fast moving objects requiring continuous detection to avoid
+   * missing collisions
+   *
+   * @see org.dyn4j.dynamics.PhysicsBody#setBullet(boolean)
+   */
+  public void setBullet(boolean enabled) {
+    body.setAtRest(false);
+    body.setBullet(enabled);
+  }
+
+  /**
    * Determines if a {@link Vector point} is contained in at least one of the {@link Collider colliders} associated
    * with this {@link RigidBody}
    *

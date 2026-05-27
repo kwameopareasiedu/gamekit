@@ -51,6 +51,7 @@ public class Demo6EntityComponents extends Scene {
 
     addChild(new BoxFrame());
     addChild(new Ball());
+    addChild(new PolyShape());
   }
 
   @Override
@@ -141,9 +142,7 @@ public class Demo6EntityComponents extends Scene {
     @Override
     protected List<Component> getComponents() {
       // Create a RigidBody component
-      RigidBody rb = new RigidBody(
-        MassType.NORMAL, new Vector(), 1, 1
-      );
+      RigidBody rb = new RigidBody(MassType.NORMAL, new Vector(), 1, 1);
 
       rb.setGravityScale(0.5);
       // Attach an id to the rigid body (For identification in collision)
@@ -227,6 +226,34 @@ public class Demo6EntityComponents extends Scene {
         .withRotation(posX, posY, tx.getGlobalRotation());
       Renderer.drawVerticalLine(posX, posY, posY + (int) radius).withColor(Color.RED)
         .withRotation(posX, posY, tx.getGlobalRotation());
+    }
+  }
+
+  public static class PolyShape extends Entity {
+    public PolyShape() {
+      super("PolyShape");
+    }
+
+    @Override
+    protected List<Component> getComponents() {
+      List<Component> components = new ArrayList<>();
+
+      RigidBody rb = new RigidBody(MassType.NORMAL, new Vector(), 10, 0.1);
+      rb.setPosition(0, 50);
+      components.add(rb);
+
+      List<ConvexCollider> colliders = ConvexCollider.decompose(
+        0, 40, -20, 20, -40, -0, -20, -20, 0, -40, 20, -20, 40, 0, 20, 20
+      );
+
+      for (ConvexCollider collider : colliders) {
+        collider.setRestitution(0);
+        collider.setFriction(0.4);
+        collider.setRestitution(0.8);
+        components.add(collider);
+      }
+
+      return components;
     }
   }
 }

@@ -43,6 +43,8 @@
 - Added `MAXIMIZED` value to `WindowMode` setting enum
 - Added `public DrawImage withMaskImage(BufferedImage maskImage)` modifier method to `DrawImage` class
 - Added `public void setMaskImage(BufferedImage maskImage)` method to `Sprite` component class
+- Added `ConvexCollider` which is a `Collider` with an arbitrary **convex** polygon shape
+- Added `void setBullet(boolean enabled)` method to `RigidBody` class
 
 ### Changed
 
@@ -176,8 +178,8 @@
 - Added `AnimatedSprite` which is a `Sprite` component extension that renders an animated sprite sheet
 - Added abstract `Collider` which is a `Component` which defines the physics shape of an entity for the purposes of
   physics collision detection
-- Added abstract `CircleCollider` which is a `Collider` with a circle shape
-- Added abstract `BoxCollider` which is a `Collider` with a rectangular shape
+- Added `CircleCollider` which is a `Collider` with a circle shape
+- Added `BoxCollider` which is a `Collider` with a rectangular shape
 - Added `void stop()` lifecycle method on `Entity` class, which is called before it is removed from the parent
   entity or the scene
 - Added `void restart()` lifecycle method on `Entity` class, which is called when a previously inactivated entity
