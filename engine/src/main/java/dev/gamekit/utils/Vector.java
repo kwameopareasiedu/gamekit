@@ -35,9 +35,21 @@ public class Vector {
     return x2mx1 * x2mx1 + y2my1 * y2my1;
   }
 
+  /** Computes the squared distance between two point pairs */
+  public static double squaredDistance(double v1x, double v1y, double v2x, double v2y) {
+    double x2mx1 = v1x - v2x;
+    double y2my1 = v1y - v2y;
+    return x2mx1 * x2mx1 + y2my1 * y2my1;
+  }
+
   /** Computes the distance between two vectors */
   public static double distance(Vector v1, Vector v2) {
     return Math.sqrt(squaredDistance(v1, v2));
+  }
+
+  /** Computes the distance between two point pairs */
+  public static double distance(double v1x, double v1y, double v2x, double v2y) {
+    return Math.sqrt(squaredDistance(v1x, v1y, v2x, v2y));
   }
 
   /** Computes the dot product between two vectors */

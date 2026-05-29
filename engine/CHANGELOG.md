@@ -45,6 +45,8 @@
 - Added `public void setMaskImage(BufferedImage maskImage)` method to `Sprite` component class
 - Added `ConvexCollider` which is a `Collider` with an arbitrary **convex** polygon shape
 - Added `void setBullet(boolean enabled)` method to `RigidBody` class
+- Added `static double distance(double v1x, double v1y, double v2x, double v2y)` method to `Vector` class
+- Added `static double squaredDistance(double v1x, double v1y, double v2x, double v2y)` method to `Vector` class
 
 ### Changed
 
