@@ -14,6 +14,8 @@
 
 ### Renderer Image Masking
 
+### Custom Render Targets
+
 ## 0.7.0
 
 ### Maven Plugin

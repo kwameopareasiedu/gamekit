@@ -3,6 +3,7 @@ package dev.gamekit.components;
 import dev.gamekit.core.Component;
 import dev.gamekit.core.Entity;
 import dev.gamekit.core.Renderer;
+import dev.gamekit.core.Window;
 import dev.gamekit.settings.ImageInterpolation;
 import dev.gamekit.utils.Bounds;
 import dev.gamekit.utils.Vector;
@@ -17,7 +18,8 @@ public class Sprite extends Component {
   protected final Bounds bounds;
 
   protected BufferedImage image;
-  protected BufferedImage maskImage;
+  protected BufferedImage mask;
+  protected BufferedImage target;
   protected ImageInterpolation interpolation;
   protected boolean flippedX = false;
   protected boolean flippedY = false;
@@ -56,8 +58,16 @@ public class Sprite extends Component {
    * If the alpha = 1.0, the pixels in the corresponding area of the underlying image are cleared and if
    * the alpha is 0.0, the pixels in the overlapping area are unchanged.
    */
-  public void setMaskImage(BufferedImage maskImage) {
-    this.maskImage = maskImage;
+  public void setMask(BufferedImage mask) {
+    this.mask = mask;
+  }
+
+  /**
+   * By default, draw image calls are applied to the {@link Window}. This method sets an additional
+   * {@link BufferedImage} target to be drawn to
+   */
+  public void setTarget(BufferedImage target) {
+    this.target = target;
   }
 
   /** Sets the image interpolation setting */
@@ -144,8 +154,9 @@ public class Sprite extends Component {
           (int) (signedHeight * resolvedScaleY)
         )
         .withInterpolation(interpolation)
-        .withMaskImage(maskImage)
         .withOpacity(resolvedOpacity)
+        .withTarget(target)
+        .withMask(mask)
         .withRotation(
           (int) (globalPosition.x),
           (int) (globalPosition.y),

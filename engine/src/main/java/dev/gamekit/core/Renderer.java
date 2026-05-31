@@ -267,6 +267,7 @@ public final class Renderer {
 
   /** {@link DrawImage} renders a <b>center-origin</b> image to the window */
   public static class DrawImage extends DrawCall<DrawImage> {
+    private static final Color TRANSPARENT = new Color(0x00000000, true);
     private static final AlphaComposite ALPHA_MASK_COMPOSITE = AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1);
     private static final Map<String, BufferedImage> IMAGE_CACHE = new HashMap<>();
 
@@ -277,7 +278,8 @@ public final class Renderer {
 
     private ImageInterpolation interpolation;
     private ImageInterpolation prevInterpolation;
-    private BufferedImage maskImage;
+    private BufferedImage mask;
+    private BufferedImage target;
 
     private DrawImage(BufferedImage image, int x, int y, int width, int height) {
       this.image = image;
@@ -325,8 +327,20 @@ public final class Renderer {
      * <p>
      * This method returns the object on which it was called for further chaining
      */
-    public final DrawImage withMaskImage(BufferedImage maskImage) {
-      this.maskImage = maskImage;
+    public final DrawImage withMask(BufferedImage maskImage) {
+      this.mask = maskImage;
+      return this;
+    }
+
+    /**
+     * By default, draw image calls are applied to the {@link Window}. With this modifier, an additional
+     * {@link BufferedImage} target can be set to be drawn to
+     * <p>
+     * This method returns the object on which it was called for further chaining
+     *
+     */
+    public final DrawImage withTarget(BufferedImage target) {
+      this.target = target;
       return this;
     }
 
@@ -342,32 +356,49 @@ public final class Renderer {
     protected void draw(Graphics2D g) {
       BufferedImage image = this.image;
 
-      if (maskImage != null) {
+      if (mask != null) {
         image = getCachedImage(width, height);
 
         int imageWidth = image.getWidth();
         int imageHeight = image.getHeight();
         Graphics2D bg = image.createGraphics();
 
+        bg.setBackground(TRANSPARENT);
+        bg.clearRect(0, 0, imageWidth, imageHeight);
+
         bg.drawImage(
           this.image, 0, 0, imageWidth, imageHeight,
           0, 0, this.image.getWidth(), this.image.getHeight(), null
         );
 
-        int maskImageWidth = maskImage.getWidth();
-        int maskImageHeight = maskImage.getHeight();
+        int maskWidth = mask.getWidth();
+        int maskHeight = mask.getHeight();
 
-        int x0 = (imageWidth - maskImageWidth) / 2;
-        int y0 = (imageHeight - maskImageHeight) / 2;
+        int x0 = (imageWidth - maskWidth) / 2;
+        int y0 = (imageHeight - maskHeight) / 2;
 
         bg.setComposite(ALPHA_MASK_COMPOSITE);
-        bg.drawImage(maskImage, x0, y0, maskImageWidth, maskImageHeight, null);
+        bg.drawImage(mask, x0, y0, maskWidth, maskHeight, null);
         bg.dispose();
       }
 
       int x0 = x - width / 2, y0 = y + height / 2;
       int x1 = x0 + width, y1 = y0 - height;
       g.drawImage(image, x0, -y0, x1, -y1, 0, 0, image.getWidth(), image.getHeight(), null);
+
+      if (target != null) {
+        Graphics2D gt = target.createGraphics();
+        int targetWidth = target.getWidth();
+        int targetHeight = target.getHeight();
+
+        if (interpolation != null)
+          interpolation.apply(gt);
+
+        gt.setBackground(TRANSPARENT);
+        gt.clearRect(0, 0, targetWidth, targetHeight);
+        gt.drawImage(image, 0, 0, width, height, 0, 0, image.getWidth(), image.getHeight(), null);
+        gt.dispose();
+      }
     }
 
     @Override

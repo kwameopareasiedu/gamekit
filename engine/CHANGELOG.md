@@ -42,8 +42,10 @@
 - Added protected `camera` field to `Scene` class
 - Added `Vector getLinearVelocity()` method to `RigidBody` class
 - Added `MAXIMIZED` value to `WindowMode` setting enum
-- Added `public DrawImage withMaskImage(BufferedImage maskImage)` modifier method to `DrawImage` class
-- Added `public void setMaskImage(BufferedImage maskImage)` method to `Sprite` component class
+- Added `public DrawImage withMask(BufferedImage mask)` modifier method to `DrawImage` class
+- Added `public DrawImage withTarget(BufferedImage target)` modifier method to `DrawImage` class
+- Added `public void setMask(BufferedImage mask)` method to `Sprite` component class
+- Added `public void setTarget(BufferedImage target)` method to `Sprite` component class
 - Added `ConvexCollider` which is a `Collider` with an arbitrary **convex** polygon shape
 - Added `void setBullet(boolean enabled)` method to `RigidBody` class
 - Added `static double distance(double v1x, double v1y, double v2x, double v2y)` method to `Vector` class
