@@ -266,6 +266,7 @@ public final class Renderer {
   }
 
   /** {@link DrawImage} renders a <b>center-origin</b> image to the window */
+  @SuppressWarnings("SynchronizeOnNonFinalField")
   public static class DrawImage extends DrawCall<DrawImage> {
     private static final Color TRANSPARENT = new Color(0x00000000, true);
     private static final AlphaComposite ALPHA_MASK_COMPOSITE = AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1);
@@ -389,17 +390,19 @@ public final class Renderer {
       g.drawImage(image, x0, -y0, x1, -y1, 0, 0, image.getWidth(), image.getHeight(), null);
 
       if (target != null) {
-        Graphics2D gt = target.createGraphics();
-        int targetWidth = target.getWidth();
-        int targetHeight = target.getHeight();
+        synchronized (target) {
+          Graphics2D gt = target.createGraphics();
+          int targetWidth = target.getWidth();
+          int targetHeight = target.getHeight();
 
-        if (interpolation != null)
-          interpolation.apply(gt);
+          if (interpolation != null)
+            interpolation.apply(gt);
 
-        gt.setBackground(TRANSPARENT);
-        gt.clearRect(0, 0, targetWidth, targetHeight);
-        gt.drawImage(image, 0, 0, targetWidth, targetHeight, 0, 0, image.getWidth(), image.getHeight(), null);
-        gt.dispose();
+          gt.setBackground(TRANSPARENT);
+          gt.clearRect(0, 0, targetWidth, targetHeight);
+          gt.drawImage(image, 0, 0, targetWidth, targetHeight, 0, 0, image.getWidth(), image.getHeight(), null);
+          gt.dispose();
+        }
       }
     }
 
