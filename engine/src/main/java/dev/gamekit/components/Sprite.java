@@ -65,6 +65,11 @@ public class Sprite extends Component {
     this.interpolation = interpolation;
   }
 
+  /** Returns the image opacity */
+  public double getOpacity() {
+    return opacity;
+  }
+
   /** Sets the image opacity */
   public void setOpacity(double opacity) {
     this.opacity = opacity;
