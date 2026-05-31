@@ -340,7 +340,6 @@ public final class Renderer {
      * The drawn image is scaled to match the dimensions of the give target.
      * <p>
      * This method returns the object on which it was called for further chaining
-     *
      */
     public final DrawImage withTarget(BufferedImage target) {
       this.target = target;
