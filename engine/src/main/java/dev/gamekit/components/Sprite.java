@@ -63,8 +63,11 @@ public class Sprite extends Component {
   }
 
   /**
-   * By default, draw image calls are applied to the {@link Window}. This method sets an additional
-   * {@link BufferedImage} target to be drawn to
+   * By default, draw image calls are applied to the {@link Window}.
+   * <p>
+   * This method sets an additional {@link BufferedImage} target to be drawn to.
+   * <p>
+   * The drawn image is scaled to match the dimensions of the give target.
    */
   public void setTarget(BufferedImage target) {
     this.target = target;

@@ -16,7 +16,7 @@ public class Playground extends Scene {
   private static final Picture MASK = IO.getImage("planetfall-logo-mask.png");
 
   private final BufferedImage target = new BufferedImage(
-    PLANET_FALL.getWidth() / 2, PLANET_FALL.getHeight(), BufferedImage.TYPE_INT_ARGB
+    PLANET_FALL.getWidth(), PLANET_FALL.getHeight(), BufferedImage.TYPE_INT_ARGB
   );
   private boolean captureImage = false;
 
@@ -32,26 +32,30 @@ public class Playground extends Scene {
 
   @Override
   protected void update() {
-    captureImage = Input.isKeyPressed(Input.KEY_SPACE);
+    if (Input.isKeyDown(Input.KEY_SPACE))
+      captureImage = true;
   }
 
   @Override
   public void render() {
+    Renderer.clear(Color.BLACK);
+    Renderer.drawImage(SIMPLE, 0, 0, SIMPLE.getWidth(), SIMPLE.getHeight());
+    Renderer.drawImage(PLANET_FALL, 0, 0, PLANET_FALL.getWidth(), PLANET_FALL.getHeight())
+      .withInterpolation(ImageInterpolation.BICUBIC).withMask(MASK).withTarget(captureImage ? target : null);
+
+
     if (captureImage) {
       Application.getInstance().scheduleTask(() -> {
         try {
           File outFile = new File("testing/target/image.png");
           ImageIO.write(target, "png", outFile);
-          logger.debug("Done!");
+          logger.debug("Captured!");
         } catch (IOException e) {
           e.printStackTrace();
         }
       }, 500);
-    }
 
-    Renderer.clear(Color.BLACK);
-    Renderer.drawImage(SIMPLE, 0, 0, SIMPLE.getWidth(), SIMPLE.getHeight());
-    Renderer.drawImage(PLANET_FALL, 0, 0, PLANET_FALL.getWidth() / 2, PLANET_FALL.getHeight())
-      .withInterpolation(ImageInterpolation.BICUBIC).withMask(MASK).withTarget(captureImage ? target : null);
+      captureImage = false;
+    }
   }
 }

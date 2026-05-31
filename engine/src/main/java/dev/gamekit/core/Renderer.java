@@ -333,8 +333,11 @@ public final class Renderer {
     }
 
     /**
-     * By default, draw image calls are applied to the {@link Window}. With this modifier, an additional
-     * {@link BufferedImage} target can be set to be drawn to
+     * By default, draw image calls are applied to the {@link Window}.
+     * <p>
+     * With this modifier, an additional {@link BufferedImage} target can be set to be drawn to.
+     * <p>
+     * The drawn image is scaled to match the dimensions of the give target.
      * <p>
      * This method returns the object on which it was called for further chaining
      *
@@ -396,7 +399,7 @@ public final class Renderer {
 
         gt.setBackground(TRANSPARENT);
         gt.clearRect(0, 0, targetWidth, targetHeight);
-        gt.drawImage(image, 0, 0, width, height, 0, 0, image.getWidth(), image.getHeight(), null);
+        gt.drawImage(image, 0, 0, targetWidth, targetHeight, 0, 0, image.getWidth(), image.getHeight(), null);
         gt.dispose();
       }
     }
