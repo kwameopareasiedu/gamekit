@@ -265,10 +265,10 @@ public abstract class Application {
       currentScene._disposeFrame();
 
     if (nextScene != null) {
-      boolean shouldStackCurrentScene = (sceneFlags | SCENE_FLAG_STACK) == SCENE_FLAG_STACK;
-
       if (currentScene != null) {
         synchronized (currentScene) {
+          boolean shouldStackCurrentScene = (sceneFlags & SCENE_FLAG_STACK) == SCENE_FLAG_STACK;
+
           if (shouldStackCurrentScene) {
             currentScene._stop();
             sceneStack.push(currentScene);
