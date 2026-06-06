@@ -20,6 +20,7 @@ public final class Window {
 
   private static Window instance;
 
+  private final Settings settings;
   private final JFrame frame;
   private final Canvas canvas;
   private final BufferedImage displayBuffer;
@@ -35,10 +36,10 @@ public final class Window {
   private double invScaling;
 
   Window() {
-    Settings settings = Application.getInstance().getSettings();
     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
     GraphicsConfiguration gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
 
+    settings = Application.getInstance().getSettings();
     displayWidth = settings.resolution.width;
     displayHeight = settings.resolution.height;
 
@@ -71,9 +72,6 @@ public final class Window {
     } else {
       frame.setSize(displayWidth, displayHeight);
       frame.setResizable(true);
-
-      if (settings.maximized)
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
       invScaling = 1;
     }
@@ -183,6 +181,9 @@ public final class Window {
   void show() {
     frame.setVisible(true);
     canvas.requestFocus();
+
+    if (settings.maximized)
+      frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
   }
 
   /** Updates the {@link JFrame} buffer strategy with the display and UI buffers */
