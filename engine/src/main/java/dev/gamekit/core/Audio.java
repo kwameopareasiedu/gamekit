@@ -52,8 +52,10 @@ public final class Audio {
    * matching the {@code mixerId}
    */
   public static AudioClip loadClip(String resPath, Object mixerId) throws UnsupportedAudioFileException, IOException {
-    if (CLIPS.containsKey(resPath))
-      return CLIPS.get(resPath);
+    if (CLIPS.containsKey(resPath)) {
+      CLIPS.get(resPath).dispose();
+      CLIPS.remove(resPath);
+    }
 
     AudioInputStream audioStream = get16BitAudioInputStream(resPath);
     byte[][] data = getChannelStreamData(audioStream);
