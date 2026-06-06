@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.sound.sampled.*;
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.BufferOverflowException;
@@ -159,7 +160,9 @@ public final class Audio {
    */
   private static AudioInputStream get16BitAudioInputStream(String resPath)
     throws IOException, UnsupportedAudioFileException {
-    AudioInputStream stream = AudioSystem.getAudioInputStream(IO.getStream(resPath));
+    AudioInputStream stream = AudioSystem.getAudioInputStream(
+      new BufferedInputStream(IO.getStream(resPath))
+    );
 
     if (stream == null)
       throw new IllegalArgumentException("Unable to find resource: " + resPath);
