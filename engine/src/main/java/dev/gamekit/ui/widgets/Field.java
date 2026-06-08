@@ -8,14 +8,14 @@ import dev.gamekit.core.Input;
 import dev.gamekit.ui.events.*;
 import dev.gamekit.utils.Bounds;
 import dev.gamekit.utils.Constraints;
-import dev.gamekit.utils.EngineImage;
+import dev.gamekit.utils.Picture;
 import dev.gamekit.utils.Spacing;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static dev.gamekit.utils.Math.clamp;
+import static dev.gamekit.utils.GMath.clamp;
 
 /** A {@link Text} widget extension which accepts text input */
 // TODO: Implement sliding window for text rendering
@@ -24,15 +24,15 @@ import static dev.gamekit.utils.Math.clamp;
 @WidgetBuilder
 public class Field extends Text
   implements FocusEvent.Handler, MouseEvent.Handler, KeyCharEvent.Handler, KeyCodeEvent.Handler {
-  public static final EngineImage DEFAULT_BG =
+  public static final Picture DEFAULT_BG =
     IO.getImageSliceWithInsets("default-sprites.png", 646, 64, 96, 32, 2, 2, 2, 2);
-  public static final EngineImage DEFAULT_FOCUS_BG =
+  public static final Picture DEFAULT_FOCUS_BG =
     IO.getImageSliceWithInsets("default-sprites.png", 646, 135, 96, 32, 2, 2, 2, 2);
 
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Field.DEFAULT_BG")
-  public EngineImage defaultBackground;
+  public Picture defaultBackground;
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Field.DEFAULT_FOCUS_BG")
-  public EngineImage focusBackground;
+  public Picture focusBackground;
   @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing(4)")
   public Spacing padding;
   @WidgetBuilderField(comparable = false, themable = false)
@@ -49,8 +49,8 @@ public class Field extends Text
   private final Animation cursorAnimation;
   private final TextModel textModel;
 
-  public Field(FieldConfig config) {
-    super(config);
+  public Field(String key, FieldConfig config) {
+    super(key, config);
 
     contentAbsoluteBounds = new Bounds();
     tempAbsoluteBounds = new Bounds();
@@ -67,8 +67,12 @@ public class Field extends Text
     });
   }
 
+  public static Field create(String key, FieldConfig.Updater updater) {
+    return new Field(key, Widgets.configureField(updater));
+  }
+
   public static Field create(FieldConfig.Updater updater) {
-    return new Field(Widgets.configureField(updater));
+    return new Field(null, Widgets.configureField(updater));
   }
 
   @Override
@@ -111,7 +115,7 @@ public class Field extends Text
 
   @Override
   protected void performRender(Graphics2D g) {
-    EngineImage background = !focused ? defaultBackground : focusBackground;
+    Picture background = !focused ? defaultBackground : focusBackground;
 
     if (background != null)
       background.render(g, absoluteBounds);

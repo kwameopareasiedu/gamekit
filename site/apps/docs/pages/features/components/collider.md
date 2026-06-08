@@ -9,6 +9,7 @@ detection.
 
 - `BoxCollider` (a rect-shaped collider with a center, width and height)
 - `CircleCollider` (a circular-shaped collider with a center and radius)
+- `ConvexCollider` (an arbitrary convex polygon collider made of points)
 
 ## Public Methods
 

@@ -4,7 +4,7 @@ import org.dyn4j.geometry.Vector2;
 
 /** Represents an (x,y) position */
 public class Vector {
-  public static final double TWO_PI = 2 * java.lang.Math.PI;
+  public static final double TWO_PI = 2 * Math.PI;
 
   public double x;
   public double y;
@@ -35,9 +35,21 @@ public class Vector {
     return x2mx1 * x2mx1 + y2my1 * y2my1;
   }
 
+  /** Computes the squared distance between two point pairs */
+  public static double squaredDistance(double v1x, double v1y, double v2x, double v2y) {
+    double x2mx1 = v1x - v2x;
+    double y2my1 = v1y - v2y;
+    return x2mx1 * x2mx1 + y2my1 * y2my1;
+  }
+
   /** Computes the distance between two vectors */
   public static double distance(Vector v1, Vector v2) {
-    return java.lang.Math.sqrt(squaredDistance(v1, v2));
+    return Math.sqrt(squaredDistance(v1, v2));
+  }
+
+  /** Computes the distance between two point pairs */
+  public static double distance(double v1x, double v1y, double v2x, double v2y) {
+    return Math.sqrt(squaredDistance(v1x, v1y, v2x, v2y));
   }
 
   /** Computes the dot product between two vectors */
@@ -54,7 +66,7 @@ public class Vector {
   public static double angle(Vector v1, Vector v2) {
     double diffX = v2.x - v1.x;
     double diffY = v2.y - v1.y;
-    double angle = java.lang.Math.atan2(diffX, diffY);
+    double angle = Math.atan2(diffX, diffY);
 
     if (angle < 0) angle = TWO_PI + angle;
 
@@ -66,10 +78,7 @@ public class Vector {
    * between 0 and 2π)
    */
   public static Vector from(double magnitude, double rad) {
-    return new Vector(
-      magnitude * java.lang.Math.sin(rad),
-      magnitude * java.lang.Math.cos(rad)
-    );
+    return new Vector(magnitude * Math.sin(rad), magnitude * Math.cos(rad));
   }
 
   /** Returns a new vector which is the sum of all input vectors */
@@ -119,12 +128,12 @@ public class Vector {
   /**
    * Returns the magnitude of this vector
    * <p>
-   * This method uses {@link java.lang.Math#sqrt sqrt} and can be expensive computer per frame
+   * This method uses {@link Math#sqrt sqrt} and can be expensive computer per frame
    * <p>
    * Consider using {@link #getSquaredMagnitude} where possible
    */
   public double getMagnitude() {
-    return java.lang.Math.sqrt(x * x + y * y);
+    return Math.sqrt(x * x + y * y);
   }
 
   /** Returns the squared magnitude of this vector */
@@ -137,7 +146,7 @@ public class Vector {
    * y-axis
    */
   public double getAngle() {
-    double angle = java.lang.Math.atan2(x, y);
+    double angle = Math.atan2(x, y);
 
     if (angle < 0) angle = TWO_PI + angle;
 
@@ -157,8 +166,8 @@ public class Vector {
   /** Interpolates the angle of this vector to match that of the target vector, preserving its magnitude */
   public void lerpAngle(Vector target, double rate) {
     double magnitude = getMagnitude();
-    double newRotation = Math.lerpAngle(getAngle(), target.getAngle(), rate);
-    set(magnitude * java.lang.Math.sin(newRotation), magnitude * java.lang.Math.cos(newRotation));
+    double newRotation = GMath.lerpAngle(getAngle(), target.getAngle(), rate);
+    set(magnitude * Math.sin(newRotation), magnitude * Math.cos(newRotation));
   }
 
   /**
@@ -167,8 +176,8 @@ public class Vector {
    * NB: <i>This method modifies the provided {@code point} with the result</i>
    */
   public void rotatePoint(Vector point, double rad) {
-    double sin = java.lang.Math.sin(rad);
-    double cos = java.lang.Math.cos(rad);
+    double sin = Math.sin(rad);
+    double cos = Math.cos(rad);
 
     double px = point.x - x;
     double py = point.y - y;

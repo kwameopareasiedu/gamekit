@@ -1,7 +1,5 @@
 package dev.gamekit.utils;
 
-import java.lang.Math;
-
 /** {@link Bounds} represents a region in 2D space */
 public class Bounds {
   public double x;
@@ -27,10 +25,10 @@ public class Bounds {
 
   /** Computes the intersection of two bounds and stores the result in {@code out} */
   public static void intersect(Bounds bounds1, Bounds bounds2, Bounds out) {
-    double x1 = java.lang.Math.max(bounds1.x, bounds2.x);
-    double y1 = java.lang.Math.max(bounds1.y, bounds2.y);
-    double x2 = java.lang.Math.min(bounds1.x + bounds1.width, bounds2.x + bounds2.width);
-    double y2 = java.lang.Math.min(bounds1.y + bounds1.height, bounds2.y + bounds2.height);
+    double x1 = Math.max(bounds1.x, bounds2.x);
+    double y1 = Math.max(bounds1.y, bounds2.y);
+    double x2 = Math.min(bounds1.x + bounds1.width, bounds2.x + bounds2.width);
+    double y2 = Math.min(bounds1.y + bounds1.height, bounds2.y + bounds2.height);
     out.set(x1, y1, x2 - x1, y2 - y1);
   }
 
@@ -82,9 +80,9 @@ public class Bounds {
 
   /** Adjust this bounds to be a union of itself and {@code bounds} */
   public void extend(Bounds bounds) {
-    double x1 = java.lang.Math.min(x, bounds.x);
-    double y1 = java.lang.Math.min(y, bounds.y);
-    double w = java.lang.Math.max(x + width, bounds.x + bounds.width) - x1;
+    double x1 = Math.min(x, bounds.x);
+    double y1 = Math.min(y, bounds.y);
+    double w = Math.max(x + width, bounds.x + bounds.width) - x1;
     double h = Math.max(y + height, bounds.y + bounds.height) - y1;
     set(x1, y1, w, h);
   }

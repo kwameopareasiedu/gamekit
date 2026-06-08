@@ -3,8 +3,7 @@ package dev.gamekit.settings;
 import java.awt.*;
 
 /** Represents the size and height the window at startup */
-public record Resolution(int width, int height) implements Setting {
-
+public final class Resolution implements Setting {
   /** A 640x480 resolution constant */
   public static final Resolution VGA = new Resolution(640, 480);
 
@@ -28,6 +27,16 @@ public record Resolution(int width, int height) implements Setting {
     Toolkit.getDefaultToolkit().getScreenSize().width,
     Toolkit.getDefaultToolkit().getScreenSize().height
   );
+
+  public final int width;
+  public final int height;
+  public final double aspectRatio;
+
+  public Resolution(int width, int height) {
+    this.width = width;
+    this.height = height;
+    this.aspectRatio = width / (double) height;
+  }
 
   /** Creates a new resolution from a given size and height */
   public static Resolution create(int width, int height) {

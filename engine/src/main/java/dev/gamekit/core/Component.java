@@ -40,11 +40,21 @@ public abstract class Component {
    */
   protected void start() { /* No-op */ }
 
+  /** Called when the component is resumed after previously being stopped */
+  protected void resume() { /* No-op */ }
+
   /** Called to update the component */
   protected void update() { /* No-op */ }
 
   /** Called to render the component */
   protected void render() { /* No-op */ }
+
+  /**
+   * Called to stop the component, but not dispose it.
+   * <p>
+   * The component can be resumed at a later time via {@link #resume}
+   */
+  protected void stop() { /* No-op */ }
 
   /**
    * Called to dispose the component
@@ -69,6 +79,11 @@ public abstract class Component {
     start();
   }
 
+  /** Called by the host {@link Entity} to resume the component after being previously stopped */
+  void _resume() {
+    resume();
+  }
+
   /** Called by the host {@link Entity} to update the component */
   void _update() {
     update();
@@ -77,6 +92,11 @@ public abstract class Component {
   /** Called by the host {@link Entity} to render the component */
   void _render() {
     render();
+  }
+
+  /** Called by the host {@link Entity} to stop the component */
+  void _stop() {
+    stop();
   }
 
   /** Called <b>once</b> by the host {@link Entity} to dispose the component */

@@ -14,12 +14,16 @@ public class Scaled extends SingleChildParent {
 
   private Double invScale;
 
-  public Scaled(ScaledConfig config, Widget child) {
-    super(config, child);
+  public Scaled(String key, ScaledConfig config, Widget child) {
+    super(key, config, child);
+  }
+
+  public static Scaled create(String key, ScaledConfig.Updater updater, Widget child) {
+    return new Scaled(key, Widgets.configureScaled(updater), child);
   }
 
   public static Scaled create(ScaledConfig.Updater updater, Widget child) {
-    return new Scaled(Widgets.configureScaled(updater), child);
+    return new Scaled(null, Widgets.configureScaled(updater), child);
   }
 
   public static Scaled create(Double scale, Widget child) {

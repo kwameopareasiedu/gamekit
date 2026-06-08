@@ -3,11 +3,11 @@ package dev.gamekit.settings;
 import dev.gamekit.core.Application;
 
 /** {@link Settings} contains startup configuration object for an {@link Application} instance */
-public class Settings {
+public final class Settings {
   public final String title;
   public final Resolution resolution;
+  public final boolean maximized;
   public final boolean fullscreen;
-  public final boolean undecorated;
   public final Antialiasing antialiasing;
   public final TextAntialiasing textAntialiasing;
   public final AlphaInterpolation alphaInterpolation;
@@ -18,8 +18,8 @@ public class Settings {
   public Settings(String title, Setting... settings) {
     this.title = title;
     this.resolution = get(Resolution.class, settings, Resolution.SVGA);
+    this.maximized = get(WindowMode.class, settings, WindowMode.WINDOWED) == WindowMode.MAXIMIZED;
     this.fullscreen = get(WindowMode.class, settings, WindowMode.WINDOWED) == WindowMode.FULLSCREEN;
-    this.undecorated = get(WindowMode.class, settings, WindowMode.WINDOWED) == WindowMode.BORDERLESS;
     this.antialiasing = get(Antialiasing.class, settings, Antialiasing.DEFAULT);
     this.textAntialiasing = get(TextAntialiasing.class, settings, TextAntialiasing.ON);
     this.alphaInterpolation = get(AlphaInterpolation.class, settings, AlphaInterpolation.DEFAULT);
@@ -31,8 +31,8 @@ public class Settings {
   @Override
   public String toString() {
     return String.format(
-      "%s[title:%s,resolution:%s,fullscreen:%b,antialiasing:%s,text antialiasing:%s," +
-        "alpha interpolation:%s,image interpolation:%s,rendering:%s,dithering:%s]",
+      "%s[title=%s, resolution=%s, fullscreen=%b, antialiasing=%s, text_antialiasing=%s, " +
+        "alpha_interpolation=%s, image_interpolation=%s, rendering=%s, dithering=%s]",
       getClass().getName(),
       title,
       resolution,

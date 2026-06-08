@@ -6,6 +6,8 @@ import dev.gamekit.utils.Constraints;
 
 import java.awt.*;
 
+import static dev.gamekit.utils.GMath.clamp;
+
 /** A {@link SingleChildParent} which renders its child with transparency */
 @WidgetBuilder
 public class Opacity extends SingleChildParent {
@@ -15,12 +17,16 @@ public class Opacity extends SingleChildParent {
   private AlphaComposite composite;
   private Composite originalComposite;
 
-  public Opacity(OpacityConfig config, Widget child) {
-    super(config, child);
+  public Opacity(String key, OpacityConfig config, Widget child) {
+    super(key, config, child);
+  }
+
+  public static Opacity create(String key, OpacityConfig.Updater updater, Widget child) {
+    return new Opacity(key, Widgets.configureOpacity(updater), child);
   }
 
   public static Opacity create(OpacityConfig.Updater updater, Widget child) {
-    return new Opacity(Widgets.configureOpacity(updater), child);
+    return new Opacity(null, Widgets.configureOpacity(updater), child);
   }
 
   public static Opacity create(Double opacity, Widget child) {
@@ -32,7 +38,7 @@ public class Opacity extends SingleChildParent {
     if (opacity == null) throw new IllegalArgumentException("Opacity opacity cannot be null");
 
     if (this.composite == null || this.composite.getAlpha() != opacity)
-      this.composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity.floatValue());
+      this.composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, clamp(opacity.floatValue(), 0, 1));
 
     super.performInit();
   }

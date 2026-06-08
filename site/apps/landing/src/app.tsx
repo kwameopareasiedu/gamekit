@@ -1,5 +1,10 @@
 const showcaseItems: { name: string; src: string; href: string }[] = [
   {
+    name: "Fade For The Empire",
+    src: "/fade-for-the-empire.png",
+    href: "https://kwameopareasiedu.itch.io/fade-for-the-empire",
+  },
+  {
     name: "Cozy Word Puzzle",
     src: "/cozy-word-puzzle.png",
     href: "https://kwameopareasiedu.itch.io/cozy-word-puzzle",

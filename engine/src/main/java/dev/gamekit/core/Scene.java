@@ -1,9 +1,12 @@
 package dev.gamekit.core;
 
+import dev.gamekit.animation.Animation;
 import dev.gamekit.ui.widgets.Widget;
+import dev.gamekit.utils.Timeout;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,12 +16,21 @@ import java.util.List;
  */
 public abstract class Scene extends Entity {
   protected final Logger logger;
+  protected final Camera camera;
+
+  final List<Timeout> timeouts;
+  final List<Timeout> newTimeouts;
+  final List<Animation> animations;
 
   private final UI ui;
 
   public Scene(String name) {
     super(name);
     logger = LogManager.getLogger(getClass());
+    camera = new Camera();
+    timeouts = new ArrayList<>();
+    newTimeouts = new ArrayList<>();
+    animations = new ArrayList<>();
     ui = new UI(this);
   }
 
@@ -26,6 +38,9 @@ public abstract class Scene extends Entity {
   public final void destroy() {
     throw new IllegalStateException("Destroy cannot be called on scene");
   }
+
+  /** Called when the scene resumes after being suspended with some optional data */
+  protected void resume(Object data) { /* No-op */ }
 
   /** Called to create the UI {@link Widget} tree of the scene */
   protected Widget createUI() {
@@ -46,19 +61,37 @@ public abstract class Scene extends Entity {
   @Override
   void _start(Entity parent) {
     logger.debug("Starting scene");
+    Camera.current = camera;
     super._start(parent);
     ui.setWidgetTree(createUI());
+    ui.clear();
+  }
+
+  /** Called by {@link Application} to resume the scene with optional data */
+  void _resume(Object data) {
+    logger.debug("Resuming scene");
+    Camera.current = camera;
+    super._resume(parent);
+    resume(data);
   }
 
   /** Called by {@link Application} to update the scene */
   @Override
   void _update() {
+    for (Animation animation : animations)
+      animation.update();
+
+    for (Timeout timeout : timeouts)
+      timeout.update();
+
     super._update();
     ui.update();
 
-    if (Renderer.isCompleted()) {
+    if (Renderer.isCompleted())
       Renderer.reset();
-    }
+
+    animations.removeIf(Animation::isEnded);
+    timeouts.removeIf(Timeout::isCompleted);
   }
 
   @Override
@@ -73,17 +106,31 @@ public abstract class Scene extends Entity {
 
   /** Called by {@link Application} to draw the scene to the {@link Window} */
   void _draw() {
-    if (Renderer.isCommitted() && !Renderer.isCompleted()) {
+    camera.updateWindowTransform();
+
+    if (Renderer.isCommitted() && !Renderer.isCompleted())
       Renderer.draw(Window.getInstance().getDisplayGraphics());
-    }
 
     ui.draw();
+  }
+
+  /** Called by {@link Application} to run cleanup at the end of a frame */
+  void _disposeFrame() {
+    if (!newTimeouts.isEmpty()) {
+      timeouts.addAll(newTimeouts);
+      newTimeouts.clear();
+    }
   }
 
   /** Called <b>once</b> by {@link Application} to dispose the scene */
   @Override
   void _dispose() {
     logger.debug("Disposing scene");
+
+    animations.clear();
+    timeouts.clear();
+    newTimeouts.clear();
+
     super._dispose();
     ui.unmount();
     dispose();

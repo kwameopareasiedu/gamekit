@@ -16,5 +16,7 @@ This component renders a sprite image at an entity's position and controls how i
 | `setSize`          | Sets the width and height, not respecting the aspect ratio       |
 | `setOffset`        | Sets the center offset of the sprite                             |
 | `setScale`         | Sets the render scale of this sprite                             |
+| `setMask`          | Sets the mask image scale of this sprite                         |
+| `setTarget`        | Sets a secondary render target of this sprite                    |
 | `flipX`            | Sets whether the sprite is flipped horizontally                  |
 | `flipY`            | Sets whether the sprite is flipped vertically                    |

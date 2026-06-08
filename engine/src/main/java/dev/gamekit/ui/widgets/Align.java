@@ -13,12 +13,16 @@ public class Align extends SingleChildParent {
   @WidgetBuilderField(fallback = "dev.gamekit.ui.enums.Alignment.START")
   public Alignment verticalAlignment;
 
-  public Align(AlignConfig config, Widget child) {
-    super(config, child);
+  public Align(String key, AlignConfig config, Widget child) {
+    super(key, config, child);
+  }
+
+  public static Align create(String key, AlignConfig.Updater updater, Widget child) {
+    return new Align(key, Widgets.configureAlign(updater), child);
   }
 
   public static Align create(AlignConfig.Updater updater, Widget child) {
-    return new Align(Widgets.configureAlign(updater), child);
+    return new Align(null, Widgets.configureAlign(updater), child);
   }
 
   @Override

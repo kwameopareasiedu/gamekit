@@ -6,10 +6,9 @@ import dev.gamekit.core.Renderer;
 import dev.gamekit.utils.Vector;
 import org.dyn4j.collision.CategoryFilter;
 import org.dyn4j.dynamics.BodyFixture;
-import org.dyn4j.geometry.Circle;
-import org.dyn4j.geometry.Convex;
+import org.dyn4j.geometry.*;
+import org.dyn4j.geometry.Polygon;
 import org.dyn4j.geometry.Rectangle;
-import org.dyn4j.geometry.Vector2;
 
 import java.awt.*;
 import java.util.UUID;
@@ -20,10 +19,10 @@ public abstract class Collider extends Component {
   private static final Stroke SENSOR_DEBUG_STROKE =
     new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{ 10, 2 }, 0);
 
-  protected final RefFixture fixture;
+  protected final Fixture fixture;
   protected Physics.CollisionListener collisionListener;
 
-  protected Collider(RefFixture fixture) {
+  protected Collider(Fixture fixture) {
     this.fixture = fixture;
     fixture.setCollider(this);
   }
@@ -91,65 +90,93 @@ public abstract class Collider extends Component {
 
   @Override
   protected void start() {
-    if (collisionListener != null) {
+    if (collisionListener != null)
       Physics.addCollisionListener(fixture.id, collisionListener);
-    }
+  }
+
+  @Override
+  protected void resume() {
+    if (collisionListener != null)
+      Physics.addCollisionListener(fixture.id, collisionListener);
   }
 
   @Override
   protected void render() {
     if (DEBUG) {
-      Transform tx = entity.findComponent(Transform.class);
-      Vector globalPosition = tx.getGlobalPosition();
-      int positionX = (int) globalPosition.x;
-      int positionY = (int) globalPosition.y;
-      double rotation = tx.getGlobalRotation();
+      Renderer.onLayer(Renderer.LAYER_COUNT - 1, () -> {
+        Transform tx = entity.findComponent(Transform.class);
+        Vector globalPosition = tx.getGlobalPosition();
+        int positionX = (int) globalPosition.x;
+        int positionY = (int) globalPosition.y;
+        double rotation = tx.getGlobalRotation();
 
-      Convex shape = fixture.getShape();
-      Vector2 shapeCenter = shape.getCenter();
-      int shapePositionX = (int) (globalPosition.x + shapeCenter.x * Physics.PIXELS_PER_METER);
-      int shapePositionY = (int) (globalPosition.y + shapeCenter.y * Physics.PIXELS_PER_METER);
-      Stroke stroke = fixture.isSensor() ? SENSOR_DEBUG_STROKE : null;
+        Convex shape = fixture.getShape();
+        Vector2 shapeCenter = shape.getCenter();
+        int shapePositionX = (int) (globalPosition.x + shapeCenter.x * Physics.PIXELS_PER_METER);
+        int shapePositionY = (int) (globalPosition.y + shapeCenter.y * Physics.PIXELS_PER_METER);
+        Stroke stroke = fixture.isSensor() ? SENSOR_DEBUG_STROKE : null;
 
-      if (shape instanceof Circle circle) {
-        int radius = (int) (circle.getRadius() * Physics.PIXELS_PER_METER);
+        if (shape instanceof Circle circle) {
+          int radius = (int) (circle.getRadius() * Physics.PIXELS_PER_METER);
 
-        Renderer.drawCircle(shapePositionX, shapePositionY, radius)
-          .withColor(Color.CYAN).withStroke(stroke).withRotation(positionX, positionY, rotation);
+          Renderer.drawCircle(shapePositionX, shapePositionY, radius)
+            .withColor(Color.CYAN).withStroke(stroke).withRotation(positionX, positionY, rotation);
 
-        Renderer.drawVerticalLine(shapePositionX, shapePositionY, shapePositionY + radius)
-          .withRotation(positionX, positionY, rotation);
-      } else if (shape instanceof Rectangle rect) {
-        int width = (int) (rect.getWidth() * Physics.PIXELS_PER_METER);
-        int height = (int) (rect.getHeight() * Physics.PIXELS_PER_METER);
+          Renderer.drawVerticalLine(shapePositionX, shapePositionY, shapePositionY + radius)
+            .withRotation(positionX, positionY, rotation);
+        } else if (shape instanceof Rectangle rect) {
+          int width = (int) (rect.getWidth() * Physics.PIXELS_PER_METER);
+          int height = (int) (rect.getHeight() * Physics.PIXELS_PER_METER);
 
-        Renderer.drawRect(shapePositionX, shapePositionY, width, height)
-          .withColor(Color.CYAN).withStroke(stroke).withRotation(positionX, positionY, rotation);
+          Renderer.drawRect(shapePositionX, shapePositionY, width, height)
+            .withColor(Color.CYAN).withStroke(stroke).withRotation(positionX, positionY, rotation);
 
-        Renderer.drawVerticalLine(shapePositionX, shapePositionY, shapePositionY + height / 2)
-          .withRotation(positionX, positionY, rotation);
-      }
+          Renderer.drawVerticalLine(shapePositionX, shapePositionY, shapePositionY + height / 2)
+            .withRotation(positionX, positionY, rotation);
+        } else if (shape instanceof Polygon poly) {
+          Vector2[] vertices = poly.getVertices();
 
-      Renderer.fillCircle(shapePositionX, shapePositionY, 2)
-        .withColor(Color.ORANGE).withRotation(positionX, positionY, rotation);
+          for (int i = 0; i < vertices.length; i++) {
+            Vector2 vertex = vertices[i];
+            int vx = (int) (positionX + vertex.x * Physics.PIXELS_PER_METER);
+            int vy = (int) (positionY + vertex.y * Physics.PIXELS_PER_METER);
+
+            Renderer.fillCircle(vx, vy, 1).withRotation(positionX, positionY, rotation);
+
+            Vector2 vertex2 = i < vertices.length - 1 ? vertices[i + 1] : vertices[0];
+            int v2x = (int) (positionX + vertex2.x * Physics.PIXELS_PER_METER);
+            int v2y = (int) (positionY + vertex2.y * Physics.PIXELS_PER_METER);
+
+            Renderer.drawLine(vx, vy, v2x, v2y).withRotation(positionX, positionY, rotation);
+          }
+        }
+
+        Renderer.fillCircle(shapePositionX, shapePositionY, 2)
+          .withColor(Color.ORANGE).withRotation(positionX, positionY, rotation);
+      });
     }
   }
 
   @Override
-  protected void dispose() {
-    if (collisionListener != null) {
+  protected void stop() {
+    if (collisionListener != null)
       Physics.removeCollisionListener(fixture.id, collisionListener);
-    }
   }
 
-  /** {@link RefFixture} extends {@link BodyFixture} adding a reference to its parent {@link Collider} */
-  public static class RefFixture extends BodyFixture {
+  @Override
+  protected void dispose() {
+    if (collisionListener != null)
+      Physics.removeCollisionListener(fixture.id, collisionListener);
+  }
+
+  /** {@link Fixture} extends {@link BodyFixture} adding a reference to its parent {@link Collider} */
+  public static class Fixture extends BodyFixture {
     public final String id = UUID.randomUUID().toString();
 
     private Collider collider;
 
-    /** Creates a {@link RefFixture} with the associated {@link Convex shape} */
-    public RefFixture(Convex shape) {
+    /** Creates a {@link Fixture} with the associated {@link Convex shape} */
+    public Fixture(Convex shape) {
       super(shape);
     }
 

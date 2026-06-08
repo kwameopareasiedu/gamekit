@@ -66,9 +66,9 @@ public class BuildMojo extends AbstractMojo {
 
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
-    OS os = OS.getCurrent();
+    OperatingSystem os = OperatingSystem.getCurrent();
 
-    if (os == OS.UNSUPPORTED)
+    if (os == OperatingSystem.UNSUPPORTED)
       throw new MojoExecutionException("Unsupported operating system");
 
     getLog().info("Generating uber JAR with all dependencies");
@@ -160,17 +160,17 @@ public class BuildMojo extends AbstractMojo {
 
     Path platformOutputRootPath = Paths.get(platformExecutablePath.toString(), name);
     Path readmeFilePath = Paths.get(platformExecutablePath.toString(), name, "README.txt");
-    StringBuilder instructionsBuilder = new StringBuilder(name + "\n");
+    StringBuilder instructionsBuilder = new StringBuilder(name);
 
     switch (os) {
       case LINUX -> {
-        instructionsBuilder.append("\n").append("Navigate to the bin/ directory");
-        instructionsBuilder.append("\n").append("Open the bin/ directory in a terminal");
-        instructionsBuilder.append("\n").append("Type 'chmod u+x ")
-          .append(name).append("' to make the file " + "executable");
-        instructionsBuilder.append("\n").append("Close the terminal and open the file to launch the game");
+        instructionsBuilder.append("\n\n").append("Navigate to the bin/ directory");
+        instructionsBuilder.append("\n\n").append("Open the bin/ directory in a terminal");
+        instructionsBuilder.append("\n\n").append("Type 'chmod u+x ").append(name)
+          .append("' to make the file " + "executable");
+        instructionsBuilder.append("\n\n").append("Close the terminal and open the file to launch the game");
       }
-      case WINDOWS -> instructionsBuilder.append("\n").append("Launch the ").append(name).append(".exe file");
+      case WINDOWS -> instructionsBuilder.append("\r\n\r\n").append("Launch the ").append(name).append(".exe file");
     }
 
     try {
@@ -192,7 +192,7 @@ public class BuildMojo extends AbstractMojo {
         Collections.reverse(reversed);
 
         for (Path entry : reversed) {
-          if (os == OS.WINDOWS) {
+          if (os == OperatingSystem.WINDOWS) {
             var attrs = Files.getFileAttributeView(entry, DosFileAttributeView.class);
             if (attrs != null) attrs.setReadOnly(false);
           }

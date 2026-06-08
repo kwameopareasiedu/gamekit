@@ -43,7 +43,7 @@ Application game = new Application(
   new Settings(
     "Demo 4 - Declarative UI",  // Window title string
     Resolution.HD,              // Resolution (VGA, SVGA, XGA, HD, WXGA, FULL_HD, NATIVE)
-    WindowMode.WINDOWED,        // Window mode (WINDOWED, BORDERLESS, FULLSCREEN)
+    WindowMode.WINDOWED,        // Window mode (WINDOWED, MAXIMIZED, FULLSCREEN)
     Antialiasing.ON,            // Antialiasing (ON, OFF, DEFAULT)
     TextAntialiasing.ON,        // UI text antialiasing (ON, OFF, DEFAULT)
     AlphaInterpolation.SPEED,   // Image alpha interpolation (SPEED, QUALITY, DEFAULT)
@@ -56,12 +56,14 @@ Application game = new Application(
 
 ## Public Methods
 
-| Method         | Description                                                                                                                   |
-|----------------|-------------------------------------------------------------------------------------------------------------------------------|
-| `loadScene`    | Loads a new scene at the end of the current frame                                                                             |
-| `scheduleTask` | `+1` Schedules a task to run immediately after the current frame<br/>`+2` Schedules a task to run after some time has elapsed |
-| `run`          | Starts the game loop of an application instance                                                                               |
-| `quit`         | Quits the running application instance                                                                                        |
+| Method          | Description                                                                                                                                                                  |
+|-----------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `loadScene`     | Schedule a new scene to be loaded at the end of the current frame, replacing the current scene                                                                               |
+| `stackScene`    | Schedule a new scene to be loaded at the end of the current frame, suspending the current scene                                                                              |
+| `popSceneStack` | `+1` Schedules a suspended scene to be resumed at the end of the current frame<br/>`+2` Schedules a suspended scene to be resumed at the end of the current frame, with data |
+| `scheduleTask`  | `+1` Schedules a task to run immediately after the current frame<br/>`+2` Schedules a task to run after some time has elapsed                                                |
+| `run`           | Starts the game loop of an application instance                                                                                                                              |
+| `quit`          | Quits the running application instance                                                                                                                                       |
 
 ## Static Methods
 

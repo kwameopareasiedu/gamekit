@@ -16,12 +16,20 @@ public class Grid extends MultiChildParent {
 
   private int rowCount;
 
-  public Grid(GridConfig config, Widget... children) {
-    super(config, children);
+  public Grid(String key, GridConfig config, Widget... children) {
+    super(key, config, children);
+  }
+
+  public static Grid create(String key, GridConfig.Updater updater, Widget... children) {
+    return new Grid(key, Widgets.configureGrid(updater), children);
   }
 
   public static Grid create(GridConfig.Updater updater, Widget... children) {
-    return new Grid(Widgets.configureGrid(updater), children);
+    return new Grid(null, Widgets.configureGrid(updater), children);
+  }
+
+  public static Grid create(String key, Widget... children) {
+    return Grid.create(key, props -> { }, children);
   }
 
   public static Grid create(Widget... children) {

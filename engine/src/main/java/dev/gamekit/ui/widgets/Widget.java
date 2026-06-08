@@ -9,6 +9,9 @@ import org.apache.logging.log4j.Logger;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import static dev.gamekit.utils.Misc.getFirstMatch;
 
 /**
  * A widget is an abstract representation of a portion of a {@link Scene scene's} user interface.
@@ -29,7 +32,15 @@ public abstract class Widget {
   public static final Color DEBUG_COLOR = Color.GREEN;
   public static final BasicStroke DEBUG_STROKE = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
   public static boolean DEBUG = false;
+  public static boolean DEBUG_NAME = false;
 
+  /**
+   * Keys are a mechanism to explicitly ensure uniqueness of widgets when comparing.
+   * <p>
+   * During reconciliation, the UI engine will replace a widget subtree when there is class type mismatch or a key
+   * mismatch.
+   */
+  protected final String key;
   protected final Logger logger = LogManager.getLogger(getClass());
   protected final Bounds absoluteBounds;
   protected final Bounds computedBounds;
@@ -41,11 +52,11 @@ public abstract class Widget {
 
   private boolean mounted;
 
-  /** Creates a new widget with a list of configurations */
-  public Widget(Config config) {
+  public Widget(String key, Config config) {
     if (config == null)
       throw new IllegalArgumentException("Widget config cannot be null");
 
+    this.key = key;
     this.config = config;
     this.absoluteBounds = new Bounds(0, 0, 0, 0);
     this.computedBounds = new Bounds(0, 0, 0, 0);
@@ -205,6 +216,14 @@ public abstract class Widget {
         (int) absoluteBounds.height
       );
 
+      if (DEBUG_NAME) {
+        canvasGraphics.drawString(
+          getClass().getName(),
+          (int) absoluteBounds.x,
+          (int) absoluteBounds.y
+        );
+      }
+
       canvasGraphics.setColor(originalColor);
       canvasGraphics.setStroke(originalStroke);
     }
@@ -325,19 +344,20 @@ public abstract class Widget {
         Widget newWidget = NEW_QUEUE.remove(0);
 
         boolean typeMatch = currentWidget.getClass().equals(newWidget.getClass());
+        boolean keyMatch = Objects.equals(currentWidget.key, newWidget.key);
         boolean configMatch = currentWidget.configEquals(newWidget);
 
-        if (!typeMatch) {
-          Parent currentWidgetParent = (Parent) currentWidget.getParent();
-
+        if (!typeMatch || !keyMatch) {
           currentWidget.unmount();
+
+          Parent currentWidgetParent = (Parent) currentWidget.getParent();
 
           if (currentWidgetParent == null) {
             treeSetter.invoke(newWidget);
           } else if (currentWidgetParent instanceof SingleChildParent currentWidgetSingleChildParent) {
             currentWidgetSingleChildParent.updateChild(newWidget);
           } else if (currentWidgetParent instanceof MultiChildParent currentWidgetMultiChildParent) {
-            int index = List.of(currentWidgetMultiChildParent.getChildren()).indexOf(currentWidget);
+            int index = currentWidgetMultiChildParent.getIndexOf(currentWidget);
             currentWidgetMultiChildParent.updateChild(index, newWidget);
           }
 
@@ -349,15 +369,31 @@ public abstract class Widget {
 
         if (currentWidget instanceof SingleChildParent currentParent && newWidget instanceof SingleChildParent newParent) {
           // Add child of SingleChildParent to queue for processing
-          CURRENT_QUEUE.add(currentParent.getChild());
-          NEW_QUEUE.add(newParent.getChild());
+          CURRENT_QUEUE.add(currentParent.child);
+          NEW_QUEUE.add(newParent.child);
         } else if (currentWidget instanceof MultiChildParent currentParent && newWidget instanceof MultiChildParent newParent) {
+          // Resize children array of current parent to accommodate for new widgets from new parent
+          currentParent.resize(newParent.children.length);
+
           // Add children of MultiChildParent to queue for processing
-          List<Widget> currentParentChildrenWidgets = List.of(currentParent.getChildren());
-          List<Widget> newParentChildrenWidgets = List.of(newParent.getChildren());
-          CURRENT_QUEUE.addAll(currentParentChildrenWidgets);
-          NEW_QUEUE.addAll(newParentChildrenWidgets);
+          for (int i = 0; i < newParent.children.length; i++) {
+            final int ii = i;
+            Widget newParentWidget = newParent.children[i];
+            Widget currentParentWidget = getFirstMatch(
+              currentParent.children,
+              widget -> newParentWidget.key != null && Objects.equals(newParentWidget.key, widget.key),
+              () -> currentParent.children[ii]
+            );
+
+            CURRENT_QUEUE.add(currentParentWidget);
+            NEW_QUEUE.add(newParentWidget);
+          }
         }
+      }
+
+      if (Widget.DEBUG) {
+        Traveller t = new Traveller() { };
+        t.printTree(treeGetter.get(), 0);
       }
 
       if (treeUpdated) {
@@ -372,6 +408,19 @@ public abstract class Widget {
 
   /** Mixin interface which provides functionality to travel up or down a widget tree */
   public interface Traveller {
+    default void printTree(Widget tree, int depth) {
+      String tabs = "  ".repeat(depth);
+
+      System.out.println(tabs + tree.getClass().getSimpleName());
+
+      if (tree instanceof SingleChildParent parent) {
+        printTree(parent.child, depth + 1);
+      } else if (tree instanceof MultiChildParent parent) {
+        for (Widget child : parent.children)
+          printTree(child, depth + 1);
+      }
+    }
+
     /** Walks up or down a widget tree, passing each visited widget to the {@code visitor} object */
     default void travelTree(Widget tree, Direction direction, ValueCallback<Widget> visitor) {
       visitor.invoke(tree);
@@ -385,11 +434,9 @@ public abstract class Widget {
         }
         case INWARD -> {
           if (tree instanceof SingleChildParent parent) {
-            travelTree(parent.getChild(), direction, visitor);
+            travelTree(parent.child, direction, visitor);
           } else if (tree instanceof MultiChildParent parent) {
-            Widget[] children = parent.getChildren();
-
-            for (Widget child : children)
+            for (Widget child : parent.children)
               travelTree(child, direction, visitor);
           }
         }

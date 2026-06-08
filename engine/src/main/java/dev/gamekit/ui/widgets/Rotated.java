@@ -13,12 +13,16 @@ public class Rotated extends SingleChildParent {
   @WidgetBuilderField(fallback = "0.0", themable = false)
   public Double rotation;
 
-  public Rotated(RotatedConfig config, Widget child) {
-    super(config, child);
+  public Rotated(String key, RotatedConfig config, Widget child) {
+    super(key, config, child);
+  }
+
+  public static Rotated create(String key, RotatedConfig.Updater updater, Widget child) {
+    return new Rotated(key, Widgets.configureRotated(updater), child);
   }
 
   public static Rotated create(RotatedConfig.Updater updater, Widget child) {
-    return new Rotated(Widgets.configureRotated(updater), child);
+    return new Rotated(null, Widgets.configureRotated(updater), child);
   }
 
   public static Rotated create(Double rotation, Widget child) {

@@ -10,8 +10,18 @@
   </parent>
 
   <artifactId>gamekit-maven-plugin</artifactId>
-  <version>0.1.0</version>
+  <version>0.2.0</version>
   <packaging>maven-plugin</packaging>
+
+  <developers>
+    <developer>
+      <name>Kwame Opare Asiedu</name>
+      <url>https://opare.dev</url>
+      <roles>
+        <role>Creator</role>
+      </roles>
+    </developer>
+  </developers>
 
   <properties>
     <maven.compiler.source>18</maven.compiler.source>
@@ -58,11 +68,17 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <version>3.1.4</version>
-        <configuration>
-          <skip>false</skip>
-        </configuration>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.3.1</version>
+        <executions>
+          <execution>
+            <id>attach-source</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

@@ -7,22 +7,22 @@ import dev.gamekit.ui.events.ChangeEvent;
 import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.utils.Bounds;
 import dev.gamekit.utils.Constraints;
-import dev.gamekit.utils.EngineImage;
+import dev.gamekit.utils.Picture;
 
 import java.awt.*;
 
 /** A {@link SingleChildParent} input widget which toggles between two states */
 @WidgetBuilder
 public class Checkbox extends SingleChildParent implements MouseEvent.Handler {
-  public static final EngineImage DEFAULT_ICON =
+  public static final Picture DEFAULT_ICON =
     IO.getImageSliceWithInsets("default-sprites.png", 646, 206, 32, 32, 8, 8, 8, 8);
-  public static final EngineImage DEFAULT_TOGGLED_ICON =
+  public static final Picture DEFAULT_TOGGLED_ICON =
     IO.getImageSliceWithInsets("default-sprites.png", 646, 277, 32, 32, 8, 8, 8, 8);
 
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Checkbox.DEFAULT_ICON")
-  public EngineImage defaultIcon;
+  public Picture defaultIcon;
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Checkbox.DEFAULT_TOGGLED_ICON")
-  public EngineImage toggledIcon;
+  public Picture toggledIcon;
   @WidgetBuilderField(fallback = "24")
   public Integer iconWidth;
   @WidgetBuilderField(fallback = "24")
@@ -36,13 +36,17 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler {
 
   private final Bounds iconAbsoluteBounds;
 
-  public Checkbox(CheckboxConfig config, Widget child) {
-    super(config, child);
+  public Checkbox(String key, CheckboxConfig config, Widget child) {
+    super(key, config, child);
     iconAbsoluteBounds = new Bounds();
   }
 
+  public static Checkbox create(String key, CheckboxConfig.Updater updater, Widget child) {
+    return new Checkbox(key, Widgets.configureCheckbox(updater), child);
+  }
+
   public static Checkbox create(CheckboxConfig.Updater updater, Widget child) {
-    return new Checkbox(Widgets.configureCheckbox(updater), child);
+    return new Checkbox(null, Widgets.configureCheckbox(updater), child);
   }
 
   @Override
@@ -82,7 +86,7 @@ public class Checkbox extends SingleChildParent implements MouseEvent.Handler {
 
   @Override
   protected void renderSelf(Graphics2D g) {
-    EngineImage icon = defaultIcon;
+    Picture icon = defaultIcon;
 
     if (toggled)
       icon = toggledIcon;

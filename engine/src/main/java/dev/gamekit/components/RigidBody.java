@@ -27,7 +27,8 @@ import java.util.List;
  * component
  */
 public class RigidBody extends Component {
-  public static boolean DEBUG_DRAW = false;
+  public static boolean DEBUG = false;
+  private static final Vector VEC_BUFFER = new Vector();
   private static final Vector2 VEC2_BUFFER = new Vector2();
 
   private final RefBody body;
@@ -86,7 +87,20 @@ public class RigidBody extends Component {
    * @see org.dyn4j.dynamics.PhysicsBody#setLinearVelocity(double, double)
    */
   public void setLinearVelocity(double x, double y) {
+    body.setAtRest(false);
     body.setLinearVelocity(x, y);
+  }
+
+  /**
+   * Returns the linear velocity of this {@link RigidBody}
+   * <p>
+   * <i>NB: For added performance, the returned {@link Vector} is reused across multiple invocations, so you should
+   * not keep a reference to it. Rather, retrieve the x and y values and store them if you need to</i>
+   */
+  public Vector getLinearVelocity() {
+    Vector2 vel = body.getLinearVelocity();
+    VEC_BUFFER.set(vel.x, vel.y);
+    return VEC_BUFFER;
   }
 
   /**
@@ -114,6 +128,19 @@ public class RigidBody extends Component {
    */
   public void applyTorque(double torque) {
     body.applyTorque(torque);
+  }
+
+  /**
+   * Marks/unmarks this {@link RigidBody} as a bullet.
+   * <p>
+   * In collision detection, bullets are very fast moving objects requiring continuous detection to avoid
+   * missing collisions
+   *
+   * @see org.dyn4j.dynamics.PhysicsBody#setBullet(boolean)
+   */
+  public void setBullet(boolean enabled) {
+    body.setAtRest(false);
+    body.setBullet(enabled);
   }
 
   /**
@@ -204,17 +231,31 @@ public class RigidBody extends Component {
   }
 
   @Override
+  protected void resume() {
+    Physics.addBody(body);
+
+    syncPositionAndRotation();
+  }
+
+  @Override
   protected void update() {
     syncPositionAndRotation();
   }
 
   @Override
   protected void render() {
-    if (DEBUG_DRAW) {
-      Transform tx = entity.findComponent(Transform.class);
-      Vector globalPosition = tx.getGlobalPosition();
-      Renderer.fillCircle((int) globalPosition.x, (int) globalPosition.y, 3).withColor(Color.RED);
+    if (DEBUG) {
+      Renderer.onLayer(Renderer.LAYER_COUNT - 1, () -> {
+        Transform tx = entity.findComponent(Transform.class);
+        Vector globalPosition = tx.getGlobalPosition();
+        Renderer.fillCircle((int) globalPosition.x, (int) globalPosition.y, 3).withColor(Color.RED);
+      });
     }
+  }
+
+  @Override
+  protected void stop() {
+    Physics.removeBody(body);
   }
 
   @Override

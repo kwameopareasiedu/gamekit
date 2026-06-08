@@ -10,8 +10,12 @@ import dev.gamekit.utils.Constraints;
 public abstract class Compose extends SingleChildParent {
   private boolean updatedChild = false;
 
+  protected Compose(String key) {
+    super(key, ignored -> { }, Empty.create());
+  }
+
   protected Compose() {
-    super(ignored -> {}, Empty.create());
+    super(null, ignored -> { }, Empty.create());
   }
 
   @Override

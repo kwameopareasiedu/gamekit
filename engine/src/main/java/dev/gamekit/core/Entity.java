@@ -47,15 +47,17 @@ public abstract class Entity {
   }
 
   /**
-   * Adds a child to this entity, at the end of the current frame, invoking the child's {@link Entity#start} method
-   * if it is new or {@link Entity#restart} if it was previously inactivated.
+   * Adds a child to this entity, at the end of the current frame.
+   * <p>
+   * The child's {@link Entity#_start} method is called if it's state is {@link State#NEW} new or
+   * {@link Entity#_resume} if it's state is {@link State#INACTIVE}.
    */
   public void addChild(Entity child) {
-    if (children.contains(child)) return;
+    if (children.contains(child))
+      return;
 
-    if (child.parent != null) {
+    if (child.parent != null)
       throw new IllegalStateException("Cannot add child with parent. Remove from parent first");
-    }
 
     switch (child.state) {
       case DOOMED, DEAD -> throw new IllegalStateException("Cannot add a doomed or dead child");
@@ -67,21 +69,23 @@ public abstract class Entity {
 
       switch (child.state) {
         case NEW -> child._start(this);
-        case INACTIVE -> child._restart(this);
+        case INACTIVE -> child._resume(this);
       }
 
       children.add(child);
     });
   }
 
-  /** Removes a child from this entity at the end of the current frame, invoking its {@link Entity#stop} method */
+  /**
+   * Removes a child from this entity at the end of the current frame.
+   * <p>
+   * The child's {@link Entity#_stop} method is called prior to this.
+   */
   public void removeChild(Entity child) {
     if (children.contains(child)) {
-      child.state = State.INACTIVE;
-
       Application.getInstance().scheduleTask(() -> {
         logger.debug("Removing {} from {}", child.name, name);
-        child.stop();
+        child._stop();
         child.parent = null;
         children.remove(child);
       });
@@ -96,10 +100,12 @@ public abstract class Entity {
   /** Returns a {@link Component} of the specified class, matching the provided filter else {@code null} */
   public <T extends Component> T findComponent(Class<T> clazz, Component.Filter<T> filter) {
     // Optimization for finding the Transform component
-    if (clazz == Transform.class) return (T) components.get(0);
+    if (clazz == Transform.class)
+      return (T) components.get(0);
 
     for (Component component : components) {
-      if (clazz.isInstance(component) && filter.filter((T) component)) return (T) component;
+      if (clazz.isInstance(component) && filter.filter((T) component))
+        return (T) component;
     }
 
     return null;
@@ -144,8 +150,8 @@ public abstract class Entity {
   /** Called to set up the entity */
   protected void start() { }
 
-  /** Called to restart the entity after being added to a new parent */
-  protected void restart() { }
+  /** Called to resume the entity after being added to a new parent */
+  protected void resume() { }
 
   /** Called to update the entity */
   protected void update() { }
@@ -181,24 +187,30 @@ public abstract class Entity {
   }
 
   /** Called by a new parent {@link Entity} after previously being stopped, to re-initialize this entity */
-  void _restart(Entity parent) {
+  void _resume(Entity parent) {
     this.parent = parent;
-    restart();
+
+    for (Component component : components)
+      component._resume();
+
+    resume();
+
+    for (Entity child : children)
+      child._resume(this);
+
     state = State.ACTIVE;
   }
 
   /** Called by the parent {@link Entity} to update the entity */
   void _update() {
     if (state == State.ACTIVE) {
-      for (Component component : components) {
+      for (Component component : components)
         component._update();
-      }
 
       update();
 
-      for (Entity child : children) {
+      for (Entity child : children)
         child._update();
-      }
     }
   }
 
@@ -207,13 +219,26 @@ public abstract class Entity {
     if (state == State.ACTIVE) {
       render();
 
-      for (Component component : components) {
+      for (Component component : components)
         component._render();
-      }
 
-      for (Entity child : children) {
+      for (Entity child : children)
         child._render();
-      }
+    }
+  }
+
+  /** Called by the parent {@link Entity} to stop the entity */
+  void _stop() {
+    if (state == State.ACTIVE) {
+      for (Entity child : children)
+        child._stop();
+
+      for (Component component : components)
+        component._stop();
+
+      stop();
+
+      state = State.INACTIVE;
     }
   }
 
@@ -224,9 +249,8 @@ public abstract class Entity {
     for (Entity child : childrenBuffer)
       child._dispose();
 
-    for (Component component : components) {
+    for (Component component : components)
       component._dispose();
-    }
 
     dispose();
 

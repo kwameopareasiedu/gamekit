@@ -2,7 +2,7 @@ package tetris;
 
 import java.awt.*;
 
-import static dev.gamekit.utils.Math.cycle;
+import static dev.gamekit.utils.GMath.cycle;
 import static tetris.Utils.getIndex;
 
 public class Tetromino {

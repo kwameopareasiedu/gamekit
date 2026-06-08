@@ -3,17 +3,23 @@ package dev.gamekit.components;
 import dev.gamekit.core.Component;
 import dev.gamekit.core.Entity;
 import dev.gamekit.core.Renderer;
+import dev.gamekit.core.Window;
 import dev.gamekit.settings.ImageInterpolation;
 import dev.gamekit.utils.Bounds;
 import dev.gamekit.utils.Vector;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /** {@link Sprite} renders a {@link BufferedImage} appearance  for an {@link Entity} */
 public class Sprite extends Component {
+  public static final BasicStroke DEBUG_STROKE = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+  public static boolean DEBUG = false;
   protected final Bounds bounds;
 
   protected BufferedImage image;
+  protected BufferedImage mask;
+  protected BufferedImage target;
   protected ImageInterpolation interpolation;
   protected boolean flippedX = false;
   protected boolean flippedY = false;
@@ -22,6 +28,7 @@ public class Sprite extends Component {
 
   private double aspectRatio;
   private double opacity = 1;
+  private int layer = 0;
 
   public Sprite(BufferedImage image, ImageInterpolation interpolation) {
     if (image == null) throw new IllegalArgumentException("Image cannot be null");
@@ -42,9 +49,38 @@ public class Sprite extends Component {
     this.aspectRatio = (double) image.getWidth() / (double) image.getHeight();
   }
 
+  /**
+   * Sets the {@link Sprite sprite's} masking image
+   * <p>
+   * The alpha channel of the provided mask image is used to control the visibility of the drawn pixels of the
+   * underlying image.
+   * <p>
+   * If the alpha = 1.0, the pixels in the corresponding area of the underlying image are cleared and if
+   * the alpha is 0.0, the pixels in the overlapping area are unchanged.
+   */
+  public void setMask(BufferedImage mask) {
+    this.mask = mask;
+  }
+
+  /**
+   * By default, draw image calls are applied to the {@link Window}.
+   * <p>
+   * This method sets an additional {@link BufferedImage} target to be drawn to.
+   * <p>
+   * The drawn image is scaled to match the dimensions of the give target.
+   */
+  public void setTarget(BufferedImage target) {
+    this.target = target;
+  }
+
   /** Sets the image interpolation setting */
   public void setInterpolation(ImageInterpolation interpolation) {
     this.interpolation = interpolation;
+  }
+
+  /** Returns the image opacity */
+  public double getOpacity() {
+    return opacity;
   }
 
   /** Sets the image opacity */
@@ -88,6 +124,15 @@ public class Sprite extends Component {
     flippedY = flipped;
   }
 
+  /**
+   * Sets the layer on which the sprite is rendered (0 - 63)
+   * <p>
+   * Layers with higher indices are rendered in front of layers with lower indices
+   */
+  public void setLayer(int layer) {
+    this.layer = layer;
+  }
+
   @Override
   protected void render() {
     Transform transform = entity.findComponent(Transform.class);
@@ -103,19 +148,38 @@ public class Sprite extends Component {
     double resolvedScaleX = parentSpriteScaleX * scaleX;
     double resolvedScaleY = parentSpriteScaleY * scaleY;
 
-    Renderer.drawImage(
-        image,
-        (int) (globalPosition.x + bounds.x),
-        (int) (globalPosition.y + bounds.y),
-        (int) (signedWidth * resolvedScaleX),
-        (int) (signedHeight * resolvedScaleY)
-      )
-      .withInterpolation(interpolation)
-      .withOpacity(resolvedOpacity)
-      .withRotation(
-        (int) (globalPosition.x),
-        (int) (globalPosition.y),
-        transform.getGlobalRotation()
-      );
+    Renderer.onLayer(layer, () -> {
+      Renderer.drawImage(
+          image,
+          (int) (globalPosition.x + bounds.x),
+          (int) (globalPosition.y + bounds.y),
+          (int) (signedWidth * resolvedScaleX),
+          (int) (signedHeight * resolvedScaleY)
+        )
+        .withInterpolation(interpolation)
+        .withOpacity(resolvedOpacity)
+        .withTarget(target)
+        .withMask(mask)
+        .withRotation(
+          (int) (globalPosition.x),
+          (int) (globalPosition.y),
+          transform.getGlobalRotation()
+        );
+    });
+
+    if (DEBUG) {
+      Renderer.onLayer(Renderer.LAYER_COUNT - 1, () -> {
+        Renderer.drawRect(
+          (int) (globalPosition.x + bounds.x),
+          (int) (globalPosition.y + bounds.y),
+          (int) (signedWidth * resolvedScaleX),
+          (int) (signedHeight * resolvedScaleY)
+        ).withRotation(
+          (int) (globalPosition.x + bounds.x),
+          (int) (globalPosition.y + bounds.y),
+          transform.getGlobalRotation()
+        ).withColor(Color.GREEN).withStroke(DEBUG_STROKE);
+      });
+    }
   }
 }

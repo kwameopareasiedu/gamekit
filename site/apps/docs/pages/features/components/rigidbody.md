@@ -19,7 +19,9 @@ computed physics position and rotation.
 | `setGravityScale`   | Sets the world gravity multiplier                                                                                                                            |
 | `setPosition`       | Sets the global position                                                                                                                                     |
 | `setRotation`       | `+1` Sets the global rotation (in radian) about its center<br/>`+2` Sets the global rotation (in radian) about a specified point                             |
+| `getLinearVelocity` | Returns the linear velocity                                                                                                                                  |
 | `setLinearVelocity` | Sets the linear velocity                                                                                                                                     |
+| `setBullet`         | Indicates that this rigid body is a very fast moving object                                                                                                  |
 | `applyForce`        | Applies a linear force vector                                                                                                                                |
 | `applyImpulse`      | Applies a linear impulse vector                                                                                                                              |
 | `applyTorque`       | Applies a torque (rotational force) about its center                                                                                                         |

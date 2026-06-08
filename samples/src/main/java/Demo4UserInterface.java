@@ -11,14 +11,14 @@ import dev.gamekit.ui.widgets.Button;
 import dev.gamekit.ui.widgets.Checkbox;
 import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.ui.widgets.Panel;
-import dev.gamekit.utils.EngineImage;
+import dev.gamekit.utils.Picture;
 import dev.gamekit.utils.Spacing;
 import utils.MainMenuButton;
 import utils.SubMenuButton;
 
 import java.awt.*;
 
-import static dev.gamekit.utils.Math.degToRad;
+import static dev.gamekit.utils.GMath.degToRad;
 
 /**
  * This demo shows how to build user interfaces and performs the following actions:
@@ -28,13 +28,13 @@ import static dev.gamekit.utils.Math.degToRad;
  * </ul>
  */
 public class Demo4UserInterface extends Scene {
-  private static final EngineImage BACKDROP = IO.getImage("planetfall-artwork.jpg");
-  private static final EngineImage LOGO = IO.getImage("planetfall-logo.png");
-  private static final EngineImage SCRIM = IO.getImage("transparent-black.png");
-  private static final EngineImage THUMB = IO.getImageWithInsets("slider-thumb.png", 10, 10, 10, 10);
-  private static final EngineImage PROGRESS_TRACK = IO.getImageSlice("progress.png", 0, 4, 48, 8);
-  private static final EngineImage PROGRESS_FILL = IO.getImageSliceWithInsets("progress.png", 50, 4, 4, 8, 0, 1, 0, 1);
-  private static final EngineImage HEADPHONES_IMG = IO.getImage("headphones.jpg");
+  private static final Picture BACKDROP = IO.getImage("planetfall-artwork.jpg");
+  private static final Picture LOGO = IO.getImage("planetfall-logo.png");
+  private static final Picture SCRIM = IO.getImage("transparent-black.png");
+  private static final Picture THUMB = IO.getImageWithInsets("slider-thumb.png", 10, 10, 10, 10);
+  private static final Picture PROGRESS_TRACK = IO.getImageSlice("progress.png", 0, 4, 48, 8);
+  private static final Picture PROGRESS_FILL = IO.getImageSliceWithInsets("progress.png", 50, 4, 4, 8, 0, 1, 0, 1);
+  private static final Picture HEADPHONES_IMG = IO.getImage("headphones.jpg");
 
   private String fieldValue = "Hello";
   private boolean checkboxValue = false;
@@ -49,8 +49,8 @@ public class Demo4UserInterface extends Scene {
     Application game = new Application(
       new Settings(
         "Demo 4 - Declarative UI",
-        Resolution.HD,
-        WindowMode.BORDERLESS,
+        Resolution.FULL_HD,
+        WindowMode.MAXIMIZED,
         Antialiasing.ON,
         TextAntialiasing.ON,
         AlphaInterpolation.SPEED,
@@ -101,8 +101,8 @@ public class Demo4UserInterface extends Scene {
                 props.crossAxisAlignment = CrossAxisAlignment.START;
                 props.gapSize = 24;
               },
-              MainMenuButton.create("Tutorial", ev -> {}),
-              MainMenuButton.create("New Planet", ev -> {}),
+              MainMenuButton.create("Tutorial", ev -> { }),
+              MainMenuButton.create("New Planet", ev -> { }),
               Field.create(
                 (FieldConfig.Updater) props -> {
                   props.text = fieldValue;

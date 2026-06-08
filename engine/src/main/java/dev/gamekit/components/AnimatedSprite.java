@@ -6,7 +6,7 @@ import dev.gamekit.utils.ValueCallback;
 
 import java.awt.image.BufferedImage;
 
-import static dev.gamekit.utils.Math.cycle;
+import static dev.gamekit.utils.GMath.cycle;
 
 /** {@link AnimatedSprite} extends {@link Sprite} to render an animated sprite sheet */
 public class AnimatedSprite extends Sprite implements ValueCallback<Animation.State> {
@@ -54,10 +54,10 @@ public class AnimatedSprite extends Sprite implements ValueCallback<Animation.St
     boolean looping
   ) {
     if (coordinates.length % 2 != 0)
-      throw new IllegalArgumentException("Sprite coordinates must be an even array");
+      throw new IllegalArgumentException("AnimatedSprite coordinates must be an even array");
 
     if (coordinates.length < 4)
-      throw new IllegalArgumentException("At least two (2) pairs of sprite coordinates required");
+      throw new IllegalArgumentException("At least two (2) pairs of AnimatedSprite coordinates required");
 
     BufferedImage[] sprites = new BufferedImage[coordinates.length / 2];
 
@@ -128,6 +128,16 @@ public class AnimatedSprite extends Sprite implements ValueCallback<Animation.St
   @Override
   protected void start() {
     animation.start();
+  }
+
+  @Override
+  protected void resume() {
+    animation.start();
+  }
+
+  @Override
+  protected void stop() {
+    animation.pause();
   }
 
   @Override

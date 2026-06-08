@@ -11,6 +11,18 @@
   </parent>
 
   <artifactId>samples</artifactId>
+  <version>1.0.0</version>
+  <packaging>jar</packaging>
+
+  <developers>
+    <developer>
+      <name>Kwame Opare Asiedu</name>
+      <url>https://opare.dev</url>
+      <roles>
+        <role>Creator</role>
+      </roles>
+    </developer>
+  </developers>
 
   <properties>
     <maven.compiler.source>18</maven.compiler.source>
@@ -22,7 +34,7 @@
     <dependency>
       <groupId>dev.gamekit</groupId>
       <artifactId>engine</artifactId>
-      <version>0.7.0</version>
+      <version>0.8.0</version>
     </dependency>
   </dependencies>
 
@@ -38,6 +50,15 @@
               dev.gamekit.annotationprocessors.CustomWidgetBuilderProcessor
             </annotationProcessor>
           </annotationProcessors>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>3.1.4</version>
+        <configuration>
+          <skip>true</skip>
         </configuration>
       </plugin>
 

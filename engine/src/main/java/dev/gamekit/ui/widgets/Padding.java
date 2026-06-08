@@ -11,12 +11,16 @@ public class Padding extends SingleChildParent {
   @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing()")
   public Spacing padding;
 
-  public Padding(PaddingConfig config, Widget child) {
-    super(config, child);
+  public Padding(String key, PaddingConfig config, Widget child) {
+    super(key, config, child);
+  }
+
+  public static Padding create(String key, PaddingConfig.Updater updater, Widget child) {
+    return new Padding(key, Widgets.configurePadding(updater), child);
   }
 
   public static Padding create(PaddingConfig.Updater updater, Widget child) {
-    return new Padding(Widgets.configurePadding(updater), child);
+    return new Padding(null, Widgets.configurePadding(updater), child);
   }
 
   public static Padding create(int padding, Widget child) {
@@ -29,6 +33,18 @@ public class Padding extends SingleChildParent {
 
   public static Padding create(int top, int right, int bottom, int left, Widget child) {
     return Padding.create(props -> props.padding = new Spacing(top, right, bottom, left), child);
+  }
+
+  public static Padding create(String key, int padding, Widget child) {
+    return Padding.create(key, props -> props.padding = new Spacing(padding), child);
+  }
+
+  public static Padding create(String key, int vertical, int horizontal, Widget child) {
+    return Padding.create(key, props -> props.padding = new Spacing(vertical, horizontal), child);
+  }
+
+  public static Padding create(String key, int top, int right, int bottom, int left, Widget child) {
+    return Padding.create(key, props -> props.padding = new Spacing(top, right, bottom, left), child);
   }
 
   @Override

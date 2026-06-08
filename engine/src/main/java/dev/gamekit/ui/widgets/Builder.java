@@ -6,12 +6,21 @@ import dev.gamekit.utils.ValueGetter;
 public class Builder extends Compose {
   public ValueGetter<Widget> delegate;
 
+  public Builder(String key, ValueGetter<Widget> delegate) {
+    super(key);
+    this.delegate = delegate;
+  }
+
   public Builder(ValueGetter<Widget> delegate) {
     this.delegate = delegate;
   }
 
+  public static Builder create(String key, ValueGetter<Widget> delegate) {
+    return new Builder(key, delegate);
+  }
+
   public static Builder create(ValueGetter<Widget> delegate) {
-    return new Builder(delegate);
+    return new Builder(null, delegate);
   }
 
   @Override

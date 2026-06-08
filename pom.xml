@@ -24,10 +24,12 @@
 
   <modules>
     <module>engine</module>
-    <module>testing</module>
-    <module>samples</module>
     <module>annotations</module>
     <module>plugin</module>
+    <module>testing</module>
+    <module>samples</module>
+    <module>packages/signals</module>
+    <module>packages/statemachine</module>
   </modules>
 
   <properties>

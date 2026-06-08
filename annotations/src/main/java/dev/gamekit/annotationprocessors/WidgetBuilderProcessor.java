@@ -112,7 +112,7 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
         out.printf("public class Theme extends SingleChildParent {\n");
 
         // Static field declarations
-        out.println("\tpublic static final Theme DEFAULT = new Theme(new ThemeConfig(), Empty.create());\n");
+        out.println("\tpublic static final Theme DEFAULT = new Theme(null, new ThemeConfig(), Empty.create());\n");
 
         // Instance field declarations
         for (WidgetClass widgetClass : widgetClasses) {
@@ -132,12 +132,16 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
 
         // Constructor, static creator method and performLayout method override declarations
         out.println("""
-            public Theme(ThemeConfig config, Widget child) {
-              super(config, child);
+            public Theme(String key, ThemeConfig config, Widget child) {
+              super(key, config, child);
+            }
+          
+            public static Theme create(String key, ThemeConfig.Updater updater, Widget child) {
+              return new Theme(key, Widgets.configureTheme(updater), child);
             }
           
             public static Theme create(ThemeConfig.Updater updater, Widget child) {
-              return new Theme(Widgets.configureTheme(updater), child);
+              return new Theme(null, Widgets.configureTheme(updater), child);
             }
           
             @Override
@@ -232,7 +236,7 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
                 widgetClass.varName, field.varName, field.varName, nearestThemeFieldVarName
               );
             } else {
-              out.printf("\t\t%sWidget.%s = %s;\n", clazz.varName, field.varName, field.varName);
+              out.printf("\t\t%sWidget.%s = %s;\n", widgetClass.varName, field.varName, field.varName);
             }
           }
         });
@@ -255,8 +259,7 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
   private WidgetClass extractWidgetClassData(Element element) {
     TypeElement typeElement = (TypeElement) element;
 
-    if (typeElement.getQualifiedName().toString().equals(WIDGET_TYPE_NAME)
-      || typeElement.getAnnotation(WidgetBuilder.class) == null)
+    if (typeElement.getAnnotation(WidgetBuilder.class) == null)
       return null;
 
     String classTypeName = typeElement.getQualifiedName().toString();
@@ -288,7 +291,7 @@ public class WidgetBuilderProcessor extends AbstractProcessor {
 
   private void ensureElementIsWidget(Element element) {
     if (element.getKind() != ElementKind.CLASS || element instanceof NoType || !(element instanceof TypeElement typeElement))
-      throw new IllegalStateException("WidgetBuilder annotation can only be used on Widget classes");
+      throw new IllegalArgumentException("WidgetBuilder annotation can only be used on Widget classes");
 
     if (typeElement.getQualifiedName().toString().equals(WIDGET_TYPE_NAME)) return;
 

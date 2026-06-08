@@ -11,6 +11,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 /**
  * {@link Application} is the heart of a GameKit program. A game or application must extend this class to do anything
@@ -27,28 +28,31 @@ public abstract class Application {
   public static final long FRAME_INTERVAL_MS = 1000 / 240;
   public static final long DRAW_INTERVAL_MS = 1000 / 60;
 
+  private static final int SCENE_FLAG_NONE = 0;
+  private static final int SCENE_FLAG_STACK = 1;
   private static Application instance;
 
   protected final Logger logger = LogManager.getLogger(getClass());
 
   private final Window window;
   private final Settings settings;
-  private final List<Timeout> timeouts;
-  private final List<Timeout> newTimeouts;
-  private final List<Animation> animations;
   private final WorkerThread audioThread;
   private final WorkerThread physicsThread;
   private final WorkerThread drawThread;
+  private final List<Timeout> pendingTimeouts;
+  private final Stack<Scene> sceneStack;
   private boolean isRunning;
   private Scene currentScene;
   private Scene nextScene;
+  private int sceneFlags;
+  private Object sceneData;
 
   public Application(String title) {
     this(new Settings(title));
   }
 
   public Application(Settings settings) {
-    System.setProperty("sun.java2d.opengl=true", "true");
+    System.setProperty("sun.java2d.opengl", "True");
     System.setProperty("sun.java2d.accthreshold", "0");
 
     logger.debug("Created application");
@@ -57,13 +61,13 @@ public abstract class Application {
     Application.instance = this;
     this.settings = settings;
     this.window = new Window();
-    this.timeouts = new ArrayList<>();
-    this.newTimeouts = new ArrayList<>();
-    this.animations = new ArrayList<>();
     this.audioThread = new WorkerThread("audio", FRAME_INTERVAL_MS, Audio::update);
     this.physicsThread = new WorkerThread("physics", FRAME_INTERVAL_MS, Physics::update);
     this.drawThread = new WorkerThread("draw", DRAW_INTERVAL_MS, this::draw);
+    this.pendingTimeouts = new ArrayList<>();
+    this.sceneStack = new Stack<>();
     this.isRunning = true;
+    this.sceneFlags = 0;
   }
 
   /** Returns the current instance of {@link Application} */
@@ -76,24 +80,50 @@ public abstract class Application {
     return settings;
   }
 
-  /** Schedules a scene to be loaded after the end of the current frame */
+  /** Schedules a scene to be loaded at the end of the current frame, replacing the current scene */
   public void loadScene(Scene scene) {
-    if (scene == null) {
-      logger.fatal("Unable to load a null scene");
-      throw new IllegalArgumentException("Unable to load a null scene");
-    }
-
-    this.nextScene = scene;
-    logger.debug("Primed next scene: {}", scene.name);
+    loadScene(scene, SCENE_FLAG_NONE, null);
   }
 
-  /** Schedules and returns a {@link Timeout timeout} to be executed immediately after the end of the current frame */
+  /** Schedules a scene to be loaded at the end of the current frame, stacking the current scene */
+  public void stackScene(Scene scene) {
+    loadScene(scene, SCENE_FLAG_STACK, null);
+  }
+
+  /**
+   * Pops the scene stack and schedules the popped scene to be resumed at the end of the current frame.
+   * <p>
+   * If the current scene was loaded to generate some data, it can be passed here to be forwarded to the popped scene
+   *
+   * @see #popSceneStack()
+   */
+  public void popSceneStack(Object data) {
+    if (sceneStack.empty())
+      throw new IllegalStateException("Scene stack is empty");
+
+    loadScene(sceneStack.pop(), SCENE_FLAG_NONE, data);
+  }
+
+  /**
+   * Pops the scene stack and schedules the popped scene to be resumed at the end of the current frame
+   *
+   * @see #popSceneStack(Object)
+   */
+  public void popSceneStack() {
+    popSceneStack(null);
+  }
+
+  /**
+   * Schedules a task to be executed immediately after the end of the current frame
+   *
+   * @see #scheduleTask(VoidCallback, long)
+   */
   public Timeout scheduleTask(VoidCallback callback) {
     return scheduleTask(callback, 0);
   }
 
   /**
-   * Schedules and returns a {@link Timeout task} to be executed after a specified time.
+   * Schedules a task to be executed after a specified time.
    * <p>
    * If {@code timeoutMs} is zero, {@code task} is executed immediately after the current frame
    *
@@ -103,7 +133,13 @@ public abstract class Application {
     if (timeoutMs < 0) throw new IllegalArgumentException("Timeout cannot be negative");
 
     Timeout timeout = new Timeout(timeoutMs, callback);
-    newTimeouts.add(timeout);
+
+    if (currentScene != null) {
+      currentScene.newTimeouts.add(timeout);
+    } else {
+      pendingTimeouts.add(timeout);
+    }
+
     return timeout;
   }
 
@@ -114,9 +150,10 @@ public abstract class Application {
    * NB: <i>{@link Animation#start} calls this method internally, so there is no need to explicitly invoke this</i>
    */
   public void playAnimation(Animation animation) {
-    if (animation != null && !animations.contains(animation)) {
-      scheduleTask(() -> animations.add(animation));
-    }
+    if (currentScene == null) throw new IllegalStateException("No currently loaded scene");
+
+    if (animation != null && !currentScene.animations.contains(animation))
+      scheduleTask(() -> currentScene.animations.add(animation));
   }
 
   /**
@@ -141,7 +178,7 @@ public abstract class Application {
         lastFrameTime = currentFrameTime;
         frameTimeAccumulator += timeDiff;
 
-        while (frameTimeAccumulator >= FRAME_INTERVAL_MS) {
+        while (frameTimeAccumulator >= FRAME_INTERVAL_MS && isRunning) {
           frameTimeAccumulator -= FRAME_INTERVAL_MS;
           Input.freeze();
           update();
@@ -162,13 +199,24 @@ public abstract class Application {
     System.exit(0);
   }
 
+  /** Schedules a scene to be loaded after the end of the current frame */
+  private void loadScene(Scene scene, int flags, Object data) {
+    if (scene == null)
+      throw new IllegalArgumentException("Unable to load a null scene");
+
+    nextScene = scene;
+    sceneFlags = flags;
+    sceneData = data;
+    logger.debug("Loaded next scene: {}, Flags: {}", scene.name, flags);
+  }
+
   /** Sets up GameKit's internals before starting the game loop */
   private void setup() {
     logger.debug("Initializing application");
 
-    window.getFrame().addKeyListener(Input.INSTANCE);
-    window.getFrame().addMouseListener(Input.INSTANCE);
-    window.getFrame().addMouseMotionListener(Input.INSTANCE);
+    window.getCanvas().addKeyListener(Input.INSTANCE);
+    window.getCanvas().addMouseListener(Input.INSTANCE);
+    window.getCanvas().addMouseMotionListener(Input.INSTANCE);
 
     window.getFrame().addWindowListener(new WindowAdapter() {
       @Override
@@ -187,17 +235,8 @@ public abstract class Application {
 
   /** Called in each frame to update the current scene */
   private void update() {
-    for (Animation animation : animations)
-      animation.update();
-
-    for (Timeout timeout : timeouts)
-      timeout.update();
-
     if (currentScene != null)
       currentScene._update();
-
-    animations.removeIf(Animation::isEnded);
-    timeouts.removeIf(Timeout::isCompleted);
   }
 
   /** Called in each frame to render the current scene */
@@ -212,8 +251,6 @@ public abstract class Application {
    */
   private void draw() {
     if (currentScene != null) {
-      Camera.updateWindowTransform();
-
       synchronized (currentScene) {
         currentScene._draw();
       }
@@ -224,34 +261,48 @@ public abstract class Application {
 
   /** Runs cleanup code at the end of a frame */
   private void disposeFrame() {
-    if (!newTimeouts.isEmpty()) {
-      timeouts.addAll(newTimeouts);
-      newTimeouts.clear();
-    }
+    if (currentScene != null)
+      currentScene._disposeFrame();
 
     if (nextScene != null) {
-      animations.clear();
-      timeouts.clear();
-      newTimeouts.clear();
-
       if (currentScene != null) {
         synchronized (currentScene) {
-          currentScene._dispose();
+          boolean shouldStackCurrentScene = (sceneFlags & SCENE_FLAG_STACK) == SCENE_FLAG_STACK;
+
+          if (shouldStackCurrentScene) {
+            currentScene._stop();
+            sceneStack.push(currentScene);
+          } else {
+            currentScene._dispose();
+          }
         }
       }
 
-      Camera.reset();
       currentScene = nextScene;
-      currentScene._start(null);
+
+      Entity.State currentSceneState = currentScene.getState();
+
+      if (currentSceneState == Entity.State.NEW) {
+        currentScene._start(null);
+        currentScene.newTimeouts.addAll(pendingTimeouts);
+        pendingTimeouts.clear();
+      } else if (currentSceneState == Entity.State.INACTIVE) {
+        currentScene._resume(sceneData);
+      }
+
       nextScene = null;
+      sceneData = null;
+      sceneFlags = SCENE_FLAG_NONE;
     }
   }
 
   /** Runs cleanup code before exiting the application */
   protected void dispose() throws InterruptedException {
-    logger.debug("Disposing application");
+    if (currentScene != null)
+      currentScene._dispose();
 
-    if (currentScene != null) currentScene._dispose();
+    Audio.dispose();
+    IO.dispose();
 
     audioThread.interrupt();
     audioThread.join(500);
@@ -262,15 +313,14 @@ public abstract class Application {
     drawThread.interrupt();
     drawThread.join(500);
 
-    Audio.dispose();
-    IO.dispose();
+    logger.debug("Disposing application");
   }
 
   private static class WorkerThread extends Thread {
     private final long frameTimeMs;
-    private final Runnable runnable;
+    private final VoidCallback runnable;
 
-    private WorkerThread(String threadName, long frameTimeMs, Runnable runnable) {
+    private WorkerThread(String threadName, long frameTimeMs, VoidCallback runnable) {
       super(threadName);
       this.frameTimeMs = frameTimeMs;
       this.runnable = runnable;
@@ -291,7 +341,7 @@ public abstract class Application {
 
         while (frameTimeAccumulator >= frameTimeMs) {
           frameTimeAccumulator -= frameTimeMs;
-          try { runnable.run(); } //
+          try { runnable.invoke(); } //
           catch (Exception ignored) { }
         }
 

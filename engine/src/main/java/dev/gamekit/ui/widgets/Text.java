@@ -52,12 +52,20 @@ public class Text extends Leaf {
   private Font renderFont;
   private FontMetrics fontMetrics;
 
-  public Text(TextConfig config) {
-    super(config);
+  public Text(String key, TextConfig config) {
+    super(key, config);
+  }
+
+  public static Text create(String key, TextConfig.Updater updater) {
+    return new Text(key, Widgets.configureText(updater));
   }
 
   public static Text create(TextConfig.Updater updater) {
-    return new Text(Widgets.configureText(updater));
+    return new Text(null, Widgets.configureText(updater));
+  }
+
+  public static Text create(String key, String text) {
+    return Text.create(key, props -> props.text = text);
   }
 
   public static Text create(String text) {

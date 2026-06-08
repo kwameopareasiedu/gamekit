@@ -5,7 +5,7 @@ import dev.gamekit.annotations.WidgetBuilderField;
 import dev.gamekit.core.IO;
 import dev.gamekit.utils.Bounds;
 import dev.gamekit.utils.Constraints;
-import dev.gamekit.utils.EngineImage;
+import dev.gamekit.utils.Picture;
 import dev.gamekit.utils.Spacing;
 
 import java.awt.*;
@@ -13,15 +13,15 @@ import java.awt.*;
 /** A {@link Leaf} widget which displays a progress bar */
 @WidgetBuilder
 public class Progress extends Leaf {
-  public static final EngineImage DEFAULT_TRACK_BG =
+  public static final Picture DEFAULT_TRACK_BG =
     IO.getImageSliceWithInsets("default-sprites.png", 470, 232, 96, 32, 8, 8, 8, 8);
-  public static final EngineImage DEFAULT_FILL_BG =
+  public static final Picture DEFAULT_FILL_BG =
     IO.getImageSliceWithInsets("default-sprites.png", 470, 289, 96, 32, 8, 8, 8, 8);
 
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Progress.DEFAULT_TRACK_BG")
-  public EngineImage trackBackground;
+  public Picture trackBackground;
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Progress.DEFAULT_FILL_BG")
-  public EngineImage fillBackground;
+  public Picture fillBackground;
   @WidgetBuilderField(fallback = "new dev.gamekit.utils.Spacing(0)")
   public Spacing fillMargin;
   @WidgetBuilderField(fallback = "dev.gamekit.ui.widgets.Progress.FillMode.SCALE")
@@ -37,14 +37,18 @@ public class Progress extends Leaf {
 
   private final Bounds fillAbsoluteBounds;
 
-  public Progress(ProgressConfig config) {
-    super(config);
+  public Progress(String key, ProgressConfig config) {
+    super(key, config);
 
     fillAbsoluteBounds = new Bounds();
   }
 
+  public static Progress create(String key, ProgressConfig.Updater updater) {
+    return new Progress(key, Widgets.configureProgress(updater));
+  }
+
   public static Progress create(ProgressConfig.Updater updater) {
-    return new Progress(Widgets.configureProgress(updater));
+    return new Progress(null, Widgets.configureProgress(updater));
   }
 
   @Override

@@ -1,5 +1,5 @@
 package dev.gamekit.settings;
 
 public enum WindowMode implements Setting {
-  WINDOWED, BORDERLESS, FULLSCREEN
+  WINDOWED, MAXIMIZED, FULLSCREEN
 }

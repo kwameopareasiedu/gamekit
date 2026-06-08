@@ -3,14 +3,15 @@ package dev.gamekit.animation;
 import dev.gamekit.core.Application;
 import dev.gamekit.utils.ValueCallback;
 
-import static dev.gamekit.utils.Math.clamp;
+import static dev.gamekit.utils.GMath.clamp;
 
 /**
  * {@link Animation} holds a value which increments from 0 to 1 over some duration. The value can then be connected
  * to any property for smooth transitions.
  * <p>
- * Animation can be set to run once or repeat (either restart or alternate). Additionally, an {@link AnimationCurve}
- * can be attached to change how the animation's value is interpolated.
+ * Animation can be set to run once or repeat (either restart or alternate).
+ * <p>
+ * Additionally, an {@link AnimationCurve} can be attached to change how the animation's value is interpolated.
  */
 public class Animation {
   private final RepeatMode repeatMode;
@@ -78,22 +79,40 @@ public class Animation {
 
   /** Starts / Restarts this animation and changes its state to {@link State#RUNNING} */
   public void start() {
-    if (state == State.ENDED) return;
-    if (state == State.IDLE) Application.getInstance().playAnimation(this);
+    if (state == State.ENDED)
+      return;
+
+    if (state == State.IDLE)
+      Application.getInstance().playAnimation(this);
+
+    if (state != State.PAUSED)
+      value = 0;
 
     state = State.RUNNING;
-    value = 0;
 
     if (stateListener != null)
       stateListener.invoke(state);
 
     if (valueListener != null)
-      valueListener.invoke(value);
+      valueListener.invoke(getValue());
   }
 
   /**
-   * Stops and resets this animation by changing its state to {@link State#STOPPED} and its value
-   * to {@code 0}. Stopped animations can be restarted by calling {@link #start}
+   * Pauses this animation by changing its state to {@link State#PAUSED}.
+   * <p>
+   * Paused animations can be restarted by calling {@link #start}
+   */
+  public void pause() {
+    state = State.PAUSED;
+
+    if (stateListener != null)
+      stateListener.invoke(state);
+  }
+
+  /**
+   * Stops and resets this animation by changing its state to {@link State#STOPPED} and its value to {@code 0}.
+   * <p>
+   * Stopped animations can be restarted by calling {@link #start}
    */
   public void stop() {
     state = State.STOPPED;
@@ -147,6 +166,8 @@ public class Animation {
     IDLE,
     /** Indicates a started animation */
     RUNNING,
+    /** Indicates a paused animation which can be resumed */
+    PAUSED,
     /** Pseudo-state indicating an animation has restarted */
     RESTARTED,
     /** Pseudo-state indicating an animation whose direction changes */

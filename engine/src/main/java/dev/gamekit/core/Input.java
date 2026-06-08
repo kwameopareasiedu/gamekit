@@ -5,8 +5,6 @@ import dev.gamekit.utils.Position;
 import java.awt.*;
 import java.awt.event.*;
 
-import static dev.gamekit.utils.Math.clamp;
-
 /**
  * {@link Input} handles keyboard and mouse input detection for use in the application.
  * <p>
@@ -226,46 +224,46 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
     keyStates = new KeyState[KEY_COUNT];
     buttonStates = new ButtonState[BUTTON_COUNT];
     absoluteMousePosition = new Position(MouseInfo.getPointerInfo().getLocation());
-    relativeMousePosition = new Position(0, 0);
+    relativeMousePosition = new Position();
 
-    for (int i1 = 0; i1 < KEY_COUNT; i1++)
-      keyStates[i1] = new KeyState();
+    for (int kdx = 0; kdx < KEY_COUNT; kdx++)
+      keyStates[kdx] = new KeyState();
 
-    for (int i = 0; i < BUTTON_COUNT; i++)
-      buttonStates[i] = new ButtonState();
+    for (int bdx = 0; bdx < BUTTON_COUNT; bdx++)
+      buttonStates[bdx] = new ButtonState();
   }
 
   /** Checks if a key has just been pressed */
   public static boolean isKeyDown(int keyCode) {
-    return INSTANCE.keyStates[keyCode].isDown;
+    return INSTANCE.keyStates[keyCode].down;
   }
 
   /** Checks if a key is being held down */
   public static boolean isKeyPressed(int keyCode) {
-    return INSTANCE.keyStates[keyCode].isPressed;
+    return INSTANCE.keyStates[keyCode].pressed;
   }
 
   /** Checks if a key has just been released */
   public static boolean isKeyReleased(int keyCode) {
-    return INSTANCE.keyStates[keyCode].isReleased;
+    return INSTANCE.keyStates[keyCode].released;
   }
 
   /** Checks if a button has just been pressed */
   public static boolean isButtonDown(int buttonId) {
     int buttonIndex = buttonId - 1;
-    return INSTANCE.buttonStates[buttonIndex].isDown;
+    return INSTANCE.buttonStates[buttonIndex].down;
   }
 
   /** Checks if a button is being held down */
   public static boolean isButtonPressed(int buttonId) {
     int buttonIndex = buttonId - 1;
-    return INSTANCE.buttonStates[buttonIndex].isPressed;
+    return INSTANCE.buttonStates[buttonIndex].pressed;
   }
 
   /** Checks if a button has just been released */
   public static boolean isButtonReleased(int buttonId) {
     int buttonIndex = buttonId - 1;
-    return INSTANCE.buttonStates[buttonIndex].isReleased;
+    return INSTANCE.buttonStates[buttonIndex].released;
   }
 
   /** Returns the key character which was just pressed */
@@ -285,24 +283,12 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
    * not keep a reference to it. Rather, retrieve the x and y values and store them if you need to</i>
    */
   public static Position getMousePosition() {
-    Window.Info info = Window.getInstance().getInfo();
-    double scaleRatio = info.displayScaleRatio();
-    double windowWidth = info.frameWidth();
-    double windowHeight = info.frameHeight();
-    double displayWidth = info.displayWidth();
-    double displayHeight = info.displayHeight();
-    double inverseScaleRatio = info.inverseDisplayScaleRatio();
-
-    double scaledDisplayWidth = displayWidth * scaleRatio;
-    double scaledDisplayHeight = displayHeight * scaleRatio;
-    double leftMargin = 0.5 * (windowWidth - scaledDisplayWidth);
-    double topMargin = 0.5 * (windowHeight - scaledDisplayHeight);
-    double scaledMouseX = inverseScaleRatio * (INSTANCE.absoluteMousePosition.x - leftMargin);
-    double scaledMouseY = inverseScaleRatio * (INSTANCE.absoluteMousePosition.y - topMargin);
+    Window win = Window.getInstance();
+    double invScaling = win.getInvScaling();
 
     INSTANCE.relativeMousePosition.set(
-      (int) clamp(scaledMouseX, 0, displayWidth),
-      (int) clamp(scaledMouseY, 0, displayHeight)
+      (int) (INSTANCE.absoluteMousePosition.x * invScaling),
+      (int) (INSTANCE.absoluteMousePosition.y * invScaling)
     );
 
     return INSTANCE.relativeMousePosition;
@@ -336,22 +322,20 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
     int keyCode = e.getKeyCode();
 
-    if (keyCode >= 0 && keyCode < KEY_COUNT) {
+    if (keyCode >= 0 && keyCode < KEY_COUNT)
       keyStates[keyCode].update(true);
-    }
 
     keyCodePressed = e.getKeyCode();
   }
 
   @Override
   public void keyReleased(KeyEvent e) {
-    if (frozen) return;
+    // Key release events exempted from input freeze to prevent 'sticky keys' bug
 
     int keyCode = e.getKeyCode();
 
-    if (keyCode >= 0 && keyCode < KEY_COUNT) {
+    if (keyCode >= 0 && keyCode < KEY_COUNT)
       keyStates[keyCode].update(false);
-    }
   }
 
   @Override
@@ -367,20 +351,18 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
     int buttonCode = e.getButton();
 
-    if (buttonCode >= 1) {
+    if (buttonCode >= 1)
       buttonStates[buttonCode - 1].update(true);
-    }
   }
 
   @Override
   public void mouseReleased(MouseEvent e) {
-    if (frozen) return;
+    // Mouse release events exempted from input freeze to prevent 'sticky buttons' bug
 
     int buttonCode = e.getButton();
 
-    if (buttonCode >= 1) {
+    if (buttonCode >= 1)
       buttonStates[buttonCode - 1].update(false);
-    }
   }
 
   @Override
@@ -408,25 +390,25 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
 
   /** Represents an input state */
   private static abstract class ActionState {
-    boolean isPressed = false;
-    boolean isDown = false;
-    boolean isReleased = false;
+    boolean pressed = false;
+    boolean down = false;
+    boolean released = false;
 
     /**
      * Updates the key state
      *
-     * @param isPressed Whether the action has been pressed
+     * @param pressed Whether the action has been pressed
      */
-    protected void update(boolean isPressed) {
-      isDown = !this.isPressed && isPressed;
-      isReleased = this.isPressed && !isPressed;
-      this.isPressed = isPressed;
+    protected void update(boolean pressed) {
+      down = !this.pressed && pressed;
+      released = this.pressed && !pressed;
+      this.pressed = pressed;
     }
 
     /** Resets this action state */
     protected void reset() {
-      isDown = false;
-      isReleased = false;
+      down = false;
+      released = false;
     }
   }
 

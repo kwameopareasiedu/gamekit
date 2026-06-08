@@ -19,20 +19,18 @@ nav:
           - RigidBody: features/components/rigidbody.md
           - Collider: features/components/collider.md
       - Renderer: features/rendering.md
-      - Camera: features/camera.md
       - Input: features/input.md
       - File IO: features/file-io.md
       - Physics: features/physics.md
       - Audio:
           - Overview: features/audio/overview.md
           - Audio Clip: features/audio/audio-clip.md
-          - Audio Group: features/audio/audio-group.md
+          - Audio Mixer: features/audio/audio-mixer.md
+          - Audio Effect: features/audio/audio-effect.md
           - Audio Listener: features/audio/audio-listener.md
           - Attenuation: features/audio/attenuation.md
-          - Audio Shape: features/audio/audio-shape.md
       - User Interface (UI): features/ui.md
-  - Tools:
-      - Export: tools/export.md
+      - Export: features/export.md
 theme: mkdocs
 markdown_extensions:
   - attr_list
