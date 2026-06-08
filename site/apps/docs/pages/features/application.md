@@ -43,7 +43,7 @@ Application game = new Application(
   new Settings(
     "Demo 4 - Declarative UI",  // Window title string
     Resolution.HD,              // Resolution (VGA, SVGA, XGA, HD, WXGA, FULL_HD, NATIVE)
-    WindowMode.WINDOWED,        // Window mode (WINDOWED, BORDERLESS, FULLSCREEN)
+    WindowMode.WINDOWED,        // Window mode (WINDOWED, MAXIMIZED, FULLSCREEN)
     Antialiasing.ON,            // Antialiasing (ON, OFF, DEFAULT)
     TextAntialiasing.ON,        // UI text antialiasing (ON, OFF, DEFAULT)
     AlphaInterpolation.SPEED,   // Image alpha interpolation (SPEED, QUALITY, DEFAULT)

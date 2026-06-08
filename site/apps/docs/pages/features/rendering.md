@@ -32,10 +32,10 @@ window.
 > In screen-space, drawing originates from the top-left of the shape by default. In GameKit, all drawing is offset to
 > the center of the shape, hence the term **center-origin**.
 
-## Render Attributes
+## Render Modifiers
 
-Each of the static methods in `Renderer` can further be enhanced with attribute methods which customize their
-operation. These attributes are defined in the table below:
+Each of the static methods in `Renderer` can further be enhanced with modifier methods which customize their
+operation. These modifiers are defined in the table below:
 
 | Method Call         | Description                                                                             |
 |---------------------|-----------------------------------------------------------------------------------------|
@@ -46,6 +46,8 @@ operation. These attributes are defined in the table below:
 | `withRotation`      | Sets the clockwise rotation in radian of the draw call                                  |
 | `withOpacity`       | Sets the opacity of the draw call                                                       |
 | `withInterpolation` | Sets the image interpolation of the draw image call                                     |
+| `withMask`          | Sets the alpha mask of the draw image call                                              |
+| `withTarget`        | Sets the secondary render target of the draw image call                                 |
 
 ## Render Layers
 
@@ -64,9 +66,46 @@ Renderer.onLayer(2, () -> {
 });
 ```
 
+## Image Masking
+
+The `Renderer` allows you to mask one image with another. Masking is where the alpha layer of an image determines
+which portions of another image is visible.
+
+When performing masking, at the portions of the mask where the alpha = 1.0, the pixels in the corresponding area of the
+underlying image are cleared and if the alpha is 0.0, the pixels in the overlapping area are unchanged.
+
+In other words, the transparent parts of the mask are where the underlying image is drawn. Likewise, the opaque parts of
+the mask are where underlying image is hidden.
+
+To set a mask on a **draw image call**, use the `withMask()` modifier method as shown below:
+
+```java
+BufferedImage mask = ...;
+
+Renderer.drawImage(...).withMask(target);
+```
+
+## Custom Render Targets
+
+As stated initially, **draw calls** are objects dispatched by the `Renderer` which perform actual drawing onto the
+screen, which is the primary render target.
+
+The custom render targets feature allows you to set a `BufferedImage` as a secondary render target to a **draw image
+call**. This means, after drawing the image to the screen, the draw call will also draw to the provided target.
+
+This is useful if you need the rendered image for computation within your game.
+
+To set a render target on a **draw image call**, use the `withTarget()` modifier method as shown below:
+
+```java
+BufferedImage target = ...;
+
+Renderer.drawImage(...).withTarget(target);
+```
+
 ## Rendering Sample
 
-The sample below is a scene which uses the renderer methods and attributes shown above:
+The sample below is a scene which uses the renderer methods and modifiers shown above:
 
 ```java
 import dev.gamekit.core.Application;
