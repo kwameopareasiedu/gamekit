@@ -3,14 +3,15 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>dev.gamekit</groupId>
+    <artifactId>gamekit</artifactId>
+    <version>1.0.0</version>
+  </parent>
 
-  <groupId>dev.gamekit</groupId>
-  <artifactId>gamekit</artifactId>
-  <version>1.0.0</version>
-  <packaging>pom</packaging>
-
-  <name>GameKit</name>
-  <description>A 2D Java game engine for creating simple games fast</description>
+  <artifactId>annotations</artifactId>
+  <version>0.2.0</version>
+  <packaging>jar</packaging>
 
   <developers>
     <developer>
@@ -22,27 +23,28 @@
     </developer>
   </developers>
 
-  <modules>
-    <module>engine</module>
-    <module>annotations</module>
-    <module>plugin</module>
-    <module>testing</module>
-    <module>samples</module>
-    <module>packages/signals</module>
-    <module>packages/statemachine</module>
-  </modules>
-
   <properties>
     <maven.compiler.source>18</maven.compiler.source>
     <maven.compiler.target>18</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
-  <distributionManagement>
-    <repository>
-      <id>maven-artifacts</id>
-      <name>Maven Artifacts</name>
-      <url>file://${maven.multiModuleProjectDirectory}/artifacts</url>
-    </repository>
-  </distributionManagement>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.3.1</version>
+        <executions>
+          <execution>
+            <id>attach-source</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
