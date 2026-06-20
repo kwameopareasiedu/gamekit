@@ -116,10 +116,10 @@ public abstract class Application {
   /**
    * Schedules a task to be executed immediately after the end of the current frame
    *
-   * @see #scheduleTask(VoidCallback, long)
+   * @see #scheduleTask(long, VoidCallback)
    */
   public Timeout scheduleTask(VoidCallback callback) {
-    return scheduleTask(callback, 0);
+    return scheduleTask(0, callback);
   }
 
   /**
@@ -129,7 +129,7 @@ public abstract class Application {
    *
    * @see #scheduleTask(VoidCallback)
    */
-  public Timeout scheduleTask(VoidCallback callback, long timeoutMs) {
+  public Timeout scheduleTask(long timeoutMs, VoidCallback callback) {
     if (timeoutMs < 0) throw new IllegalArgumentException("Timeout cannot be negative");
 
     Timeout timeout = new Timeout(timeoutMs, callback);

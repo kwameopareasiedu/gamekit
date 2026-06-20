@@ -1,21 +1,23 @@
 # Change Log
 
-## Road Map
-
-- Text widget spanning to allow different text attributes for different segments of text
-- New widgets: Flow, Divider, Scroll
-- Dynamic lighting
-- Networked multiplayer
-- Update AudioClip to preload in constructor to be able to use clip instances without Audio.get();
-- Exchange the operands for `Application#scheduleTask(VoidCallback, long)`
-- Include os name and project version in built artifact names
-- Explore GPU rendering via LWJGL bindings
-
-## UNRELEASED
+## TEMPLATE
 
 ### Added
 
 ### Changed
+
+### Deprecated
+
+### Removed
+
+## 0.9.0
+
+### Added
+
+### Changed
+
+- Changed signature of `public Timeout scheduleTask(VoidCallback callback, long timeoutMs)` method in `Application`
+  class to `public Timeout scheduleTask(long timeoutMs, VoidCallback callback)`
 
 ### Deprecated
 
@@ -68,8 +70,6 @@
 - Changes signature of `double attenuate(double distance, double minDistance, double maxDistance)` method in
   `AudioAttenuation` class to `double attenuate(double distance)`
 - Changed signature of `private static Vector POSITION` constant in `AudioListener` to `public static Vector POSITION`
-
-### Deprecated
 
 ### Removed
 

@@ -8,7 +8,7 @@
         <phases>
           <process-resources>
             org.apache.maven.plugins:maven-resources-plugin:3.5.0:resources,
-            dev.gamekit:gamekit-maven-plugin:generateResources
+            dev.gamekit:maven-plugin:generateResources
           </process-resources>
           <compile>
             org.apache.maven.plugins:maven-compiler-plugin:3.15.0:compile
@@ -24,7 +24,7 @@
           </test>
           <package>
             org.apache.maven.plugins:maven-jar-plugin:3.5.0:jar,
-            dev.gamekit:gamekit-maven-plugin:build
+            dev.gamekit:maven-plugin:build
           </package>
           <install>
             org.apache.maven.plugins:maven-install-plugin:3.1.4:install
