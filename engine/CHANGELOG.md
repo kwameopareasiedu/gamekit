@@ -7,6 +7,9 @@
 - Dynamic lighting
 - Networked multiplayer
 - Update AudioClip to preload in constructor to be able to use clip instances without Audio.get();
+- Exchange the operands for `Application#scheduleTask(VoidCallback, long)`
+- Include os name and project version in built artifact names
+- Explore GPU rendering via LWJGL bindings
 
 ## UNRELEASED
 
