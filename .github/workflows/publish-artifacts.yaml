@@ -1,10 +1,9 @@
-name: Publish Maven Artifacts
+name: Publish Artifacts
 
 on:
   release:
     types:
       - published
-  workflow_dispatch:
 
 jobs:
   publish-maven-artifacts:
@@ -12,8 +11,17 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Checkout gamekit-mvn repo
+        uses: actions/checkout@v4
+        with:
+          repository: kwameopareasiedu/gamekit-mvn
+          ref: master
+          path: mvn
+          token: ${{ secrets.GAMEKIT_PAT }}
+      - name: Setup Java 18
+        uses: actions/setup-java@v4
         with:
           java-version: 18
           distribution: temurin
@@ -21,8 +29,17 @@ jobs:
         run: mvn --batch-mode deploy
       - name: Commit built artifacts
         run: |
-          git config user.name "Kwame Opare Asiedu"
-          git config user.email kwameopareasiedu@gamekit.dev
+          git config user.name Publisher
+          git config user.email publisher@gamekit.dev
           git add artifacts
           git commit -m "Built new artifacts"
           git push origin HEAD:master
+        working-directory: mvn
+      - name: Dispatch site update event
+        run: |
+          curl  -X POST \
+                -H "Accept: application/vnd.github+json" \
+                -H "Authorization: Bearer ${{ secrets.GAMEKIT_PAT }}" \
+                -H "X-GitHub-Api-Version: 2026-03-10" \
+                -d '{"event_type":"release_published","client_payload":{}}' \
+          https://api.github.com/repos/kwameopareasiedu/gamekit-site/dispatches
