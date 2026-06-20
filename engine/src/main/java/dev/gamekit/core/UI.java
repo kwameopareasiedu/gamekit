@@ -5,6 +5,7 @@ import dev.gamekit.ui.events.*;
 import dev.gamekit.ui.widgets.Widget;
 import dev.gamekit.utils.Constraints;
 import dev.gamekit.utils.Position;
+import dev.gamekit.utils.ValueGetter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,7 +21,7 @@ public final class UI implements Widget.Host, Widget.Updater, Widget.Traveller {
 
   private static final Logger LOGGER = LogManager.getLogger(UI.class);
 
-  private final Scene scene;
+  private final ValueGetter<Widget> createUI;
   private final Constraints windowConstraints;
   private final List<Widget> currentHitTestList;
   private final List<Widget> previousHitTestList;
@@ -37,13 +38,13 @@ public final class UI implements Widget.Host, Widget.Updater, Widget.Traveller {
   private boolean needsRender = false;
   private boolean needsDraw = false;
 
-  public UI(Scene scene) {
+  public UI(ValueGetter<Widget> createUI) {
     Settings settings = Application.getInstance().getSettings();
     Window window = Window.getInstance();
     int displayWidth = window.getDisplayWidth();
     int displayHeight = window.getDisplayHeight();
 
-    this.scene = scene;
+    this.createUI = createUI;
     this.windowConstraints = new Constraints(displayWidth, displayWidth, displayHeight, displayHeight);
     this.currentHitTestList = new ArrayList<>();
     this.previousHitTestList = new ArrayList<>();
@@ -104,7 +105,7 @@ public final class UI implements Widget.Host, Widget.Updater, Widget.Traveller {
   void update() {
     if (tree != null && needsUpdate) {
       LOGGER.debug("Updating UI");
-      updateTree(this, windowConstraints, this::getTree, scene::createUI, this::setTree, this::triggerRender);
+      updateTree(this, windowConstraints, this::getTree, createUI, this::setTree, this::triggerRender);
       needsUpdate = false;
     }
 

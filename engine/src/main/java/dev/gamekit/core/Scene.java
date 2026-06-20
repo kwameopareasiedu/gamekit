@@ -31,7 +31,7 @@ public abstract class Scene extends Entity {
     timeouts = new ArrayList<>();
     newTimeouts = new ArrayList<>();
     animations = new ArrayList<>();
-    ui = new UI(this);
+    ui = new UI(this::createUI);
   }
 
   @Override
