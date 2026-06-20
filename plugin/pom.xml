@@ -9,8 +9,8 @@
     <version>1.0.0</version>
   </parent>
 
-  <artifactId>gamekit-maven-plugin</artifactId>
-  <version>0.2.0</version>
+  <artifactId>plugin</artifactId>
+  <version>0.3.0</version>
   <packaging>maven-plugin</packaging>
 
   <developers>
@@ -79,6 +79,15 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <version>3.15.1</version>
+        <configuration>
+          <goalPrefix>gamekit</goalPrefix>
+        </configuration>
       </plugin>
     </plugins>
   </build>

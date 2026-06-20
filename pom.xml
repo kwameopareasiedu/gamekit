@@ -42,7 +42,7 @@
     <repository>
       <id>maven-artifacts</id>
       <name>Maven Artifacts</name>
-      <url>file://${maven.multiModuleProjectDirectory}/artifacts</url>
+      <url>file://${project.build.directory}/mvn</url>
     </repository>
   </distributionManagement>
 </project>

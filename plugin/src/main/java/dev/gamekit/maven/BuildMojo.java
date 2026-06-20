@@ -109,6 +109,7 @@ public class BuildMojo extends AbstractMojo {
     getLog().info("Creating output directories");
 
     String name = mavenProject.getArtifactId();
+    String version = mavenProject.getVersion();
     String jarFileName = String.format("%s-%s.jar", name, mavenProject.getVersion());
     Path jarFilePath = Paths.get(mavenProject.getBuild().getDirectory(), jarFileName);
     Path jarFileDestPath = Paths.get(mavenProject.getBuild().getDirectory(), "outputs", "jar", jarFileName);
@@ -181,7 +182,10 @@ public class BuildMojo extends AbstractMojo {
     }
 
     getLog().info("Zipping files");
-    Path zippedOutputPath = Paths.get(platformExecutablePath.toString(), name + ".zip");
+    Path zippedOutputPath = Paths.get(
+      platformExecutablePath.toString(),
+      String.format("%s-%s-%s.zip", name, os.name, version)
+    );
     ZipUtil.pack(readmeFilePath.getParent().toFile(), zippedOutputPath.toFile());
 
     getLog().info("Cleaning up");

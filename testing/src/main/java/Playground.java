@@ -45,7 +45,7 @@ public class Playground extends Scene {
 
 
     if (captureImage) {
-      Application.getInstance().scheduleTask(() -> {
+      Application.getInstance().scheduleTask(500, () -> {
         try {
           File outFile = new File("testing/target/image.png");
           ImageIO.write(target, "png", outFile);
@@ -53,7 +53,7 @@ public class Playground extends Scene {
         } catch (IOException e) {
           e.printStackTrace();
         }
-      }, 500);
+      });
 
       captureImage = false;
     }
