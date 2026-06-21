@@ -59,7 +59,6 @@ public abstract class Application {
 
     Application.instance = this;
     this.settings = settings;
-//    this.window = new SwingWindow();
     this.window = new GLFWWindow();
     this.audioThread = new WorkerThread("audio", FRAME_INTERVAL_MS, Audio::update);
     this.physicsThread = new WorkerThread("physics", FRAME_INTERVAL_MS, Physics::update);
@@ -159,7 +158,6 @@ public abstract class Application {
   /** Quits the current {@link Application} */
   public void quit() {
     window.notifyClose();
-//    window.getFrame().dispatchEvent(new WindowEvent(window.getFrame(), WindowEvent.WINDOW_CLOSING));
   }
 
   /** Begins the game loop of this application */
@@ -266,6 +264,8 @@ public abstract class Application {
 
   /** Runs cleanup code at the end of a frame */
   private void disposeFrame() {
+    window.disposeFrame();
+
     if (currentScene != null)
       currentScene._disposeFrame();
 
