@@ -11,7 +11,7 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 
 /**
- * {@link Camera} controls which part of the game world is visible in the {@link Window}.
+ * {@link Camera} controls which part of the game world is visible in the {@link SwingWindow}.
  * <p>
  * It does this by manipulating the window's {@link AffineTransform} object
  */
@@ -36,7 +36,7 @@ public final class Camera {
 
   /** Returns the visible render bounds based on the camera's parameters */
   public Bounds getRenderBounds() {
-    Window win = Window.getInstance();
+    SwingWindow win = SwingWindow.getInstance();
 
     boundsCache.set(
       (int) ((x - win.getCenterX()) * invZoom),
@@ -50,7 +50,7 @@ public final class Camera {
 
   /** Transforms the screen-space point (sx,sy) into world-space position */
   public Vector screenToWorldPosition(int sx, int sy) {
-    Window win = Window.getInstance();
+    SwingWindow win = SwingWindow.getInstance();
     double wx = invZoom * (win.getCenterX() - sx - x);
     double wy = invZoom * (win.getCenterY() - sy - y);
     doublePositionCache.set(-wx, wy);
@@ -59,14 +59,14 @@ public final class Camera {
 
   /** Transforms the world-space point (wx,wy) into screen-space position */
   public Position worldToScreenPosition(double wx, double wy) {
-    Window win = Window.getInstance();
+    SwingWindow win = SwingWindow.getInstance();
     int sx = (int) (win.getCenterX() + wx * zoom - x);
     int sy = (int) (win.getCenterY() - wy * zoom - y);
     intPositionCache.set(sx, sy);
     return intPositionCache;
   }
 
-  /** Pan the camera to center point (x, y) within the {@link Window} */
+  /** Pan the camera to center point (x, y) within the {@link SwingWindow} */
   public void lookAt(double x, double y) {
     this.x = x;
     this.y = -y;
@@ -90,7 +90,7 @@ public final class Camera {
 
   /** Applies the camera's position and zoom to the current window's transform matrix */
   void updateWindowTransform() {
-    Window win = Window.getInstance();
+    SwingWindow win = SwingWindow.getInstance();
     Graphics2D g = win.getDisplayGraphics();
     Bounds rb = getRenderBounds();
     transform.setTransform(zoom, 0, 0, zoom, win.getCenterX() - x, win.getCenterY() - y);

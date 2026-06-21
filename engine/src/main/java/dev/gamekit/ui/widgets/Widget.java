@@ -1,7 +1,7 @@
 package dev.gamekit.ui.widgets;
 
 import dev.gamekit.core.Scene;
-import dev.gamekit.core.Window;
+import dev.gamekit.core.SwingWindow;
 import dev.gamekit.utils.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -298,7 +298,7 @@ public abstract class Widget {
 
   /** Interface for the host containing a {@link Widget} tree, providing methods to it */
   public interface Host {
-    /** Returns the font metrics for the given font from the {@link Window} object */
+    /** Returns the font metrics for the given font from the {@link SwingWindow} object */
     FontMetrics getFontMetrics(Font font);
 
     /** Triggers an update of the {@link Widget widget} tree */

@@ -11,7 +11,7 @@
   </parent>
 
   <artifactId>engine</artifactId>
-  <version>0.8.0</version>
+  <version>0.9.0</version>
   <packaging>jar</packaging>
 
   <developers>
@@ -74,12 +74,14 @@
   </dependencyManagement>
 
   <dependencies>
+    <!-- GameKit Annotations -->
     <dependency>
       <groupId>dev.gamekit</groupId>
       <artifactId>annotations</artifactId>
       <version>0.2.0</version>
     </dependency>
 
+    <!-- Apache Log4j -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
@@ -92,6 +94,7 @@
       <version>2.24.3</version>
     </dependency>
 
+    <!-- JUnit 5 -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
@@ -99,6 +102,7 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- Dyn4j -->
     <dependency>
       <groupId>org.dyn4j</groupId>
       <artifactId>dyn4j</artifactId>
@@ -119,6 +123,7 @@
       <classifier>javadoc</classifier>
     </dependency>
 
+    <!-- LWJGL -->
     <dependency>
       <groupId>org.lwjgl</groupId>
       <artifactId>lwjgl</artifactId>

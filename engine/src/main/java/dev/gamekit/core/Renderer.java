@@ -12,7 +12,7 @@ import java.util.Map;
 
 /**
  * {@link Renderer} dispatches {@link DrawCall draw calls} which are processed by the render thread to draw on the
- * current {@link Window}
+ * current {@link SwingWindow}
  */
 @SuppressWarnings({ "JavaExistingMethodCanBeUsed", "unchecked" })
 public final class Renderer {
@@ -334,7 +334,7 @@ public final class Renderer {
     }
 
     /**
-     * By default, draw image calls are applied to the {@link Window}.
+     * By default, draw image calls are applied to the {@link SwingWindow}.
      * <p>
      * With this modifier, an additional {@link BufferedImage} target can be set to be drawn to.
      * <p>

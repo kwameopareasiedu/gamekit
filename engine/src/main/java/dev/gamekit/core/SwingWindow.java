@@ -15,10 +15,10 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 
 /** Window manages the {@link JFrame} and image buffers the application is rendered in */
-public final class Window {
-  private static final Logger LOGGER = LogManager.getLogger(Window.class);
+public final class SwingWindow {
+  private static final Logger LOGGER = LogManager.getLogger(SwingWindow.class);
 
-  private static Window instance;
+  private static SwingWindow instance;
 
   private final Settings settings;
   private final JFrame frame;
@@ -35,7 +35,7 @@ public final class Window {
   private boolean bufferInvalidated = false;
   private double invScaling;
 
-  Window() {
+  SwingWindow() {
     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
     GraphicsConfiguration gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
 
@@ -124,45 +124,45 @@ public final class Window {
       displayWidth, displayHeight, centerX, centerY
     );
 
-    Window.instance = this;
+    SwingWindow.instance = this;
   }
 
-  /** Returns the current instance of {@link Window} */
-  public static Window getInstance() {
+  /** Returns the current instance of {@link SwingWindow} */
+  public static SwingWindow getInstance() {
     return instance;
   }
 
-  /** Returns the display width of the {@link Window} */
+  /** Returns the display width of the {@link SwingWindow} */
   public int getDisplayWidth() {
     return displayWidth;
   }
 
-  /** Returns the display height of the {@link Window} */
+  /** Returns the display height of the {@link SwingWindow} */
   public int getDisplayHeight() {
     return displayHeight;
   }
 
-  /** Returns the x-coordinate of the center point of the {@link Window} */
+  /** Returns the x-coordinate of the center point of the {@link SwingWindow} */
   public int getCenterX() {
     return centerX;
   }
 
-  /** Returns the y-coordinate of the center point of the {@link Window} */
+  /** Returns the y-coordinate of the center point of the {@link SwingWindow} */
   public int getCenterY() {
     return centerY;
   }
 
-  /** Returns the inverse display scaling factor of the {@link Window} */
+  /** Returns the inverse display scaling factor of the {@link SwingWindow} */
   double getInvScaling() {
     return invScaling;
   }
 
-  /** Returns the visible {@link JFrame} of the {@link Window} */
+  /** Returns the visible {@link JFrame} of the {@link SwingWindow} */
   JFrame getFrame() {
     return frame;
   }
 
-  /** Returns the visible {@link Canvas} of the {@link Window} */
+  /** Returns the visible {@link Canvas} of the {@link SwingWindow} */
   Canvas getCanvas() {
     return canvas;
   }

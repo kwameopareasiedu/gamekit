@@ -283,7 +283,7 @@ public final class Input implements KeyListener, MouseListener, MouseMotionListe
    * not keep a reference to it. Rather, retrieve the x and y values and store them if you need to</i>
    */
   public static Position getMousePosition() {
-    Window win = Window.getInstance();
+    SwingWindow win = SwingWindow.getInstance();
     double invScaling = win.getInvScaling();
 
     INSTANCE.relativeMousePosition.set(

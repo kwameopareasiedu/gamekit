@@ -40,7 +40,7 @@ public final class UI implements Widget.Host, Widget.Updater, Widget.Traveller {
 
   public UI(ValueGetter<Widget> createUI) {
     Settings settings = Application.getInstance().getSettings();
-    Window window = Window.getInstance();
+    SwingWindow window = SwingWindow.getInstance();
     int displayWidth = window.getDisplayWidth();
     int displayHeight = window.getDisplayHeight();
 
@@ -63,7 +63,7 @@ public final class UI implements Widget.Host, Widget.Updater, Widget.Traveller {
 
   /** Clears the UI buffer with transparent pixels */
   public void clear() {
-    Window win = Window.getInstance();
+    SwingWindow win = SwingWindow.getInstance();
     Graphics2D uiGraphics = win.getUiGraphics();
     int displayWidth = win.getDisplayWidth();
     int displayHeight = win.getDisplayHeight();
@@ -74,7 +74,7 @@ public final class UI implements Widget.Host, Widget.Updater, Widget.Traveller {
 
   @Override
   public FontMetrics getFontMetrics(Font font) {
-    return Window.getInstance().getUiGraphics().getFontMetrics(font);
+    return SwingWindow.getInstance().getUiGraphics().getFontMetrics(font);
   }
 
   /** Triggers a layout update during the next frame */
@@ -113,7 +113,7 @@ public final class UI implements Widget.Host, Widget.Updater, Widget.Traveller {
     dispatchInputEvents();
   }
 
-  /** Renders the UI tree to the canvas which is drawn to the {@link Window} by the draw thread at a later time */
+  /** Renders the UI tree to the canvas which is drawn to the {@link SwingWindow} by the draw thread at a later time */
   void render() {
     if (tree != null && needsRender && !needsDraw) {
       LOGGER.debug("Rendering UI");
@@ -127,10 +127,10 @@ public final class UI implements Widget.Host, Widget.Updater, Widget.Traveller {
     }
   }
 
-  /** Called by the render thread to draw the canvas to the {@link Window} UI layer */
+  /** Called by the render thread to draw the canvas to the {@link SwingWindow} UI layer */
   void draw() {
     if (needsDraw) {
-      Window win = Window.getInstance();
+      SwingWindow win = SwingWindow.getInstance();
       Graphics2D uiGraphics = win.getUiGraphics();
       int displayWidth = win.getDisplayWidth();
       int displayHeight = win.getDisplayHeight();

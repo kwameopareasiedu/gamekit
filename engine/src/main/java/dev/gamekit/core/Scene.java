@@ -104,12 +104,12 @@ public abstract class Scene extends Entity {
     ui.render();
   }
 
-  /** Called by {@link Application} to draw the scene to the {@link Window} */
+  /** Called by {@link Application} to draw the scene to the {@link SwingWindow} */
   void _draw() {
     camera.updateWindowTransform();
 
     if (Renderer.isCommitted() && !Renderer.isCompleted())
-      Renderer.draw(Window.getInstance().getDisplayGraphics());
+      Renderer.draw(SwingWindow.getInstance().getDisplayGraphics());
 
     ui.draw();
   }

@@ -6,7 +6,7 @@ import dev.gamekit.audio.effects.AudioEffect;
 import dev.gamekit.audio.effects.LowPassFilter;
 import dev.gamekit.audio.effects.ReverbFilter;
 import dev.gamekit.core.*;
-import dev.gamekit.core.Window;
+import dev.gamekit.core.SwingWindow;
 import dev.gamekit.settings.*;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
@@ -48,7 +48,7 @@ public class Demo5Audio extends Scene {
   public Demo5Audio() {
     super("Main Scene");
 
-    halfWindowWidth = Window.getInstance().getDisplayWidth() / 2;
+    halfWindowWidth = Application.getInstance().getSettings().resolution.width / 2;
     listenerPos = new Vector(0, 0);
     prevMousePos = new Position(0, 0);
 
@@ -105,7 +105,7 @@ public class Demo5Audio extends Scene {
       updateUI();
     }
 
-    Window win = Window.getInstance();
+    SwingWindow win = SwingWindow.getInstance();
     Position mousePos = Input.getMousePosition();
 
     if (!Objects.equals(prevMousePos, mousePos)) {

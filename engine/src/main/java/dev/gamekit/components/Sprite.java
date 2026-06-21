@@ -3,7 +3,7 @@ package dev.gamekit.components;
 import dev.gamekit.core.Component;
 import dev.gamekit.core.Entity;
 import dev.gamekit.core.Renderer;
-import dev.gamekit.core.Window;
+import dev.gamekit.core.SwingWindow;
 import dev.gamekit.settings.ImageInterpolation;
 import dev.gamekit.utils.Bounds;
 import dev.gamekit.utils.Vector;
@@ -63,7 +63,7 @@ public class Sprite extends Component {
   }
 
   /**
-   * By default, draw image calls are applied to the {@link Window}.
+   * By default, draw image calls are applied to the {@link SwingWindow}.
    * <p>
    * This method sets an additional {@link BufferedImage} target to be drawn to.
    * <p>

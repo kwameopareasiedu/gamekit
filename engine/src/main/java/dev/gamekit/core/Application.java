@@ -7,8 +7,6 @@ import dev.gamekit.utils.VoidCallback;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -34,11 +32,12 @@ public abstract class Application {
 
   protected final Logger logger = LogManager.getLogger(getClass());
 
+  //  private final SwingWindow window;
   private final Window window;
   private final Settings settings;
   private final WorkerThread audioThread;
   private final WorkerThread physicsThread;
-  private final WorkerThread drawThread;
+  //  private final WorkerThread drawThread;
   private final List<Timeout> pendingTimeouts;
   private final Stack<Scene> sceneStack;
   private boolean isRunning;
@@ -60,10 +59,11 @@ public abstract class Application {
 
     Application.instance = this;
     this.settings = settings;
-    this.window = new Window();
+//    this.window = new SwingWindow();
+    this.window = new GLFWWindow();
     this.audioThread = new WorkerThread("audio", FRAME_INTERVAL_MS, Audio::update);
     this.physicsThread = new WorkerThread("physics", FRAME_INTERVAL_MS, Physics::update);
-    this.drawThread = new WorkerThread("draw", DRAW_INTERVAL_MS, this::draw);
+//    this.drawThread = new WorkerThread("draw", DRAW_INTERVAL_MS, this::draw);
     this.pendingTimeouts = new ArrayList<>();
     this.sceneStack = new Stack<>();
     this.isRunning = true;
@@ -156,12 +156,10 @@ public abstract class Application {
       scheduleTask(() -> currentScene.animations.add(animation));
   }
 
-  /**
-   * Quits the current {@link Application} by dispatching a {@link WindowEvent#WINDOW_CLOSING} event to the
-   * {@link Window} {@link javax.swing.JFrame frame}
-   */
+  /** Quits the current {@link Application} */
   public void quit() {
-    window.getFrame().dispatchEvent(new WindowEvent(window.getFrame(), WindowEvent.WINDOW_CLOSING));
+    window.notifyClose();
+//    window.getFrame().dispatchEvent(new WindowEvent(window.getFrame(), WindowEvent.WINDOW_CLOSING));
   }
 
   /** Begins the game loop of this application */
@@ -172,7 +170,7 @@ public abstract class Application {
       long lastFrameTime = System.currentTimeMillis();
       long frameTimeAccumulator = 0;
 
-      while (isRunning) {
+      while (isRunning && !window.closeEventReceived()) {
         long currentFrameTime = System.currentTimeMillis();
         long timeDiff = currentFrameTime - lastFrameTime;
         lastFrameTime = currentFrameTime;
@@ -214,23 +212,29 @@ public abstract class Application {
   private void setup() {
     logger.debug("Initializing application");
 
-    window.getCanvas().addKeyListener(Input.INSTANCE);
-    window.getCanvas().addMouseListener(Input.INSTANCE);
-    window.getCanvas().addMouseMotionListener(Input.INSTANCE);
-
-    window.getFrame().addWindowListener(new WindowAdapter() {
-      @Override
-      public void windowClosing(WindowEvent e) {
-        super.windowClosing(e);
-        logger.debug("Received window closing event");
-        isRunning = false;
-      }
+    window.setCloseListener(() -> {
+      logger.debug("Received window closing event");
+      isRunning = false;
     });
 
+//    window.getCanvas().addKeyListener(Input.INSTANCE);
+//    window.getCanvas().addMouseListener(Input.INSTANCE);
+//    window.getCanvas().addMouseMotionListener(Input.INSTANCE);
+//
+//    window.getFrame().addWindowListener(new WindowAdapter() {
+//      @Override
+//      public void windowClosing(WindowEvent e) {
+//        super.windowClosing(e);
+//        logger.debug("Received window closing event");
+//        isRunning = false;
+//      }
+//    });
+//
+//    window.show();
     window.show();
     audioThread.start();
     physicsThread.start();
-    drawThread.start();
+//    drawThread.start();
   }
 
   /** Called in each frame to update the current scene */
@@ -245,19 +249,20 @@ public abstract class Application {
       currentScene._render();
   }
 
-  /**
-   * Applies the {@link Camera} transformation on the {@link Window} scene buffer and draws the current scene to the
-   * {@link Window}
-   */
-  private void draw() {
-    if (currentScene != null) {
-      synchronized (currentScene) {
-        currentScene._draw();
-      }
-
-      window.update();
-    }
-  }
+//  /**
+//   * Applies the {@link Camera} transformation on the {@link SwingWindow} scene buffer and draws the current scene
+//   to the
+//   * {@link SwingWindow}
+//   */
+//  private void draw() {
+//    if (currentScene != null) {
+//      synchronized (currentScene) {
+//        currentScene._draw();
+//      }
+//
+//      window.update();
+//    }
+//  }
 
   /** Runs cleanup code at the end of a frame */
   private void disposeFrame() {
@@ -310,8 +315,10 @@ public abstract class Application {
     physicsThread.interrupt();
     physicsThread.join(500);
 
-    drawThread.interrupt();
-    drawThread.join(500);
+//    drawThread.interrupt();
+//    drawThread.join(500);
+
+    window.dispose();
 
     logger.debug("Disposing application");
   }
