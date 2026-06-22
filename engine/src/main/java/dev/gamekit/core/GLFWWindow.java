@@ -20,14 +20,14 @@ public final class GLFWWindow implements Window {
   private static final Logger LOGGER = LogManager.getLogger(GLFWWindow.class);
 
   private final long windowHandle;
-  private final GLFWErrorCallback errorCallback;
-  private final GLFWWindowCloseCallback windowCloseCallback;
-  private final GLFWKeyCallback keyCallback;
-  private VoidCallback onClose;
-  private InputListener inputListener;
+  private final GLFWErrorCallback glfwErrorCallback;
+  private final GLFWWindowCloseCallback glfwWindowCloseCallback;
+  private final GLFWKeyCallback glfwKeyCallback;
+  private VoidCallback closeCallback;
+  private InputCallback inputCallback;
 
   GLFWWindow() {
-    errorCallback = GLFWErrorCallback.createPrint(System.err).set();
+    glfwErrorCallback = GLFWErrorCallback.createPrint(System.err).set();
 
     if (!glfwInit()) {
       glfwTerminate();
@@ -52,20 +52,19 @@ public final class GLFWWindow implements Window {
       throw new IllegalStateException("Unable to create a GLFW window");
     }
 
-    windowCloseCallback = glfwSetWindowCloseCallback(windowHandle, (win) -> {
-      LOGGER.debug("Closing!!!");
-      if (onClose != null)
-        onClose.invoke();
+    glfwWindowCloseCallback = glfwSetWindowCloseCallback(windowHandle, (win) -> {
+      if (closeCallback != null)
+        closeCallback.invoke();
     });
 
-    keyCallback = glfwSetKeyCallback(windowHandle, (window, key, scanCode, action, mods) -> {
+    glfwKeyCallback = glfwSetKeyCallback(windowHandle, (window, key, scanCode, action, mods) -> {
       LOGGER.debug("Key ev: {}, {}, {}", key, scanCode, action);
 
-      if (inputListener != null) {
+      if (inputCallback != null) {
         if (action == GLFW_PRESS)
-          inputListener.onKeyPressed(key);
+          inputCallback.onKeyPressed(key);
         else if (action == GLFW_RELEASE)
-          inputListener.onKeyReleased(key);
+          inputCallback.onKeyReleased(key);
       }
     });
 
@@ -106,13 +105,13 @@ public final class GLFWWindow implements Window {
   }
 
   @Override
-  public void setCloseListener(VoidCallback callback) {
-    this.onClose = callback;
+  public void setCloseCallback(VoidCallback callback) {
+    this.closeCallback = callback;
   }
 
   @Override
-  public void setInputListener(InputListener listener) {
-    this.inputListener = listener;
+  public void setInputCallback(InputCallback listener) {
+    this.inputCallback = listener;
   }
 
   @Override
@@ -123,9 +122,9 @@ public final class GLFWWindow implements Window {
 
   @Override
   public void dispose() {
-    windowCloseCallback.free();
-    keyCallback.free();
-    errorCallback.free();
+    glfwWindowCloseCallback.free();
+    glfwKeyCallback.free();
+    glfwErrorCallback.free();
 
     glfwDestroyWindow(windowHandle);
     glfwTerminate();

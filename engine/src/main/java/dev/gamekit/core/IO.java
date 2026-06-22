@@ -8,14 +8,12 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.RasterFormatException;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+import java.util.stream.Collectors;
 
 /**
  * {@link IO} handles resource access
@@ -112,6 +110,19 @@ public final class IO {
       return Font.createFont(Font.TRUETYPE_FONT, getStream(resPath));
     } catch (FontFormatException | IOException e) {
       LOGGER.error("Unable to load resource font at {}", resPath, e);
+      return null;
+    }
+  }
+
+  public static String getContents(String resPath) {
+    try {
+      LOGGER.debug("Loading resource contents at {}", resPath);
+      BufferedReader reader = new BufferedReader(new InputStreamReader(getStream(resPath)));
+      String contents = reader.lines().collect(Collectors.joining(System.lineSeparator()));
+      reader.close();
+      return contents;
+    } catch (IOException e) {
+      LOGGER.error("Unable to load resource contents at {}", resPath, e);
       return null;
     }
   }

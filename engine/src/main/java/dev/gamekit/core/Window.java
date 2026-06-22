@@ -14,10 +14,10 @@ public interface Window {
   boolean closeEventReceived();
 
   /** Sets a callback for when a close event is received */
-  void setCloseListener(VoidCallback callback);
+  void setCloseCallback(VoidCallback callback);
 
   /** Sets a callback for inputs which occur on the window */
-  void setInputListener(InputListener listener);
+  void setInputCallback(InputCallback callback);
 
   /** Runs post-frame dispose operations */
   void disposeFrame();
@@ -26,7 +26,7 @@ public interface Window {
   void dispose();
 
   /** Handler for inputs that occur on a {@link Window} */
-  interface InputListener {
+  interface InputCallback {
     /** Called with the integer key code of a pressed key */
     void onKeyPressed(int keyCode);
 

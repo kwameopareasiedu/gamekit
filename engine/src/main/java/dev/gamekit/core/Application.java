@@ -1,6 +1,8 @@
 package dev.gamekit.core;
 
 import dev.gamekit.animation.Animation;
+import dev.gamekit.rendering.Quad;
+import dev.gamekit.rendering.Shader;
 import dev.gamekit.settings.Settings;
 import dev.gamekit.utils.Timeout;
 import dev.gamekit.utils.VoidCallback;
@@ -10,6 +12,8 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+
+import static org.lwjgl.opengl.GL11.*;
 
 /**
  * {@link Application} is the heart of a GameKit program. A game or application must extend this class to do anything
@@ -51,8 +55,8 @@ public abstract class Application {
   }
 
   public Application(Settings settings) {
-    System.setProperty("sun.java2d.opengl", "True");
-    System.setProperty("sun.java2d.accthreshold", "0");
+//    System.setProperty("sun.java2d.opengl", "True");
+//    System.setProperty("sun.java2d.accthreshold", "0");
 
     logger.debug("Created application");
     logger.debug(settings);
@@ -165,10 +169,25 @@ public abstract class Application {
     try {
       setup();
 
+      glClearColor(0.3f, 0.3f, 0.3f, 1f);
+
+      Shader shader = new Shader(
+        IO.getContents("shader-vert.glsl"),
+        IO.getContents("shader-frag.glsl")
+      );
+
+      Quad quad = new Quad();
+
       long lastFrameTime = System.currentTimeMillis();
       long frameTimeAccumulator = 0;
 
       while (isRunning && !window.closeEventReceived()) {
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        shader.bind();
+        quad.render();
+        shader.unbind();
+
         long currentFrameTime = System.currentTimeMillis();
         long timeDiff = currentFrameTime - lastFrameTime;
         lastFrameTime = currentFrameTime;
@@ -210,7 +229,7 @@ public abstract class Application {
   private void setup() {
     logger.debug("Initializing application");
 
-    window.setCloseListener(() -> {
+    window.setCloseCallback(() -> {
       logger.debug("Received window closing event");
       isRunning = false;
     });
@@ -227,8 +246,7 @@ public abstract class Application {
 //        isRunning = false;
 //      }
 //    });
-//
-//    window.show();
+
     window.show();
     audioThread.start();
     physicsThread.start();
